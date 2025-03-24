@@ -1,0 +1,6 @@
+@LOM.API_HostAddress = http://localhost:5073
+
+GET {{LOM.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

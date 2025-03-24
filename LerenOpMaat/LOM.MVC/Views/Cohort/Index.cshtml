@@ -1,0 +1,13 @@
+﻿@using LOM.MVC.ViewModels
+
+@model CohortSelectionViewModel
+
+@{
+    ViewData["Title"] = "CohortSelection";
+}
+
+<h1>Kies een cohort</h1>
+
+@foreach (var cohort in Model.Cohorts.OrderByDescending(x => x.StartDate)){
+    <button type="button" class="btn btn-primary">@cohort.YearString</button>
+}
