@@ -1,4 +1,4 @@
-﻿using LOM.Shared.Models;
+﻿using LOM.API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LOM.API.DAL;
