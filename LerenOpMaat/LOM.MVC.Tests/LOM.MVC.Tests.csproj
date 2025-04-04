@@ -24,8 +24,4 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\LOM.MVC\LOM.MVC.csproj" />
-  </ItemGroup>
-
 </Project>

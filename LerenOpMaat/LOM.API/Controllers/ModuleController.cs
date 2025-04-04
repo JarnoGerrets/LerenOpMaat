@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
-using LOM.Shared.Models;
+using LOM.API.Models;
 
 namespace LOM.API.Controllers
 {
@@ -73,7 +73,7 @@ namespace LOM.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Module>> PostModule(Module @module)
         {
-            _context.Modules.Add(@module);
+            _context.Modules.Add(module);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetModule", new { id = @module.Id }, @module);
