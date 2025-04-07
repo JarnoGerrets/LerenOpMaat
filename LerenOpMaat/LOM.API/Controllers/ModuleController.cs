@@ -16,15 +16,15 @@ namespace LOM.API.Controllers
             _context = context;
         }
 
-        // GET: api/Module
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Module>>> GetModules()
-        {
+		// GET: api/Module
+		[HttpGet]
+		public async Task<ActionResult<IEnumerable<Module>>> GetModules()
+		{
 			return await _context.Modules.ToListAsync();
-        }
+		}
 
-        // GET: api/Module/5
-        [HttpGet("{id}")]
+		// GET: api/Module/5
+		[HttpGet("{id}")]
         public async Task<ActionResult<Module>> GetModule(int id)
         {
             var @module = await _context.Modules.FindAsync(id);
