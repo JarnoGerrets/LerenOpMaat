@@ -20,7 +20,7 @@ namespace LOM.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Module>>> GetModules()
         {
-            return await _context.Modules.ToListAsync();
+			return await _context.Modules.ToListAsync();
         }
 
         // GET: api/Module/5
