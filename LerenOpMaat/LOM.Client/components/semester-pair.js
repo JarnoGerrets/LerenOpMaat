@@ -1,7 +1,6 @@
 import SemesterCard from "../components/semester-card.js";
 
 export default function SemesterPair(semester1, semester2) {
-    console.log("SemesterPair", semester1, semester2);
     const wrapper = document.createElement("div");
     wrapper.classList.add("semester-pair");
     

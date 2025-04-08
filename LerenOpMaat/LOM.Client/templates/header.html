@@ -1,64 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Leren Op Maat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="icon" type="image/svg+xml" href="../images/windesheim_w.svg">
-  <link rel="stylesheet" href="../style/header.css">
-</head>
-<body>
-
-  <!-- Header -->
-  <header>
-    <div class="d-flex align-items-center">
-        <div class="icon-group">
-            <div class="bi bi-list icon" onclick="toggleMenu()">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <i class="bi bi-bell-fill icon"></i>
-          </div>          
-    </div>
-    <!-- User -->
-    <div class="account-section">
-      <div id="user-info" class="user-box" style="display: none;">
-        <!-- User sessie moet nog gemaakt worden style is al gemaakt moet misschien aangepast worden --> 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+<link rel="icon" type="image/svg+xml" href="../images/windesheim_w.svg">
+<link rel="stylesheet" href="../style/header.css">
+<!-- Header -->
+<header>
+  <div class="d-flex align-items-center">
+    <div class="icon-group">
+      <div class="bi bi-list icon" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
-
-      <!-- Guest -->
-      <div id="guest-info" class="guest-box">
-        <button class="login-btn">Inloggen</button>
-      </div>
-    </div>
-
-    <!-- Logo -->
-    <div class="logo">
-      <img src="../images/Windesheim_logo_Zwart.png" alt="Windesheim Logo" />
-    </div>
-  </header>
-
-  <!-- Slide Menu -->
-  <div id="menu" class="menu-overlay">
-    <nav>
-      <a href="#">Leerroute Overzicht</a>
-      <a href="#">Module Overzicht</a>
-      <a href="#">OER</a>
-      <a href="#">Help & Support</a>
-      <a href="#">Instellingen</a>
-    </nav>
-    <i class="bi bi-chevron-up mobile-close-btn" onclick="toggleMenu()"></i>
-    <div class="desktop-close-btn" onclick="toggleMenu()">
-      <i class="bi bi-chevron-left"></i>
+      <i class="bi bi-bell-fill icon"></i>
     </div>
   </div>
-  <script>
-    function toggleMenu() {
+  <!-- User -->
+  <div class="account-section">
+    <div id="user-info" class="user-box" style="display: none;">
+      <!-- User sessie moet nog gemaakt worden style is al gemaakt moet misschien aangepast worden -->
+    </div>
+
+    <!-- Guest -->
+    <div id="guest-info" class="guest-box">
+      <button class="login-btn">Inloggen</button>
+    </div>
+  </div>
+
+  <!-- Logo -->
+  <div class="logo">
+    <img src="../images/Windesheim_logo_Zwart.png" alt="Windesheim Logo" />
+  </div>
+</header>
+
+<!-- Slide Menu -->
+<div id="menu" class="menu-overlay">
+  <nav>
+    <a href="#">Leerroute Overzicht</a>
+    <a href="#">Module Overzicht</a>
+    <a href="#">OER</a>
+    <a href="#">Help & Support</a>
+    <a href="#">Instellingen</a>
+  </nav>
+  <i class="bi bi-chevron-up mobile-close-btn" onclick="toggleMenu()"></i>
+  <div class="desktop-close-btn" onclick="toggleMenu()">
+    <i class="bi bi-chevron-left"></i>
+  </div>
+</div>
+
+<script>
+  function toggleMenu() {
     document.getElementById('menu').classList.toggle('active');
   }   
-  </script>
-</body>
-</html>
+</script>
