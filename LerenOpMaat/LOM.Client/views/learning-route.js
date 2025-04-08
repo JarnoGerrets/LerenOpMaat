@@ -1,8 +1,8 @@
 import SemesterPair from "../components/semester-pair.js";
 
 export default async function LearningRoute() {
-    const res = await fetch("/templates/learning-route.html");
-    const html = await res.text();
+    const response = await fetch("/templates/learning-route.html");
+    const html = await response.text();
     const template = document.createElement("template");
     template.innerHTML = html;
     const fragment = template.content.cloneNode(true);
@@ -30,12 +30,10 @@ export default async function LearningRoute() {
         , {});
 
     Object.values(semesterDataGroupedByYear).forEach((semesterGroup) => {
-        console.log("SemesterGroup", semesterGroup);
         semesterGroup.sort((a, b) => a.semester - b.semester);
         const semesterPair = SemesterPair(semesterGroup[0], semesterGroup[1]);
         grid.appendChild(semesterPair);
     });
-
 
     return fragment;
 }
