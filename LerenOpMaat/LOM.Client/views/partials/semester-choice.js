@@ -39,8 +39,7 @@ export default async function SemesterChoice() {
         <h1 class="popup-header">
             Selecteer je module
         </h1>
-          <hr class="custom-hr">
-        `,
+            `,
         buttons: [
             {
                 text: `
@@ -66,6 +65,17 @@ function showFilter(Data) {
     if (!filterDropdown) {
         filterDropdown = document.createElement('div');
         filterDropdown.classList.add('filter-dropdown');
+
+        // Create search input
+        const searchInput = document.createElement('input');
+        searchInput.type = 'text';
+        searchInput.placeholder = 'Zoek modules...';
+        searchInput.classList.add('search-input');
+        searchInput.addEventListener('input', () => {
+            filterData(searchInput.value.trim().toLowerCase());
+        });
+
+        filterDropdown.appendChild(searchInput);
 
         const categories = ['Alles', ...new Set(Data.map(m => m.Category))];
         categories.forEach(category => {
@@ -101,8 +111,8 @@ function showFilter(Data) {
                     }
                 }
                 updateHighlight();
-                filterData();
-                if (category === 'Alles'){
+                filterData(searchInput.value.trim().toLowerCase());
+                if (category === 'Alles') {
                     filterDropdown.classList.remove('open');
                     document.removeEventListener('click', closeFilterDropdownHandler);
                 }
@@ -111,9 +121,9 @@ function showFilter(Data) {
             filterDropdown.appendChild(option);
         });
 
-        mijnPopup.popup.appendChild(filterDropdown);
+        openPopup(filterDropdown);
     } else {
-        mijnPopup.popup.appendChild(filterDropdown);
+        openPopup(filterDropdown);
     }
 
     if (!isOpen) {
@@ -129,12 +139,19 @@ function showFilter(Data) {
     }
 }
 
+function openPopup(filterDropdown){
+    const filterButtonWrapper = mijnPopup.popup.querySelector('.filter-button')?.closest('.popup-button-wrapper');
+    if (filterButtonWrapper) {
+        filterButtonWrapper.appendChild(filterDropdown);
+    }
+}
+
 function updateHighlight() {
     const options = filterDropdown.querySelectorAll('.filter-option');
     options.forEach(option => {
         const category = option.textContent;
         option.style.backgroundColor = selectedCategories.length === 0 ? '#d0ebff' : 'transparent';
-        option.style.fontWeight = selectedCategories.length === 0 ? 'bold' : 'norma;';
+        option.style.fontWeight = selectedCategories.length === 0 ? 'bold' : 'normal;';
         option.style.backgroundColor = selectedCategories.includes(category) ? '#d0ebff' : 'transparent';
         option.style.fontWeight = selectedCategories.includes(category) ? 'bold' : 'normal';
     });
@@ -147,14 +164,21 @@ function closeFilterDropdown(event) {
     }
 }
 
-function filterData() {
-    let data;
-    const filtered = modulesData.filter(m => selectedCategories.includes(m.Category));
-    if (filtered != '') {
-        data = new SemesterModule(filtered);
-    } else {
-        data = new SemesterModule(modulesData);
+function filterData(searchTerm = '') {
+    let filtered = modulesData;
+
+    if (selectedCategories.length > 0) {
+        filtered = filtered.filter(m => selectedCategories.includes(m.Category));
     }
+
+    if (searchTerm) {
+        filtered = filtered.filter(m =>
+            m.name.toLowerCase().includes(searchTerm) ||
+            m.description.toLowerCase().includes(searchTerm)
+        );
+    }
+
+    const data = new SemesterModule(filtered);
     mijnPopup.contentContainer.innerHTML = '';
     mijnPopup.contentContainer.appendChild(data.render());
 }
