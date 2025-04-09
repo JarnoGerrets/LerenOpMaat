@@ -1,7 +1,8 @@
 .learning-route-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .learning-route-content {
@@ -84,4 +85,52 @@
     border-left: none;
     border-radius: 0 20px 0 0;
     margin-right: 36px;
+}
+
+@media screen and (max-width: 1040px) {
+    .semester-pair {
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .corner-connector {
+        width: 6px;
+        height: 40px;
+        background-color: #003366;
+        align-self: center;
+        border-radius: 3px;
+        border: unset;
+        padding-left: unset;
+        padding-right: unset;
+        margin-top: unset;
+    }
+
+    .corner-connector.left {
+        border-bottom: none;
+        border-right: none;
+        border-radius: 20px 0 0 0;
+        margin-left: unset;
+    }
+
+    .corner-connector.right {
+        border-bottom: none;
+        border-left: none;
+        border-radius: 0 20px 0 0;
+        margin-right: unset;
+    }
+
+    .semester-connector {
+        width: 6px;
+        height: 40px;
+    }
+
+    .year-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .semester-pair.reverse {
+        flex-direction: row;
+    }
 }
