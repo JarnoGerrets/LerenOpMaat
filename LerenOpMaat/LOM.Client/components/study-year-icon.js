@@ -29,7 +29,7 @@ class StudyYearIcon extends HTMLElement {
           width: 80px;
           height: 80px;
           border-radius: 50%;
-          background-color: #ffc400;
+          background-color: #FFCB05;
           color: white;
           font-weight: bold;
           font-size: 1.25rem;
