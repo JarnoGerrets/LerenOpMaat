@@ -3,6 +3,7 @@ using System;
 using LOM.API.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -15,19 +16,25 @@ namespace LOM.API.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.14");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.14")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("LOM.Shared.Models.Cohort", b =>
+            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("LOM.API.Models.Cohort", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -38,59 +45,61 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 3, 24, 20, 54, 18, 941, DateTimeKind.Local).AddTicks(1036)
+                            StartDate = new DateTime(2025, 4, 8, 20, 21, 14, 394, DateTimeKind.Local).AddTicks(6059)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 3, 24, 20, 54, 18, 941, DateTimeKind.Local).AddTicks(1089)
+                            StartDate = new DateTime(2026, 4, 8, 20, 21, 14, 394, DateTimeKind.Local).AddTicks(6104)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 3, 24, 20, 54, 18, 941, DateTimeKind.Local).AddTicks(1093)
+                            StartDate = new DateTime(2027, 4, 8, 20, 21, 14, 394, DateTimeKind.Local).AddTicks(6108)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 3, 24, 20, 54, 18, 941, DateTimeKind.Local).AddTicks(1095)
+                            StartDate = new DateTime(2024, 4, 8, 20, 21, 14, 394, DateTimeKind.Local).AddTicks(6110)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 3, 24, 20, 54, 18, 941, DateTimeKind.Local).AddTicks(1097)
+                            StartDate = new DateTime(2023, 4, 8, 20, 21, 14, 394, DateTimeKind.Local).AddTicks(6112)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 3, 24, 20, 54, 18, 941, DateTimeKind.Local).AddTicks(1100)
+                            StartDate = new DateTime(2022, 4, 8, 20, 21, 14, 394, DateTimeKind.Local).AddTicks(6113)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 3, 24, 20, 54, 18, 941, DateTimeKind.Local).AddTicks(1102)
+                            StartDate = new DateTime(2021, 4, 8, 20, 21, 14, 394, DateTimeKind.Local).AddTicks(6115)
                         });
                 });
 
-            modelBuilder.Entity("LOM.Shared.Models.Module", b =>
+            modelBuilder.Entity("LOM.API.Models.Module", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
