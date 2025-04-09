@@ -1,0 +1,87 @@
+.learning-route-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.learning-route-content {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.learning-route-actions {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.semester-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+}
+
+.semester-pair {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.semester-pair.reverse {
+    flex-direction: row-reverse;
+}
+
+.semester-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1rem;
+    width: 250px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.semester-button {
+    display: flex;
+    width: -moz-available;
+    justify-content: space-between;
+}
+
+.year-container{
+    display: flex;
+    align-items: center;
+}
+
+.semester-connector {
+    width: 40px;
+    height: 6px;
+    background-color: #003366;
+    align-self: center;
+    border-radius: 3px;
+}
+
+.corner-connector {
+    width: 120px;
+    height: 40px;
+    border: 6px solid #003366;
+    border-radius: 0 0 0 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 50px;
+}
+
+.corner-connector.left {
+    border-bottom: none;
+    border-right: none;
+    border-radius: 20px 0 0 0;
+    margin-left: 36px;
+}
+
+.corner-connector.right {
+    border-bottom: none;
+    border-left: none;
+    border-radius: 0 20px 0 0;
+    margin-right: 36px;
+}
