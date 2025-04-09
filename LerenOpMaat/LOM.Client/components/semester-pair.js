@@ -13,21 +13,25 @@ export default function SemesterPair(semester1, semester2, index) {
     }
 
     if (semester1){
-        addYearIconToPair(wrapper, index);
+        addYearIconToPair(wrapper);
         const card1 = SemesterCard(semester1);
         wrapper.appendChild(card1);
     }
     if (semester2){
-        const card2 = SemesterCard(semester2, index);
+        const card2 = SemesterCard(semester2);
         wrapper.appendChild(card2);
 
         addYearIconPlaceholder();
     }
 
-    function addYearIconToPair(wrapper, index) {
+    function addYearIconToPair(wrapper) {
+        const yearContainer = document.createElement("div");
+        yearContainer.classList.add("year-container");
         const icon = document.createElement("study-year-icon");
+        
         icon.setAttribute("start", semester1.startDate.getFullYear());
-        wrapper.appendChild(icon);
+        yearContainer.appendChild(icon);
+        wrapper.appendChild(yearContainer);
     }
 
     function addYearIconPlaceholder(){
