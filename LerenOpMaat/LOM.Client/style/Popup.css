@@ -76,14 +76,21 @@
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
+
 .popup-header-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
     gap: clamp(4px, 4vw, 16px);
     width: 100%;
-
-}
+  }
+  
+  .popup-header-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
 
 .popup-header {
     margin: 0 0 8px 0;

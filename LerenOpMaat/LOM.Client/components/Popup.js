@@ -1,5 +1,5 @@
 export default class Popup {
-    constructor({ maxWidth = 'auto', height = 'auto', header = '', content = '', buttons = [] }) {
+    constructor({maxWidth = 'auto', height = 'auto', header = '', content = '', buttons = [] }) {
         this.popup = document.createElement('div');
         this.popup.classList.add('popup');
         this.popup.style.maxWidth = maxWidth;
@@ -69,12 +69,20 @@ export default class Popup {
         // Header container
         const headerContainer = document.createElement('div');
         headerContainer.classList.add('popup-header-container');
-        headerContainer.appendChild(titleWrapper);
-        headerContainer.appendChild(rightControls);
 
-        // divider
+        // Row with title + controls
+        const headerRow = document.createElement('div');
+        headerRow.classList.add('popup-header-row');
+        headerRow.appendChild(titleWrapper);
+        headerRow.appendChild(rightControls);
+
+        // Divider
         const divider = document.createElement('hr');
         divider.classList.add('custom-hr');
+
+        // Assemble header container
+        headerContainer.appendChild(headerRow);
+        headerContainer.appendChild(divider);
 
         // Content container
         const contentContainer = document.createElement('div');
@@ -96,7 +104,6 @@ export default class Popup {
 
         // Assemble the popup
         this.popup.appendChild(headerContainer);
-        this.popup.appendChild(divider);
         this.popup.appendChild(scrollWrapper);
         this.overlay.appendChild(this.popup);
     }
