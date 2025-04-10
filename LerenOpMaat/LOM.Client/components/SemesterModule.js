@@ -6,6 +6,7 @@ export default class SemesterModule {
     render() {
         const container = document.createElement('div');
         container.classList.add('module-container');
+        container.id = 'popup-module-container';
 
         this.modules.forEach(module => {
             const tile = document.createElement('div');

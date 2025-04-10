@@ -36,8 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("testButton").addEventListener("click", () => SemesterChoice());
-  
-  document.getElementById("testButton2").addEventListener("click", () => LearningRoute());
+
 
   router();
 });

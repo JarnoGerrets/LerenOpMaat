@@ -56,6 +56,7 @@ export default async function SemesterChoice() {
     mijnPopup.contentContainer.appendChild(semesterModules.render());
 
     mijnPopup.open();
+
 }
 
 
@@ -139,7 +140,7 @@ function showFilter(Data) {
     }
 }
 
-function openPopup(filterDropdown){
+function openPopup(filterDropdown) {
     const filterButtonWrapper = mijnPopup.popup.querySelector('.filter-button')?.closest('.popup-button-wrapper');
     if (filterButtonWrapper) {
         filterButtonWrapper.appendChild(filterDropdown);
@@ -177,8 +178,12 @@ function filterData(searchTerm = '') {
             m.description.toLowerCase().includes(searchTerm)
         );
     }
+    let popupWidth = 0;
+        popupWidth = mijnPopup.popup.getBoundingClientRect().width - 58;
+        console.log("Popup width:", popupWidth);
 
     const data = new SemesterModule(filtered);
     mijnPopup.contentContainer.innerHTML = '';
+    mijnPopup.contentContainer.style.minWidth = `${popupWidth}px`;
     mijnPopup.contentContainer.appendChild(data.render());
 }
