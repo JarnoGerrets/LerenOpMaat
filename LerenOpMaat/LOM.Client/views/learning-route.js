@@ -29,10 +29,13 @@ export default async function LearningRoute() {
     }
         , {});
 
+    let index = 0;
+    const totalAmountOfYears = Object.keys(semesterDataGroupedByYear).length;
     Object.values(semesterDataGroupedByYear).forEach((semesterGroup) => {
         semesterGroup.sort((a, b) => a.semester - b.semester);
-        const semesterPair = SemesterPair(semesterGroup[0], semesterGroup[1]);
+        const semesterPair = SemesterPair(semesterGroup[0], semesterGroup[1], index, totalAmountOfYears);
         grid.appendChild(semesterPair);
+        index++;
     });
 
     return fragment;
