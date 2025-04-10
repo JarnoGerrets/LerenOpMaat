@@ -1,30 +1,24 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copy only csproj to restore
-COPY ["LOM.API/LOM.API.csproj", "LOM.API/"]
-WORKDIR /src/LOM.API
+COPY LOM.API.csproj .
 RUN dotnet restore
 
-# Copy rest of the source
-WORKDIR /src
+# Copy the rest of the source code
 COPY . .
 
-WORKDIR /src/LOM.API
-
-# Build the API project only
-RUN dotnet build "LOM.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# Build
+RUN dotnet build LOM.API.csproj -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-WORKDIR /src/LOM.API
-RUN dotnet publish "LOM.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish LOM.API.csproj -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
