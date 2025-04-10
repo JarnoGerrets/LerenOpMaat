@@ -1,6 +1,6 @@
 .learning-route-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly ;
     flex-direction: row;
     flex-wrap: wrap;
 }
@@ -12,14 +12,15 @@
 
 .learning-route-actions {
     display: flex;
-    justify-content: center;
+    justify-content: end;
     flex-direction: column;
+    gap: 10px;
 }
 
 .semester-grid {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 4rem;
     padding: 2rem;
 }
 
@@ -61,6 +62,7 @@
     background-color: #003366;
     align-self: center;
     border-radius: 3px;
+    position: relative;
 }
 
 .corner-connector {
@@ -71,6 +73,7 @@
     padding-left: 10px;
     padding-right: 10px;
     margin-top: 50px;
+    position: relative;
 }
 
 .corner-connector.left {
@@ -87,7 +90,113 @@
     margin-right: 36px;
 }
 
+.semester-connector.reverse::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    width: 18px;
+    height: 18px;
+    background-color: #003366;
+    clip-path: polygon(100% 0%, 0% 50%, 100% 100%);
+}
+
+.semester-connector.reverse::after {
+    display: none;
+}
+
+.semester-connector::after {
+    content: "";
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    background-color: #003366;
+    clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+}
+
+.corner-connector::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 18px;
+    background-color: #003366;
+    clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+}
+
+.corner-connector.left::after {
+    left: -2px;
+    right: unset;
+}
+
+.corner-connector.right::after {
+    right: -20px;
+    left: unset;
+}
+
+.learning-route-action-button{
+    padding: 10px 20px;
+    min-width: 180px;
+}
+
+.top-right-buttons {
+    position: fixed;
+    top: 8rem;
+    right: 4rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 100;
+}
+
+.top-right-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+}
+
+.circle-button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.circle-button:hover {
+    transform: scale(1.1);
+  }
+  
+  .circle-button.blue {
+    background-color: #003366;
+  }
+  
+  .circle-button.light-blue {
+    background-color: #3b93d3;
+  }
+  
+  .circle-button.red {
+    background-color: #d94d4d;
+  }
+
 @media screen and (max-width: 1040px) {
+    .semester-grid {
+        gap: 2rem;
+    }
+
     .semester-pair {
         flex-direction: column;
         justify-content: center;
@@ -104,20 +213,31 @@
         padding-left: unset;
         padding-right: unset;
         margin-top: unset;
+        position: relative;
     }
 
     .corner-connector.left {
         border-bottom: none;
         border-right: none;
-        border-radius: 20px 0 0 0;
+        border-radius: 3px;
         margin-left: unset;
     }
 
     .corner-connector.right {
         border-bottom: none;
         border-left: none;
-        border-radius: 0 20px 0 0;
+        border-radius: 3px;
         margin-right: unset;
+    }
+
+    .semester-connector::after {
+        display: none;
+    }
+    .semester-connector::before {
+        display: none;
+    }
+    .corner-connector::after {
+        display: none;
     }
 
     .semester-connector {
@@ -138,5 +258,19 @@
     .learning-route-container {
         flex-direction: column;
         align-items: center;
+    }
+}
+
+@media screen and (max-width: 1227px) {
+    .learning-route-actions {
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        width: 100%;
+        padding: 10px;
+    }
+}
+@media screen and (max-width: 555px) {
+    .top-right-buttons {
+        right: 2vh;
     }
 }
