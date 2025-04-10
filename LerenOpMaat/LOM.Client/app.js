@@ -1,5 +1,4 @@
 import LearningRoute from "./views/learning-route.js";
-import SemesterChoice from "./views/partials/semester-choice.js";
 
 const routes = {
   "/": LearningRoute
@@ -34,9 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
       navigateTo(e.target.href);
     }
   });
-
-  document.getElementById("testButton").addEventListener("click", () => SemesterChoice());
-
 
   router();
 });
