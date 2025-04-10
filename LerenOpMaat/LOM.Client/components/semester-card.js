@@ -5,10 +5,10 @@ export default function SemesterCard({ semester, module, locked = false }) {
     template.innerHTML = `
       <div class="semester-card ${locked ? 'locked' : ''}">
         <h3>Semester ${semester}</h3>
-        <button id="select-module" class="btn btn-light border select-module ${locked ? 'disabled' : ''}" ${locked ? 'disabled' : ''}>
+        <button id="select-module" class="semester-button btn btn-light border">
           ${module}
+          <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill' }"></i> 
         </button>
-        <p>${locked ? '<span class="lock">🔒</span>' : ''}</p>
       </div>
     `;
 
