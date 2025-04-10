@@ -179,8 +179,7 @@ function filterData(searchTerm = '') {
         );
     }
     let popupWidth = 0;
-        popupWidth = mijnPopup.popup.getBoundingClientRect().width - 58;
-        console.log("Popup width:", popupWidth);
+    popupWidth = mijnPopup.popup.getBoundingClientRect().width - 58;
 
     const data = new SemesterModule(filtered);
     mijnPopup.contentContainer.innerHTML = '';
