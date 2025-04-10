@@ -17,6 +17,9 @@ export default function SemesterPair(semester1, semester2, index, totalAmountOfY
 
         const connector = document.createElement("div");
         connector.classList.add("semester-connector");
+        if (!isEven(index)) {
+            connector.classList.add("reverse");
+        }
         wrapper.appendChild(connector);
         
         const card1 = SemesterCard(semester1);
@@ -26,6 +29,9 @@ export default function SemesterPair(semester1, semester2, index, totalAmountOfY
     if (semester2){
         const connector = document.createElement("div");
         connector.classList.add("semester-connector");
+        if (!isEven(index)) {
+            connector.classList.add("reverse");
+        }
         wrapper.appendChild(connector);
 
         const card2 = SemesterCard(semester2);
