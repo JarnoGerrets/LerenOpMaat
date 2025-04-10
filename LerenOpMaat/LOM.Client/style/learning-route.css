@@ -91,6 +91,7 @@
     .semester-pair {
         flex-direction: column;
         justify-content: center;
+        align-items: center;
     }
 
     .corner-connector {
@@ -131,6 +132,11 @@
     }
 
     .semester-pair.reverse {
-        flex-direction: row;
+        flex-direction: column;
+    }
+
+    .learning-route-container {
+        flex-direction: column;
+        align-items: center;
     }
 }
