@@ -11,25 +11,31 @@ let selectedCategory;
 export default async function SemesterChoice() {
     // Hardcoded data for 4 semester modules
     modulesData = [
-        { name: 'Module 1', description: 'Introduction to Programming', Category: 'SE' },
-        { name: 'Module 2', description: 'Web Development Basics', Category: 'BIM' },
-        { name: 'Module 3', description: 'Data Structures and Algorithms', Category: 'IDNS' },
-        { name: 'Module 4', description: 'Database Management Systems', Category: 'SE' },
-        { name: 'Module 1', description: 'Introduction to Programming', Category: 'BIM' },
-        { name: 'Module 2', description: 'Web Development Basics', Category: 'IDNS' },
-        { name: 'Module 3', description: 'Data Structures and Algorithms', Category: 'SE' },
-        { name: 'Module 4', description: 'Database Management Systems', Category: 'BIM' },
-        { name: 'Module 1', description: 'Introduction to Programming', Category: 'IDNS' },
-        { name: 'Module 2', description: 'Web Development Basics', Category: 'SE' },
-        { name: 'Module 3', description: 'Data Structures and Algorithms', Category: 'BIM' },
-        { name: 'Module 4', description: 'Database Management Systems', Category: 'IDNS' },
-        { name: 'Module 3', description: 'Data Structures and Algorithms', Category: 'BIM' },
-        { name: 'Module 4', description: 'Database Management Systems', Category: 'IDNS' },
-        { name: 'Module 4', description: 'Database Management Systems', Category: 'IDNS' },
+        { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
+        { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'BIM' },
+        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'IDNS' },
+        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'SE' },
+        { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'BIM' },
+        { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'IDNS' },
+        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'SE' },
+        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'BIM' },
+        { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'IDNS' },
+        { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'SE' },
+        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
+        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
+        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
+        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
+        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
     ];
+    
 
     // Create the SemesterModules component with the hardcoded data
-    const semesterModules = new SemesterModule(modulesData);
+    const semesterModules = new SemesterModule(modulesData, (selectedModule) => {
+
+        console.log('Selected Module:', selectedModule);
+        mijnPopup.close(selectedModule);
+        return selectedModule;
+    });
 
 
     mijnPopup = new Popup({
@@ -55,7 +61,11 @@ export default async function SemesterChoice() {
     });
     mijnPopup.contentContainer.appendChild(semesterModules.render());
 
-    mijnPopup.open();
+    const selectedModule = await mijnPopup.open();
+    if (selectedModule) {
+        console.log('User selected module:', selectedModule);
+        return selectedModule;
+    }
 
 }
 

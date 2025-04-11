@@ -1,6 +1,6 @@
 import SemesterCard from "../components/semester-card.js";
 
-export default function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
+export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("semester-pair");
 
@@ -22,7 +22,12 @@ export default function SemesterPair(semester1, semester2, index, totalAmountOfY
         }
         wrapper.appendChild(connector);
         
-        const card1 = SemesterCard(semester1);
+        // Await the creation of the semester card
+        const card1 = await SemesterCard({
+            semester: semester1.semester,
+            module: semester1.module,
+            locked: semester1.locked
+        });
         wrapper.appendChild(card1);
     }
     
@@ -34,10 +39,15 @@ export default function SemesterPair(semester1, semester2, index, totalAmountOfY
         }
         wrapper.appendChild(connector);
 
-        const card2 = SemesterCard(semester2);
+        // Await the creation of the semester card
+        const card2 = await SemesterCard({
+            semester: semester2.semester,
+            module: semester2.module,
+            locked: semester2.locked
+        });
         wrapper.appendChild(card2);
 
-        if (index !== totalAmountOfYears -1) {
+        if (index !== totalAmountOfYears - 1) {
             const cornerConnector = document.createElement("div");
             cornerConnector.classList.add("corner-connector");
             if (!isEven(index)) {
@@ -71,4 +81,4 @@ export default function SemesterPair(semester1, semester2, index, totalAmountOfY
     }
 
     return wrapper;
-  }
+}

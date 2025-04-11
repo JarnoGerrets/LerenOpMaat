@@ -1,6 +1,6 @@
 import SemesterChoice from "../views/partials/semester-choice.js";
 
-export default function SemesterCard({ semester, module, locked = false }) {
+export default async function SemesterCard({ semester, module, locked = false }) {
     const template = document.createElement("template");
     template.innerHTML = `
       <div class="semester-card ${locked ? 'locked' : ''}">
@@ -14,12 +14,18 @@ export default function SemesterCard({ semester, module, locked = false }) {
 
     const fragment = template.content.cloneNode(true);
     const button = fragment.querySelector("#select-module");
-  
+
     if (!locked && button) {
-      button.addEventListener("click", () => {
-        SemesterChoice();
-      });
+        button.addEventListener("click", async () => {
+            const selectedModule = await SemesterChoice();
+            if (selectedModule) {
+                button.innerHTML = `
+                    ${selectedModule.name} 
+                    <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
+                `;
+            }
+        });
     }
-  
+
     return fragment;
-  }
+}

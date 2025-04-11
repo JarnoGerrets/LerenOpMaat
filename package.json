@@ -1,0 +1,26 @@
+{
+  "name": "lerenopmaat",
+  "version": "1.0.0",
+  "description": "Leerroute planner",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JarnoGerrets/LerenOpMaat.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JarnoGerrets/LerenOpMaat/issues"
+  },
+  "homepage": "https://github.com/JarnoGerrets/LerenOpMaat#readme",
+  "devDependencies": {
+    "browser-sync": "^3.0.4",
+    "gulp": "^5.0.0",
+    "gulp-autoprefixer": "^9.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-concat": "^2.6.1"
+  }
+}

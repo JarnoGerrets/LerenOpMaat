@@ -1,5 +1,8 @@
 export default class Popup {
     constructor({maxWidth = 'auto', height = 'auto', header = '', content = '', buttons = [] }) {
+        this.result = null;
+        this._resolve = null;
+
         this.popup = document.createElement('div');
         this.popup.classList.add('popup');
         this.popup.style.maxWidth = maxWidth;
@@ -108,7 +111,7 @@ export default class Popup {
         this.overlay.appendChild(this.popup);
     }
 
-    open() {
+   open() {
         document.body.appendChild(this.overlay);
         setTimeout(() => {
             this.overlay.style.opacity = 1;
@@ -116,14 +119,19 @@ export default class Popup {
             this.popup.style.transform = 'scale(1)';
             this.popup.style.opacity = 1;
         }, 10);
+
+        return new Promise((resolve) => {
+            this._resolve = resolve;
+        });
     }
 
-    close() {
+    close(result = null) {
         this.overlay.style.opacity = 0;
         this.popup.style.transform = 'scale(0)';
         this.popup.style.opacity = 0;
         setTimeout(() => {
             document.body.removeChild(this.overlay);
+            if (this._resolve) this._resolve(result);
         }, 300);
     }
 }
