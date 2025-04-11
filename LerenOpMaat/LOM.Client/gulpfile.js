@@ -1,7 +1,6 @@
 const {series, parallel, watch} = require('gulp');
 const browserSync = require('browser-sync').create();
 const css = function (done) {
-console.log('css....');
 done();
 };
 const watchFiles = () => {

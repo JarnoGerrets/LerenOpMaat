@@ -31,8 +31,6 @@ export default async function SemesterChoice() {
 
     // Create the SemesterModules component with the hardcoded data
     const semesterModules = new SemesterModule(modulesData, (selectedModule) => {
-
-        console.log('Selected Module:', selectedModule);
         mijnPopup.close(selectedModule);
         return selectedModule;
     });
@@ -63,7 +61,6 @@ export default async function SemesterChoice() {
 
     const selectedModule = await mijnPopup.open();
     if (selectedModule) {
-        console.log('User selected module:', selectedModule);
         return selectedModule;
     }
 
@@ -191,7 +188,11 @@ function filterData(searchTerm = '') {
     let popupWidth = 0;
     popupWidth = mijnPopup.popup.getBoundingClientRect().width - 58;
 
-    const data = new SemesterModule(filtered);
+    const data = new SemesterModule(filtered, (selectedModule) => {
+        mijnPopup.close(selectedModule);
+        return selectedModule;
+    });
+
     mijnPopup.contentContainer.innerHTML = '';
     mijnPopup.contentContainer.style.minWidth = `${popupWidth}px`;
     mijnPopup.contentContainer.appendChild(data.render());
