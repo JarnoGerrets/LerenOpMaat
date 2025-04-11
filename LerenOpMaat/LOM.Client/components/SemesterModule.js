@@ -1,6 +1,7 @@
 export default class SemesterModule {
-    constructor(modules) {
+    constructor(modules, onModuleSelect) {
         this.modules = modules;
+        this.onModuleSelect = onModuleSelect;
     }
 
     render() {
@@ -20,12 +21,16 @@ export default class SemesterModule {
             const infoIcon = document.createElement('span');
             infoIcon.classList.add('material-icons', 'module-icon');
             infoIcon.textContent = 'i';
-            infoIcon.title = 'ga naar ' + module.description;
+            infoIcon.title = `ga naar ${module.description}`;
             tile.appendChild(infoIcon);
 
             const moduleDescription = document.createElement('p');
             moduleDescription.textContent = module.name;
             tile.appendChild(moduleDescription);
+
+            tile.addEventListener('click', () => {
+                this.onModuleSelect(module);
+            });
 
             container.appendChild(tile);
         });
