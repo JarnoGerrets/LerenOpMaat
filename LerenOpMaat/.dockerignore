@@ -1,4 +1,11 @@
-﻿**/.dockerignore
+﻿**/.idea
+**/.vscode
+**/node_modules
+**/dist
+**/bin
+**/obj
+**/packages
+**/.dockerignore
 **/.env
 **/.git
 **/.gitignore
