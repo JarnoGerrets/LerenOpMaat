@@ -21,8 +21,7 @@ export default async function SemesterCard({ semester, module, locked = false })
       if (selectedModule) {
         button.innerHTML = `
                   ${selectedModule.name} 
-                  <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>.
-                  
+                  <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>                  
               `;
       } else {
         // Maak de knop leeg als de selectie wordt gereset
