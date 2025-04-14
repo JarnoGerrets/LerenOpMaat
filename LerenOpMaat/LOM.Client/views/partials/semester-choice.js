@@ -27,13 +27,19 @@ export default async function SemesterChoice() {
         { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
         { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
     ];
-    
+
 
     // Create the SemesterModules component with the hardcoded data
-    const semesterModules = new SemesterModule(modulesData, (selectedModule) => {
-        mijnPopup.close(selectedModule);
-        return selectedModule;
-    });
+    const semesterModules = new SemesterModule(
+        modulesData,
+        (selectedModule) => {
+            mijnPopup.close(selectedModule); // Sluit popup met geselecteerde module
+            return selectedModule;
+        },
+        () => {
+            mijnPopup.close(null); // Sluit popup en reset selectie
+        }
+    );
 
 
     mijnPopup = new Popup({
