@@ -1,8 +1,7 @@
 export default class SemesterModule {
-    constructor(modules, onModuleSelect, onUnassign = null) { // onUnassign is optioneel
+    constructor(modules, onModuleSelect) {
         this.modules = modules;
         this.onModuleSelect = onModuleSelect;
-        this.onUnassign = onUnassign; // Callback voor reset
     }
 
     render() {
@@ -19,17 +18,13 @@ export default class SemesterModule {
             moduleName.textContent = module.description;
             tile.appendChild(moduleName);
 
-            const unassignIcon = document.createElement('span');
-            unassignIcon.classList.add('material-icons', 'module-icon');
-            unassignIcon.textContent = 'X';
-            unassignIcon.title = `Module ${module.description} ontkoppelen`;
-            tile.appendChild(unassignIcon);
-
-            const infoIcon = document.createElement('span');
-            infoIcon.classList.add('material-icons', 'module-icon');
-            infoIcon.textContent = 'i';
-            infoIcon.title = `ga naar ${module.description}`;
-            tile.appendChild(infoIcon);
+            if (module.name !== "Geen Keuze") {
+                const infoIcon = document.createElement('span');
+                infoIcon.classList.add('material-icons', 'module-icon');
+                infoIcon.textContent = 'i';
+                infoIcon.title = `ga naar ${module.description}`;
+                tile.appendChild(infoIcon);
+            }
 
             const moduleDescription = document.createElement('p');
             moduleDescription.textContent = module.name;
@@ -37,12 +32,6 @@ export default class SemesterModule {
 
             tile.addEventListener('click', () => {
                 this.onModuleSelect(module);
-            });
-
-            // Eventlistener voor unassign
-            unassignIcon.addEventListener('click', (event) => {
-                event.stopPropagation(); // Voorkomt dat de click op de tile wordt getriggerd
-                this.onUnassign(); // Roep de onUnassign callback aan
             });
 
             container.appendChild(tile);

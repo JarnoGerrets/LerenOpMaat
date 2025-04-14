@@ -50,11 +50,3 @@
     color: black;
     font-family: 'Courier', sans-serif;
 }
-
-.module-icon:first-of-type {
-    right: 28px;
-}
-
-.module-icon:last-of-type {
-    right: 60px;
-}
