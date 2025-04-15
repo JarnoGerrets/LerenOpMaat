@@ -15,19 +15,20 @@ export default async function SemesterCard({ semester, module, locked = false })
   const fragment = template.content.cloneNode(true);
   const button = fragment.querySelector("#select-module");
 
+  //Deze gaan wij ook aanpassen later als wij een DB hebben
   if (!locked && button) {
     button.addEventListener("click", async () => {
-      const selectedModule = await SemesterChoice();
+      const selectedModule = await SemesterChoice(button.textContent.trim());
       if (selectedModule.name !== "Geen Keuze") {
         button.innerHTML = `
-                  ${selectedModule.name} 
-                  <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>                  
-              `;
+              ${selectedModule.name} 
+              <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
+          `;
       } else {
         button.innerHTML = `
-                  Selecteer je module
-                  <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
-              `;
+              Selecteer je module
+              <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
+          `;
       }
     });
   }

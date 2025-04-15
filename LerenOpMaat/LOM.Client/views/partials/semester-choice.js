@@ -8,10 +8,9 @@ let modulesData = [];
 let selectedCategories = [];
 let selectedCategory;
 
-export default async function SemesterChoice() {
+export default async function SemesterChoice(selectedModuleName = "Selecteer je module") {
     // Hardcoded data for 4 semester modules
     modulesData = [
-        { name: 'Geen Keuze', description: 'Geen Keuze' },
         { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
         { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'BIM' },
         { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'IDNS' },
@@ -28,6 +27,11 @@ export default async function SemesterChoice() {
         { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
     ];
 
+    //Deze is omdat alles hardcoded is, maar later als wij een DB hebben
+    //dan wordt alles uit de koppel tabel opgehaald
+    if (selectedModuleName !== "Selecteer je module") {
+        modulesData.unshift({ name: 'Geen Keuze', description: 'Geen Keuze' });
+    }
 
     // Create the SemesterModules component with the hardcoded data
     const semesterModules = new SemesterModule(
