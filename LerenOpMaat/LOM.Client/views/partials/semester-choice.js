@@ -8,7 +8,7 @@ let modulesData = [];
 let selectedCategories = [];
 let selectedCategory;
 
-export default async function SemesterChoice() {
+export default async function SemesterChoice(selectedModuleName = "Selecteer je module") {
     // Hardcoded data for 4 semester modules
     modulesData = [
         { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
@@ -24,16 +24,23 @@ export default async function SemesterChoice() {
         { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
         { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
         { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
-        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
         { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
     ];
-    
+
+    //Deze is omdat alles hardcoded is, maar later als wij een DB hebben
+    //dan wordt alles uit de koppel tabel opgehaald
+    if (selectedModuleName !== "Selecteer je module") {
+        modulesData.unshift({ name: 'Geen Keuze', description: 'Geen Keuze' });
+    }
 
     // Create the SemesterModules component with the hardcoded data
-    const semesterModules = new SemesterModule(modulesData, (selectedModule) => {
-        mijnPopup.close(selectedModule);
-        return selectedModule;
-    });
+    const semesterModules = new SemesterModule(
+        modulesData,
+        (selectedModule) => {
+            mijnPopup.close(selectedModule); // Sluit popup met geselecteerde module
+            return selectedModule;
+        }
+    );
 
 
     mijnPopup = new Popup({
@@ -84,8 +91,7 @@ function showFilter(Data) {
         });
 
         filterDropdown.appendChild(searchInput);
-
-        const categories = ['Alles', ...new Set(Data.map(m => m.Category))];
+        const categories = ['Alles', ...new Set(Data.filter(m => m.name !== 'Geen Keuze').map(m => m.Category))];
         categories.forEach(category => {
             const option = document.createElement('div');
             option.textContent = category;
@@ -173,7 +179,8 @@ function closeFilterDropdown(event) {
 }
 
 function filterData(searchTerm = '') {
-    let filtered = modulesData;
+    //Geen Keuze niet filteren
+    let filtered = modulesData.filter(m => m.name !== 'Geen Keuze');
 
     if (selectedCategories.length > 0) {
         filtered = filtered.filter(m => selectedCategories.includes(m.Category));
@@ -185,6 +192,9 @@ function filterData(searchTerm = '') {
             m.description.toLowerCase().includes(searchTerm)
         );
     }
+
+    //doe 'Geen Keuze' altijd als eerste optie
+    filtered.unshift({ name: 'Geen Keuze', description: 'Geen Keuze' });
     let popupWidth = 0;
     popupWidth = mijnPopup.popup.getBoundingClientRect().width - 58;
 

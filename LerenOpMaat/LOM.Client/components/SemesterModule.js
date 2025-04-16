@@ -18,11 +18,13 @@ export default class SemesterModule {
             moduleName.textContent = module.description;
             tile.appendChild(moduleName);
 
-            const infoIcon = document.createElement('span');
-            infoIcon.classList.add('material-icons', 'module-icon');
-            infoIcon.textContent = 'i';
-            infoIcon.title = `ga naar ${module.description}`;
-            tile.appendChild(infoIcon);
+            if (module.name !== "Geen Keuze") {
+                const infoIcon = document.createElement('span');
+                infoIcon.classList.add('material-icons', 'module-icon');
+                infoIcon.textContent = 'i';
+                infoIcon.title = `ga naar ${module.description}`;
+                tile.appendChild(infoIcon);
+            }
 
             const moduleDescription = document.createElement('p');
             moduleDescription.textContent = module.name;
