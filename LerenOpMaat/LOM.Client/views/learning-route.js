@@ -1,4 +1,5 @@
 import SemesterPair from "../components/semester-pair.js";
+import { modulesArray } from "../components/semester-card.js"; // Correcte import
 
 export default async function LearningRoute() {
     const response = await fetch("/templates/learning-route.html");
@@ -26,8 +27,7 @@ export default async function LearningRoute() {
         }
         acc[year].push(data);
         return acc;
-    }
-        , {});
+    }, {});
 
     let index = 0;
     const totalAmountOfYears = Object.keys(semesterDataGroupedByYear).length;
@@ -37,6 +37,31 @@ export default async function LearningRoute() {
         grid.appendChild(semesterPair);
         index++;
     }
+    
+    document.body.appendChild(fragment);
+
+    const saveButton = document.getElementById("saveLearningRoute");
+    if (saveButton) {
+        saveButton.addEventListener("click", () => {
+            console.log("Exporteren van modulesArray:", modulesArray);
+            saveModulesArrayAsJSON(modulesArray);
+        });
+    } else {
+        console.error("Knop met id 'saveLearningRoute' niet gevonden!");
+    }
 
     return fragment;
+}
+
+function saveModulesArrayAsJSON(modulesArray) {
+    if (Array.isArray(modulesArray) && modulesArray.length > 0) {
+        const json = JSON.stringify(modulesArray, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "modulesArray.json";
+        link.click();
+    } else {
+        console.error("modulesArray is leeg of geen array!");
+    }
 }
