@@ -15,9 +15,9 @@ export default async function LearningRoute() {
     try {
         //Dummy route in DB 
         //comment apiResponse & uncomment de 2e apiResponse to use dummy data
-        //const apiResponse = await getLearningRoutesById(1);
-        const apiResponse = null;
-        console.log("API Response:", apiResponse);
+        const apiResponse = await getLearningRoutesById(1);
+        //const apiResponse = null;
+        console.log("API Response:", apiResponse); //Added bij Elias voor debugging
 
         if (!apiResponse.semesters || !Array.isArray(apiResponse.semesters.$values) || apiResponse.semesters.$values.length === 0) {
             console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.semesters);
@@ -26,12 +26,12 @@ export default async function LearningRoute() {
             semesterData = apiResponse.semesters.$values;
         }
     } catch (error) {
-        console.error("Error fetching semester data:", error.message);
+        console.error("Error fetching semester data:", error.message);//debugging added bij Elias
         semesterData = dummyApiResponse.semesters.$values; // Gebruik de dummy data bij een fout
     }
 
     const semesterDataGroupedByYear = semesterData.reduce((acc, data) => {
-        const year = data.year; // Gebruik de 'year'-eigenschap direct
+        const year = data.year; // dit moet nog gefixt worden maar er is nog geen kolom in de db voor de semester jaar.
         if (!acc[year]) {
             acc[year] = [];
         }
@@ -42,20 +42,23 @@ export default async function LearningRoute() {
     let index = 0;
     const totalAmountOfYears = Object.keys(semesterDataGroupedByYear).length;
 
-    // Verwerk de semesters per jaar
-    for (const [year, semesterGroup] of Object.entries(semesterDataGroupedByYear)) {
+    // Sorteer de jaren en verwerk de semesters per jaar
+    const sortedYears = Object.entries(semesterDataGroupedByYear).sort(([yearA], [yearB]) => yearA - yearB);
+
+    for (const [year, semesterGroup] of sortedYears) {
+        console.log(`Processing year: ${year}`); // Added by Elias for debugging
+
         // Sorteer de semesters binnen een jaar op semester-nummer
         semesterGroup.sort((a, b) => a.semester - b.semester);
 
-        // Controleer of er twee semesters zijn om een pair te maken
         const semester1 = semesterGroup.find(s => s.semester === 1);
         const semester2 = semesterGroup.find(s => s.semester === 2);
 
         const semesterPair = await SemesterPair(semester1, semester2, index, totalAmountOfYears);
 
         if (!(semesterPair instanceof Node)) {
-            console.error("SemesterPair is not a valid Node:", semesterPair);
-            continue; // Sla deze iteratie over als het geen Node is
+            console.error(`SemesterPair for year ${year} is not a valid Node:`, semesterPair);
+            continue;
         }
 
         grid.appendChild(semesterPair);
