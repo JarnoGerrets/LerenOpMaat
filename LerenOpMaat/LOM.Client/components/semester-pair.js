@@ -11,7 +11,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         wrapper.classList.add("reverse");
     }
 
-    if (semester1 ) {
+    if (semester1) {
         addYearIconToPair();
 
         const connector = document.createElement("div");
@@ -23,7 +23,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card1 = await SemesterCard({
             semester: semester1.semester,
-            module: semester1.module.description,
+            module: semester1.module.name,
             locked: semester1.locked
         });
         console.log("Card1:", card1); // Debugging
@@ -40,7 +40,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card2 = await SemesterCard({
             semester: semester2.semester,
-            module: semester2.module.description,
+            module: semester2.module.name,
             locked: semester2.locked
         });
         console.log("Card2:", card2); // Debugging
@@ -60,16 +60,11 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         }
     }
 
-    if (!semester1 && !semester2) {
-        console.warn("No valid semesters provided for SemesterPair");
-        return document.createElement("div"); // Retourneer een lege div
-    }
-
     function addYearIconToPair() {
         const yearContainer = document.createElement("div");
         yearContainer.classList.add("year-container");
         const icon = document.createElement("study-year-icon");
-    
+
         // Stel het jaar altijd in op 2025
         icon.setAttribute("start", "2025");
         yearContainer.appendChild(icon);

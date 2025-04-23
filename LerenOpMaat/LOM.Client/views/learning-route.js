@@ -1,6 +1,7 @@
 import SemesterPair from "../components/semester-pair.js";
 import { modulesArray } from "../components/semester-card.js"; // Correcte import
 import { getLearningRoutesById } from "../../client/api-client.js";
+import { dummyApiResponse } from "../components/dummyData.js";
 
 export default async function LearningRoute() {
     const response = await fetch("/templates/learning-route.html");
@@ -12,25 +13,23 @@ export default async function LearningRoute() {
 
     let semesterData = [];
     try {
-        const apiResponse = await getLearningRoutesById(1);
+        //Dummy route in DB 
+        //comment apiResponse & uncomment de 2e apiResponse to use dummy data
+        //const apiResponse = await getLearningRoutesById(1);
+        const apiResponse = null;
         console.log("API Response:", apiResponse);
 
         if (!apiResponse.semesters || !Array.isArray(apiResponse.semesters.$values) || apiResponse.semesters.$values.length === 0) {
             console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.semesters);
-
-            //hier moet nog dummy data komen.
-
+            semesterData = dummyApiResponse.semesters.$values; // Gebruik de dummy data
         } else {
             semesterData = apiResponse.semesters.$values;
         }
-
-        // Geeft de data terug zodat je deze in de console kunt inspecteren
-
     } catch (error) {
         console.error("Error fetching semester data:", error.message);
+        semesterData = dummyApiResponse.semesters.$values; // Gebruik de dummy data bij een fout
     }
 
-    // Groepeer de data op jaar
     const semesterDataGroupedByYear = semesterData.reduce((acc, data) => {
         const year = data.year; // Gebruik de 'year'-eigenschap direct
         if (!acc[year]) {
