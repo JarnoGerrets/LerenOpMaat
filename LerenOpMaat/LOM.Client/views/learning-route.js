@@ -1,5 +1,6 @@
 import SemesterPair from "../components/semester-pair.js";
 import { modulesArray } from "../components/semester-card.js"; // Correcte import
+import { getLearningRoutesById } from "../../client/api-client.js";
 
 export default async function LearningRoute() {
     const response = await fetch("/templates/learning-route.html");
@@ -9,19 +10,29 @@ export default async function LearningRoute() {
     const fragment = template.content.cloneNode(true);
     const grid = fragment.querySelector(".semester-grid");
 
-    const semesterData = [
-        { semester: 1, module: "Basisconcepten ICT 1", locked: true, startDate: new Date("2025-04-07") },
-        { semester: 2, module: "Basisconcepten ICT 2", locked: true, startDate: new Date("2025-04-07") },
-        { semester: 1, module: "Selecteer je module", locked: false, startDate: new Date("2026-04-07") },
-        { semester: 2, module: "Selecteer je module", locked: false, startDate: new Date("2026-04-07") },
-        { semester: 1, module: "Selecteer je module", locked: false, startDate: new Date("2027-04-07") },
-        { semester: 2, module: "Selecteer je module", locked: false, startDate: new Date("2027-04-07") },
-        { semester: 1, module: "Selecteer je module", locked: false, startDate: new Date("2028-04-07") },
-        { semester: 2, module: "Selecteer je module", locked: false, startDate: new Date("2028-04-07") },
-    ];
+    let semesterData = [];
+    try {
+        const apiResponse = await getLearningRoutesById(1);
+        console.log("API Response:", apiResponse);
 
+        if (!apiResponse.semesters || !Array.isArray(apiResponse.semesters.$values) || apiResponse.semesters.$values.length === 0) {
+            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.semesters);
+
+            //hier moet nog dummy data komen.
+
+        } else {
+            semesterData = apiResponse.semesters.$values;
+        }
+
+        // Geeft de data terug zodat je deze in de console kunt inspecteren
+
+    } catch (error) {
+        console.error("Error fetching semester data:", error.message);
+    }
+
+    // Groepeer de data op jaar
     const semesterDataGroupedByYear = semesterData.reduce((acc, data) => {
-        const year = data.startDate.getFullYear();
+        const year = data.year; // Gebruik de 'year'-eigenschap direct
         if (!acc[year]) {
             acc[year] = [];
         }
@@ -31,13 +42,27 @@ export default async function LearningRoute() {
 
     let index = 0;
     const totalAmountOfYears = Object.keys(semesterDataGroupedByYear).length;
-    for (const semesterGroup of Object.values(semesterDataGroupedByYear)) {
+
+    // Verwerk de semesters per jaar
+    for (const [year, semesterGroup] of Object.entries(semesterDataGroupedByYear)) {
+        // Sorteer de semesters binnen een jaar op semester-nummer
         semesterGroup.sort((a, b) => a.semester - b.semester);
-        const semesterPair = await SemesterPair(semesterGroup[0], semesterGroup[1], index, totalAmountOfYears);
+
+        // Controleer of er twee semesters zijn om een pair te maken
+        const semester1 = semesterGroup.find(s => s.semester === 1);
+        const semester2 = semesterGroup.find(s => s.semester === 2);
+
+        const semesterPair = await SemesterPair(semester1, semester2, index, totalAmountOfYears);
+
+        if (!(semesterPair instanceof Node)) {
+            console.error("SemesterPair is not a valid Node:", semesterPair);
+            continue; // Sla deze iteratie over als het geen Node is
+        }
+
         grid.appendChild(semesterPair);
         index++;
     }
-    
+
     document.body.appendChild(fragment);
 
     const saveButton = document.getElementById("saveLearningRoute");
@@ -65,3 +90,13 @@ function saveModulesArrayAsJSON(modulesArray) {
         console.error("modulesArray is leeg of geen array!");
     }
 }
+
+window.fetchLearningRoute = async function () {
+    try {
+        const res = await getLearningRoutesById(1);
+        console.log("Learning Route Data:", res);
+        return res; // Geeft de data terug zodat je deze in de console kunt inspecteren
+    } catch (error) {
+        console.error("Error fetching learning route:", error.message);
+    }
+};

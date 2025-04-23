@@ -14,3 +14,18 @@ export async function getModules() {
 
     return await res.json();
 }
+
+export async function getLearningRoutesById(id) {
+    const res = await fetch(`${API_BASE}/learningRoutes/${id}`, {
+        method: "GET",
+        headers: {
+            "Accept": "text/plain"
+        }
+    });
+
+    if (!res.ok) {
+        throw new Error(`Failed to fetch learning routes: ${res.status}`);
+    }
+
+    return await res.json();
+}

@@ -7,12 +7,11 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
     const isEven = (num) => num % 2 === 0;
     if (isEven(index)) {
         wrapper.classList.remove("reverse");
-    }
-    else{
+    } else {
         wrapper.classList.add("reverse");
     }
 
-    if (semester1){
+    if (semester1 ) {
         addYearIconToPair();
 
         const connector = document.createElement("div");
@@ -21,17 +20,17 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             connector.classList.add("reverse");
         }
         wrapper.appendChild(connector);
-        
-        // Await the creation of the semester card
+
         const card1 = await SemesterCard({
             semester: semester1.semester,
-            module: semester1.module,
+            module: semester1.module.description,
             locked: semester1.locked
         });
+        console.log("Card1:", card1); // Debugging
         wrapper.appendChild(card1);
     }
-    
-    if (semester2){
+
+    if (semester2) {
         const connector = document.createElement("div");
         connector.classList.add("semester-connector");
         if (!isEven(index)) {
@@ -39,12 +38,12 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         }
         wrapper.appendChild(connector);
 
-        // Await the creation of the semester card
         const card2 = await SemesterCard({
             semester: semester2.semester,
-            module: semester2.module,
+            module: semester2.module.description,
             locked: semester2.locked
         });
+        console.log("Card2:", card2); // Debugging
         wrapper.appendChild(card2);
 
         if (index !== totalAmountOfYears - 1) {
@@ -52,15 +51,18 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             cornerConnector.classList.add("corner-connector");
             if (!isEven(index)) {
                 cornerConnector.classList.add("left");
-            }
-            else{
+            } else {
                 cornerConnector.classList.add("right");
             }
             wrapper.appendChild(cornerConnector);
-        }
-        else{
+        } else {
             addYearIconPlaceholder();
         }
+    }
+
+    if (!semester1 && !semester2) {
+        console.warn("No valid semesters provided for SemesterPair");
+        return document.createElement("div"); // Retourneer een lege div
     }
 
     function addYearIconToPair() {
@@ -68,12 +70,13 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         yearContainer.classList.add("year-container");
         const icon = document.createElement("study-year-icon");
     
-        icon.setAttribute("start", semester1.startDate.getFullYear());
+        // Stel het jaar altijd in op 2025
+        icon.setAttribute("start", "2025");
         yearContainer.appendChild(icon);
         wrapper.appendChild(yearContainer);
     }
 
-    function addYearIconPlaceholder(){
+    function addYearIconPlaceholder() {
         const placeholder = document.createElement("div");
         placeholder.classList.add("year-container");
         placeholder.style.width = "150px";
