@@ -15,18 +15,17 @@ export default async function LearningRoute() {
     try {
         //Dummy route in DB 
         //comment apiResponse & uncomment de 2e apiResponse to use dummy data
-        const apiResponse = await getLearningRoutesById(1);
-        //const apiResponse = null;
+        //const apiResponse = await getLearningRoutesById(1);
+        const apiResponse = null;
         console.log("API Response:", apiResponse); //Added bij Elias voor debugging
 
         if (!apiResponse.semesters || !Array.isArray(apiResponse.semesters.$values) || apiResponse.semesters.$values.length === 0) {
             console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.semesters);
-            semesterData = dummyApiResponse.semesters.$values; // Gebruik de dummy data
         } else {
             semesterData = apiResponse.semesters.$values;
         }
     } catch (error) {
-        console.error("Error fetching semester data:", error.message);//debugging added bij Elias
+        console.error("Error fetching semester data:", error.message); //debugging added bij Elias
         semesterData = dummyApiResponse.semesters.$values; // Gebruik de dummy data bij een fout
     }
 
@@ -65,6 +64,54 @@ export default async function LearningRoute() {
         index++;
     }
 
+    const totalSemestersGroup = 4;
+    let currentSemesters = index;
+
+    // Controleer of er minder dan 8 semesters zijn en vul de ontbrekende semesters aan
+    if (currentSemesters < totalSemestersGroup) {
+        const missingSemesters = totalSemesters - currentSemesters;
+
+        for (let i = 0; i < missingSemesters; i++) {
+            console.log(`Adding dummy semester pair for index: ${index}`); // Debugging
+
+            const dummySemester1 = {
+                id: 600000,
+                year: new Date().getFullYear(),
+                semester: 1,
+                module: {
+                    id: 200000,
+                    name: "Selecteer je module",
+                    description: "Selecteer je module",
+                },
+                locked: false,
+                startDate: `2027-01-01T00:00:00Z`,
+            };
+
+            const dummySemester2 = {
+                id: 500000,
+                year: new Date().getFullYear(),
+                semester: 2,
+                module: {
+                    id: 300000,
+                    name: "Selecteer je module",
+                    description: "Selecteer je module",
+                },
+                locked: false,
+                startDate: `2027-10-07T00:00:00Z`,
+            };
+
+            const dummySemesterPair = await SemesterPair(dummySemester1, dummySemester2, index, totalSemesters);
+
+            if (!(dummySemesterPair instanceof Node)) {
+                console.error(`Dummy SemesterPair for index ${index} is not a valid Node:`, dummySemesterPair);
+                continue; // Ga naar de volgende zonder index te verhogen
+            }
+
+            grid.appendChild(dummySemesterPair);
+            index++; // Verhoog index alleen als een geldig semesterPair is toegevoegd
+        }
+    }
+
     document.body.appendChild(fragment);
 
     const saveButton = document.getElementById("saveLearningRoute");
@@ -80,6 +127,7 @@ export default async function LearningRoute() {
     return fragment;
 }
 
+//Dit is voor het exporteren van de leermodule niet verwijderen
 function saveModulesArrayAsJSON(modulesArray) {
     if (Array.isArray(modulesArray) && modulesArray.length > 0) {
         const json = JSON.stringify(modulesArray, null, 2);

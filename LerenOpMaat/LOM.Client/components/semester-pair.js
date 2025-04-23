@@ -22,6 +22,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         wrapper.appendChild(connector);
 
         const card1 = await SemesterCard({
+            id: semester1.id,
             semester: semester1.semester,
             module: semester1.module.name,
             locked: semester1.locked
@@ -39,6 +40,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         wrapper.appendChild(connector);
 
         const card2 = await SemesterCard({
+            id: semester1.id,
             semester: semester2.semester,
             module: semester2.module.name,
             locked: semester2.locked
