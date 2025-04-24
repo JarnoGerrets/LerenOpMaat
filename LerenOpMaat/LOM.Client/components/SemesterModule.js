@@ -15,13 +15,13 @@ export default class SemesterModule {
 
             const moduleName = document.createElement('h1');
             moduleName.classList.add('module-title');
-            moduleName.textContent = module.description;
+            moduleName.textContent = module.Name;
             tile.appendChild(moduleName);
 
             const infoIcon = document.createElement('span');
             infoIcon.classList.add('material-icons', 'module-icon');
             infoIcon.textContent = 'i';
-            infoIcon.title = `ga naar ${module.description}`;
+            infoIcon.title = `ga naar ${module.Description}`;
             tile.appendChild(infoIcon);
 
             const moduleDescription = document.createElement('p');

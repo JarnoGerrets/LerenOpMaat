@@ -11,7 +11,7 @@ let selectedCategory;
 
 export default async function SemesterChoice() {
     // Hardcoded data for 4 semester modules
-    modulesData = [
+    /* modulesData = [
         { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
         { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'BIM' },
         { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'IDNS' },
@@ -27,16 +27,17 @@ export default async function SemesterChoice() {
         { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
         { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
         { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
-    ];
+    ]; */
 
     //Uncomment deze als je de modules wilt ophalen van de API en comment de modulesData
-    /* try {
+    try {
         const res = await getModules();
-        modulesData = res.$values || [];
+        console.log("Modules API Response:", res); // Added for debugging
+        modulesData = Array.isArray(res) ? res : [];
 
     } catch (error) {
         console.error('Error fetching modules:', error.message);
-    } */
+    }
 
     // Create the SemesterModules component with the hardcoded data
     const semesterModules = new SemesterModule(modulesData, (selectedModule) => {

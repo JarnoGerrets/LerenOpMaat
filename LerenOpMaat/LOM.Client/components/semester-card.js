@@ -1,8 +1,6 @@
 import SemesterChoice from "../views/partials/semester-choice.js";
 
-export let modulesArray = [];
-
-export default async function SemesterCard({ semester, module, locked = false }) {
+export default async function SemesterCard({ semester, module, locked = false, onModuleChange }) {
   const template = document.createElement("template");
   template.innerHTML = `
       <div class="semester-card ${locked ? 'locked' : ''}">
@@ -22,11 +20,16 @@ export default async function SemesterCard({ semester, module, locked = false })
       const selectedModule = await SemesterChoice();
       if (selectedModule) {
         button.innerHTML = `
-                    ${selectedModule.name} 
+                    ${selectedModule.Name} 
                     <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
                 `;
-        //Voeg de geselecteerde module aan de modulesArray toe.
-        modulesArray.push({ id: 1, name: selectedModule.name, semester: semester });
+        // Roep de callback aan om de learningRouteArray bij te werken
+        if (onModuleChange) {
+          onModuleChange({
+            semester,
+            moduleId: selectedModule.Id,
+          });
+        }
       }
     });
   }
