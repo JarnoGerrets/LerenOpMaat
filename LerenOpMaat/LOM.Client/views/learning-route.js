@@ -20,13 +20,13 @@ export default async function LearningRoute() {
         console.log("API Response:", apiResponse); //Added bij Elias voor debugging
 
         if (
-            !apiResponse.learninRoute ||
-            !Array.isArray(apiResponse.learninRoute.semesters) ||
-            apiResponse.learninRoute.semesters.length === 0
+            !apiResponse.semesters ||
+            !Array.isArray(apiResponse.semesters) ||
+            apiResponse.semesters.length === 0
         ) {
             console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters); //Elias voor debugging
         } else {
-            semesterData = apiResponse.learninRoute.semesters;
+            semesterData = apiResponse.semesters;
         }
     } catch (error) {
         console.error("Error fetching semester data:", error.message); //debugging added bij Elias
