@@ -1,6 +1,6 @@
 import SemesterPair from "../components/semester-pair.js";
 import { modulesArray } from "../components/semester-card.js"; // Correcte import
-import { getLearningRoutesById } from "../../client/api-client.js";
+import { getLearningRoutesByUserId } from "../../client/api-client.js";
 import { dummyApiResponse } from "../components/dummyData.js";
 
 export default async function LearningRoute() {
@@ -15,14 +15,18 @@ export default async function LearningRoute() {
     try {
         //Dummy route in DB 
         //comment apiResponse & uncomment de 2e apiResponse to use dummy data
-        //const apiResponse = await getLearningRoutesById(1);
-        const apiResponse = null;
+        const apiResponse = await getLearningRoutesByUserId(1);
+        //const apiResponse = null;
         console.log("API Response:", apiResponse); //Added bij Elias voor debugging
 
-        if (!apiResponse.semesters || !Array.isArray(apiResponse.semesters.$values) || apiResponse.semesters.$values.length === 0) {
-            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.semesters);
+        if (
+            !apiResponse.learninRoute ||
+            !Array.isArray(apiResponse.learninRoute.semesters) ||
+            apiResponse.learninRoute.semesters.length === 0
+        ) {
+            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters); //Elias voor debugging
         } else {
-            semesterData = apiResponse.semesters.$values;
+            semesterData = apiResponse.learninRoute.semesters;
         }
     } catch (error) {
         console.error("Error fetching semester data:", error.message); //debugging added bij Elias
@@ -65,11 +69,10 @@ export default async function LearningRoute() {
     }
 
     const totalSemestersGroup = 4;
-    let currentSemesters = index;
 
     // Controleer of er minder dan 8 semesters zijn en vul de ontbrekende semesters aan
-    if (currentSemesters < totalSemestersGroup) {
-        const missingSemesters = totalSemesters - currentSemesters;
+    if (index < totalSemestersGroup) {
+        const missingSemesters = totalSemestersGroup - index;
 
         for (let i = 0; i < missingSemesters; i++) {
             console.log(`Adding dummy semester pair for index: ${index}`); // Debugging
@@ -100,7 +103,7 @@ export default async function LearningRoute() {
                 startDate: `2027-10-07T00:00:00Z`,
             };
 
-            const dummySemesterPair = await SemesterPair(dummySemester1, dummySemester2, index, totalSemesters);
+            const dummySemesterPair = await SemesterPair(dummySemester1, dummySemester2, index, totalSemestersGroup);
 
             if (!(dummySemesterPair instanceof Node)) {
                 console.error(`Dummy SemesterPair for index ${index} is not a valid Node:`, dummySemesterPair);
@@ -143,7 +146,7 @@ function saveModulesArrayAsJSON(modulesArray) {
 
 window.fetchLearningRoute = async function () {
     try {
-        const res = await getLearningRoutesById(1);
+        const res = await getLearningRoutesByUserId(1);
         console.log("Learning Route Data:", res);
         return res; // Geeft de data terug zodat je deze in de console kunt inspecteren
     } catch (error) {

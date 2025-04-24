@@ -15,8 +15,8 @@ export async function getModules() {
     return await res.json();
 }
 
-export async function getLearningRoutesById(id) {
-    const res = await fetch(`${API_BASE}/learningRoutes/${id}`, {
+export async function getLearningRoutesByUserId(id) {
+    const res = await fetch(`${API_BASE}/learningRoutes/User/${id}`, {
         method: "GET",
         headers: {
             "Accept": "text/plain"
