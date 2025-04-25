@@ -21,8 +21,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             connector.classList.add("reverse");
         }
         wrapper.appendChild(connector);
-        
-        // Await the creation of the semester card
+
         const card1 = await SemesterCard({
             semester: semester1.semester,
             module: semester1.module,
@@ -39,7 +38,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         }
         wrapper.appendChild(connector);
 
-        // Await the creation of the semester card
         const card2 = await SemesterCard({
             semester: semester2.semester,
             module: semester2.module,
