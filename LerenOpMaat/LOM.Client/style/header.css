@@ -34,7 +34,7 @@ header {
   padding-left: 10px;
   z-index: 2001;
   transition: transform 0.2s ease-in-out;
-  transform-origin: center;
+  transform-origin: center center;
   &:hover{
     transform: scale(1.2);
   } 
@@ -142,6 +142,13 @@ header {
   gap: 40px;
 }
 
+.bi-chevron-left{
+  transition: transform 0.2s ease-in-out;
+  transform-origin: center center;
+  &:hover{
+    transform: scale(1.1);
+  } 
+}
 
 /* Desktop stijl (768px en breder) */
 @media (min-width: 768px) {
