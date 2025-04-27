@@ -1,7 +1,29 @@
 import LearningRoute from "./views/learning-route.js";
+import CohortSelector from "./views/cohort-selector.js";
+import { getStartYear } from "./Services/userService.js";
 
 const routes = {
-  "/": LearningRoute
+  "/": async () => {
+    const cohortYear = localStorage.getItem("cohortYear");
+    const userId = localStorage.getItem("userId");
+
+    if (!cohortYear) {
+      if (userId) {
+        const startYearFromUser = await getStartYear(userId);
+
+        if (startYearFromUser){
+          cohortYear = startYearFromUser;
+          localStorage.setItem('cohortYear', cohortYear);
+        }
+      }
+    }
+
+    if (!cohortYear) {
+      return await CohortSelector();
+    }
+
+    return await LearningRoute();
+  }
 };
 
 const navigateTo = url => {

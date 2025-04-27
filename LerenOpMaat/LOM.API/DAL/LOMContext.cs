@@ -15,4 +15,6 @@ public class LOMContext : DbContext
 		var seeder = new Seeder(modelBuilder);
 		seeder.Seed();
 	}
+
+public DbSet<LOM.API.Models.User> User { get; set; } = default!;
 }
