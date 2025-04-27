@@ -1,5 +1,5 @@
 import SemesterCard from "../components/semester-card.js";
-
+import {dummySemester1, dummySemester2} from "../components/dummyData2.js";
 export let learningRouteArray = [];
 
 export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
@@ -11,6 +11,12 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         wrapper.classList.remove("reverse");
     } else {
         wrapper.classList.add("reverse");
+    }
+
+    // Fallback for semester1
+    if (!semester1 || !semester1.Module || !semester1.Module.Name) {
+        console.warn("Semester1.Module.Name is null or undefined. Using dummySemester1.");
+        semester1 = dummySemester1;
     }
 
     if (semester1) {
@@ -55,6 +61,12 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         });
     }
 
+    // Fallback for semester2
+    if (!semester2 || !semester2.Module || !semester2.Module.Name) {
+        console.warn("Semester2.Module.Name is null or undefined. Using dummySemester2.");
+        semester2 = dummySemester2;
+    }
+
     if (semester2) {
         const connector = document.createElement("div");
         connector.classList.add("semester-connector");
@@ -82,7 +94,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         moduleId,
                     });
                 }
-                console.log("Updated LearningRouteArray:", learningRouteArray);//Debug Elias
+                console.log("Updated LearningRouteArray:", learningRouteArray); // Debug Elias
             },
         });
         wrapper.appendChild(card2);
@@ -90,7 +102,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         learningRouteArray.push({
             Year: index + 1,
             semester: semester2.semester,
-            moduleId: semester2.Module.Id
+            moduleId: semester2.Module.Id,
         });
 
         if (index !== totalAmountOfYears - 1) {

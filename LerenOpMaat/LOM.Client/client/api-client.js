@@ -29,3 +29,20 @@ export async function getLearningRoutesByUserId(id) {
 
     return await res.json();
 }
+
+export async function postLearningRoute(learningRoute) {
+    const res = await fetch(`${API_BASE}/learningRoutes`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "text/plain"
+        },
+        body: JSON.stringify(learningRoute)
+    });
+
+    if (!res.ok) {
+        throw new Error(`Failed to post learning route: ${res.status}`);
+    }
+
+    return;
+}
