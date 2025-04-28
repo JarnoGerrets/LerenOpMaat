@@ -46,3 +46,28 @@ export async function postLearningRoute(learningRoute) {
 
     return;
 }
+
+export async function updateSemester(learningRouteId, semesterData) {
+    const res = await fetch(`${API_BASE}/Semesters/updateSemesters/${learningRouteId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        body: JSON.stringify(semesterData) // Verstuur de array van semesters
+    });
+
+    if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Server error response:", errorText);
+        throw new Error(`Failed to update semester: ${res.status}`);
+    }
+
+    // Controleer of de response JSON bevat
+    if (res.headers.get("Content-Type")?.includes("application/json")) {
+        return await res.json();
+    } else {
+        console.warn("Response bevat geen JSON, retourneer een standaardwaarde.");
+        return { message: "Semesters updated successfully (geen JSON)" }; // Standaardwaarde
+    }
+}

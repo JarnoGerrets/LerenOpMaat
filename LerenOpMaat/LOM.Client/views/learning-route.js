@@ -1,12 +1,10 @@
 import SemesterPair from "../components/semester-pair.js";
-import { getLearningRoutesByUserId, postLearningRoute } from "../../client/api-client.js";
+import { getLearningRoutesByUserId, postLearningRoute, updateSemester } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
 
 //dummyApiResponse om de route met 2 locked moduls te testen
 //dummyApiResponse2 om een leger route te testen
 import { dummyApiResponse, dummyApiResponse2, dummySemester1, dummySemester2 } from "../components/dummyData2.js";
-
-
 
 export default async function LearningRoute() {
     const response = await fetch("/templates/learning-route.html");
@@ -16,13 +14,15 @@ export default async function LearningRoute() {
     const fragment = template.content.cloneNode(true);
     const grid = fragment.querySelector(".semester-grid");
     let semesterData = [];
+    let routeId = null;
+    let apiResponse = [];
 
     try {
         //comment apiResponse & uncomment de 2e apiResponse to use dummy data
-        const apiResponse = await getLearningRoutesByUserId(1);
+        apiResponse = await getLearningRoutesByUserId(1);
 
         //Uncomment deze regel om dummy data te gebruiken
-        //const apiResponse = null;
+        //apiResponse = null;
 
         console.log("API Response:", apiResponse); //Added bij Elias voor debugging
 
@@ -34,6 +34,8 @@ export default async function LearningRoute() {
             console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters); //Elias voor debugging
         } else {
             semesterData = apiResponse.Semesters;
+            routeId = apiResponse.Id;
+            console.log("Route ID opgeslagen:", routeId); //Elias voor debugging
         }
     } catch (error) {
         console.error("Error fetching semester data:", error.message); //debugging added bij Elias
@@ -95,12 +97,115 @@ export default async function LearningRoute() {
 
     document.body.appendChild(fragment);
 
+    //Opslaan knop als de gebruiker al een route heeft dan wordt het aangepast
+    //Als er nog geen route is gekoppeld aan de  gebruiker dan maakt hij een nieuwe route
     const saveButton = document.getElementById("saveLearningRoute");
     if (saveButton) {
-        saveButton.addEventListener("click", () => {
-            console.log("Exporteren van learningRouteArray:", learningRouteArray);
-            saveLearningRoute(learningRouteArray);
+        saveButton.addEventListener("click", async () => {
+            JSON.stringify(learningRouteArray, null, 2);
+
+            if (routeId !== null) {
+                try {
+                    await updateLearningRoute(routeId, learningRouteArray);
+                } catch (error) {
+                    console.error("Fout bij het updaten van de learning route:", error.message);
+                }
+            } else {
+                try {
+                    await saveLearningRoute(learningRouteArray);
+                    console.log("Nieuwe learning route succesvol aangemaakt.");
+                } catch (error) {
+                    console.error("Fout bij het aanmaken van een nieuwe learning route:", error.message);
+                }
+            }
+        });
+    };
+
+    //De export knop werkt alleen als er een apiResponse is dus het werkt niet met dummy data.
+    const exportButton = document.getElementById("exportLearningRoute");
+    if (exportButton) {
+        exportButton.addEventListener("click", () => {
+            if (apiResponse) {
+                const jsonString = JSON.stringify(apiResponse, null, 2);
+                const blob = new Blob([jsonString], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "learning-route.json";
+                a.click();
+
+                URL.revokeObjectURL(url);
+                console.log("API Response succesvol geëxporteerd.");
+            } else {
+                console.error("Geen API Response beschikbaar om te exporteren.");
+            }
         });
     }
+
     return fragment;
 }
+
+//leerroute opslaan.
+async function saveLearningRoute(learningRouteArray) {
+    if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
+        const jsonData = {
+            //Route Name en Users moeten later aangepast worden.
+            //De user ID moet nog uit de ingelogde gebruiker gehaald worden.
+            //Route name ik weet niet of dat nodig is.
+            Name: "Test Route 2",
+            Users: [
+                {
+                    Id: 2,
+                    Name: "Robin Hood"
+                }
+            ],
+            Semesters: learningRouteArray.map(item => ({
+                Year: item.Year,
+                semester: item.semester,
+                moduleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
+            }))
+        };
+        console.log("Verzonden JSON-data:", JSON.stringify(jsonData, null, 2)); // Debugging added bij Elias
+        try {
+            await postLearningRoute(jsonData);
+            console.log("Leerroute succesvol opgeslagen:", jsonData); // Debugging added bij Elias
+        } catch (error) {
+            console.error("Er is een fout opgetreden bij het opslaan van de leerroute:", error.message);
+        }
+    } else {
+        console.error("learningRouteArray is leeg of geen array!");
+    }
+};
+
+async function updateLearningRoute(routeId, semesterData) {
+    if (!routeId) {
+        console.error("Route ID is niet beschikbaar!");
+        return;
+    }
+
+    const body = semesterData.map(item => ({
+        Year: item.Year,
+        semester: item.semester,
+        moduleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
+    }));
+
+    try {
+        const response = await updateSemester(routeId, body);
+
+        if (!response) {
+            console.error(`Fout bij het updaten van de learning route: ${response.status}`);
+            return;
+        } else {
+            console.log("Learning route succesvol geüpdatet.");
+        }
+    } catch (error) {
+        if (error && error.message) {
+            console.error("Fout bij het updaten van de learning route:", error.message);
+        } else {
+            console.error("Onbekende fout bij het updaten van de learning route.");
+        }
+    }
+};
+
+

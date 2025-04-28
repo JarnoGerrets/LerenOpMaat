@@ -53,8 +53,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                 console.log("Updated LearningRouteArray:", learningRouteArray); //Debug Elias
             },
         });
-        //deze ga ik aan het einde van het project verwijderen
-        console.log("Card1:", card1); //Debug Elias
         wrapper.appendChild(card1);
 
         learningRouteArray.push({
