@@ -3,7 +3,7 @@ import { getLearningRoutesByUserId, postLearningRoute, updateSemester } from "..
 import { learningRouteArray } from "../../components/semester-pair.js";
 
 //dummyApiResponse om de route met 2 locked moduls te testen
-//dummyApiResponse2 om een leger route te testen
+//dummyApiResponse2 om een lege route te testen
 import { dummyApiResponse, dummyApiResponse2, dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 
 export default async function LearningRoute() {
@@ -146,7 +146,6 @@ export default async function LearningRoute() {
     return fragment;
 }
 
-//leerroute opslaan.
 async function saveLearningRoute(learningRouteArray) {
     if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
         const jsonData = {
