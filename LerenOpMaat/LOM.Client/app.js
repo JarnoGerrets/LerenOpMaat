@@ -1,6 +1,7 @@
 import LearningRoute from "./views/learning-route.js";
 import ModuleInfo from "./views/module-info.js";
 
+//routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
   "/": async () => {
     return await LearningRoute();
@@ -10,6 +11,8 @@ const routes = {
   },
 };
 
+//function which takes for example and Id and gives it to the router as parameter to be used. 
+//the url /module/5 results in parameter: 5.
 const matchRoute = (path) => {
 
   for (const [route, handler] of Object.entries(routes)) {
@@ -37,6 +40,8 @@ const matchRoute = (path) => {
   return null;
 };
 
+// router to match pathname with any existing routes, in case of no results an error is displayed.
+// router uses fragments and possible intialization scripts to 'switch' pages.
 const router = async () => {
   const path = window.location.pathname;
   const app = document.getElementById("app");
@@ -49,7 +54,7 @@ const router = async () => {
     const { fragment, init } = await handler(params.id);
 
     app.appendChild(fragment);
-    if (init) await init(); //when a script needs the view to be loaded before continuing
+    if (init) await init(); // <-- when a script needs the view to be loaded before continuing this ensures that the contents are in the DOM to be used.
 
   } else {
     const div = document.createElement("div");
@@ -77,51 +82,49 @@ const navigateTo = (url) => {
 };
 
 
+//----------------------Old Router---------------------------------------------------------------------------------------------------------------//
 
 
+// import LearningRoute from "./views/learning-route.js";
+// import ModuleInfo from "./views/module-info.js";
 
-/* import LearningRoute from "./views/learning-route.js";
-import ModuleInfo from "./views/module-info.js";
+// const routes = {
+//   "/": LearningRoute,
+//   "/Module_Overzicht/:id": ModuleInfo
+// };
 
-const routes = {
-  "/": LearningRoute,
-  "/Module_Overzicht/:id": ModuleInfo
-};
+// const navigateTo = url => {
+//   history.pushState(null, null, url);
+//   router();
+// };
 
-const navigateTo = url => {
-  history.pushState(null, null, url);
-  router();
-};
+// const router = async () => {
+//   const path = window.location.pathname;
+//   console.log(path);
+//   const app = document.getElementById("app");
+//   app.innerHTML = "";
 
-const router = async () => {
-  const path = window.location.pathname;
-  console.log(path);
-  const app = document.getElementById("app");
-  app.innerHTML = "";
+//   const viewFn = routes[path];
 
-  const viewFn = routes[path];
+//   if (viewFn) {
+//     const view = await viewFn();
+//     app.appendChild(view);
+//   } else {
+//     const div = document.createElement("div");
+//     div.innerHTML = "<h1>404 Not Found</h1>";
+//     app.appendChild(div);
+//   }
+// };
 
-  if (viewFn) {
-    const view = await viewFn();
-    app.appendChild(view);
-  } else {
-    const div = document.createElement("div");
-    div.innerHTML = "<h1>404 Not Found</h1>";
-    app.appendChild(div);
-  }
-};
+// window.addEventListener("popstate", router);
 
-window.addEventListener("popstate", router);
+// document.addEventListener("DOMContentLoaded", () => {
+//   document.body.addEventListener("click", e => {
+//     if (e.target.matches("[data-link]")) {
+//       e.preventDefault();
+//       navigateTo(e.target.href);
+//     }
+//   });
 
-document.addEventListener("DOMContentLoaded", () => {
-  document.body.addEventListener("click", e => {
-    if (e.target.matches("[data-link]")) {
-      e.preventDefault();
-      navigateTo(e.target.href);
-    }
-  });
-
-  router();
-});
-
-*/
+//   router();
+// });
