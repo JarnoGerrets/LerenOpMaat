@@ -1,4 +1,28 @@
-import { setStartYear }  from "../Services/userService.js";
+import LearningRoute from "../views/learning-route.js";
+import { getStartYear } from "../client/api-client.js";
+import { setStartYear }  from "../client/api-client.js";
+
+export async function RouteOrSelector() {
+  let cohortYear = localStorage.getItem("cohortYear");
+  //userId moet nog toegevoegd worden zodra authenticatie rond is.
+
+   if (!cohortYear) {
+        if (userId) {
+          const startYearFromUser = await getStartYear(userId);
+  
+          if (startYearFromUser){
+            cohortYear = startYearFromUser;
+            localStorage.setItem('cohortYear', cohortYear);
+          }
+        }
+      }
+  
+      if (!cohortYear) {
+        return await CohortSelector();
+      }
+  
+      return await LearningRoute();
+    }
 
 export default async function CohortSelector() {
   const response = await fetch("/templates/cohort-selector.html");
