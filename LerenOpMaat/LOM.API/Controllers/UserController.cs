@@ -13,11 +13,11 @@ namespace LOM.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly LOMContext _context;
 
-        public UsersController(LOMContext context)
+        public UserController(LOMContext context)
         {
             _context = context;
         }
