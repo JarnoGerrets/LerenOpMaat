@@ -38,5 +38,5 @@ export default async function LearningRoute() {
         index++;
     }
 
-    return fragment;
+    return { fragment, init: () => null};
 }

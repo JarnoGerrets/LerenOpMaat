@@ -1,16 +1,18 @@
-/* Ensure that the parent container uses flexbox */
 .module-info-container {
     display: flex;
-    justify-content: space-between; /* Optional: adjust the space between items */
-    align-items: center; /* Aligns items vertically in the center */
+    justify-content: space-between;
+    align-items: top center; 
     gap: 20px;
-    padding-left: 25px; /* Optional: adds space between the button and textarea */
+    padding-left: 25px;
     padding-right: 25px;
+    padding-top: 35px;
 }
 
-/* Style for the button and textarea if needed */
 #card-column {
     flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px
 }
 
 #text-column {
@@ -18,17 +20,37 @@
 }
 
 button {
-    width: 300px; /* Make button take up full width of the container */
+    width: 300px;
 }
 
 .text-area {
-    width: 100%; /* Make the textarea take up full width of the container */
-    height: 100px; /* Optional: adjust the height as needed */
+    width: 100%;
+    height: 80vh;
     border-width: 0px;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: inset -8px 0px 12px 6px rgba(0, 0, 0, 0.2);
     resize: none; 
     border-radius: 22px;
     padding: 12px;
     outline: none;
     pointer-events: none; 
+}
+
+.module-tile{
+    background-color: rgb(177,210,073);
+    &:hover{
+        background-color: rgb(177,210,073);
+        transform: scale(1);
+    }
+}
+
+.ingangseisen-tile{
+    background-color: rgb(069,185,124);
+    &:hover{
+        background-color: rgb(069,185,124);
+        transform: scale(1);
+    }
+}
+.module-tile .module-title{
+    text-align: left;
+    max-width: 100vw;
 }

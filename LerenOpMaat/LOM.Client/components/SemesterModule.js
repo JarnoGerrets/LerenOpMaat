@@ -1,3 +1,5 @@
+import loadTemplate from "../scripts/loadTemplate.js";
+
 export default class SemesterModule {
     constructor(modules, onModuleSelect) {
         this.modules = modules;
@@ -9,13 +11,20 @@ export default class SemesterModule {
         container.classList.add('module-container');
         container.id = 'popup-module-container';
 
-        const template = await this.loadTemplate();
+        const template = await loadTemplate('../templates/module-card.html');
 
         this.modules.forEach(module => {
+            let link = '';
+            if (module.id) {
+                link = `<a href="/Module/${module.id}" class="material-icons module-icon" title="Go to ${module.description}">
+                    i
+                </a>`;
+            }
             const populatedTemplate = template
                 .replace('{{id}}', module.id)
-                .replace('{{description}}', module.description)
-                .replace('{{name}}', module.name);
+                .replace('{{card_text}}', module.description)
+                .replace('{{title}}', module.name)
+                .replace('{{link}}', link);
 
             const tile = document.createElement('div');
             tile.classList.add('module-tile');
@@ -25,6 +34,11 @@ export default class SemesterModule {
             const infoLink = tile.querySelector('a');
             if (infoLink) {
                 infoLink.setAttribute('data-link', '');
+                infoLink.addEventListener('click', () => {
+                    if (module.id) {
+                        localStorage.setItem(`module-${module.id}`, JSON.stringify(module));
+                    }
+                });
             }
 
             tile.addEventListener('click', () => {
@@ -34,11 +48,5 @@ export default class SemesterModule {
             container.appendChild(tile);
         });
         return container;
-    }
-
-    async loadTemplate() {
-        const response = await fetch('../templates/module-card.html');
-        const template = await response.text();
-        return template;
     }
 }
