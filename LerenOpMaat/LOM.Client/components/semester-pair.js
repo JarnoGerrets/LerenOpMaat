@@ -48,10 +48,13 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         moduleId,
                     });
                 }
+
+                //deze ga ik aan het einde van het project verwijderen
                 console.log("Updated LearningRouteArray:", learningRouteArray); //Debug Elias
             },
         });
-        console.log("Card1:", card1);
+        //deze ga ik aan het einde van het project verwijderen
+        console.log("Card1:", card1); //Debug Elias
         wrapper.appendChild(card1);
 
         learningRouteArray.push({
@@ -94,6 +97,8 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         moduleId,
                     });
                 }
+
+                //deze ga ik aan het einde van het project verwijderen
                 console.log("Updated LearningRouteArray:", learningRouteArray); // Debug Elias
             },
         });
@@ -123,9 +128,8 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         const yearContainer = document.createElement("div");
         yearContainer.classList.add("year-container");
         const icon = document.createElement("study-year-icon");
-
-        // Dit moet gefixt worden ik heb het tijdelijk hardcoded
-        icon.setAttribute("start", "2025");
+        
+        icon.setAttribute("start", "2025");// Dit moet nog gefixt worden ik heb het tijdelijk hardcoded.
         yearContainer.appendChild(icon);
         wrapper.appendChild(yearContainer);
     }

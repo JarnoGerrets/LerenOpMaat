@@ -2,9 +2,9 @@ import SemesterPair from "../components/semester-pair.js";
 import { getLearningRoutesByUserId, postLearningRoute } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
 
-//Beide dummy data kan je gebruiken in regeld 38
-import { dummyApiResponse } from "../components/dummyData2.js"; //deze is de normale dummy data
-import { dummyApiResponse2, dummySemester1, dummySemester2 } from "../components/dummyData2.js";
+//dummyApiResponse om de route met 2 locked moduls te testen
+//dummyApiResponse2 om een leger route te testen
+import { dummyApiResponse, dummyApiResponse2, dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 
 
 
@@ -18,10 +18,12 @@ export default async function LearningRoute() {
     let semesterData = [];
 
     try {
-        //Dummy route in DB
         //comment apiResponse & uncomment de 2e apiResponse to use dummy data
-        //const apiResponse = await getLearningRoutesByUserId(2);
-        const apiResponse = null;
+        const apiResponse = await getLearningRoutesByUserId(1);
+
+        //Uncomment deze regel om dummy data te gebruiken
+        //const apiResponse = null;
+
         console.log("API Response:", apiResponse); //Added bij Elias voor debugging
 
         if (
@@ -101,34 +103,4 @@ export default async function LearningRoute() {
         });
     }
     return fragment;
-}
-
-//leerroute opslaan.
-async function saveLearningRoute(learningRouteArray) {
-    if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
-        const jsonData = {
-            Name: "Test Route 2",
-            Users: [
-                {
-                    Id: 2,
-                    Name: "Robin Hood"
-                }
-            ],
-            Semesters: learningRouteArray.map(item => ({
-                Year: item.Year,
-                semester: item.semester,
-                moduleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
-            }))
-        };
-        console.log("Verzonden JSON-data:", JSON.stringify(jsonData, null, 2)); // Debugging added bij Elias
-
-        try {
-            await postLearningRoute(jsonData);
-            console.log("Leerroute succesvol opgeslagen:", jsonData); // Debugging added bij Elias
-        } catch (error) {
-            console.error("Er is een fout opgetreden bij het opslaan van de leerroute:", error.message);
-        }
-    } else {
-        console.error("learningRouteArray is leeg of geen array!");
-    }
 }

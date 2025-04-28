@@ -25,7 +25,7 @@ export default class SemesterModule {
             tile.appendChild(infoIcon);
 
             const moduleDescription = document.createElement('p');
-            moduleDescription.textContent = module.name;
+            moduleDescription.textContent = module.Name;
             tile.appendChild(moduleDescription);
 
             tile.addEventListener('click', () => {
