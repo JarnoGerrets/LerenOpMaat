@@ -11,17 +11,3 @@ watch('./style/*.css').on('change', browserSync.reload);
 };
 watchFiles.displayName = 'watch';
 exports.watch = watchFiles
-
-browserSync.init({
-    server: {
-      baseDir: "./",
-      middleware: function (req, res, next) {
-        if (req.url.startsWith('/api/')) {
-          next();
-        } else {
-          req.url = '/index.html';
-          next();
-        }
-      }
-    }
-  });
