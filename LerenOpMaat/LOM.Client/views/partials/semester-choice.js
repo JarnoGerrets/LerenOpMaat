@@ -11,20 +11,20 @@ let selectedCategory;
 export default async function SemesterChoice(selectedModuleName = "Selecteer je module") {
     // Hardcoded data for 4 semester modules
     modulesData = [
-        { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
-        { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'BIM' },
-        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'IDNS' },
-        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'SE' },
-        { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'BIM' },
-        { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'IDNS' },
-        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'SE' },
-        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'BIM' },
-        { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'IDNS' },
-        { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'SE' },
-        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
-        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
-        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
-        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
+        { id: '1', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
+        { id: '2', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'BIM' },
+        { id: '3', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'IDNS' },
+        { id: '4', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'SE' },
+        { id: '5', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'BIM' },
+        { id: '6', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'IDNS' },
+        { id: '7', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'SE' },
+        { id: '8', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'BIM' },
+        { id: '9', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'IDNS' },
+        { id: '10', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'SE' },
+        { id: '11', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
+        { id: '12', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
+        { id: '13', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
+        { id: '14', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
     ];
 
     //Deze is omdat alles hardcoded is, maar later als wij een DB hebben
@@ -41,8 +41,8 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
             return selectedModule;
         }
     );
-
-
+    const renderedSemesterModules = await semesterModules.render();
+    
     mijnPopup = new Popup({
         maxWidth: 'auto',
         height: '620px',
@@ -64,7 +64,7 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
             }
         ]
     });
-    mijnPopup.contentContainer.appendChild(semesterModules.render());
+    mijnPopup.contentContainer.appendChild(renderedSemesterModules);
 
     const selectedModule = await mijnPopup.open();
     if (selectedModule) {

@@ -4,31 +4,28 @@ export default class SemesterModule {
         this.onModuleSelect = onModuleSelect;
     }
 
-    render() {
+    async render() {
         const container = document.createElement('div');
         container.classList.add('module-container');
         container.id = 'popup-module-container';
 
+        const template = await this.loadTemplate();
+
         this.modules.forEach(module => {
+            const populatedTemplate = template
+                .replace('{{id}}', module.id)
+                .replace('{{description}}', module.description)
+                .replace('{{name}}', module.name);
+
             const tile = document.createElement('div');
             tile.classList.add('module-tile');
-
-            const moduleName = document.createElement('h1');
-            moduleName.classList.add('module-title');
-            moduleName.textContent = module.description;
-            tile.appendChild(moduleName);
-
-            if (module.name !== "Geen Keuze") {
-                const infoIcon = document.createElement('span');
-                infoIcon.classList.add('material-icons', 'module-icon');
-                infoIcon.textContent = 'i';
-                infoIcon.title = `ga naar ${module.description}`;
-                tile.appendChild(infoIcon);
+            tile.id = 'module-{{id}}';
+            tile.innerHTML = populatedTemplate;
+            //making sure the router can recognize this call
+            const infoLink = tile.querySelector('a');
+            if (infoLink) {
+                infoLink.setAttribute('data-link', '');
             }
-
-            const moduleDescription = document.createElement('p');
-            moduleDescription.textContent = module.name;
-            tile.appendChild(moduleDescription);
 
             tile.addEventListener('click', () => {
                 this.onModuleSelect(module);
@@ -36,7 +33,12 @@ export default class SemesterModule {
 
             container.appendChild(tile);
         });
-
         return container;
+    }
+
+    async loadTemplate() {
+        const response = await fetch('../templates/module-card.html');
+        const template = await response.text();
+        return template;
     }
 }

@@ -173,6 +173,9 @@
     align-items: center;
     gap: 0.5rem;
 }
+a.module-icon {
+  text-decoration: none;
+}
 
 /*------------------- Styles for the filter dropdown ------------------------- */
 

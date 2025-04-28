@@ -1,0 +1,34 @@
+/* Ensure that the parent container uses flexbox */
+.module-info-container {
+    display: flex;
+    justify-content: space-between; /* Optional: adjust the space between items */
+    align-items: center; /* Aligns items vertically in the center */
+    gap: 20px;
+    padding-left: 25px; /* Optional: adds space between the button and textarea */
+    padding-right: 25px;
+}
+
+/* Style for the button and textarea if needed */
+#card-column {
+    flex: 0 0 auto;
+}
+
+#text-column {
+    flex: 1;
+}
+
+button {
+    width: 300px; /* Make button take up full width of the container */
+}
+
+.text-area {
+    width: 100%; /* Make the textarea take up full width of the container */
+    height: 100px; /* Optional: adjust the height as needed */
+    border-width: 0px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+    resize: none; 
+    border-radius: 22px;
+    padding: 12px;
+    outline: none;
+    pointer-events: none; 
+}
