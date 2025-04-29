@@ -2,6 +2,8 @@ import loadTemplate from "./loadTemplate.js";
 export default async function initModuleInfo(id) {
 
     const CardContainer = document.getElementById('card-column');
+    const textArea = document.getElementById('moduleTextArea');
+    textArea.readOnly = true;
 
     const path = window.location.pathname;
     const pathParts = path.split('/');
@@ -32,8 +34,28 @@ export default async function initModuleInfo(id) {
         tile2.classList.add('module-tile', 'ingangseisen-tile');
         tile2.innerHTML = populatedTemplate2;
 
+        const extraButtonsDiv = document.createElement("div");
+        extraButtonsDiv.id = "extra-buttons";
+        extraButtonsDiv.className = "extra-module-buttons";
+
+        const editButton = document.createElement("a");
+        editButton.href = "/";
+        editButton.className = "bi bi-pencil-square edit-button";
+        editButton.title = "Bewerken"; // optional tooltip
+
+        const trashButton = document.createElement("a");
+        trashButton.href = "/";
+        trashButton.className = "bi bi-trash trash-button";
+        trashButton.title = "Verwijderen"; // optional tooltip
+
+        // Append buttons to the container
+        extraButtonsDiv.appendChild(editButton);
+        extraButtonsDiv.appendChild(trashButton);
+
+        // Append the container to wherever it should go (e.g., inside .buttons-container-module-info)
+        document.querySelector(".buttons-container-module-info").appendChild(extraButtonsDiv);
+
         CardContainer.appendChild(tile2);
-        updateUrlWithName(savedModule);
 
     } else {
         console.log('Module data not found in localStorage, fetch from DB...');
@@ -45,19 +67,4 @@ export default async function initModuleInfo(id) {
     function handleUnload() {
         localStorage.removeItem(`module-${moduleId}`);
     }
-}
-
-function updateUrlWithName (module) {
-    const updatedText = slugify(module.name)
-    history.replaceState(null, null, `/Module/${updatedText}`);
-};
-
-function slugify(text) {
-    return text
-        .toString()
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-');
 }

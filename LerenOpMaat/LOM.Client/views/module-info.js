@@ -11,6 +11,6 @@ export default async function ModuleInfo(id) {
     while (tempDiv.firstChild) {
         fragment.appendChild(tempDiv.firstChild);
     }
-
+    
     return { fragment, init: () => initModuleInfo(id) };
 }

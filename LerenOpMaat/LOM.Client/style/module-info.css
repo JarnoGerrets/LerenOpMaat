@@ -1,11 +1,40 @@
+.buttons-container-module-info {
+    padding-left: 25px;
+    padding-top: 15px;
+    display: flex;
+    gap: 200px;
+}
+.extra-buttons{
+    display: flex;
+    gap: 30px;
+}
+
+.bi-chevron-left {
+    -webkit-text-stroke: 1px;
+    text-align: center;
+    align-items: center center;
+    text-decoration: underline;
+    color: black;
+}
+
+.bi-trash {
+    -webkit-text-stroke: 0.35px;
+    color: black;
+}
+
+.bi-pencil-square {
+    color: black;
+    -webkit-text-stroke: 1px;
+}
+
 .module-info-container {
     display: flex;
     justify-content: space-between;
-    align-items: top center; 
+    align-items: top center;
     gap: 20px;
     padding-left: 25px;
     padding-right: 25px;
-    padding-top: 35px;
+    padding-top: 15px;
 }
 
 #card-column {
@@ -28,29 +57,31 @@ button {
     height: 80vh;
     border-width: 0px;
     box-shadow: inset -8px 0px 12px 6px rgba(0, 0, 0, 0.2);
-    resize: none; 
+    resize: none;
     border-radius: 22px;
     padding: 12px;
     outline: none;
-    pointer-events: none; 
 }
 
-.module-tile{
-    background-color: rgb(177,210,073);
-    &:hover{
-        background-color: rgb(177,210,073);
+.module-tile {
+    background-color: rgb(177, 210, 073);
+
+    &:hover {
+        background-color: rgb(177, 210, 073);
         transform: scale(1);
     }
 }
 
-.ingangseisen-tile{
-    background-color: rgb(069,185,124);
-    &:hover{
-        background-color: rgb(069,185,124);
+.ingangseisen-tile {
+    background-color: rgb(069, 185, 124);
+
+    &:hover {
+        background-color: rgb(069, 185, 124);
         transform: scale(1);
     }
 }
-.module-tile .module-title{
+
+.module-tile .module-title {
     text-align: left;
     max-width: 100vw;
 }

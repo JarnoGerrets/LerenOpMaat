@@ -41,7 +41,7 @@ const matchRoute = (path) => {
 };
 
 // router to match pathname with any existing routes, in case of no results an error is displayed.
-// router uses fragments and possible intialization scripts to 'switch' pages.
+// router uses fragments followed by possible intialization scripts to 'switch' pages.
 const router = async () => {
   const path = window.location.pathname;
   const app = document.getElementById("app");
