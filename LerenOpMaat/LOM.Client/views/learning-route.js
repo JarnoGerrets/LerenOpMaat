@@ -44,7 +44,7 @@ export default async function LearningRoute() {
     }
 
     const semesterDataGroupedByYear = semesterData.reduce((acc, data) => {
-        const year = data.Year; // dit moet nog gefixt worden maar er is nog geen kolom in de db voor de semester jaar.
+        const year = data.Year;
         if (!acc[year]) {
             acc[year] = [];
         }
@@ -52,6 +52,7 @@ export default async function LearningRoute() {
         return acc;
     }, {});
 
+    console.log(semesterDataGroupedByYear);
     let index = 0;
     const totalAmountOfYears = Object.keys(semesterDataGroupedByYear).length;
 
