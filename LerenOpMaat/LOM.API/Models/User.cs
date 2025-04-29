@@ -8,7 +8,11 @@ namespace LOM.API.Models
         [Key]
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
+        public int StartYear { get; set; }
 
         [ForeignKey(nameof(learningRoute))]
         public int? learningRouteId { get; set; }

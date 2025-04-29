@@ -86,7 +86,7 @@ namespace LOM.API.Controllers
             if (learningRoute.Users != null && learningRoute.Users.Any())
             {
                 var userIds = learningRoute.Users.Select(u => u.Id).ToList();
-                var existingUsers = await _context.Users.Where(u => userIds.Contains(u.Id)).ToListAsync();
+                var existingUsers = await _context.User.Where(u => userIds.Contains(u.Id)).ToListAsync();
 
                 if (existingUsers.Count != userIds.Count)
                 {

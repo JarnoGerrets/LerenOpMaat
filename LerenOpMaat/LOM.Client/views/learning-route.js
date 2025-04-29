@@ -4,11 +4,11 @@ import { learningRouteArray } from "../../components/semester-pair.js";
 
 //dummyApiResponse om de route met 2 locked moduls te testen
 //dummyApiResponse2 om een lege route te testen
-import { dummyApiResponse, dummyApiResponse2, dummySemester1, dummySemester2 } from "../components/dummyData2.js";
+import { dummyApiResponse2, dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 
 export default async function LearningRoute() {
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
-    
+
     const response = await fetch("/templates/learning-route.html");
     const html = await response.text();
     const template = document.createElement("template");
@@ -138,7 +138,7 @@ export default async function LearningRoute() {
                 a.click();
 
                 URL.revokeObjectURL(url);
-                console.log("API Response succesvol ge�xporteerd.");
+                console.log("API Response succesvol gexporteerd.");
             } else {
                 console.error("Geen API Response beschikbaar om te exporteren.");
             }
@@ -180,7 +180,8 @@ async function saveLearningRoute(learningRouteArray) {
             Users: [
                 {
                     Id: 2,
-                    Name: "Robin Hood"
+                    FirstName: "Robin",
+                    LastName: "Hood"
                 }
             ],
             Semesters: learningRouteArray.map(item => ({
