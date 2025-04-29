@@ -46,7 +46,7 @@ public class Seeder
         );
 
         _modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", learningRouteId = 1 },
+            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", learningRouteId = 1, StartYear = 2023 },
             new User { Id = 2, FirstName = "Robin", LastName = "Hood" }
             );
 

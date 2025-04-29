@@ -93,6 +93,15 @@ namespace LOM.API.Controllers
                     return BadRequest("One or more users do not exist.");
                 }
 
+                foreach (var user in learningRoute.Users)
+                {
+                    var existingUser = existingUsers.FirstOrDefault(u => u.Id == user.Id);
+                    if (existingUser != null)
+                    {
+                        existingUser.StartYear = user.StartYear; // Update startYear
+                    }
+                }
+
                 learningRoute.Users = existingUsers;
             }
 
@@ -123,7 +132,6 @@ namespace LOM.API.Controllers
                 _context.Semesters.RemoveRange(learningRoute.Semesters);
             }
 
-            //Ontkoppel de user van de leerroute
             if (learningRoute.Users != null && learningRoute.Users.Any())
             {
                 foreach (var user in learningRoute.Users)
@@ -148,10 +156,26 @@ namespace LOM.API.Controllers
                 .ThenInclude(m => m.Module)
                 .FirstOrDefaultAsync(lr => lr.Users.Any(u => u.Id == userId && lr.Id == u.learningRouteId));
 
+            var getUser = await _context.User.FirstOrDefaultAsync(ui => ui.Id == userId);
+
             if (learningRoute == null)
             {
-                return NotFound();
+                // Return altijd de user gegevens. 
+                return new learningRoute
+                {
+                    Users = new List<User>
+                        {
+                            new User
+                            {
+                                Id = getUser.Id,
+                                FirstName = getUser.FirstName,
+                                LastName = getUser.LastName
+                            }
+                        }
+                };
             }
+
+            learningRoute.Users ??= new List<User>();
 
             return learningRoute;
         }
