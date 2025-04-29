@@ -1,5 +1,5 @@
 import SemesterPair from "../components/semester-pair.js";
-import { getLearningRoutesByUserId, postLearningRoute, updateSemester } from "../../client/api-client.js";
+import { getLearningRoutesByUserId, postLearningRoute, updateSemester, deleteRoute } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
 
 //dummyApiResponse om de route met 2 locked moduls te testen
@@ -19,7 +19,7 @@ export default async function LearningRoute() {
 
     try {
         //comment apiResponse & uncomment de 2e apiResponse to use dummy data
-        apiResponse = await getLearningRoutesByUserId(1);
+        apiResponse = await getLearningRoutesByUserId(2);
 
         //Uncomment deze regel om dummy data te gebruiken
         //apiResponse = null;
@@ -139,6 +139,28 @@ export default async function LearningRoute() {
                 console.log("API Response succesvol geëxporteerd.");
             } else {
                 console.error("Geen API Response beschikbaar om te exporteren.");
+            }
+        });
+    };
+
+    //Willen wij een popup of window.alert gebruiken om het te bevestigen?
+    const deleteButton = document.getElementById("deleteRoute");
+    if (deleteButton) {
+        deleteButton.addEventListener("click", async () => {
+            if (routeId !== null) {
+                try {
+                    const isDeleted = await deleteRoute(routeId);
+                    if (isDeleted) {
+                        console.log("Leerroute succesvol verwijderd.");
+                        location.reload(); // Herlaad de pagina na succesvolle verwijdering
+                    } else {
+                        console.error("Fout bij het verwijderen van de leerroute.");
+                    }
+                } catch (error) {
+                    console.error("Fout bij het verwijderen van de leerroute:", error.message);
+                }
+            } else {
+                console.error("Geen routeId beschikbaar om te verwijderen.");
             }
         });
     }

@@ -71,3 +71,18 @@ export async function updateSemester(learningRouteId, semesterData) {
         return { message: "Semesters updated successfully (geen JSON)" }; // Standaardwaarde
     }
 }
+
+export async function deleteRoute(learningRouteId) {
+    const res = await fetch(`${API_BASE}/learningRoutes/${learningRouteId}`, {
+        method: "DELETE",
+        headers: {
+            "Accept": "application/json"
+        }
+    });
+
+    if (!res.ok) {
+        throw new Error(`Failed to delete learning route: ${res.status}`);
+    }
+
+    return res.ok; // Return true if the request was successful
+}
