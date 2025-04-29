@@ -4,13 +4,13 @@ import { deleteModule } from "../../client/api-client.js";
 let mijnPopup;
 
 
-export default async function confirmationPopup(id) {
+export default async function confirmationPopup(id, name) {
     mijnPopup = new Popup({
         maxWidth: 'auto',
         height: '250px',
         header: `
             <h3 class="popup-header-confirmation">
-                Wil je dit echt verwijderen?
+                Wilt u '${name}' verwijderen?
             </h3>
         `,
         content: `
@@ -26,7 +26,6 @@ export default async function confirmationPopup(id) {
     setTimeout(() => {
         document.getElementById("confirm-delete")?.addEventListener("click", async () => {
             await deleteModule(id);
-            mijnPopup.close();
             window.location.href = "/";
         });
 
@@ -34,4 +33,11 @@ export default async function confirmationPopup(id) {
             mijnPopup.close();
         });
     }, 0);
+}
+
+window.addEventListener('beforeunload', handleUnload);
+window.addEventListener('popstate', handleUnload);
+
+function handleUnload() {
+    mijnPopup.close();
 }

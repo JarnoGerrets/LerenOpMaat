@@ -55,7 +55,7 @@ export default async function initModuleInfo(id) {
         trashButton.className = "bi bi-trash trash-button";
         trashButton.title = "Verwijderen";
         trashButton.addEventListener('click', async () => {
-            await confirmationPopup(savedModule.Id);
+            await confirmationPopup(savedModule.Id, savedModule.Name);
         });
 
 
