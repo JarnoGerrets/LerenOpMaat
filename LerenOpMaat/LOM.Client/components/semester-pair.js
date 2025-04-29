@@ -3,6 +3,7 @@ import {dummySemester1, dummySemester2} from "../components/dummyData2.js";
 export let learningRouteArray = [];
 
 export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
+    const cohortYear = parseInt(localStorage.getItem("cohortYear"));
     const wrapper = document.createElement("div");
     wrapper.classList.add("semester-pair");
 
@@ -126,8 +127,13 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         const yearContainer = document.createElement("div");
         yearContainer.classList.add("year-container");
         const icon = document.createElement("study-year-icon");
-        
-        icon.setAttribute("start", "2025");// Dit moet nog gefixt worden ik heb het tijdelijk hardcoded.
+    
+        //deze is een caluclatie van de cohortYear + 1 elke keer.
+        const startYear = cohortYear + index;
+        const endYear = startYear + 1; // Volgnde jaar
+        const yearRange = `${startYear % 100}/${endYear % 100}`; // Format YY/YY
+    
+        icon.setAttribute("start", yearRange);
         yearContainer.appendChild(icon);
         wrapper.appendChild(yearContainer);
     }

@@ -5,7 +5,7 @@ import { learningRouteArray } from "../../components/semester-pair.js";
 //dummyApiResponse om de route met 2 locked moduls te testen
 //dummyApiResponse2 om een lege route te testen
 import { dummyApiResponse2, dummySemester1, dummySemester2 } from "../components/dummyData2.js";
-
+let apiResponse = [];
 export default async function LearningRoute() {
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
 
@@ -16,12 +16,11 @@ export default async function LearningRoute() {
     const fragment = template.content.cloneNode(true);
     const grid = fragment.querySelector(".semester-grid");
     let semesterData = [];
-    let routeId = null;
-    let apiResponse = [];
+    let routeId = null;    
 
     try {
         //comment apiResponse & uncomment de 2e apiResponse to use dummy data
-        apiResponse = await getLearningRoutesByUserId(1);
+        apiResponse = await getLearningRoutesByUserId(2);
 
         //Uncomment deze regel om dummy data te gebruiken
         //apiResponse = null;
@@ -172,28 +171,34 @@ export default async function LearningRoute() {
 
 async function saveLearningRoute(learningRouteArray) {
     if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
-        const jsonData = {
-            //Route Name en Users moeten later aangepast worden.
-            //De user ID moet nog uit de ingelogde gebruiker gehaald worden.
-            //Route name ik weet niet of dat nodig is.
-            Name: "Test Route 2",
-            Users: [
-                {
-                    Id: 2,
-                    FirstName: "Robin",
-                    LastName: "Hood"
-                }
-            ],
-            Semesters: learningRouteArray.map(item => ({
-                Year: item.Year,
-                semester: item.semester,
-                moduleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
-            }))
-        };
-        console.log("Verzonden JSON-data:", JSON.stringify(jsonData, null, 2)); // Debugging added bij Elias
         try {
+            const user = apiResponse?.Users?.[0]; // Pak de gebruiker uit de API-response
+
+            if (!user) {
+                console.error("Geen gebruikersgegevens gevonden in de API-response.");
+                return;
+            }
+
+            const jsonData = {
+                Name: "Test Route 2",
+                Users: [
+                    {
+                        Id: user.Id,
+                        FirstName: user.FirstName,
+                        LastName: user.LastName,
+                        StartYear: 2025
+                    }
+                ],
+                Semesters: learningRouteArray.map(item => ({
+                    Year: item.Year,
+                    semester: item.semester,
+                    moduleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
+                }))
+            };
+
+            console.log("Verzonden JSON-data:", JSON.stringify(jsonData, null, 2)); // Debugging
             await postLearningRoute(jsonData);
-            console.log("Leerroute succesvol opgeslagen:", jsonData); // Debugging added bij Elias
+            console.log("Leerroute succesvol opgeslagen:", jsonData); // Debugging
         } catch (error) {
             console.error("Er is een fout opgetreden bij het opslaan van de leerroute:", error.message);
         }
