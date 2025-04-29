@@ -1,7 +1,7 @@
-import LearningRoute from "./views/learning-route.js";
+import { RouteOrSelector } from "./views/cohort-selector.js";
 
 const routes = {
-  "/": LearningRoute
+  "/": RouteOrSelector
 };
 
 const navigateTo = url => {

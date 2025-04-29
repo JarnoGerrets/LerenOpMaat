@@ -77,8 +77,7 @@ function showFilter(Data) {
         });
 
         filterDropdown.appendChild(searchInput);
-
-        const categories = ['Alles', ...new Set(Data.map(m => m.Category))];
+        const categories = ['Alles', ...new Set(Data.filter(m => m.name !== 'Geen Keuze').map(m => m.Category))];
         categories.forEach(category => {
             const option = document.createElement('div');
             option.textContent = category;
@@ -166,7 +165,8 @@ function closeFilterDropdown(event) {
 }
 
 function filterData(searchTerm = '') {
-    let filtered = modulesData;
+    //Geen Keuze niet filteren
+    let filtered = modulesData.filter(m => m.name !== 'Geen Keuze');
 
     if (selectedCategories.length > 0) {
         filtered = filtered.filter(m => selectedCategories.includes(m.Category));
@@ -178,6 +178,9 @@ function filterData(searchTerm = '') {
             m.Description.toLowerCase().includes(searchTerm)
         );
     }
+
+    //doe 'Geen Keuze' altijd als eerste optie
+    filtered.unshift({ name: 'Geen Keuze', description: 'Geen Keuze' });
     let popupWidth = 0;
     popupWidth = mijnPopup.popup.getBoundingClientRect().width - 58;
 

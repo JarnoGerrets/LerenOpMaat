@@ -7,6 +7,8 @@ import { learningRouteArray } from "../../components/semester-pair.js";
 import { dummyApiResponse, dummyApiResponse2, dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 
 export default async function LearningRoute() {
+    const cohortYear = parseInt(localStorage.getItem("cohortYear"));
+    
     const response = await fetch("/templates/learning-route.html");
     const html = await response.text();
     const template = document.createElement("template");
@@ -136,7 +138,7 @@ export default async function LearningRoute() {
                 a.click();
 
                 URL.revokeObjectURL(url);
-                console.log("API Response succesvol geëxporteerd.");
+                console.log("API Response succesvol ge�xporteerd.");
             } else {
                 console.error("Geen API Response beschikbaar om te exporteren.");
             }
@@ -218,7 +220,7 @@ async function updateLearningRoute(routeId, semesterData) {
             console.error(`Fout bij het updaten van de learning route: ${response.status}`);
             return;
         } else {
-            console.log("Learning route succesvol geüpdatet.");
+            console.log("Learning route succesvol ge�pdatet.");
         }
     } catch (error) {
         if (error && error.message) {
