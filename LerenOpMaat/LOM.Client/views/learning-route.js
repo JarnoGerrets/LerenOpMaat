@@ -21,7 +21,7 @@ export default async function LearningRoute() {
 
     try {
         //comment apiResponse & uncomment de 2e apiResponse to use dummy data
-        apiResponse = await getLearningRoutesByUserId(2);
+        apiResponse = await getLearningRoutesByUserId(1);
 
         //Uncomment deze regel om dummy data te gebruiken
         //apiResponse = null;
