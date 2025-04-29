@@ -1,36 +1,59 @@
 import Popup from "../../components/Popup.js";
 import SemesterModule from "../../components/SemesterModule.js";
+import { getModules } from "../../client/api-client.js";
 
 let filterDropdown;
 let mijnPopup;
 let closeFilterDropdownHandler;
 let modulesData = [];
+let apiResponse = [];
 let selectedCategories = [];
 let selectedCategory;
 
 export default async function SemesterChoice(selectedModuleName = "Selecteer je module") {
     // Hardcoded data for 4 semester modules
-    modulesData = [
-        { id: '1', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
-        { id: '2', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'BIM' },
-        { id: '3', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'IDNS' },
-        { id: '4', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'SE' },
-        { id: '5', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'BIM' },
-        { id: '6', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'IDNS' },
-        { id: '7', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'SE' },
-        { id: '8', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'BIM' },
-        { id: '9', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'IDNS' },
-        { id: '10', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'SE' },
-        { id: '11', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
-        { id: '12', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
-        { id: '13', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
-        { id: '14', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
-    ];
+
+
+    try {
+        //comment apiResponse & uncomment de 2e apiResponse to use dummy data
+        apiResponse = await getModules();
+        console.log(apiResponse);
+        if (
+            !apiResponse ||
+            !Array.isArray(apiResponse) ||
+            apiResponse.length === 0
+        ) {
+            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse); //Jarno voor debugging
+        } else {
+            modulesData = apiResponse;
+        }
+
+    } catch (error) {
+        console.error("Error fetching module data:", error.message); //debugging added bij Jarno
+
+
+        modulesData = [
+            { id: '1', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
+            { id: '2', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'BIM' },
+            { id: '3', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'IDNS' },
+            { id: '4', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'SE' },
+            { id: '5', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'BIM' },
+            { id: '6', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'IDNS' },
+            { id: '7', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'SE' },
+            { id: '8', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'BIM' },
+            { id: '9', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'IDNS' },
+            { id: '10', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'SE' },
+            { id: '11', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
+            { id: '12', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
+            { id: '13', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
+            { id: '14', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
+        ];
+    }
 
     //Deze is omdat alles hardcoded is, maar later als wij een DB hebben
     //dan wordt alles uit de koppel tabel opgehaald
     if (selectedModuleName !== "Selecteer je module") {
-        modulesData.unshift({ name: 'Geen Keuze', description: 'Geen Keuze' });
+        modulesData.unshift({ Name: 'Geen Keuze', Description: 'Geen Keuze' });
     }
 
     // Create the SemesterModules component with the hardcoded data
@@ -42,7 +65,7 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
         }
     );
     const renderedSemesterModules = await semesterModules.render();
-    
+
     mijnPopup = new Popup({
         maxWidth: 'auto',
         height: '620px',

@@ -4,9 +4,9 @@
     display: flex;
     gap: 200px;
 }
-.extra-buttons{
+.extra-module-buttons{
     display: flex;
-    gap: 30px;
+    gap: 15px;
 }
 
 .bi-chevron-left {

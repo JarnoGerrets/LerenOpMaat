@@ -101,6 +101,15 @@
     font-weight: 900;
 }
 
+.popup-header-confirmation{
+    margin: 0 0 8px 0;
+    opacity: 1;
+    font-size: clamp(0.6rem, 2vw, 1.2rem);
+    color: black;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+}
+
 .popup-close-btn {
     position: relative;
     display: flex;

@@ -1,5 +1,6 @@
 export default class Popup {
     constructor({maxWidth = 'auto', height = 'auto', header = '', content = '', buttons = [] }) {
+        
         this.result = null;
         this._resolve = null;
 

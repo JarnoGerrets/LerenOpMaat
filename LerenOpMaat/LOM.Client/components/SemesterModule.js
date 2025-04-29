@@ -15,15 +15,15 @@ export default class SemesterModule {
 
         this.modules.forEach(module => {
             let link = '';
-            if (module.id) {
-                link = `<a href="/Module/${module.id}" class="material-icons module-icon" title="Go to ${module.description}">
+            if (module.Id) {
+                link = `<a href="/Module/${module.Id}" class="material-icons module-icon" title="Go to ${module.Description}">
                     i
                 </a>`;
             }
             const populatedTemplate = template
-                .replace('{{id}}', module.id)
-                .replace('{{card_text}}', module.description)
-                .replace('{{title}}', module.name)
+                .replace('{{id}}', module.Id)
+                .replace('{{card_text}}', module.Description)
+                .replace('{{title}}', module.Name)
                 .replace('{{link}}', link);
 
             const tile = document.createElement('div');

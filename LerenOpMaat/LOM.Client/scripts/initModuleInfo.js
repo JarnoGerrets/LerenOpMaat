@@ -1,4 +1,7 @@
 import loadTemplate from "./loadTemplate.js";
+import { getModule } from "../../client/api-client.js";
+import confirmationPopup from "../views/partials/confirmation-popup.js";
+
 export default async function initModuleInfo(id) {
 
     const CardContainer = document.getElementById('card-column');
@@ -8,32 +11,37 @@ export default async function initModuleInfo(id) {
     const path = window.location.pathname;
     const pathParts = path.split('/');
     const moduleId = pathParts[2];
-    const savedModule = JSON.parse(localStorage.getItem(`module-${moduleId}`))
+    let savedModule = JSON.parse(localStorage.getItem(`module-${moduleId}`))
 
-    if (savedModule) {
-        const template = await loadTemplate('../templates/module-card.html');
-        const populatedTemplate = template
-            .replace('{{id}}', savedModule.id)
-            .replace('{{card_text}}', savedModule.description)
-            .replace('{{title}}', savedModule.name)
-            .replace('{{link}}', '');
+    if (!savedModule) {
+        console.log('Module data not found in localStorage, fetch from DB...');
+        savedModule = await getModule(moduleId);
 
-        const tile = document.createElement('div');
-        tile.classList.add('module-tile');
-        tile.innerHTML = populatedTemplate;
+    }
+    const template = await loadTemplate('../templates/module-card.html');
+    const populatedTemplate = template
+        .replace('{{id}}', savedModule.Id)
+        .replace('{{card_text}}', savedModule.Description)
+        .replace('{{title}}', savedModule.Name)
+        .replace('{{link}}', '');
 
-        CardContainer.appendChild(tile);
+    const tile = document.createElement('div');
+    tile.classList.add('module-tile');
+    tile.innerHTML = populatedTemplate;
 
-        const template2 = await loadTemplate('../templates/module-card.html');
-        const populatedTemplate2 = template2
-            .replace('{{id}}', savedModule.id)
-            .replace('{{card_text}}', 'Nog niet bekend')
-            .replace('{{title}}', 'Ingangseisen')
-            .replace('{{link}}', '');
-        const tile2 = document.createElement('div');
-        tile2.classList.add('module-tile', 'ingangseisen-tile');
-        tile2.innerHTML = populatedTemplate2;
+    CardContainer.appendChild(tile);
 
+    const template2 = await loadTemplate('../templates/module-card.html');
+    const populatedTemplate2 = template2
+        .replace('{{id}}', savedModule.id)
+        .replace('{{card_text}}', 'Nog niet bekend')
+        .replace('{{title}}', 'Ingangseisen')
+        .replace('{{link}}', '');
+    const tile2 = document.createElement('div');
+    tile2.classList.add('module-tile', 'ingangseisen-tile');
+    tile2.innerHTML = populatedTemplate2;
+    const correctRole = true;
+    if (correctRole) {
         const extraButtonsDiv = document.createElement("div");
         extraButtonsDiv.id = "extra-buttons";
         extraButtonsDiv.className = "extra-module-buttons";
@@ -41,25 +49,24 @@ export default async function initModuleInfo(id) {
         const editButton = document.createElement("a");
         editButton.href = "/";
         editButton.className = "bi bi-pencil-square edit-button";
-        editButton.title = "Bewerken"; // optional tooltip
+        editButton.title = "Bewerken";
 
         const trashButton = document.createElement("a");
-        trashButton.href = "/";
         trashButton.className = "bi bi-trash trash-button";
-        trashButton.title = "Verwijderen"; // optional tooltip
+        trashButton.title = "Verwijderen";
+        trashButton.addEventListener('click', async () => {
+            await confirmationPopup(savedModule.Id);
+        });
 
-        // Append buttons to the container
+
         extraButtonsDiv.appendChild(editButton);
         extraButtonsDiv.appendChild(trashButton);
 
-        // Append the container to wherever it should go (e.g., inside .buttons-container-module-info)
         document.querySelector(".buttons-container-module-info").appendChild(extraButtonsDiv);
-
-        CardContainer.appendChild(tile2);
-
-    } else {
-        console.log('Module data not found in localStorage, fetch from DB...');
     }
+    CardContainer.appendChild(tile2);
+
+
 
     window.addEventListener('beforeunload', handleUnload);
     window.addEventListener('popstate', handleUnload);
