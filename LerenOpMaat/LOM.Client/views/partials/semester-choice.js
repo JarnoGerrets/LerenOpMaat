@@ -1,46 +1,28 @@
 import Popup from "../../components/Popup.js";
 import SemesterModule from "../../components/SemesterModule.js";
+import { getModules } from "../../client/api-client.js";
 
 let filterDropdown;
 let mijnPopup;
 let closeFilterDropdownHandler;
-let modulesData = [];
 let selectedCategories = [];
+let modulesData = [];
 let selectedCategory;
 
-export default async function SemesterChoice(selectedModuleName = "Selecteer je module") {
-    // Hardcoded data for 4 semester modules
-    modulesData = [
-        { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
-        { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'BIM' },
-        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'IDNS' },
-        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'SE' },
-        { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'BIM' },
-        { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'IDNS' },
-        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'SE' },
-        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'BIM' },
-        { name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'IDNS' },
-        { name: 'Web Development Basics', description: 'Web Development Basics', Category: 'SE' },
-        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
-        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
-        { name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
-        { name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
-    ];
+export default async function SemesterChoice() {
 
-    //Deze is omdat alles hardcoded is, maar later als wij een DB hebben
-    //dan wordt alles uit de koppel tabel opgehaald
-    if (selectedModuleName !== "Selecteer je module") {
-        modulesData.unshift({ name: 'Geen Keuze', description: 'Geen Keuze' });
+    try {
+        const res = await getModules();
+        modulesData = Array.isArray(res) ? res : [];
+
+    } catch (error) {
+        console.error('Error fetching modules:', error.message);
     }
 
-    // Create the SemesterModules component with the hardcoded data
-    const semesterModules = new SemesterModule(
-        modulesData,
-        (selectedModule) => {
-            mijnPopup.close(selectedModule); // Sluit popup met geselecteerde module
-            return selectedModule;
-        }
-    );
+    const semesterModules = new SemesterModule(modulesData, (selectedModule) => {
+        mijnPopup.close(selectedModule);
+        return selectedModule;
+    });
 
 
     mijnPopup = new Popup({
@@ -72,7 +54,6 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
     }
 
 }
-
 
 function showFilter(Data) {
     const isOpen = filterDropdown && filterDropdown.classList.contains('open');
@@ -188,8 +169,8 @@ function filterData(searchTerm = '') {
 
     if (searchTerm) {
         filtered = filtered.filter(m =>
-            m.name.toLowerCase().includes(searchTerm) ||
-            m.description.toLowerCase().includes(searchTerm)
+            m.Name.toLowerCase().includes(searchTerm) ||
+            m.Description.toLowerCase().includes(searchTerm)
         );
     }
 
