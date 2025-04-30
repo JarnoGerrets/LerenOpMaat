@@ -35,8 +35,8 @@ export default class SemesterModule {
             if (infoLink) {
                 infoLink.setAttribute('data-link', '');
                 infoLink.addEventListener('click', () => {
-                    if (module.id) {
-                        localStorage.setItem(`module-${module.id}`, JSON.stringify(module));
+                    if (module.Id) {
+                        localStorage.setItem(`module-${module.Id}`, JSON.stringify(module));
                     }
                 });
             }

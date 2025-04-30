@@ -8,6 +8,8 @@ export default async function confirmationPopup(id, name) {
     mijnPopup = new Popup({
         maxWidth: 'auto',
         height: '250px',
+        sizeCloseButton: '0',
+        closeButtonStyle: 'popup-confirmation-closebutton',
         header: `
             <h3 class="popup-header-confirmation">
                 Wilt u '${name}' verwijderen?
@@ -33,11 +35,14 @@ export default async function confirmationPopup(id, name) {
             mijnPopup.close();
         });
     }, 0);
+
+    window.addEventListener('beforeunload', handleUnload);
+    window.addEventListener('popstate', handleUnload);
+
+    function handleUnload() {
+        mijnPopup.close();
+    }
+
+
 }
 
-window.addEventListener('beforeunload', handleUnload);
-window.addEventListener('popstate', handleUnload);
-
-function handleUnload() {
-    mijnPopup.close();
-}

@@ -6,7 +6,7 @@ export default async function initModuleInfo(id) {
 
     const CardContainer = document.getElementById('card-column');
     const textArea = document.getElementById('moduleTextArea');
-    textArea.readOnly = true;
+    textArea.readOnly = true; // by default its not editable
 
     const path = window.location.pathname;
     const pathParts = path.split('/');
@@ -16,8 +16,10 @@ export default async function initModuleInfo(id) {
     if (!savedModule) {
         console.log('Module data not found in localStorage, fetch from DB...');
         savedModule = await getModule(moduleId);
-
+        console.log(savedModule);
     }
+
+    //module info card section
     const template = await loadTemplate('../templates/module-card.html');
     const populatedTemplate = template
         .replace('{{id}}', savedModule.Id)
@@ -30,16 +32,32 @@ export default async function initModuleInfo(id) {
     tile.innerHTML = populatedTemplate;
 
     CardContainer.appendChild(tile);
+    //end module info card
+
+    // requirements card section
+    let cardText = "";
+    savedModule.Requirements.forEach(req => {
+        console.log("yes");
+        if (req.RequiredCredits) {
+            cardText += `Vereiste EC's: ${req.RequiredCredits}<br>`;
+        }
+        if (req.RequiredModule) {
+            cardText += `${req.RequiredModule.Name} is verplicht<br>`;
+        }
+    });
 
     const template2 = await loadTemplate('../templates/module-card.html');
     const populatedTemplate2 = template2
         .replace('{{id}}', savedModule.id)
-        .replace('{{card_text}}', 'Nog niet bekend')
+        .replace('{{card_text}}', cardText)
         .replace('{{title}}', 'Ingangseisen')
         .replace('{{link}}', '');
     const tile2 = document.createElement('div');
     tile2.classList.add('module-tile', 'ingangseisen-tile');
     tile2.innerHTML = populatedTemplate2;
+    // end requirements card
+
+    // section to add admin buttons to the info page (to delete or modify)
     const correctRole = true;
     if (correctRole) {
         const extraButtonsDiv = document.createElement("div");
@@ -47,9 +65,33 @@ export default async function initModuleInfo(id) {
         extraButtonsDiv.className = "extra-module-buttons";
 
         const editButton = document.createElement("a");
-        editButton.href = "/";
         editButton.className = "bi bi-pencil-square edit-button";
         editButton.title = "Bewerken";
+        editButton.addEventListener('click', async () => {
+            textArea.readOnly = false;
+        
+            const saveButton = document.createElement("button");
+            saveButton.classList.add("circle-button", "blue", "save-button");
+            saveButton.title = "Opslaan";
+        
+            // Add the save icon inside the button
+            saveButton.innerHTML = '<i class="bi bi-save"></i>';
+            saveButton.addEventListener('click', async () => {
+                //save logic comes here
+        
+                textArea.readOnly = true;
+                saveButton.remove();
+            });
+        
+            const textAreaContainer = document.createElement("div");
+            textAreaContainer.classList.add("text-area-container");
+            
+            textAreaContainer.appendChild(textArea);
+            textAreaContainer.appendChild(saveButton);
+        
+            document.getElementById('description-text').innerHTML = '';
+            document.getElementById('description-text').appendChild(textAreaContainer);
+        });
 
         const trashButton = document.createElement("a");
         trashButton.className = "bi bi-trash trash-button";
@@ -63,6 +105,7 @@ export default async function initModuleInfo(id) {
         extraButtonsDiv.appendChild(trashButton);
 
         document.querySelector(".buttons-container-module-info").appendChild(extraButtonsDiv);
+        // end section admin buttons
     }
     CardContainer.appendChild(tile2);
 

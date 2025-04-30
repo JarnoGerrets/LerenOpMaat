@@ -19,9 +19,10 @@ export default async function SemesterCard({ semester, module, locked = false })
   if (!locked && button) {
     button.addEventListener("click", async () => {
       const selectedModule = await SemesterChoice(button.textContent.trim());
-      if (selectedModule.name !== "Geen Keuze") {
+      console.log(selectedModule);
+      if (selectedModule.Name !== "Geen Keuze") {
         button.innerHTML = `
-              ${selectedModule.name} 
+              ${selectedModule.Name} 
               <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
           `;
       } else {

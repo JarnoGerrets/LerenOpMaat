@@ -69,6 +69,7 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
     mijnPopup = new Popup({
         maxWidth: 'auto',
         height: '620px',
+        sizeCloseButton: '16',
         header: `
         <h1 class="popup-header">
             Selecteer je module
@@ -114,7 +115,7 @@ function showFilter(Data) {
         });
 
         filterDropdown.appendChild(searchInput);
-        const categories = ['Alles', ...new Set(Data.filter(m => m.name !== 'Geen Keuze').map(m => m.Category))];
+        const categories = ['Alles', ...new Set(Data.filter(m => m.Name !== 'Geen Keuze').map(m => m.Category))];
         categories.forEach(category => {
             const option = document.createElement('div');
             option.textContent = category;
@@ -203,7 +204,7 @@ function closeFilterDropdown(event) {
 
 function filterData(searchTerm = '') {
     //Geen Keuze niet filteren
-    let filtered = modulesData.filter(m => m.name !== 'Geen Keuze');
+    let filtered = modulesData.filter(m => m.Name !== 'Geen Keuze');
 
     if (selectedCategories.length > 0) {
         filtered = filtered.filter(m => selectedCategories.includes(m.Category));
@@ -211,13 +212,13 @@ function filterData(searchTerm = '') {
 
     if (searchTerm) {
         filtered = filtered.filter(m =>
-            m.name.toLowerCase().includes(searchTerm) ||
-            m.description.toLowerCase().includes(searchTerm)
+            m.Name.toLowerCase().includes(searchTerm) ||
+            m.Description.toLowerCase().includes(searchTerm)
         );
     }
 
     //doe 'Geen Keuze' altijd als eerste optie
-    filtered.unshift({ name: 'Geen Keuze', description: 'Geen Keuze' });
+    filtered.unshift({ Name: 'Geen Keuze', Description: 'Geen Keuze' });
     let popupWidth = 0;
     popupWidth = mijnPopup.popup.getBoundingClientRect().width - 58;
 
@@ -228,5 +229,7 @@ function filterData(searchTerm = '') {
 
     mijnPopup.contentContainer.innerHTML = '';
     mijnPopup.contentContainer.style.minWidth = `${popupWidth}px`;
-    mijnPopup.contentContainer.appendChild(data.render());
+    data.render().then(rendered => {
+        mijnPopup.contentContainer.appendChild(rendered);
+    });
 }
