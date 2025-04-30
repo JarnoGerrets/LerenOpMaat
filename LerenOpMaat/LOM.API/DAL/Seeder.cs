@@ -25,7 +25,7 @@ public class Seeder
         );
 
         _modelBuilder.Entity<LearningRoute>().HasData(
-           new LearningRoute { Id = 1, Name = "Test Route" });
+           new LearningRoute { Id = 1});
 
         _modelBuilder.Entity<Module>().HasData(
             new Module { Id = 1, Name = "Introduction to Programming", Description = "Introduction to Programming", Category = "SE" },

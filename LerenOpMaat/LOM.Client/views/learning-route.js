@@ -17,26 +17,20 @@ export default async function LearningRoute() {
     let routeId = null;
 
     try {
-        //comment apiResponse & uncomment de 2e apiResponse to use dummy data
-        apiResponse = await getLearningRoutesByUserId(2);
-
-        //Uncomment deze regel om dummy data te gebruiken
-        //apiResponse = null;
-
-        console.log("API Response:", apiResponse); //Added bij Elias voor debugging
+        apiResponse = await getLearningRoutesByUserId(1);
 
         if (
             !apiResponse.Semesters ||
             !Array.isArray(apiResponse.Semesters) ||
             apiResponse.Semesters.length === 0
         ) {
-            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters); //Elias voor debugging
+            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
         } else {
             semesterData = apiResponse.Semesters;
             routeId = apiResponse.Id;
         }
     } catch (error) {
-        console.error("Error fetching semester data:", error.message); //debugging added bij Elias
+        console.error("Error fetching semester data:", error.message);
     }
 
     const semesterDataGroupedByYear = semesterData.reduce((acc, data) => {
@@ -59,7 +53,7 @@ export default async function LearningRoute() {
 
         const semester1 = semesterGroup.find(s => s.SemesterNumber === 1);
         const semester2 = semesterGroup.find(s => s.SemesterNumber === 2);
-        
+
         const semesterPair = await SemesterPair(semester1, semester2, index, totalAmountOfYears);
 
         if (!(semesterPair instanceof Node)) {
@@ -81,7 +75,6 @@ export default async function LearningRoute() {
 
             const dummySemesterPair = await SemesterPair(dummySemester1, dummySemester2, index, totalSemestersGroup);
 
-            //debufging added bij Elias
             if (!(dummySemesterPair instanceof Node)) {
                 console.error(`Dummy SemesterPair for index ${index} is not a valid Node:`, dummySemesterPair);
                 continue;
@@ -100,10 +93,10 @@ export default async function LearningRoute() {
     if (saveButton) {
         saveButton.addEventListener("click", async () => {
             JSON.stringify(learningRouteArray, null, 2);
-
             if (routeId !== null) {
                 try {
                     await updateLearningRoute(routeId, learningRouteArray);
+
                 } catch (error) {
                     console.error("Fout bij het updaten van de learning route:", error.message);
                 }
@@ -133,7 +126,6 @@ export default async function LearningRoute() {
                 a.click();
 
                 URL.revokeObjectURL(url);
-                console.log("API Response succesvol gexporteerd.");
             } else {
                 console.error("Geen API Response beschikbaar om te exporteren.");
             }
@@ -148,8 +140,7 @@ export default async function LearningRoute() {
                 try {
                     const isDeleted = await deleteRoute(routeId);
                     if (isDeleted) {
-                        console.log("Leerroute succesvol verwijderd.");
-                        location.reload(); // Herlaad de pagina na succesvolle verwijdering
+                        location.reload();
                     } else {
                         console.error("Fout bij het verwijderen van de leerroute.");
                     }
@@ -176,7 +167,6 @@ async function saveLearningRoute(learningRouteArray) {
             }
 
             const jsonData = {
-                Name: "Test Route 2",
                 Users: [
                     {
                         Id: user.Id,
@@ -191,10 +181,7 @@ async function saveLearningRoute(learningRouteArray) {
                     ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
                 }))
             };
-
-            console.log("Verzonden JSON-data:", JSON.stringify(jsonData, null, 2)); // Debugging
             await postLearningRoute(jsonData);
-            console.log("Leerroute succesvol opgeslagen:", jsonData); // Debugging
         } catch (error) {
             console.error("Er is een fout opgetreden bij het opslaan van de leerroute:", error.message);
         }
@@ -208,11 +195,10 @@ async function updateLearningRoute(routeId, semesterData) {
         console.error("Route ID is niet beschikbaar!");
         return;
     }
-
     const body = semesterData.map(item => ({
         Year: item.Year,
         SemesterNumber: item.SemesterNumber,
-        ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.mduleId
+        ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
     }));
 
     try {

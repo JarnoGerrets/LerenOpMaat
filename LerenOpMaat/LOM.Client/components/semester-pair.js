@@ -49,9 +49,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         moduleId,
                     });
                 }
-
-                //deze ga ik aan het einde van het project verwijderen
-                console.log("Updated LearningRouteArray:", learningRouteArray); //Debug Elias
             },
         });
         wrapper.appendChild(card1);
@@ -96,9 +93,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         moduleId,
                     });
                 }
-
-                //deze ga ik aan het einde van het project verwijderen
-                console.log("Updated LearningRouteArray:", learningRouteArray); // Debug Elias
             },
         });
         wrapper.appendChild(card2);

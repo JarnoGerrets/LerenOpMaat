@@ -1,7 +1,6 @@
 import Popup from "../../components/Popup.js";
 import SemesterModule from "../../components/SemesterModule.js";
 import { getModules } from "../../client/api-client.js";
-import { modulesDummyData } from "../../components/dummyData2.js"; // Dummy data voor modullen
 
 let filterDropdown;
 let mijnPopup;
@@ -11,13 +10,9 @@ let modulesData = [];
 let selectedCategory;
 
 export default async function SemesterChoice() {
-    //comment deze als je de modullen wilt ophalen van de API
-    //modulesData = modulesDummyData;
 
-    //Uncomment deze als je de modullen wilt ophalen van de API en comment de modulesData = modulesDummyData regel
     try {
         const res = await getModules();
-        console.log("Modules API Response:", res); // Debug Elias
         modulesData = Array.isArray(res) ? res : [];
 
     } catch (error) {
