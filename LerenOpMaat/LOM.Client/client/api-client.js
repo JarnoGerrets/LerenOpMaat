@@ -1,4 +1,4 @@
-const API_BASE = "https://localhost:7024/api";
+const API_BASE = "http://localhost:5073/api";
 
 export async function getModules() {
   const res = await fetch(`${API_BASE}/Module`, {

@@ -1,7 +1,9 @@
 import { RouteOrSelector } from "./views/cohort-selector.js";
+import { moduleOverview } from "./views/module-overview.js";
 
 const routes = {
-  "/": RouteOrSelector
+  "/": RouteOrSelector,
+  "/module-overview": moduleOverview,
 };
 
 const navigateTo = url => {
