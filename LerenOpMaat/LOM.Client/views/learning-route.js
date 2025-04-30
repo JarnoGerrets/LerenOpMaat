@@ -2,9 +2,7 @@ import SemesterPair from "../components/semester-pair.js";
 import { getLearningRoutesByUserId, postLearningRoute, updateSemester, deleteRoute } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
 
-//dummyApiResponse om de route met 2 locked moduls te testen
-//dummyApiResponse2 om een lege route te testen
-import { dummyApiResponse2, dummySemester1, dummySemester2 } from "../components/dummyData2.js";
+import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 let apiResponse = [];
 export default async function LearningRoute() {
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
@@ -16,7 +14,7 @@ export default async function LearningRoute() {
     const fragment = template.content.cloneNode(true);
     const grid = fragment.querySelector(".semester-grid");
     let semesterData = [];
-    let routeId = null;    
+    let routeId = null;
 
     try {
         //comment apiResponse & uncomment de 2e apiResponse to use dummy data
@@ -36,11 +34,9 @@ export default async function LearningRoute() {
         } else {
             semesterData = apiResponse.Semesters;
             routeId = apiResponse.Id;
-            console.log("Route ID opgeslagen:", routeId); //Elias voor debugging
         }
     } catch (error) {
         console.error("Error fetching semester data:", error.message); //debugging added bij Elias
-        semesterData = dummyApiResponse2.Semesters; // Gebruik de dummy data bij een fout
     }
 
     const semesterDataGroupedByYear = semesterData.reduce((acc, data) => {
@@ -52,7 +48,6 @@ export default async function LearningRoute() {
         return acc;
     }, {});
 
-    console.log(semesterDataGroupedByYear);
     let index = 0;
     const totalAmountOfYears = Object.keys(semesterDataGroupedByYear).length;
 
@@ -60,11 +55,11 @@ export default async function LearningRoute() {
     const sortedYears = Object.entries(semesterDataGroupedByYear).sort(([yearA], [yearB]) => yearA - yearB);
 
     for (const [year, semesterGroup] of sortedYears) {
-        semesterGroup.sort((a, b) => a.semester - b.semester);
+        semesterGroup.sort((a, b) => a.SemesterNumber - b.semester);
 
-        const semester1 = semesterGroup.find(s => s.semester === 1);
-        const semester2 = semesterGroup.find(s => s.semester === 2);
-
+        const semester1 = semesterGroup.find(s => s.SemesterNumber === 1);
+        const semester2 = semesterGroup.find(s => s.SemesterNumber === 2);
+        
         const semesterPair = await SemesterPair(semester1, semester2, index, totalAmountOfYears);
 
         if (!(semesterPair instanceof Node)) {
@@ -192,8 +187,8 @@ async function saveLearningRoute(learningRouteArray) {
                 ],
                 Semesters: learningRouteArray.map(item => ({
                     Year: item.Year,
-                    semester: item.semester,
-                    moduleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
+                    SemesterNumber: item.SemesterNumber,
+                    ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
                 }))
             };
 
@@ -216,8 +211,8 @@ async function updateLearningRoute(routeId, semesterData) {
 
     const body = semesterData.map(item => ({
         Year: item.Year,
-        semester: item.semester,
-        moduleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
+        SemesterNumber: item.SemesterNumber,
+        ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.mduleId
     }));
 
     try {
@@ -227,7 +222,7 @@ async function updateLearningRoute(routeId, semesterData) {
             console.error(`Fout bij het updaten van de learning route: ${response.status}`);
             return;
         } else {
-            console.log("Learning route succesvol ge�pdatet.");
+            console.log("Learning route succesvol gepdatet.");
         }
     } catch (error) {
         if (error && error.message) {

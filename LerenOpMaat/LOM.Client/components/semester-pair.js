@@ -1,5 +1,5 @@
 import SemesterCard from "../components/semester-card.js";
-import {dummySemester1, dummySemester2} from "../components/dummyData2.js";
+import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 export let learningRouteArray = [];
 
 export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
@@ -32,13 +32,13 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card1 = await SemesterCard({
             id: semester1.id,
-            semester: semester1.semester,
+            semester: semester1.SemesterNumber,
             module: semester1.Module.Name,
-            moduleId: semester1.Module.Id,
+            moduleId: semester1.ModuleId,
             locked: semester1.locked,
             onModuleChange: ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(
-                    (item) => item.Year === index + 1 && item.semester === semester
+                    (item) => item.Year === index + 1 && item.SemesterNumber === semester
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
@@ -58,8 +58,8 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         learningRouteArray.push({
             Year: index + 1,
-            semester: semester1.semester,
-            moduleId: semester1.Module.Id
+            SemesterNumber: semester1.SemesterNumber,
+            moduleId: semester1.Module.Id,
         });
     }
 
@@ -79,13 +79,13 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card2 = await SemesterCard({
             id: semester2.id,
-            semester: semester2.semester,
+            semester: semester2.SemesterNumber,
             module: semester2.Module.Name,
             moduleId: semester2.Module.Id,
             locked: semester2.locked,
             onModuleChange: ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(
-                    (item) => item.Year === index + 1 && item.semester === semester
+                    (item) => item.Year === index + 1 && item.SemesterNumber === semester
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
@@ -105,7 +105,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         learningRouteArray.push({
             Year: index + 1,
-            semester: semester2.semester,
+            SemesterNumber: semester2.SemesterNumber,
             moduleId: semester2.Module.Id,
         });
 
@@ -127,12 +127,12 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         const yearContainer = document.createElement("div");
         yearContainer.classList.add("year-container");
         const icon = document.createElement("study-year-icon");
-    
+
         //deze is een caluclatie van de cohortYear + 1 elke keer.
         const startYear = cohortYear + index;
         const endYear = startYear + 1; // Volgnde jaar
         const yearRange = `${startYear % 100}/${endYear % 100}`; // Format YY/YY
-    
+
         icon.setAttribute("start", yearRange);
         yearContainer.appendChild(icon);
         wrapper.appendChild(yearContainer);
