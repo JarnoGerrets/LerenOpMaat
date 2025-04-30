@@ -13,7 +13,7 @@ export async function getModules() {
     }
 
     return await res.json();
-    
+
 }
 
 export async function getModule(id) {
@@ -29,7 +29,28 @@ export async function getModule(id) {
     }
 
     return await res.json();
-    
+
+}
+
+export async function updateModule(id, moduleData) {
+    const res = await fetch(`${API_BASE}/Module/${id}`, {
+        method: "PUT",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(moduleData)
+    });
+
+    if (!res.ok) {
+        throw new Error(`Failed to update module: ${res.status}`);
+    }
+
+    if (!res.ok) {
+        throw new Error(`Failed to update module: ${res.status}`);
+    }
+
+    return;
 }
 
 export async function deleteModule(id) {
@@ -45,5 +66,5 @@ export async function deleteModule(id) {
     }
 
     return res.text();
-    
+
 }

@@ -2,3 +2,65 @@
     background-color: #124477 !important;
     border-color: #124477 !important;
 }
+
+
+/*------------------------------------toast message------------------------------------------------------------*/
+
+#toast-container {
+    position: fixed;
+    top: 45px;
+    right: 25px;
+    z-index: 999;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .toast {
+    z-index: 999;
+    background-color: #333;
+    color: white;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    opacity: 0;
+    animation: fade-in 0.5s forwards, fade-out 0.5s 3.5s forwards;
+  }
+  
+  .toast.success {
+    background-color: green;
+  }
+  
+  .toast.error {
+    background-color: red;
+  }
+  
+  .toast.info {
+    z-index: 999;
+    background-color: blue;
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+  
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  
+    to {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+  }

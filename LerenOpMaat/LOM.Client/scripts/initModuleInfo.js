@@ -1,17 +1,18 @@
 import loadTemplate from "./loadTemplate.js";
 import { getModule } from "../../client/api-client.js";
-import confirmationPopup from "../views/partials/confirmation-popup.js";
+import { createModuleInfoCard, createRequirementsCard } from '../components/module-cards.js';
+import { setupButtons } from './module-actions.js';
 
 export default async function initModuleInfo(id) {
-
+    const correctRole = true;
     const CardContainer = document.getElementById('card-column');
     const textArea = document.getElementById('moduleTextArea');
-    textArea.readOnly = true; // by default its not editable
+    textArea.readOnly = true; // by default it's not editable
 
     const path = window.location.pathname;
     const pathParts = path.split('/');
     const moduleId = pathParts[2];
-    let savedModule = JSON.parse(localStorage.getItem(`module-${moduleId}`))
+    let savedModule = JSON.parse(localStorage.getItem(`module-${moduleId}`));
 
     if (!savedModule) {
         console.log('Module data not found in localStorage, fetch from DB...');
@@ -19,98 +20,39 @@ export default async function initModuleInfo(id) {
         console.log(savedModule);
     }
 
-    //module info card section
-    const template = await loadTemplate('../templates/module-card.html');
-    const populatedTemplate = template
+    // Create Module Info Card
+    const infoCardText = createModuleInfoCard(savedModule);
+    const populatedTemplate = await loadTemplate('../templates/module-card.html');
+    const populatedModuleCard = populatedTemplate
         .replace('{{id}}', savedModule.Id)
-        .replace('{{card_text}}', savedModule.Description)
+        .replace('{{card_text}}', infoCardText)
         .replace('{{title}}', savedModule.Name)
         .replace('{{link}}', '');
 
     const tile = document.createElement('div');
     tile.classList.add('module-tile');
-    tile.innerHTML = populatedTemplate;
-
+    tile.innerHTML = populatedModuleCard;
     CardContainer.appendChild(tile);
-    //end module info card
 
-    // requirements card section
-    let cardText = "";
-    savedModule.Requirements.forEach(req => {
-        console.log("yes");
-        if (req.RequiredCredits) {
-            cardText += `Vereiste EC's: ${req.RequiredCredits}<br>`;
-        }
-        if (req.RequiredModule) {
-            cardText += `${req.RequiredModule.Name} is verplicht<br>`;
-        }
-    });
-
-    const template2 = await loadTemplate('../templates/module-card.html');
-    const populatedTemplate2 = template2
+    // Create Requirements Card
+    const reqCardText = createRequirementsCard(savedModule.Requirements);
+    const populatedTemplate2 = populatedTemplate
         .replace('{{id}}', savedModule.id)
-        .replace('{{card_text}}', cardText)
+        .replace('{{card_text}}', reqCardText)
         .replace('{{title}}', 'Ingangseisen')
         .replace('{{link}}', '');
     const tile2 = document.createElement('div');
     tile2.classList.add('module-tile', 'ingangseisen-tile');
+    tile2.style.fontWeight = 'bold';
     tile2.innerHTML = populatedTemplate2;
-    // end requirements card
-
-    // section to add admin buttons to the info page (to delete or modify)
-    const correctRole = true;
-    if (correctRole) {
-        const extraButtonsDiv = document.createElement("div");
-        extraButtonsDiv.id = "extra-buttons";
-        extraButtonsDiv.className = "extra-module-buttons";
-
-        const editButton = document.createElement("a");
-        editButton.className = "bi bi-pencil-square edit-button";
-        editButton.title = "Bewerken";
-        editButton.addEventListener('click', async () => {
-            textArea.readOnly = false;
-        
-            const saveButton = document.createElement("button");
-            saveButton.classList.add("circle-button", "blue", "save-button");
-            saveButton.title = "Opslaan";
-        
-            // Add the save icon inside the button
-            saveButton.innerHTML = '<i class="bi bi-save"></i>';
-            saveButton.addEventListener('click', async () => {
-                //save logic comes here
-        
-                textArea.readOnly = true;
-                saveButton.remove();
-            });
-        
-            const textAreaContainer = document.createElement("div");
-            textAreaContainer.classList.add("text-area-container");
-            
-            textAreaContainer.appendChild(textArea);
-            textAreaContainer.appendChild(saveButton);
-        
-            document.getElementById('description-text').innerHTML = '';
-            document.getElementById('description-text').appendChild(textAreaContainer);
-        });
-
-        const trashButton = document.createElement("a");
-        trashButton.className = "bi bi-trash trash-button";
-        trashButton.title = "Verwijderen";
-        trashButton.addEventListener('click', async () => {
-            await confirmationPopup(savedModule.Id, savedModule.Name);
-        });
-
-
-        extraButtonsDiv.appendChild(editButton);
-        extraButtonsDiv.appendChild(trashButton);
-
-        document.querySelector(".buttons-container-module-info").appendChild(extraButtonsDiv);
-        // end section admin buttons
-    }
     CardContainer.appendChild(tile2);
 
+    // Add admin buttons for editing and deleting
+    if (correctRole) {
+        setupButtons(savedModule, textArea);
+    }
 
-
+    // Clear localStorage on unload
     window.addEventListener('beforeunload', handleUnload);
     window.addEventListener('popstate', handleUnload);
 
