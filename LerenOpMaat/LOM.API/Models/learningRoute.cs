@@ -2,7 +2,7 @@
 
 namespace LOM.API.Models
 {
-    public class learningRoute
+    public class LearningRoute
     {
         [Key]
         public int Id { get; set; }

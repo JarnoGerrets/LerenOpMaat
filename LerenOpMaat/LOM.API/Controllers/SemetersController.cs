@@ -12,11 +12,11 @@ namespace LOM.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SemestersController : ControllerBase
+    public class SemesterController : ControllerBase
     {
         private readonly LOMContext _context;
 
-        public SemestersController(LOMContext context)
+        public SemesterController(LOMContext context)
         {
             _context = context;
         }
@@ -104,7 +104,7 @@ namespace LOM.API.Controllers
         [HttpPut("/api/[controller]/updateSemesters/{learningRouteId}")]
         public async Task<IActionResult> UpdateSemesters(int learningRouteId, [FromBody] List<Semester> semesters)
         {
-            var learningRoute = await _context.learningRoute
+            var learningRoute = await _context.LearningRoutes
                 .Include(lr => lr.Semesters)
                 .FirstOrDefaultAsync(lr => lr.Id == learningRouteId);
 
@@ -117,7 +117,7 @@ namespace LOM.API.Controllers
             {
                 // Zoek het semester obv de Year, senester en learningRouteId
                 var semesterToUpdate = await _context.Semesters
-                    .FirstOrDefaultAsync(s => s.Year == semester.Year && s.semester == semester.semester && s.learningRouteId == learningRouteId);
+                    .FirstOrDefaultAsync(s => s.Year == semester.Year && s.SemesterNumber == semester.SemesterNumber && s.LearningRouteId == learningRouteId);
 
                 if (semesterToUpdate == null)
                 {
@@ -125,8 +125,8 @@ namespace LOM.API.Controllers
                 }
 
                 semesterToUpdate.Year = semester.Year;
-                semesterToUpdate.semester = semester.semester;
-                semesterToUpdate.moduleId = semester.moduleId;
+                semesterToUpdate.SemesterNumber = semester.SemesterNumber;
+                semesterToUpdate.ModuleId = semester.ModuleId;
             }
             try
             {

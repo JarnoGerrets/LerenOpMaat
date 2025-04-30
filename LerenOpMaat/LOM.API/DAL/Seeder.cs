@@ -24,8 +24,8 @@ public class Seeder
             new Cohort { Id = 7, StartDate = DateTime.Now.AddYears(-4), IsActive = true }
         );
 
-        _modelBuilder.Entity<learningRoute>().HasData(
-           new learningRoute { Id = 1, Name = "Test Route" });
+        _modelBuilder.Entity<LearningRoute>().HasData(
+           new LearningRoute { Id = 1, Name = "Test Route" });
 
         _modelBuilder.Entity<Module>().HasData(
             new Module { Id = 1, Name = "Introduction to Programming", Description = "Introduction to Programming", Category = "SE" },
@@ -46,19 +46,19 @@ public class Seeder
         );
 
         _modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", learningRouteId = 1, StartYear = 2023 },
+            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", LearningRouteId = 1, StartYear = 2023 },
             new User { Id = 2, FirstName = "Robin", LastName = "Hood" }
             );
 
         _modelBuilder.Entity<Semester>().HasData(
-            new Semester { Id = 1, Year = 1, semester = 1, moduleId = 1, learningRouteId = 1 },
-            new Semester { Id = 2, Year = 1, semester = 2, moduleId = 2, learningRouteId = 1 },
-            new Semester { Id = 3, Year = 2, semester = 1, moduleId = 3, learningRouteId = 1 },
-            new Semester { Id = 4, Year = 2, semester = 2, moduleId = 4, learningRouteId = 1 },
-            new Semester { Id = 5, Year = 3, semester = 1, moduleId = 5, learningRouteId = 1 },
-            new Semester { Id = 6, Year = 3, semester = 2, moduleId = 6, learningRouteId = 1 },
-            new Semester { Id = 7, Year = 4, semester = 1, moduleId = 7, learningRouteId = 1 },
-            new Semester { Id = 8, Year = 4, semester = 2, moduleId = 8, learningRouteId = 1 }
+            new Semester { Id = 1, Year = 1, SemesterNumber = 1, ModuleId = 1, LearningRouteId = 1 },
+            new Semester { Id = 2, Year = 1, SemesterNumber = 2, ModuleId = 2, LearningRouteId = 1 },
+            new Semester { Id = 3, Year = 2, SemesterNumber = 1, ModuleId = 3, LearningRouteId = 1 },
+            new Semester { Id = 4, Year = 2, SemesterNumber = 2, ModuleId = 4, LearningRouteId = 1 },
+            new Semester { Id = 5, Year = 3, SemesterNumber = 1, ModuleId = 5, LearningRouteId = 1 },
+            new Semester { Id = 6, Year = 3, SemesterNumber = 2, ModuleId = 6, LearningRouteId = 1 },
+            new Semester { Id = 7, Year = 4, SemesterNumber = 1, ModuleId = 7, LearningRouteId = 1 },
+            new Semester { Id = 8, Year = 4, SemesterNumber = 2, ModuleId = 8, LearningRouteId = 1 }
             );
     }
 }

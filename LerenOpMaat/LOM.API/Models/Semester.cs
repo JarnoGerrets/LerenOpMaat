@@ -10,14 +10,14 @@ namespace LOM.API.Models
         public int Id { get; set; }
 
         public int Year { get; set; }
-        public byte semester { get; set; }
+        public byte SemesterNumber { get; set; }
 
-        [ForeignKey(nameof(learningRoute))]
-        public int learningRouteId { get; set; }
-        public learningRoute? learningRoute { get; set; }
+        [ForeignKey(nameof(LearningRoute))]
+        public int LearningRouteId { get; set; }
+        public LearningRoute? LearningRoute { get; set; }
 
         [ForeignKey(nameof(Module))]
-        public int? moduleId { get; set; }
+        public int? ModuleId { get; set; }
         public Module? Module { get; set; }
     }
 }

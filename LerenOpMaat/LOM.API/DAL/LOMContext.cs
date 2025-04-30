@@ -10,7 +10,7 @@ public class LOMContext : DbContext
     public DbSet<Cohort> Cohorts { get; set; }
     public DbSet<User> User { get; set; }
     public DbSet<Semester> Semesters { get; set; }
-    public DbSet<learningRoute> learningRoute { get; set; }
+    public DbSet<LearningRoute> LearningRoutes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -14,8 +14,8 @@ namespace LOM.API.Models
         public string LastName { get; set; }
         public int StartYear { get; set; }
 
-        [ForeignKey(nameof(learningRoute))]
-        public int? learningRouteId { get; set; }
-        public learningRoute? learningRoute { get; set; }
+        [ForeignKey(nameof(LearningRoute))]
+        public int? LearningRouteId { get; set; }
+        public LearningRoute? LearningRoute { get; set; }
     }
 }
