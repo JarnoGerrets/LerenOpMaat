@@ -1,19 +1,26 @@
 // Create Module Info Card
 export function createModuleInfoCard(savedModule) {
     return `
-    <div style="display: flex; gap: 50px; font-weight: bold; font-size: 18px;">
-      <div>
-        Code: <span id="code-text">${savedModule.Code}</span><br>
-        Periode: <span id="periode-text">${savedModule.Periode}</span><br>
+    <div class="module-card-text" style="display: flex; font-weight: bold;">
+      <div class="module-info-column">
+        <div class="module-info-row">
+          Code: <span id="code-text">${savedModule.Code}</span>
+        </div>
+        <div class="module-info-row">
+          Periode: <span id="periode-text">${savedModule.Periode}</span>
+        </div>
       </div>
-      <div>
-        EC: <span id="ec-text">${savedModule.EC}</span><br>
-        Niveau: <span id="niveau-text">${savedModule.Niveau}</span><br>
+      <div class="module-info-column">
+        <div class="module-info-row">
+          EC: <span id="ec-text">${savedModule.EC}</span>
+        </div>
+        <div class="module-info-row">
+          Niveau: <span id="niveau-text">${savedModule.Niveau}</span>
+        </div>
       </div>
     </div>
-  `;
+    `;
 }
-
 // Create Requirements Card
 export function createRequirementsCard(requirements) {
     let reqCardText = "";

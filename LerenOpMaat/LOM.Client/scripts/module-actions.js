@@ -26,7 +26,7 @@ function setupEditButton(module, textArea) {
         isEditing = true;
         textArea.readOnly = false;
         ToggleFields(module);
-        
+
         const buttonContainerEdit = document.createElement('div');
         buttonContainerEdit.classList.add("button-container-edit");
 
@@ -101,33 +101,39 @@ function ToggleFields(module) {
         ecText.innerHTML = `${module.EC}`;
         niveauText.innerHTML = `${module.Niveau}`;
     } else {
-        codeText.innerHTML = `<input class="card-input" type="text" id="code-input" value="${module.Code}">`;
+        codeText.innerHTML = `
+        <div><input class="card-input" type="text" id="code-input" value="${module.Code}"></div>
+        `;
+
 
         let optionsPeriod = '';
         for (let i = 1; i <= 2; i++) {
             optionsPeriod += `<option value="${i}" ${module.Periode === i ? 'selected' : ''}>${i}</option>`;
         }
         periodeText.innerHTML = `
-          <select class="card-input" id="periode-input">
-            ${optionsPeriod}
-          </select>
+        <div><select class="card-input" id="periode-input">
+          ${optionsPeriod}
+        </select>
+        </div>
         `;
-        
-        ecText.innerHTML = `<input class="card-input" type = "number" id = "ec-input" value = "${module.EC}">`;
+
+        ecText.innerHTML = `
+      <div><input class="card-input" type="number" id="ec-input" value="${module.EC}"></div>
+        `;
 
         let optionsNiveau = '';
         for (let i = 1; i <= 3; i++) {
             optionsNiveau += `<option value="${i}" ${module.Niveau === i ? 'selected' : ''}>${i}</option>`;
         }
         niveauText.innerHTML = `
-        <select class="card-input" id = "niveau-input">
-        ${optionsNiveau}
-        </select>
-        `;
+        <div><select class="card-input" id="niveau-input">
+          ${optionsNiveau}
+        </select></div>
+      `;
     }
 }
 
-async function saveChanges(module, textArea){
+async function saveChanges(module, textArea) {
     module.Code = document.getElementById("code-input").value;
     module.Periode = document.getElementById("periode-input").value;
     module.EC = document.getElementById("ec-input").value;
@@ -135,7 +141,7 @@ async function saveChanges(module, textArea){
     module.Description = textArea.value;
     console.log(module);
     const response = await updateModule(module.Id, module);
-    showToast(`${module.Name} succesvol gewijzigd`);
+    showToast(`${module.Name} succesvol gewijzigd`, 'success');
 
 }
 
