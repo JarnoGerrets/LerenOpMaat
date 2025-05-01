@@ -105,7 +105,6 @@ function ToggleFields(module) {
         <div><input class="card-input" type="text" id="code-input" value="${module.Code}"></div>
         `;
 
-
         let optionsPeriod = '';
         for (let i = 1; i <= 2; i++) {
             optionsPeriod += `<option value="${i}" ${module.Periode === i ? 'selected' : ''}>${i}</option>`;
@@ -118,7 +117,7 @@ function ToggleFields(module) {
         `;
 
         ecText.innerHTML = `
-      <div><input class="card-input" type="number" id="ec-input" value="${module.EC}"></div>
+        <div><input class="card-input" type="number" id="ec-input" value="${module.EC}"></div>
         `;
 
         let optionsNiveau = '';
@@ -134,12 +133,13 @@ function ToggleFields(module) {
 }
 
 async function saveChanges(module, textArea) {
+
     module.Code = document.getElementById("code-input").value;
     module.Periode = document.getElementById("periode-input").value;
     module.EC = document.getElementById("ec-input").value;
     module.Niveau = document.getElementById("niveau-input").value;
     module.Description = textArea.value;
-    console.log(module);
+
     const response = await updateModule(module.Id, module);
     showToast(`${module.Name} succesvol gewijzigd`, 'success');
 

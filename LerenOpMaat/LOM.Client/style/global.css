@@ -1,4 +1,4 @@
-.btn-primary{
+.btn-primary {
     background-color: #124477 !important;
     border-color: #124477 !important;
 }
@@ -15,59 +15,104 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-  }
-  
-  #toast-container .toast {
+}
+
+#toast-container .toast {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fdf6e3; /* creamy paper-like */
+    background-color: #fdf6e3;
+    /* creamy paper-like */
     color: #333;
     padding: 15px 20px 5px 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
     min-width: 150px;
     max-width: 400px;
     animation: fade-in 0.5s forwards, fade-out 0.5s 3.5s forwards;
     opacity: 0;
     position: relative;
-  }
-  
-  #toast-container  .toast-message {
+}
+
+#toast-container .toast-message {
     flex: 1;
     padding-right: 10px;
     font-weight: 500;
     min-width: 150px;
     max-width: 400px;
-  }
-  
-  .toast-icon {
+}
+
+.toast-icon {
     width: 24px;
     height: 24px;
     border-radius: 4px;
-  }
-  
-  @keyframes fade-in {
+}
+
+@keyframes fade-in {
     from {
-      opacity: 0;
-      transform: translateY(-25px);
+        opacity: 0;
+        transform: translateY(-25px);
     }
-  
+
     to {
-      opacity: 1;
-      transform: translateY(0);
+        opacity: 1;
+        transform: translateY(0);
     }
-  }
-  
-  @keyframes fade-out {
+}
+
+@keyframes fade-out {
     from {
-      opacity: 1;
-      transform: translateY(0);
+        opacity: 1;
+        transform: translateY(0);
     }
-  
+
     to {
-      opacity: 0;
-      transform: translateY(25px);
+        opacity: 0;
+        transform: translateY(25px);
     }
-  }
+}
+
+@media (max-width: 768px) {
+
+    #toast-container .toast {
+        width: 100%;
+        min-width: 100px;
+        max-width: 250px;
+    }
+
+    #toast-container .toast-message {
+        font-size: 10px;
+    }
+
+    #toast-container {
+        position:fixed;
+        right: 110px;
+    }
+
+    
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+}
+
+}

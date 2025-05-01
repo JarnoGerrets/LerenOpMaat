@@ -25,12 +25,7 @@ export function createModuleInfoCard(savedModule) {
 export function createRequirementsCard(requirements) {
     let reqCardText = "";
     requirements.forEach(req => {
-        if (req.RequiredCredits) {
-            reqCardText += `Vereiste EC's: ${req.RequiredCredits}<br>`;
-        }
-        if (req.RequiredModule) {
-            reqCardText += `${req.RequiredModule.Name} is verplicht<br>`;
-        }
+    reqCardText += `${req.Description}<br>`;
     });
     return reqCardText;
 }
