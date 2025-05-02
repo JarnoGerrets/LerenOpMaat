@@ -16,7 +16,6 @@ namespace LOM.API.DTO
 		public bool IsActive { get; set; }
 		public List<RequirementDto> Requirements { get; set; }
 
-		// Model to DTO mapping
 		public static async Task<ModuleDto> FromModelAsync(Module module, LOMContext context)
 		{
 			var requirementDtos = await Task.WhenAll(
@@ -37,8 +36,6 @@ namespace LOM.API.DTO
 				Requirements = requirementDtos.ToList()
 			};
 		}
-
-		// DTO to Model mapping
 		public Module ToModel()
 		{
 			List<Requirement> requirements = RequirementDtoFactory.ToModelList(this.Requirements);

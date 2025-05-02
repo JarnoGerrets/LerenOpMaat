@@ -80,13 +80,8 @@ export default class Popup {
         headerRow.appendChild(titleWrapper);
         headerRow.appendChild(rightControls);
 
-        // Divider
-        const divider = document.createElement('hr');
-        divider.classList.add('custom-hr');
-
         // Assemble header container
         headerContainer.appendChild(headerRow);
-        headerContainer.appendChild(divider);
 
         // Content container
         const contentContainer = document.createElement('div');

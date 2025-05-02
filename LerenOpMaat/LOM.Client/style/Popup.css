@@ -26,7 +26,6 @@
         border-radius: 35px;
         max-width: 90vw;
         height: auto;
-        padding: 20px;
         box-sizing: border-box;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         position: relative;
@@ -62,7 +61,6 @@
     border-radius: 35px;
     max-width: auto;
     height: auto;
-    padding: 20px;
     box-sizing: border-box;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     position: relative;
@@ -82,6 +80,9 @@
     flex-direction: column;
     gap: clamp(4px, 4vw, 16px);
     width: 100%;
+    background-color: #FFCB05;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   }
   
   .popup-header-row {
@@ -151,6 +152,7 @@
     max-height: calc(100vh - 100px);
     padding-right: 10px;
     overflow-x: hidden;
+    margin-top: 10px;
 }
 
 .popup-button-container {
@@ -203,6 +205,10 @@
 }
 a.module-icon {
   text-decoration: none;
+}
+
+.popup-buttons{
+    padding:20px;
 }
 
 /*------------------- Styles for the filter dropdown ------------------------- */

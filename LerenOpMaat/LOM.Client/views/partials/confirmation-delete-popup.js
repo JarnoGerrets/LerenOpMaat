@@ -7,7 +7,7 @@ let mijnPopup;
 export default async function confirmationPopup(id, name) {
     mijnPopup = new Popup({
         maxWidth: 'auto',
-        height: '250px',
+        height: 'auto',
         sizeCloseButton: '0',
         closeButtonStyle: 'popup-confirmation-closebutton',
         header: `

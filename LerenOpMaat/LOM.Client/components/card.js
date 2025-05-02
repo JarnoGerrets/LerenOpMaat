@@ -3,10 +3,10 @@ class CardComponent extends HTMLElement {
         super();
     }
 
-    renderCard(contentHtml) {
+    renderCard(contentHtml, backgroundColor) {
         this.innerHTML = `
             <a class="rm-a-style">
-                <div class="bg-info shadow rounded-3 p-5 d-flex flex-column justify-content-between h-100">
+                <div style="border-radius: 25px; background: ${backgroundColor};" class="shadow p-5 d-flex flex-column justify-content-between h-100">
                     ${contentHtml}
                 </div>
             </a>
