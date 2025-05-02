@@ -4,7 +4,7 @@ import { setStartYear } from "../client/api-client.js";
 
 export async function RouteOrSelector() {
   let cohortYear = localStorage.getItem("cohortYear");
-  //userId moet nog toegevoegd worden zodra authenticatie rond is.
+  let userId = '';//userId moet nog toegevoegd worden zodra authenticatie rond is.
 
   if (!cohortYear) {
     if (userId) {
@@ -65,5 +65,5 @@ export default async function CohortSelector() {
     }
   });
 
-  return fragment;
+    return { fragment, init: () => null };
 }

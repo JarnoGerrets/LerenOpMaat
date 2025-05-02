@@ -153,7 +153,7 @@ export default async function LearningRoute() {
         });
     }
 
-    return fragment;
+    return { fragment, init: () => null };
 }
 
 async function saveLearningRoute(learningRouteArray) {

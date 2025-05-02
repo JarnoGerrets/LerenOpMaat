@@ -1,32 +1,45 @@
+import loadTemplate from "../scripts/loadTemplate.js";
+
 export default class SemesterModule {
     constructor(modules, onModuleSelect) {
         this.modules = modules;
         this.onModuleSelect = onModuleSelect;
     }
 
-    render() {
+    async render() {
         const container = document.createElement('div');
         container.classList.add('module-container');
         container.id = 'popup-module-container';
 
+        const template = await loadTemplate('../templates/module-card.html');
+
         this.modules.forEach(module => {
+            let link = '';
+            if (module.Id) {
+                link = `<a href="#Module/${module.Id}" class="material-icons module-icon" title="Go to ${module.Description}">
+                    i
+                </a>`;
+            }
+            const populatedTemplate = template
+                .replace('{{id}}', module.Id)
+                .replace('{{card_text}}', module.Description)
+                .replace('{{title}}', module.Name)
+                .replace('{{link}}', link);
+
             const tile = document.createElement('div');
             tile.classList.add('module-tile');
-
-            const moduleName = document.createElement('h1');
-            moduleName.classList.add('module-title');
-            moduleName.textContent = module.Name;
-            tile.appendChild(moduleName);
-
-            const infoIcon = document.createElement('span');
-            infoIcon.classList.add('material-icons', 'module-icon');
-            infoIcon.textContent = 'i';
-            infoIcon.title = `ga naar ${module.Description}`;
-            tile.appendChild(infoIcon);
-
-            const moduleDescription = document.createElement('p');
-            moduleDescription.textContent = module.Name;
-            tile.appendChild(moduleDescription);
+            tile.id = 'module-{{id}}';
+            tile.innerHTML = populatedTemplate;
+            //making sure the router can recognize this call
+            const infoLink = tile.querySelector('a');
+            if (infoLink) {
+                infoLink.setAttribute('data-link', '');
+                infoLink.addEventListener('click', () => {
+                    if (module.Id) {
+                        localStorage.setItem(`module-${module.Id}`, JSON.stringify(module));
+                    }
+                });
+            }
 
             tile.addEventListener('click', () => {
                 this.onModuleSelect(module);
@@ -34,7 +47,6 @@ export default class SemesterModule {
 
             container.appendChild(tile);
         });
-
         return container;
     }
 }

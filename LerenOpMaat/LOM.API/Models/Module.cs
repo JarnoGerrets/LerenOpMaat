@@ -8,14 +8,17 @@ public class Module
     public int Id { get; set; }
     [Required]
     public string Name { get; set; }
-	[Required]
     public string Code { get; set; }
-    [Required]
-    public string Description { get; set; }
-	[Required]
-	public int Ec { get; set; }
-	[Required]
-	public int Niveau { get; set; }
+
+    public string? Description { get; set; }
+
     public string? Category { get; set; }
-    public ICollection<Semester>? Semesters { get; set; }
+
+    public int Ec { get; set; }
+    public int Niveau {get; set; }
+    public int Periode {get; set; }
+    public Boolean IsActive { get; set; } = false;
+
+    public ICollection<Requirement> Requirements { get; set; } = new List<Requirement>();
+
 }
