@@ -18,11 +18,11 @@ export default async function SemesterCard({ semester, module, locked = false, o
   if (!locked && button) {
     button.addEventListener("click", async () => {
       const selectedModule = await SemesterChoice(button.textContent.trim());
-      if (selectedModule) {
+      if (selectedModule.Name !== "Geen Keuze") {
         button.innerHTML = `
-                    ${selectedModule.Name} 
-                    <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
-                `;
+              ${selectedModule.Name} 
+              <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
+          `;
         // Roep de callback aan om de learningRouteArray bij te werken
         if (onModuleChange) {
           onModuleChange({
@@ -30,6 +30,12 @@ export default async function SemesterCard({ semester, module, locked = false, o
             moduleId: selectedModule.Id,
           });
         }
+      }
+      else {
+        button.innerHTML = `
+              Selecteer je module
+              <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
+          `;
       }
     });
   }
