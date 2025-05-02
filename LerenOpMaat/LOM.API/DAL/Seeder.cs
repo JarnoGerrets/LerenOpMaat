@@ -28,21 +28,21 @@ public class Seeder
            new LearningRoute { Id = 1});
 
         _modelBuilder.Entity<Module>().HasData(
-            new Module { Id = 1, Name = "Introduction to Programming", Description = "Introduction to Programming", Category = "SE" },
-            new Module { Id = 2, Name = "Web Development Basics", Description = "Web Development Basics", Category = "BIM" },
-            new Module { Id = 3, Name = "Data Structures and Algorithms", Description = "Data Structures and Algorithms", Category = "IDNS" },
-            new Module { Id = 4, Name = "Database Management Systems", Description = "Database Management Systems", Category = "SE" },
-            new Module { Id = 5, Name = "Introduction to Programming", Description = "Introduction to Programming", Category = "BIM" },
-            new Module { Id = 6, Name = "Web Development Basics", Description = "Web Development Basics", Category = "IDNS" },
-            new Module { Id = 7, Name = "Data Structures and Algorithms", Description = "Data Structures and Algorithms", Category = "SE" },
-            new Module { Id = 8, Name = "Database Management Systems", Description = "Database Management Systems", Category = "BIM" },
-            new Module { Id = 9, Name = "Introduction to Programming", Description = "Introduction to Programming", Category = "IDNS" },
-            new Module { Id = 10, Name = "Web Development Basics", Description = "Web Development Basics", Category = "SE" },
-            new Module { Id = 11, Name = "Data Structures and Algorithms", Description = "Data Structures and Algorithms", Category = "BIM" },
-            new Module { Id = 12, Name = "Database Management Systems", Description = "Database Management Systems", Category = "IDNS" },
-            new Module { Id = 13, Name = "Data Structures and Algorithms", Description = "Data Structures and Algorithms", Category = "SE" },
-            new Module { Id = 14, Name = "Database Management Systems", Description = "Database Management Systems", Category = "BIM" },
-            new Module { Id = 15, Name = "Database Management Systems", Description = "Database Management Systems", Category = "IDNS" }
+            new Module { Id = 1, Name = "Introduction to Programming", Description = "Introduction to Programming", Category = "SE", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 2, Name = "Web Development Basics", Description = "Web Development Basics", Category = "BIM", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 3, Name = "Data Structures and Algorithms", Description = "Data Structures and Algorithms", Category = "IDNS", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 4, Name = "Database Management Systems", Description = "Database Management Systems", Category = "SE", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 5, Name = "Introduction to Programming", Description = "Introduction to Programming", Category = "BIM", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 6, Name = "Web Development Basics", Description = "Web Development Basics", Category = "IDNS", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 7, Name = "Data Structures and Algorithms", Description = "Data Structures and Algorithms", Category = "SE", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 8, Name = "Database Management Systems", Description = "Database Management Systems", Category = "BIM", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 9, Name = "Introduction to Programming", Description = "Introduction to Programming", Category = "IDNS", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 10, Name = "Web Development Basics", Description = "Web Development Basics", Category = "SE", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 11, Name = "Data Structures and Algorithms", Description = "Data Structures and Algorithms", Category = "BIM", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 12, Name = "Database Management Systems", Description = "Database Management Systems", Category = "IDNS", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 13, Name = "Data Structures and Algorithms", Description = "Data Structures and Algorithms", Category = "SE", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 14, Name = "Database Management Systems", Description = "Database Management Systems", Category = "BIM", Ec=30, Niveau=2, Code="TMP.01.DT"},
+            new Module { Id = 15, Name = "Database Management Systems", Description = "Database Management Systems", Category = "IDNS", Ec=30, Niveau=2, Code="TMP.01.DT"}
         );
 
         _modelBuilder.Entity<User>().HasData(
