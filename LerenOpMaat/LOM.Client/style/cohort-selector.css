@@ -1,0 +1,59 @@
+.cohort-wrapper {
+  min-height: 100vh;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.cohort-container {
+  width: 100%;
+  max-width: 24rem;
+}
+
+.cohort-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.cohort-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cohort-button {
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #D1D5DB;
+  background-color: #F3F4F6;
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-align: left;
+  color: #1F2937;
+  transition: all 0.2s ease-in-out;
+}
+
+.cohort-button.selected {
+  background-color: #DBEAFE;
+  border-color: #3B82F6;
+  color: #1D4ED8;
+}
+
+.cohort-submit {
+  margin-top: 2rem;
+  width: 100%;
+  padding: 0.75rem;
+  color: white;
+  text-align: center;
+  border-radius: 0.75rem;
+  background-color: #1E3A8A;
+  opacity: 1;
+}
+
+.cohort-submit:disabled {
+  opacity: 0.4;
+}

@@ -1,6 +1,6 @@
 .learning-route-container {
     display: flex;
-    justify-content: space-evenly ;
+    justify-content: center;
     flex-direction: row;
     flex-wrap: wrap;
 }
@@ -140,11 +140,6 @@
     left: unset;
 }
 
-.learning-route-action-button{
-    padding: 10px 20px;
-    min-width: 180px;
-}
-
 .top-right-buttons {
     position: fixed;
     top: 8rem;
@@ -187,9 +182,13 @@
   .circle-button.light-blue {
     background-color: #3b93d3;
   }
-  
+
   .circle-button.red {
-    background-color: #d94d4d;
+      background-color: #d94d4d;
+  }
+
+  .circle-button.green {
+      background-color: #45b97c;
   }
 
 @media screen and (max-width: 1040px) {

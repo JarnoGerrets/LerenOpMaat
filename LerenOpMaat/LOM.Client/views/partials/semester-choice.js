@@ -1,6 +1,7 @@
 import Popup from "../../components/Popup.js";
 import SemesterModule from "../../components/SemesterModule.js";
 import { getModules } from "../../client/api-client.js";
+import { getModules } from "../../client/api-client.js";
 
 let filterDropdown;
 let mijnPopup;
@@ -8,6 +9,7 @@ let closeFilterDropdownHandler;
 let modulesData = [];
 let apiResponse = [];
 let selectedCategories = [];
+let modulesData = [];
 let selectedCategory;
 
 export default async function SemesterChoice(selectedModuleName = "Selecteer je module") {
@@ -96,7 +98,6 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
     }
 
 }
-
 
 function showFilter(Data) {
     const isOpen = filterDropdown && filterDropdown.classList.contains('open');
@@ -212,6 +213,8 @@ function filterData(searchTerm = '') {
 
     if (searchTerm) {
         filtered = filtered.filter(m =>
+            m.Name.toLowerCase().includes(searchTerm) ||
+            m.Description.toLowerCase().includes(searchTerm)
             m.Name.toLowerCase().includes(searchTerm) ||
             m.Description.toLowerCase().includes(searchTerm)
         );

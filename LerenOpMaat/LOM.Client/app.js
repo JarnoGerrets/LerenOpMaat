@@ -1,10 +1,11 @@
 import LearningRoute from "./views/learning-route.js";
 import ModuleInfo from "./views/module-info.js";
+import { RouteOrSelector } from "./views/cohort-selector.js";
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
   "/": async () => {
-    return await LearningRoute();
+    return await RouteOrSelector();
   },
   "/Module/:id": async (id) => {
     return await ModuleInfo(id);
