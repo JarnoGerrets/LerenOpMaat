@@ -1,6 +1,6 @@
 export default class Popup {
-    constructor({maxWidth = 'auto', height = 'auto', sizeCloseButton='',closeButtonStyle, header = '', content = '', buttons = [] }) {
-        
+    constructor({ maxWidth = 'auto', height = 'auto', sizeCloseButton = '', extraButtons = false, closeButtonStyle, header = '', titleWrapperClass = '',content = '', buttons = [] }) {
+
         this.result = null;
         this._resolve = null;
 
@@ -37,22 +37,23 @@ export default class Popup {
 
         // Buttons
         const buttonContainer = document.createElement('div');
-        buttonContainer.classList.add('popup-button-container');
-        if (buttons.length === 0) {
-            buttonContainer.style.display = 'none';
+        if (extraButtons) {
+            buttonContainer.classList.add('popup-button-container');
+            if (buttons.length === 0) {
+                buttonContainer.style.display = 'none';
+            }
+
+            buttons.forEach(({ text, onClick }) => {
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('popup-button-wrapper');
+                const btn = document.createElement('button');
+                btn.innerHTML = text;
+                btn.classList.add('popup-btn');
+                btn.addEventListener('click', onClick);
+                wrapper.appendChild(btn);
+                buttonContainer.appendChild(wrapper);
+            });
         }
-
-        buttons.forEach(({ text, onClick }) => {
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('popup-button-wrapper');
-            const btn = document.createElement('button');
-            btn.innerHTML = text;
-            btn.classList.add('popup-btn');
-            btn.addEventListener('click', onClick);
-            wrapper.appendChild(btn);
-            buttonContainer.appendChild(wrapper);
-        });
-
         // Header container
         const title = document.createElement('div');
         title.classList.add('popup-header');
@@ -62,6 +63,7 @@ export default class Popup {
         // Title wrapper
         const titleWrapper = document.createElement('div');
         titleWrapper.classList.add('popup-title');
+        if (titleWrapperClass) titleWrapper.classList.add(titleWrapperClass);
         titleWrapper.appendChild(title);
 
         // Right-side controls container (buttons + close)
@@ -107,7 +109,7 @@ export default class Popup {
         this.overlay.appendChild(this.popup);
     }
 
-   open() {
+    open() {
         document.body.appendChild(this.overlay);
         setTimeout(() => {
             this.overlay.style.opacity = 1;

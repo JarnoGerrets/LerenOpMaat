@@ -70,6 +70,7 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
         maxWidth: 'auto',
         height: '620px',
         sizeCloseButton: '16',
+        extraButtons: true,
         header: `
         <h1 class="popup-header">
             Selecteer je module
