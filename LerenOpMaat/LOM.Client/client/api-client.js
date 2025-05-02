@@ -45,10 +45,6 @@ export async function updateModule(id, moduleData) {
         throw new Error(`Failed to update module: ${res.status}`);
     }
 
-    if (!res.ok) {
-        throw new Error(`Failed to update module: ${res.status}`);
-    }
-
     return;
 }
 
