@@ -2,3 +2,8 @@
     background-color: #124477 !important;
     border-color: #124477 !important;
 }
+
+a.rm-a-style, a.rm-a-style:hover, a.rm-a-style:focus, a.rm-a-style:active {
+    text-decoration: none;
+    color: inherit;
+}

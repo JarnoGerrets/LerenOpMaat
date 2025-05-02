@@ -1,7 +1,9 @@
 import { RouteOrSelector } from "./views/cohort-selector.js";
+import { moduleOverview } from "./views/module-overview.js";
 
 const routes = {
-  "/": RouteOrSelector
+  "": RouteOrSelector,
+  "#module-overview": moduleOverview,
 };
 
 const navigateTo = url => {
@@ -10,7 +12,7 @@ const navigateTo = url => {
 };
 
 const router = async () => {
-  const path = window.location.pathname;
+  const path = window.location.hash;
   const viewFn = routes[path] || (() => {
     const div = document.createElement("div");
     div.innerHTML = "<h1>404 Not Found</h1>";
