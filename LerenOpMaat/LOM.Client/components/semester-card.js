@@ -17,7 +17,7 @@ export default async function SemesterCard({ semester, module, locked = false, o
 
   if (!locked && button) {
     button.addEventListener("click", async () => {
-      const selectedModule = await SemesterChoice();
+      const selectedModule = await SemesterChoice(button.textContent.trim());
       if (selectedModule) {
         button.innerHTML = `
                     ${selectedModule.Name} 
