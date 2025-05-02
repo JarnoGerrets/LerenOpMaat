@@ -1,7 +1,7 @@
-import loadTemplate from "./loadTemplate.js";
 import { getModule } from "../../client/api-client.js";
-import { createModuleInfoCard, createRequirementsCard } from '../components/module-cards.js';
 import { setupButtons } from './module-actions.js';
+import '../components/module-card.js';
+import '../components/requirements-card.js';
 
 export default async function initModuleInfo(id) {
     const correctRole = true;
@@ -21,32 +21,15 @@ export default async function initModuleInfo(id) {
         console.log(savedModule);
     }
 
-    // Create Module Info Card
-    const infoCardText = createModuleInfoCard(savedModule);
-    const populatedTemplate = await loadTemplate('../templates/module-card.html');
-    const populatedModuleCard = populatedTemplate
-        .replace('{{id}}', savedModule.Id)
-        .replace('{{card_text}}', infoCardText)
-        .replace('{{title}}', savedModule.Name)
-        .replace('{{link}}', '');
-
-    const tile = document.createElement('div');
-    tile.classList.add('module-tile');
-    tile.innerHTML = populatedModuleCard;
-    CardContainer.appendChild(tile);
+    // Create Module Info Card 
+    const infoCard = document.createElement('module-card');
+    infoCard.data = savedModule;
+    CardContainer.appendChild(infoCard);
 
     // Create Requirements Card
-    const reqCardText = createRequirementsCard(savedModule.Requirements);
-    const populatedTemplate2 = populatedTemplate
-        .replace('{{id}}', savedModule.id)
-        .replace('{{card_text}}', reqCardText)
-        .replace('{{title}}', 'Ingangseisen')
-        .replace('{{link}}', '');
-    const tile2 = document.createElement('div');
-    tile2.classList.add('module-tile', 'ingangseisen-tile');
-    tile2.style.fontWeight = 'bold';
-    tile2.innerHTML = populatedTemplate2;
-    CardContainer.appendChild(tile2);
+    const reqCard = document.createElement('requirements-card');
+    reqCard.data = savedModule.Requirements;
+    CardContainer.appendChild(reqCard);
 
     // Add admin buttons for editing and deleting
     if (correctRole) {

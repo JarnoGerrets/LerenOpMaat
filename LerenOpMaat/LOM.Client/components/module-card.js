@@ -12,12 +12,20 @@ export default class ModuleCard extends customElements.get("base-card") {
             </div>
             <div class="d-flex">
                 <div class="w-50">
-                    <p><b>code:</b> ${module.Code}</p>
-                    <p><b>semester:</b> ${module.Period}</p>
+                    <div class="module-info-row" style="font-weight: bold;">
+                    Code: <span id="code-text">${module.Code}</span>
+                    </div>
+                    <div class="module-info-row" style="font-weight: bold;">
+                    Periode: <span id="periode-text">${module.Periode}</span>
+                    </div>
                 </div>
-                <div class="w-50">
-                    <p><b>ec:</b> ${module.Ec}</p>
-                    <p><b>niveau:</b> ${module.Niveau}</p>
+                <div>
+                    <div class="module-info-row" style="font-weight: bold;">
+                    EC: <span id="ec-text">${module.Ec}</span>
+                    </div>
+                    <div class="module-info-row" style="font-weight: bold;">
+                    Niveau: <span id="niveau-text">${module.Niveau}</span>
+                    </div>
                 </div>
             </div>
         `;
