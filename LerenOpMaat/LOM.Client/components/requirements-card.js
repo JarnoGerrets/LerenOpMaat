@@ -21,7 +21,7 @@ export default class RequirementsCard extends customElements.get("base-card") {
             </div>
         `;
 
-        this.renderCard(content);
+        this.renderCard(content, "#45B97C");
     }
 }
 

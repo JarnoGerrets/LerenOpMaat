@@ -62,6 +62,23 @@
     function shrinkItem(element) {
         element.style.transform = 'scale(1)';
       }
+      // when clicked anywhere outside sidebar, its closed
+      document.addEventListener('click', function(event) {
+      const menu = document.getElementById('menu');
+      const menuButton = document.querySelector('.bi-list');
+
+      if (!menu.contains(event.target) && !menuButton.contains(event.target)) {
+        menu.classList.remove('active');
+      }
+    });
+
+    // add event listeners to all <a> links inside the menu to close it when clicked
+    const menuLinks = document.querySelectorAll('#menu a');
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('menu').classList.remove('active');
+      });
+    });
   </script>
 </body>
 

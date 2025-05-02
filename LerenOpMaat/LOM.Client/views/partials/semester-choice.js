@@ -114,7 +114,7 @@ function showFilter(Data) {
         });
 
         filterDropdown.appendChild(searchInput);
-        const categories = ['Alles', ...new Set(Data.filter(m => m.Name !== 'Geen Keuze').map(m => m.Category))];
+        const categories = ['Alles', ...new Set(Data.filter(m => m.Name !== 'Geen Keuze').map(m => m.GraduateProfile.Name))];
         categories.forEach(category => {
             const option = document.createElement('div');
             option.textContent = category;
@@ -206,7 +206,7 @@ function filterData(searchTerm = '') {
     let filtered = modulesData.filter(m => m.Name !== 'Geen Keuze');
 
     if (selectedCategories.length > 0) {
-        filtered = filtered.filter(m => selectedCategories.includes(m.Category));
+        filtered = filtered.filter(m => selectedCategories.includes(m.GraduateProfile.Name));
     }
 
     if (searchTerm) {
