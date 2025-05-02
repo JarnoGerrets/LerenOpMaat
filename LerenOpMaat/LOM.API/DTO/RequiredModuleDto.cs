@@ -6,7 +6,6 @@ namespace LOM.API.DTO
 {
 	public class RequiredModuleDto : ModuleDto
 	{
-		// Model to DTO mapping
 		public static RequiredModuleDto FromModel(Module module)
 		{
 			return new RequiredModuleDto
