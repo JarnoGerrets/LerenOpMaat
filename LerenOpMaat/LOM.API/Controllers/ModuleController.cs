@@ -17,19 +17,30 @@ namespace LOM.API.Controllers
 			_context = context;
 		}
 
-		// GET: api/Module
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules()
+		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules([FromQuery] string? q)
 		{
-			var modules = await _context.Modules
-				.Where(m => m.IsActive)
-				.Include(m => m.Requirements)
-				.ToListAsync();
+			var query = _context.Modules
+				.Where(m => m.IsActive);
 
-			// Use Task.WhenAll to await all DTO mappings
-			var result = await Task.WhenAll(modules.Select(m => ModuleDto.FromModelAsync(m, _context)));
+			if (!string.IsNullOrWhiteSpace(q))
+			{
+				string lowerQ = q.ToLower();
+				query = query.Where(m =>
+					m.Name.ToLower().Contains(lowerQ) ||
+					m.Code.ToLower().Contains(lowerQ) ||
+					m.Description.ToLower().Contains(lowerQ));
+			}
 
-			return result.ToList();
+			var modules = await query.Include(m => m.Requirements).ToListAsync();
+
+			var result = new List<ModuleDto>();
+			foreach (var module in modules)
+			{
+				result.Add(await ModuleDto.FromModelAsync(module, _context));
+			}
+
+			return result;
 		}
 
 		// GET: api/Module/5
