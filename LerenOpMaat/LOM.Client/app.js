@@ -4,10 +4,10 @@ import { RouteOrSelector } from "./views/cohort-selector.js";
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
-  "/": async () => {
+  "": async () => {
     return await RouteOrSelector();
   },
-  "/Module/:id": async (id) => {
+  "#Module/:id": async (id) => {
     return await ModuleInfo(id);
   },
 };
@@ -44,16 +44,14 @@ const matchRoute = (path) => {
 // router to match pathname with any existing routes, in case of no results an error is displayed.
 // router uses fragments followed by possible intialization scripts to 'switch' pages.
 const router = async () => {
-  const path = window.location.pathname;
+  const path = window.location.hash;
   const app = document.getElementById("app");
   app.innerHTML = "";
 
   const match = matchRoute(path);
-
   if (match) {
     const { handler, params } = match;
     const { fragment, init } = await handler(params.id);
-
     app.appendChild(fragment);
     if (init) await init(); // <-- when a script needs the view to be loaded before continuing this ensures that the contents are in the DOM to be used.
 

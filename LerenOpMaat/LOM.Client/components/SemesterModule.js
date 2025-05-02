@@ -16,7 +16,7 @@ export default class SemesterModule {
         this.modules.forEach(module => {
             let link = '';
             if (module.Id) {
-                link = `<a href="/Module/${module.Id}" class="material-icons module-icon" title="Go to ${module.Description}">
+                link = `<a href="#Module/${module.Id}" class="material-icons module-icon" title="Go to ${module.Description}">
                     i
                 </a>`;
             }

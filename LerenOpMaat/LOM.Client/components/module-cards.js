@@ -12,7 +12,7 @@ export function createModuleInfoCard(savedModule) {
       </div>
       <div class="module-info-column">
         <div class="module-info-row">
-          EC: <span id="ec-text">${savedModule.EC}</span>
+          EC: <span id="ec-text">${savedModule.Ec}</span>
         </div>
         <div class="module-info-row">
           Niveau: <span id="niveau-text">${savedModule.Niveau}</span>

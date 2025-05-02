@@ -7,11 +7,12 @@ export default async function initModuleInfo(id) {
     const correctRole = true;
     const CardContainer = document.getElementById('card-column');
     const textArea = document.getElementById('moduleTextArea');
-    textArea.readOnly = true; // by default it's not editable
+    textArea.readOnly = true; // by default it's not editable to prevent issues (not secure but without saving options not a real issue)
 
-    const path = window.location.pathname;
+    const path = window.location.hash;
+    console.log(path);
     const pathParts = path.split('/');
-    const moduleId = pathParts[2];
+    const moduleId = pathParts[1];
     let savedModule = JSON.parse(localStorage.getItem(`module-${moduleId}`));
 
     if (!savedModule) {

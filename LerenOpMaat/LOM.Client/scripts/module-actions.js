@@ -93,12 +93,12 @@ function ToggleFields(module) {
     if (codeText.querySelector("input")) {
         module.Code = document.getElementById("code-input").value;
         module.Periode = document.getElementById("periode-input").value;
-        module.EC = document.getElementById("ec-input").value;
+        module.Ec = document.getElementById("ec-input").value;
         module.Niveau = document.getElementById("niveau-input").value;
 
         codeText.innerHTML = `${module.Code}`;
         periodeText.innerHTML = `${module.Periode}`;
-        ecText.innerHTML = `${module.EC}`;
+        ecText.innerHTML = `${module.Ec}`;
         niveauText.innerHTML = `${module.Niveau}`;
     } else {
         codeText.innerHTML = `
@@ -117,7 +117,7 @@ function ToggleFields(module) {
         `;
 
         ecText.innerHTML = `
-        <div><input class="card-input" type="number" id="ec-input" value="${module.EC}"></div>
+        <div><input class="card-input" type="number" id="ec-input" value="${module.Ec}"></div>
         `;
 
         let optionsNiveau = '';
@@ -136,7 +136,7 @@ async function saveChanges(module, textArea) {
 
     module.Code = document.getElementById("code-input").value;
     module.Periode = document.getElementById("periode-input").value;
-    module.EC = document.getElementById("ec-input").value;
+    module.Ec = document.getElementById("ec-input").value;
     module.Niveau = document.getElementById("niveau-input").value;
     module.Description = textArea.value;
 
