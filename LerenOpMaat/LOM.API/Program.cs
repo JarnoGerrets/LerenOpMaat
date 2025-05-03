@@ -9,11 +9,16 @@ builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AppCorsPolicy", policy =>
 	{
-		policy.WithOrigins("https://lom.robhutten.nl")
-			  .AllowAnyHeader()
-			  .AllowAnyMethod()
-			  .AllowCredentials()
-			  .SetIsOriginAllowedToAllowWildcardSubdomains();
+		policy.WithOrigins(
+				"https://lom.robhutten.nl",
+				"http://lom.robhutten.nl",
+				"https://www.lom.robhutten.nl",
+				"http://www.lom.robhutten.nl"
+			)
+			.AllowAnyHeader()
+			.AllowAnyMethod()
+			.AllowCredentials()
+			.SetIsOriginAllowedToAllowWildcardSubdomains();
 	});
 });
 
@@ -36,15 +41,15 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {/
-    app.UseSwagger();
-    app.UseSwaggerUI();
-// }
+if (app.Environment.IsDevelopment())
+{
+	app.UseSwagger();
+	app.UseSwaggerUI();
+}
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+	ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
 // Enable CORS before other middleware

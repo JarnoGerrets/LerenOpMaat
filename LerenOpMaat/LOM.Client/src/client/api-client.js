@@ -4,9 +4,8 @@ export async function getModules(q) {
   const res = await fetch(`${API_BASE}/Module?q=${q||''}`, {
     method: "GET",
     credentials: 'include',
-    mode: 'no-cors',
     headers: {
-      "Accept": "text/plain"
+      "Accept": "application/json"
     }
   });
 
@@ -14,16 +13,15 @@ export async function getModules(q) {
     throw new Error(`Failed to fetch modules: ${res.status}`);
   }
 
-    return await res.json();
+  return await res.json();
 }
 
 export async function getModule(id) {
     const res = await fetch(`${API_BASE}/Module/${id}`, {
         method: "GET",
         credentials: 'include',
-        mode: 'no-cors',
         headers: {
-            "Accept": "text/plain"
+            "Accept": "application/json"
         }
     });
 
@@ -32,14 +30,12 @@ export async function getModule(id) {
     }
 
     return await res.json();
-
 }
 
 export async function updateModule(id, moduleData) {
     const res = await fetch(`${API_BASE}/Module/${id}`, {
         method: "PUT",
         credentials: 'include',
-        mode: 'no-cors',
         headers: {
             "Accept": "application/json",
             "Content-Type": "application/json"
@@ -58,9 +54,8 @@ export async function deleteModule(id) {
     const res = await fetch(`${API_BASE}/Module/${id}`, {
         method: "DELETE",
         credentials: 'include',
-        mode: 'no-cors',
         headers: {
-            "Accept": "text/plain"
+            "Accept": "application/json"
         }
     });
 
@@ -69,16 +64,14 @@ export async function deleteModule(id) {
     }
 
     return res.text();
-
 }
 
 export async function getLearningRoutesByUserId(id) {
   const res = await fetch(`${API_BASE}/LearningRoute/User/${id}`, {
     method: "GET",
     credentials: 'include',
-    mode: 'no-cors',
     headers: {
-      "Accept": "text/plain"
+      "Accept": "application/json"
     }
   });
 
@@ -93,10 +86,9 @@ export async function postLearningRoute(learningRoute) {
   const res = await fetch(`${API_BASE}/LearningRoute`, {
     method: "POST",
     credentials: 'include',
-    mode: 'no-cors',
     headers: {
       "Content-Type": "application/json",
-      "Accept": "text/plain"
+      "Accept": "application/json"
     },
     body: JSON.stringify(learningRoute)
   });
@@ -112,12 +104,11 @@ export async function updateSemester(learningRouteId, semesterData) {
   const res = await fetch(`${API_BASE}/Semester/UpdateSemesters/${learningRouteId}`, {
     method: "PUT",
     credentials: 'include',
-    mode: 'no-cors',
     headers: {
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
-    body: JSON.stringify(semesterData) // Verstuur de array van semesters
+    body: JSON.stringify(semesterData)
   });
 
   if (!res.ok) {
@@ -126,12 +117,11 @@ export async function updateSemester(learningRouteId, semesterData) {
     throw new Error(`Failed to update semester: ${res.status}`);
   }
 
-  // Controleer of de response JSON bevat
   if (res.headers.get("Content-Type")?.includes("application/json")) {
     return await res.json();
   } else {
     console.warn("Response bevat geen JSON, retourneer een standaardwaarde.");
-    return { message: "Semesters updated successfully (geen JSON)" }; // Standaardwaarde
+    return { message: "Semesters updated successfully (geen JSON)" };
   }
 }
 
@@ -139,7 +129,6 @@ export async function deleteRoute(learningRouteId) {
   const res = await fetch(`${API_BASE}/LearningRoute/${learningRouteId}`, {
     method: "DELETE",
     credentials: 'include',
-    mode: 'no-cors',
     headers: {
       "Accept": "application/json"
     }
@@ -149,7 +138,7 @@ export async function deleteRoute(learningRouteId) {
     throw new Error(`Failed to delete learning route: ${res.status}`);
   }
 
-  return res.ok; // Return true if the request was successful
+  return res.ok;
 }
 
 export async function getStartYear(id) {
@@ -157,9 +146,8 @@ export async function getStartYear(id) {
     const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
       method: 'GET',
       credentials: 'include',
-      mode: 'no-cors',
       headers: {
-        'Content-Type': 'application/json'
+        'Accept': 'application/json'
       }
     });
 
@@ -180,9 +168,9 @@ export async function setStartYear(id, startYear) {
     const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
       method: 'POST',
       credentials: 'include',
-      mode: 'no-cors',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(startYear)
     });
