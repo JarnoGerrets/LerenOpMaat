@@ -79,7 +79,7 @@ export default async function addModulePopup() {
     });
 
     document.getElementById("add-module-form").addEventListener("submit", async (e) => {
-        e.preventDefault(); // Prevent actual form submission
+        e.preventDefault();
 
         const form = e.target;
         if (!form.checkValidity()) {
