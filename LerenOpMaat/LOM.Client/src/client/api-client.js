@@ -3,6 +3,8 @@ const API_BASE = "https://api.robhutten.nl/api";
 export async function getModules(q) {
   const res = await fetch(`${API_BASE}/Module?q=${q||''}`, {
     method: "GET",
+    credentials: 'include',
+    mode: 'no-cors',
     headers: {
       "Accept": "text/plain"
     }
@@ -18,6 +20,8 @@ export async function getModules(q) {
 export async function getModule(id) {
     const res = await fetch(`${API_BASE}/Module/${id}`, {
         method: "GET",
+        credentials: 'include',
+        mode: 'no-cors',
         headers: {
             "Accept": "text/plain"
         }
@@ -34,6 +38,8 @@ export async function getModule(id) {
 export async function updateModule(id, moduleData) {
     const res = await fetch(`${API_BASE}/Module/${id}`, {
         method: "PUT",
+        credentials: 'include',
+        mode: 'no-cors',
         headers: {
             "Accept": "application/json",
             "Content-Type": "application/json"
@@ -51,6 +57,8 @@ export async function updateModule(id, moduleData) {
 export async function deleteModule(id) {
     const res = await fetch(`${API_BASE}/Module/${id}`, {
         method: "DELETE",
+        credentials: 'include',
+        mode: 'no-cors',
         headers: {
             "Accept": "text/plain"
         }
@@ -67,6 +75,8 @@ export async function deleteModule(id) {
 export async function getLearningRoutesByUserId(id) {
   const res = await fetch(`${API_BASE}/LearningRoute/User/${id}`, {
     method: "GET",
+    credentials: 'include',
+    mode: 'no-cors',
     headers: {
       "Accept": "text/plain"
     }
@@ -82,6 +92,8 @@ export async function getLearningRoutesByUserId(id) {
 export async function postLearningRoute(learningRoute) {
   const res = await fetch(`${API_BASE}/LearningRoute`, {
     method: "POST",
+    credentials: 'include',
+    mode: 'no-cors',
     headers: {
       "Content-Type": "application/json",
       "Accept": "text/plain"
@@ -99,6 +111,8 @@ export async function postLearningRoute(learningRoute) {
 export async function updateSemester(learningRouteId, semesterData) {
   const res = await fetch(`${API_BASE}/Semester/UpdateSemesters/${learningRouteId}`, {
     method: "PUT",
+    credentials: 'include',
+    mode: 'no-cors',
     headers: {
       "Content-Type": "application/json",
       "Accept": "application/json"
@@ -124,6 +138,8 @@ export async function updateSemester(learningRouteId, semesterData) {
 export async function deleteRoute(learningRouteId) {
   const res = await fetch(`${API_BASE}/LearningRoute/${learningRouteId}`, {
     method: "DELETE",
+    credentials: 'include',
+    mode: 'no-cors',
     headers: {
       "Accept": "application/json"
     }
@@ -140,6 +156,8 @@ export async function getStartYear(id) {
   try {
     const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
       method: 'GET',
+      credentials: 'include',
+      mode: 'no-cors',
       headers: {
         'Content-Type': 'application/json'
       }
@@ -161,6 +179,8 @@ export async function setStartYear(id, startYear) {
   try {
     const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
       method: 'POST',
+      credentials: 'include',
+      mode: 'no-cors',
       headers: {
         'Content-Type': 'application/json'
       },
