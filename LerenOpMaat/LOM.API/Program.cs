@@ -4,15 +4,16 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+// Add CORS services
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AppCorsPolicy", policy =>
 	{
-		policy.WithOrigins(allowedOrigins ?? [])
+		policy.WithOrigins("https://lom.robhutten.nl")
 			  .AllowAnyHeader()
 			  .AllowAnyMethod()
-			  .AllowCredentials();
+			  .AllowCredentials()
+			  .SetIsOriginAllowedToAllowWildcardSubdomains();
 	});
 });
 
@@ -33,10 +34,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
 
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
@@ -45,8 +42,15 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     app.UseSwaggerUI();
 // }
 
-app.UseHttpsRedirection();
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
+// Enable CORS before other middleware
 app.UseCors("AppCorsPolicy");
+
+app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.UseStaticFiles();
