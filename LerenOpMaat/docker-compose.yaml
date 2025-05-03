@@ -16,4 +16,4 @@
     container_name: lom-client
     restart: unless-stopped
     ports:
-      - "8002:80"
+      - "8002:3000"

@@ -1,11 +1,33 @@
-﻿# Use the official NGINX base image
-FROM nginx:alpine
+﻿# Build stage
+FROM node:18-alpine AS builder
 
-# Remove the default NGINX web content
-RUN rm -rf /usr/share/nginx/html/*
+# Set working directory
+WORKDIR /app
 
-# Copy all files and folders recursively from the current directory
-COPY . /usr/share/nginx/html
+# Copy package files
+COPY package*.json ./
 
-# Expose default NGINX port
-EXPOSE 80
+# Install dependencies
+RUN npm install
+
+# Copy all files
+COPY . .
+
+# Production stage
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files and install production dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy built files from builder stage
+COPY --from=builder /app .
+
+# Expose the port Gulp will serve on
+EXPOSE 3000
+
+# Set the entrypoint to run Gulp
+ENTRYPOINT ["npx", "gulp"]
