@@ -17,30 +17,20 @@ namespace LOM.API.Controllers
 			_context = context;
 		}
 
+		// GET: api/Module
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules([FromQuery] string? q)
+		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules()
 		{
-			var query = _context.Modules
-				.Where(m => m.IsActive);
+			var modules = await _context.Modules
+				.Where(m => m.IsActive)
+				.Include(m => m.Requirements)
+				.Include(m => m.GraduateProfile)
+				.ToListAsync();
 
-			if (!string.IsNullOrWhiteSpace(q))
-			{
-				string lowerQ = q.ToLower();
-				query = query.Where(m =>
-					m.Name.ToLower().Contains(lowerQ) ||
-					m.Code.ToLower().Contains(lowerQ) ||
-					m.Description.ToLower().Contains(lowerQ));
-			}
+			// Use Task.WhenAll to await all DTO mappings
+			var result = await Task.WhenAll(modules.Select(m => ModuleDto.FromModelAsync(m, _context)));
 
-			var modules = await query.Include(m => m.Requirements).ToListAsync();
-
-			var result = new List<ModuleDto>();
-			foreach (var module in modules)
-			{
-				result.Add(await ModuleDto.FromModelAsync(module, _context));
-			}
-
-			return result;
+			return result.ToList();
 		}
 
 		// GET: api/Module/5
@@ -50,6 +40,7 @@ namespace LOM.API.Controllers
 			var module = await _context.Modules
 				.Where(m => m.Id == id)
 				.Include(m => m.Requirements)
+				.Include(m => m.GraduateProfile)
 				.FirstOrDefaultAsync();
 
 			if (module == null)
