@@ -28,6 +28,9 @@ function bundleJs() {
         sourcemap: true,
         format: 'iife',
         target: ['es2017'],
+        minify: true,
+        treeShaking: true,
+        legalComments: 'none'
     }).catch(() => process.exit(1));
 }
 
