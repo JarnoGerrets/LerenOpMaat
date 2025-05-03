@@ -1,5 +1,5 @@
 import Popup from "../../components/Popup.js";
-import { getProfiles } from "../../client/api-client.js";
+import { getProfiles, addModule} from "../../client/api-client.js";
 let mijnPopup;
 
 export default async function addModulePopup() {
@@ -16,6 +16,7 @@ export default async function addModulePopup() {
             `,
         titleWrapperClass: 'popup-title-confirmation',
         content: `
+        <form id="add-module-form" novalidate>
                 <div class="add-module-popup-content">
                     <div class="row-save-module">
                         <span class="field-text">Naam:</span>
@@ -34,11 +35,18 @@ export default async function addModulePopup() {
                     <div class="row-save-module">
                         <div class="field-wrapper">
                             <span class="field-text" >Periode:</span>
-                            <input id="period" type="number" class="save-module-input" required></input>
+                            <select id="period" type="number" class="save-module-select" required>
+                            <option id=1>1</option>
+                            <option id=2>2</option>
+                            </select>
                         </div>
                         <div class="field-wrapper">
                             <span class="field-text-2 spacer-row-1">Niveau:</span>
-                            <input id="niveau" type="number" class="save-module-input" required></input>
+                            <select id="niveau" type="number" class="save-module-select" required>
+                            <option id=1>1</option>
+                            <option id=2>2</option>
+                            <option id=2>3</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row-save-module">
@@ -52,10 +60,11 @@ export default async function addModulePopup() {
                         </div>
                     </div>
                 <div class="add-module-popup-buttons"> 
-                    <button id="save-module" class="save-module-button">Opslaan</button>
-                    <button id="cancel-save" class="cancel-add-module-button">Annuleren</button>
+                    <button id="save-module" type="submit" class="save-module-button">Opslaan</button>
+                    <button id="cancel-save" type="button" class="cancel-add-module-button">Annuleren</button>
                     </div>
                 </div>
+                </form>
             `
     });
 
@@ -69,34 +78,35 @@ export default async function addModulePopup() {
         select.appendChild(option);
     });
 
-    setTimeout(() => {
-        document.getElementById("save-module")?.addEventListener("click", async () => {
-            // save logic
-            const moduleToSend = {
-                name: "",
-                code: "",
-                description: "",
-                ec: 0,
-                niveau: 0,
-                period: 0,
-                isActive: true,
-                graduateProfileId: 0,
-                requirements: [] // This should be an array of requirement IDs
-            };
+    document.getElementById("add-module-form").addEventListener("submit", async (e) => {
+        e.preventDefault(); // Prevent actual form submission
 
-            moduleToSend.name = document.querySelector('#name').value;
-            moduleToSend.code = document.querySelector('#code').value;
-            moduleToSend.ec = document.querySelector('#ec').value;
-            moduleToSend.niveau = document.querySelector('#niveau').value;
-            moduleToSend.period = document.querySelector('#period').value;
-            moduleToSend.graduateProfileId = parseInt(document.querySelector('#graduateProfile').value);
-            console.log(moduleToSend);
-        });
+        const form = e.target;
+        if (!form.checkValidity()) {
+            form.reportValidity(); // This shows built-in browser messages
+            return;
+        }
 
-        document.getElementById("cancel-save")?.addEventListener("click", () => {
+        const moduleToSend = {
+            Name: form.querySelector("#name").value,
+            Code: form.querySelector("#code").value,
+            EC: parseInt(form.querySelector("#ec").value),
+            Niveau: parseInt(form.querySelector("#niveau").value),
+            Periode: parseInt(form.querySelector("#period").value),
+            IsActive: true,
+            GraduateProfileId: parseInt(form.querySelector("#graduateProfile").value),
+            Requirements: []
+        };
+        try {
+            const result = await addModule(moduleToSend);
+            console.log(result);
+            console.log(result.Name);
+            showToast(`${result.Name} succesvol toegevoegd`, 'success');
             mijnPopup.close();
-        });
-    }, 0);
+        } catch (error) {
+            showToast(`Er is een fout opgetreden, probeer opnieuw: ${error}`, 'error')
+        }
+    });
 
     window.addEventListener('beforeunload', handleUnload);
     window.addEventListener('popstate', handleUnload);
@@ -104,9 +114,12 @@ export default async function addModulePopup() {
     function handleUnload() {
         mijnPopup.close();
     }
+    document.getElementById("cancel-save").addEventListener("click", () => {
+        mijnPopup.close();
+    });
 
 }
 
-function createModule(data){
+function createModule(data) {
 
 }
