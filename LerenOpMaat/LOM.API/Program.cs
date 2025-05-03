@@ -7,18 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add CORS services
 builder.Services.AddCors(options =>
 {
+	var corsSettings = builder.Configuration.GetSection("Cors");
 	options.AddPolicy("AppCorsPolicy", policy =>
 	{
-		policy.WithOrigins(
-				"https://lom.robhutten.nl",
-				"http://lom.robhutten.nl",
-				"https://www.lom.robhutten.nl",
-				"http://www.lom.robhutten.nl"
-			)
-			.AllowAnyHeader()
-			.AllowAnyMethod()
-			.AllowCredentials()
-			.SetIsOriginAllowedToAllowWildcardSubdomains();
+		policy.WithOrigins(corsSettings["AllowedOrigins"].Split(','))
+			  .WithMethods(corsSettings["AllowedMethods"].Split(','))
+			  .WithHeaders(corsSettings["AllowedHeaders"].Split(','))
+			  .AllowCredentials();
 	});
 });
 
