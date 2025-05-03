@@ -1,5 +1,5 @@
 import confirmationPopup from "../views/partials/confirmation-delete-popup.js";
-import { updateModule } from "../../client/api-client.js";
+import { updateModule } from "../client/api-client.js";
 
 export function setupButtons(module, textArea) {
     let editButton = setupEditButton(module, textArea)

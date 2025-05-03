@@ -1,3 +1,12 @@
+import * as Sentry from '@sentry/browser';
+import Header from './components/header.js';
+
+Sentry.init({
+  dsn: "https://26257e066ef541cf2308222319d5d5d0@o4509258287284224.ingest.de.sentry.io/4509258290561104",
+  integrations: [Sentry.browserTracingIntegration()],
+  tracesSampleRate: 1.0,
+});
+
 import LearningRoute from "./views/learning-route.js";
 import ModuleInfo from "./views/module-info.js";
 import { RouteOrSelector } from "./views/cohort-selector.js";

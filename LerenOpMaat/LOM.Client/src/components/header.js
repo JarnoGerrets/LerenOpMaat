@@ -4,7 +4,7 @@ export default class Header extends HTMLElement {
   }
 
   async connectedCallback() {
-    const res = await fetch("/templates/header.html");
+    const res = await fetch("./templates/header.html");
     const html = await res.text();
 
     const template = document.createElement("template");
