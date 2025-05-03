@@ -32,13 +32,13 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card1 = await SemesterCard({
             id: semester1.id,
-            semester: semester1.SemesterNumber,
+            semester: semester1.Periode,
             module: semester1.Module.Name,
             moduleId: semester1.ModuleId,
             locked: semester1.locked,
             onModuleChange: ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(
-                    (item) => item.Year === index + 1 && item.SemesterNumber === semester
+                    (item) => item.Year === index + 1 && item.Periode === semester
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
@@ -55,7 +55,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         learningRouteArray.push({
             Year: index + 1,
-            SemesterNumber: semester1.SemesterNumber,
+            Periode: semester1.Periode,
             moduleId: semester1.Module.Id,
         });
     }
@@ -76,13 +76,13 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card2 = await SemesterCard({
             id: semester2.id,
-            semester: semester2.SemesterNumber,
+            semester: semester2.Periode,
             module: semester2.Module.Name,
             moduleId: semester2.Module.Id,
             locked: semester2.locked,
             onModuleChange: ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(
-                    (item) => item.Year === index + 1 && item.SemesterNumber === semester
+                    (item) => item.Year === index + 1 && item.Periode === semester
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
@@ -99,7 +99,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         learningRouteArray.push({
             Year: index + 1,
-            SemesterNumber: semester2.SemesterNumber,
+            Periode: semester2.Periode,
             moduleId: semester2.Module.Id,
         });
 
