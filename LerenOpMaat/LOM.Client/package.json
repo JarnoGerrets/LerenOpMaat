@@ -24,10 +24,10 @@
     "gulp-concat": "^2.6.1",
     "esbuild": "^0.25.3",
     "jasmine": "^5.6.0",
-    "jsdom": "^26.1.0"
+    "jsdom": "^26.1.0",
+    "@sentry/browser": "^9.15.0"
   },
   "dependencies": {
-    "@sentry/browser": "^9.15.0",
     "@fortawesome/fontawesome-free": "^6.7.2"
   }
 }
