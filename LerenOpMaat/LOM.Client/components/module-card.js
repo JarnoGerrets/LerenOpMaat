@@ -29,7 +29,7 @@ export default class ModuleCard extends customElements.get("base-card") {
                 </div>
             </div>
         `;
-        this.renderCard(content, module);
+        this.renderCard(content, module.GraduateProfile.ColorCode);
     }
 }
 

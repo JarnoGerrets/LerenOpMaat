@@ -7,18 +7,23 @@ let mijnPopup;
 export default async function confirmationPopup(id, name) {
     mijnPopup = new Popup({
         maxWidth: 'auto',
-        height: '250px',
+        height: 'auto',
         sizeCloseButton: '0',
+        extraButtons: false,
         closeButtonStyle: 'popup-confirmation-closebutton',
         header: `
             <h3 class="popup-header-confirmation">
-                Wilt u '${name}' verwijderen?
+                Verwijderen module
             </h3>
         `,
+        titleWrapperClass: 'popup-title-confirmation',
         content: `
-            <div class="popup-buttons">
-                <button id="confirm-delete" class="btn btn-danger">Ja</button>
-                <button id="cancel-delete" class="btn btn-secondary">Annuleren</button>
+            <div class="confirmation-popup-content">
+            <p>Weet u zeker dat u ${name} wilt verwijderen?</p>
+            <div class="confirmation-popup-buttons"> 
+                <button id="confirm-delete" class="confirmation-accept-btn">Ja</button>
+                <button id="cancel-delete" class="confirmation-deny-btn">Nee</button>
+                </div>
             </div>
         `
     });

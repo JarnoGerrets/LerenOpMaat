@@ -5,17 +5,14 @@ import { getModules } from "../../client/api-client.js";
 let filterDropdown;
 let mijnPopup;
 let closeFilterDropdownHandler;
-let modulesData = [];
+let modules = [];
 let apiResponse = [];
 let selectedCategories = [];
 let selectedCategory;
 
 export default async function SemesterChoice(selectedModuleName = "Selecteer je module") {
-    // Hardcoded data for 4 semester modules
-
 
     try {
-        //comment apiResponse & uncomment de 2e apiResponse to use dummy data
         apiResponse = await getModules();
         console.log(apiResponse);
         if (
@@ -23,16 +20,16 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
             !Array.isArray(apiResponse) ||
             apiResponse.length === 0
         ) {
-            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse); //Jarno voor debugging
+            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse);
         } else {
-            modulesData = apiResponse;
+            modules = apiResponse;
         }
 
     } catch (error) {
-        console.error("Error fetching module data:", error.message); //debugging added bij Jarno
+        console.error("Error fetching module data:", error.message);
 
 
-        modulesData = [
+        modules = [
             { id: '1', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
             { id: '2', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'BIM' },
             { id: '3', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'IDNS' },
@@ -53,12 +50,14 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
     //Deze is omdat alles hardcoded is, maar later als wij een DB hebben
     //dan wordt alles uit de koppel tabel opgehaald
     if (selectedModuleName !== "Selecteer je module") {
-        modulesData.unshift({ Name: 'Geen Keuze', Description: 'Geen Keuze' });
+        modules.unshift({ Name: 'Geen Keuze', Description: 'Geen Keuze' });
     }
+
+    console.log(modules);
 
     // Create the SemesterModules component with the hardcoded data
     const semesterModules = new SemesterModule(
-        modulesData,
+        modules,
         (selectedModule) => {
             mijnPopup.close(selectedModule); // Sluit popup met geselecteerde module
             return selectedModule;
@@ -70,6 +69,7 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
         maxWidth: 'auto',
         height: '620px',
         sizeCloseButton: '16',
+        extraButtons: true,
         header: `
         <h1 class="popup-header">
             Selecteer je module
@@ -83,7 +83,7 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
               </svg>
             `,
                 onClick: () => {
-                    showFilter(modulesData);
+                    showFilter(modules);
                 }
             }
         ]
@@ -114,7 +114,7 @@ function showFilter(Data) {
         });
 
         filterDropdown.appendChild(searchInput);
-        const categories = ['Alles', ...new Set(Data.filter(m => m.Name !== 'Geen Keuze').map(m => m.Category))];
+        const categories = ['Alles', ...new Set(Data.filter(m => m.Name !== 'Geen Keuze').map(m => m.GraduateProfile.Name))];
         categories.forEach(category => {
             const option = document.createElement('div');
             option.textContent = category;
@@ -203,10 +203,10 @@ function closeFilterDropdown(event) {
 
 function filterData(searchTerm = '') {
     //Geen Keuze niet filteren
-    let filtered = modulesData.filter(m => m.Name !== 'Geen Keuze');
+    let filtered = modules.filter(m => m.Name !== 'Geen Keuze');
 
     if (selectedCategories.length > 0) {
-        filtered = filtered.filter(m => selectedCategories.includes(m.Category));
+        filtered = filtered.filter(m => selectedCategories.includes(m.GraduateProfile.Name));
     }
 
     if (searchTerm) {
