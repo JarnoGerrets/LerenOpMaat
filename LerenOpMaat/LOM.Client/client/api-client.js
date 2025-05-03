@@ -15,6 +15,21 @@ export async function getModules(q) {
     return await res.json();
 }
 
+export async function getProfiles(q) {
+  const res = await fetch(`${API_BASE}/GraduateProfile?q=${q||''}`, {
+    method: "GET",
+    headers: {
+      "Accept": "text/plain"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch modules: ${res.status}`);
+  }
+
+    return await res.json();
+}
+
 export async function getModule(id) {
     const res = await fetch(`${API_BASE}/Module/${id}`, {
         method: "GET",
