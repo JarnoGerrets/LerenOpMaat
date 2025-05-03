@@ -1,7 +1,7 @@
 const API_BASE = "https://localhost:7024/api";
 
-export async function getModules() {
-  const res = await fetch(`${API_BASE}/Module`, {
+export async function getModules(q) {
+  const res = await fetch(`${API_BASE}/Module?q=${q||''}`, {
     method: "GET",
     headers: {
       "Accept": "text/plain"
