@@ -1,4 +1,4 @@
-import { getModule } from "../../client/api-client.js";
+import { getModule } from "../client/api-client.js";
 import { setupButtons } from './module-actions.js';
 import '../components/module-card.js';
 import '../components/requirements-card.js';
