@@ -1,5 +1,6 @@
 // module-overview.js
 import { getModules } from '../client/api-client.js';
+import addModulePopup from '../views/partials/add-module-popup.js';
 import './module-card.js';
 
 class ModuleOverview extends HTMLElement {
@@ -9,7 +10,7 @@ class ModuleOverview extends HTMLElement {
 
     async connectedCallback() {
         this.renderLayout();
-        this.addSearchHandler();
+        this.addHandlers();
 
         const modules = await getModules();
         this.renderModules(modules);
@@ -18,19 +19,31 @@ class ModuleOverview extends HTMLElement {
     renderLayout() {
         this.innerHTML = `
             <div class="container my-5">
-                <h1>Module Overview</h1>
+                <div id="top-section-module-overview">
+                    <h1 class="module-overview-title">Module Overview</h1>
+                    <div id="add-module-button">
+                        <i class="bi bi-plus-circle"></i><span class="icon-text-module-overview">Module toevoegen</span>
+                    </div>
+                </div>
                 <input class="form-control" id="searchInput" type="text" placeholder="Type om te zoeken">
                 <div class="row" id="module-wrapper"></div>
             </div>
         `;
     }
 
-    async addSearchHandler() {
+    async addHandlers() {
+        //search handler
         const input = this.querySelector('#searchInput');
         input.addEventListener('input', async (e) => {
             const query = e.target.value;
             const filteredModules = await getModules(query);
             this.renderModules(filteredModules);
+        });
+
+        //add module handler
+        const addModuleInput = this.querySelector('#add-module-button');
+        addModuleInput.addEventListener('click', async () => {
+            await addModulePopup();
         });
     }
 
