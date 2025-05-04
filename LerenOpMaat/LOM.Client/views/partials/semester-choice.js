@@ -67,7 +67,7 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
 
     mijnPopup = new Popup({
         maxWidth: 'auto',
-        height: '620px',
+        maxHeight: '620px',
         sizeCloseButton: '16',
         extraButtons: true,
         header: `
@@ -213,8 +213,7 @@ function filterData(searchTerm = '') {
         filtered = filtered.filter(m =>
             m.Name.toLowerCase().includes(searchTerm) ||
             m.Description.toLowerCase().includes(searchTerm) ||
-            m.Name.toLowerCase().includes(searchTerm) ||
-            m.Description.toLowerCase().includes(searchTerm)
+            m.Code.toLowerCase().includes(searchTerm)
         );
     }
 

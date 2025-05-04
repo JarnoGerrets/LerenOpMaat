@@ -2,7 +2,7 @@
     padding-left: 25px;
     padding-top: 15px;
     display: flex;
-    gap: 200px;
+    gap: 400px;
 }
 
 .extra-module-buttons {
@@ -159,6 +159,10 @@ button {
 .module-info-row {
     margin-bottom: 10px;
     /* control vertical spacing */
+}
+
+#go-back-button{
+    cursor: pointer;
 }
 
 /*-----------------------------mobile section----------------------------------------------------------------------------------*/

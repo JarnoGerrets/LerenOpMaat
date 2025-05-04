@@ -190,6 +190,8 @@
 
 a.module-icon {
     text-decoration: none;
+    font-size: 30px;
+    width: 20px;
 }
 
 .popup-header-confirmation {
@@ -205,6 +207,10 @@ a.module-icon {
     pointer-events: none;
 }
 
+.module-info-row {
+    flex: 1;
+}
+
 /*--------------------------bevestigings popup styling----------------------------------------------------------------------------------*/
 
 .popup-confirmation-closebutton {
@@ -214,7 +220,7 @@ a.module-icon {
     width: 0;
 }
 
-.popup-title-confirmation{
+.popup-title-confirmation {
     justify-content: center;
 }
 
@@ -225,7 +231,8 @@ a.module-icon {
     width: auto;
     padding: 2px 15px 2px 15px;
     transition: background-color 0.2s ease;
-    &:hover{
+
+    &:hover {
         background-color: #e6b800;
     }
 }
@@ -237,7 +244,8 @@ a.module-icon {
     width: auto;
     padding: 2px 15px 2px 15px;
     transition: background-color 0.2s ease;
-    &:hover{
+
+    &:hover {
         background-color: #bfbfbf;
     }
 }
@@ -260,7 +268,7 @@ a.module-icon {
 }
 
 /*------------------------------------module  toevoegen styling-----------------------------------------------*/
-.add-module-popup-content{
+.add-module-popup-content {
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -269,7 +277,8 @@ a.module-icon {
     text-align: left;
     gap: 10px;
 }
-.save-module-input{
+
+.save-module-input {
     flex: 1;
     padding-left: 7px;
     margin-left: 25px;
@@ -278,10 +287,12 @@ a.module-icon {
     border: none;
     box-shadow: inset 0px 2px 2px 2px rgba(0, 0, 0, 0.2);
     width: 100%;
-    &:focus{
+
+    &:focus {
         outline-color: #FFCB05;
     }
 }
+
 .save-module-select {
     flex: 1;
     padding-left: 7px;
@@ -291,10 +302,11 @@ a.module-icon {
     border: none;
     box-shadow: inset 0px 2px 2px 2px rgba(0, 0, 0, 0.2);
     width: 100%;
-    -webkit-appearance:none;
+    -webkit-appearance: none;
     background: url("data:image/svg+xml,<svg height='10px' width='10px' viewBox='0 0 16 16' fill='%23000000' xmlns='http://www.w3.org/2000/svg'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>") no-repeat;
     background-position: calc(100% - 0.75rem) center !important;
-    &:focus{
+
+    &:focus {
         outline-color: #FFCB05;
     }
 }
@@ -309,29 +321,29 @@ input[type="number"] {
     -moz-appearance: textfield;
 }
 
-.name-input{
-    flex: 1; 
+.name-input {
+    flex: 1;
     width: 100%;
 }
 
-.field-text{
+.field-text {
     width: 110px;
-    display: inline-block; 
+    display: inline-block;
 }
 
-.field-text-2{
+.field-text-2 {
     width: 100px;
-    display: inline-block; 
+    display: inline-block;
 }
 
 
-.row-save-module{
+.row-save-module {
     align-items: center;
     display: flex;
     justify-content: space-between;
 }
 
-.spacer-row-1{
+.spacer-row-1 {
     margin-left: 30px;
 }
 
@@ -340,9 +352,9 @@ input[type="number"] {
     flex: 1;
     display: flex;
     align-items: center;
-  }
+}
 
-  .save-module-button{
+.save-module-button {
     align-self: flex-end;
     background-color: #FFCB05;
     border: none;
@@ -351,12 +363,13 @@ input[type="number"] {
     padding: 2px 15px 2px 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     transition: background-color 0.2s ease;
-    &:hover{
+
+    &:hover {
         background-color: #e6b800;
     }
-  }
+}
 
-  .cancel-add-module-button{
+.cancel-add-module-button {
     align-self: flex-end;
     background-color: lightgray;
     border: none;
@@ -365,12 +378,13 @@ input[type="number"] {
     padding: 2px 15px 2px 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     transition: background-color 0.2s ease;
-    &:hover{
+
+    &:hover {
         background-color: #bfbfbf;
     }
-  }
+}
 
-  .add-module-popup-buttons {
+.add-module-popup-buttons {
     display: flex;
     margin-top: 10px;
     flex-direction: row;

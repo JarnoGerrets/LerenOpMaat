@@ -54,7 +54,7 @@ class ModuleOverview extends HTMLElement {
         modules.forEach(mod => {
             const card = document.createElement('module-card');
             card.classList.add("col-12", "col-md-6", "col-lg-4", "p-4");
-            card.data = mod;
+            card.data = { module: mod, showInfoIcon: true };
             wrapper.appendChild(card);
         });
     }
