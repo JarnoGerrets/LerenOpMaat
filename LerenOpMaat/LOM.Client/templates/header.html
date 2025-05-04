@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>Leren Op Maat</title>
@@ -9,16 +10,17 @@
   <link rel="icon" type="image/svg+xml" href="../images/windesheim_w.svg">
   <link rel="stylesheet" href="../style/header.css">
 </head>
+
 <body>
 
   <!-- Header -->
   <header>
     <!-- Linkerkant: menu en notificatie -->
     <div class="left-section">
-      <div class="bi bi-list icon" onclick="toggleMenu()"></div>
+      <i class="bi bi-list icon" onclick="toggleMenu()"></i>
       <i class="bi bi-bell-fill icon"></i>
     </div>
-  
+
     <!-- Rechterkant: logo + login/account -->
     <div class="right-section">
       <div class="account-section">
@@ -32,7 +34,6 @@
       </div>
     </div>
   </header>
-  
 
   <!-- Slide Menu -->
   <div id="menu" class="menu-overlay">
@@ -50,8 +51,35 @@
   </div>
   <script>
     function toggleMenu() {
-    document.getElementById('menu').classList.toggle('active');
-  }   
+      document.getElementById('menu').classList.toggle('active');
+    }
+
+    function growItem(element) {
+      element.style.transform = 'scale(1.1)';
+      element.style.transition = 'transform 0.2s ease-in-out';
+    }   
+    
+    function shrinkItem(element) {
+        element.style.transform = 'scale(1)';
+      }
+      // when clicked anywhere outside sidebar, its closed
+      document.addEventListener('click', function(event) {
+      const menu = document.getElementById('menu');
+      const menuButton = document.querySelector('.bi-list');
+
+      if (!menu.contains(event.target) && !menuButton.contains(event.target)) {
+        menu.classList.remove('active');
+      }
+    });
+
+    // add event listeners to all <a> links inside the menu to close it when clicked
+    const menuLinks = document.querySelectorAll('#menu a');
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('menu').classList.remove('active');
+      });
+    });
   </script>
 </body>
+
 </html>

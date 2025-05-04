@@ -85,8 +85,6 @@ export default async function LearningRoute() {
         }
     }
 
-    document.body.appendChild(fragment);
-
     //Opslaan knop als de gebruiker al een route heeft dan wordt het aangepast
     //Als er nog geen route is gekoppeld aan de  gebruiker dan maakt hij een nieuwe route
     const saveButton = document.getElementById("saveLearningRoute");
@@ -153,7 +151,7 @@ export default async function LearningRoute() {
         });
     }
 
-    return fragment;
+    return { fragment, init: () => null };
 }
 
 async function saveLearningRoute(learningRouteArray) {

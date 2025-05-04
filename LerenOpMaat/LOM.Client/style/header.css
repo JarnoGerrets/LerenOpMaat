@@ -33,6 +33,12 @@ header {
   cursor: pointer;
   padding-left: 10px;
   z-index: 2001;
+  transition: transform 0.2s ease-in-out;
+  transform-origin: center center;
+
+  &:hover {
+    transform: scale(1.2);
+  }
 }
 
 .logo img {
@@ -71,7 +77,12 @@ header {
   color: black;
   text-decoration: none;
   position: relative;
-  transition: top 0.3s ease;
+  transition: transform 0.3s ease-in-out;
+  transform-origin: center;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
 .menu-overlay .logo {
@@ -121,6 +132,7 @@ header {
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 180px;
 }
 
 .login-btn:hover {
@@ -133,70 +145,79 @@ header {
   gap: 40px;
 }
 
+.bi-chevron-left {
+  transition: transform 0.2s ease-in-out;
+  transform-origin: center center;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
 
 /* Desktop stijl (768px en breder) */
 @media (min-width: 768px) {
-    .menu-overlay {
-        top: 0;
-        left: -350px;
-        width: 300px;
-        transition: left 0.3s ease;
-        align-items: flex-start;
-        z-index: 1999;
-    }
+  .menu-overlay {
+    top: 0;
+    left: -350px;
+    width: 300px;
+    transition: left 0.3s ease;
+    align-items: flex-start;
+    z-index: 1999;
+  }
 
-    .mobile-close-btn {
-      display: none;
-    }
+  .mobile-close-btn {
+    display: none;
+  }
 
-    .logo img {
-      height: 60px;
-      padding-right: 30px;
-      font-weight: bold;
-      z-index: 2002;
-      object-fit: contain;
-    }
+  .logo img {
+    height: 60px;
+    padding-right: 30px;
+    font-weight: bold;
+    z-index: 2002;
+    object-fit: contain;
+  }
 
-    .icon {
-      font-size: 20px;
-      object-fit: contain;
-      color: black;
-      cursor: pointer;
-      padding-left: 20px;
-      z-index: 2001;
-    }
+  .icon {
+    font-size: 20px;
+    object-fit: contain;
+    color: black;
+    cursor: pointer;
+    padding-left: 20px;
+    z-index: 2001;
+  }
 
-    .desktop-close-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: absolute;
-      top: 50%;
-      right: -20px;
-      background-color: #FFCB05;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 20px;
-      color: black;
-    }
+  .desktop-close-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    right: -20px;
+    background-color: #FFCB05;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    color: black;
+  }
 
-    .icon {
-      font-size: 30px;
-      object-fit: contain;
-      color: black;
-      padding-left: 20px;
-      z-index: 2001;
-    }
+  .icon {
+    font-size: 30px;
+    object-fit: contain;
+    color: black;
+    padding-left: 20px;
+    z-index: 2001;
+  }
 
-    .menu-overlay.active {
-        left: 0;
-    }
+  .menu-overlay.active {
+    left: 0;
+  }
 
-    .close-btn {
-        align-self: flex-end;
-        transform: rotate(0deg);
-        margin: 20px;
-    }
-    }
+  .close-btn {
+    align-self: flex-end;
+    transform: rotate(0deg);
+    margin: 20px;
+  }
+}
+

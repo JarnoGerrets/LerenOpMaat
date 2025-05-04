@@ -1,5 +1,6 @@
 export default class Popup {
-    constructor({maxWidth = 'auto', height = 'auto', header = '', content = '', buttons = [] }) {
+    constructor({ maxWidth = 'auto', height = 'auto', sizeCloseButton = '', extraButtons = false, closeButtonStyle, header = '', titleWrapperClass = '',content = '', buttons = [] }) {
+
         this.result = null;
         this._resolve = null;
 
@@ -20,11 +21,11 @@ export default class Popup {
         // Close button
         const closeButton = document.createElement('button');
         closeButton.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" class="bi bi-x" viewBox="0 0 16 16">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="black" class="bi bi-x" viewBox="0 0 ${sizeCloseButton} ${sizeCloseButton}">
           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
         </svg>
         `;
-        closeButton.classList.add('popup-close-btn');
+        closeButton.classList.add('popup-close-btn', closeButtonStyle);
         closeButton.addEventListener('mouseenter', () => {
             closeButton.classList.add('hovered');
         });
@@ -36,22 +37,23 @@ export default class Popup {
 
         // Buttons
         const buttonContainer = document.createElement('div');
-        buttonContainer.classList.add('popup-button-container');
-        if (buttons.length === 0) {
-            buttonContainer.style.display = 'none';
+        if (extraButtons) {
+            buttonContainer.classList.add('popup-button-container');
+            if (buttons.length === 0) {
+                buttonContainer.style.display = 'none';
+            }
+
+            buttons.forEach(({ text, onClick }) => {
+                const wrapper = document.createElement('div');
+                wrapper.classList.add('popup-button-wrapper');
+                const btn = document.createElement('button');
+                btn.innerHTML = text;
+                btn.classList.add('popup-btn');
+                btn.addEventListener('click', onClick);
+                wrapper.appendChild(btn);
+                buttonContainer.appendChild(wrapper);
+            });
         }
-
-        buttons.forEach(({ text, onClick }) => {
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('popup-button-wrapper');
-            const btn = document.createElement('button');
-            btn.innerHTML = text;
-            btn.classList.add('popup-btn');
-            btn.addEventListener('click', onClick);
-            wrapper.appendChild(btn);
-            buttonContainer.appendChild(wrapper);
-        });
-
         // Header container
         const title = document.createElement('div');
         title.classList.add('popup-header');
@@ -61,6 +63,7 @@ export default class Popup {
         // Title wrapper
         const titleWrapper = document.createElement('div');
         titleWrapper.classList.add('popup-title');
+        if (titleWrapperClass) titleWrapper.classList.add(titleWrapperClass);
         titleWrapper.appendChild(title);
 
         // Right-side controls container (buttons + close)
@@ -79,13 +82,8 @@ export default class Popup {
         headerRow.appendChild(titleWrapper);
         headerRow.appendChild(rightControls);
 
-        // Divider
-        const divider = document.createElement('hr');
-        divider.classList.add('custom-hr');
-
         // Assemble header container
         headerContainer.appendChild(headerRow);
-        headerContainer.appendChild(divider);
 
         // Content container
         const contentContainer = document.createElement('div');
@@ -111,7 +109,7 @@ export default class Popup {
         this.overlay.appendChild(this.popup);
     }
 
-   open() {
+    open() {
         document.body.appendChild(this.overlay);
         setTimeout(() => {
             this.overlay.style.opacity = 1;

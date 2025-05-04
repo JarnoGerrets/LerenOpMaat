@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
+using LOM.API.DTO;
 
 namespace LOM.API.Controllers
 {
@@ -16,57 +17,77 @@ namespace LOM.API.Controllers
 			_context = context;
 		}
 
-		// GET: api/Module
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Module>>> GetModules()
+		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules([FromQuery] string? q)
 		{
-			return await _context.Modules.ToListAsync();
+			var query = _context.Modules
+				.Where(m => m.IsActive);
+
+			if (!string.IsNullOrWhiteSpace(q))
+			{
+				string lowerQ = q.ToLower();
+				query = query.Where(m =>
+					m.Name.ToLower().Contains(lowerQ) ||
+					m.Code.ToLower().Contains(lowerQ) ||
+					m.Description.ToLower().Contains(lowerQ));
+			}
+
+			var modules = await query.Include(m => m.Requirements).ToListAsync();
+
+			var result = new List<ModuleDto>();
+			foreach (var module in modules)
+			{
+				result.Add(await ModuleDto.FromModelAsync(module, _context));
+			}
+
+			return result;
 		}
 
 		// GET: api/Module/5
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Module>> GetModule(int id)
+		public async Task<ActionResult<ModuleDto>> GetModule(int id)
 		{
-			var @module = await _context.Modules.FindAsync(id);
+			var module = await _context.Modules
+				.Where(m => m.Id == id)
+				.Include(m => m.Requirements)
+				.FirstOrDefaultAsync();
 
-			if (@module == null)
+			if (module == null)
 			{
 				return NotFound();
 			}
+			else if (!module.IsActive)
+			{
+				return Forbid();
+			}
 
-			return @module;
+			var result = await ModuleDto.FromModelAsync(module, _context);
+			return result;
 		}
-
 		// PUT: api/Module/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutModule(int id, Module @module)
+		public async Task<IActionResult> PutModule(int id, ModuleDto moduleDto)
 		{
-			if (id != @module.Id)
+			var roleClaim = HttpContext.User.FindFirst("role")?.Value;
+
+			if (roleClaim == "Student")
+				return Forbid();
+
+			if (id != moduleDto.Id)
 			{
 				return BadRequest();
 			}
 
-			_context.Entry(@module).State = EntityState.Modified;
+			// Convert the DTO back to a model using the mapping method
+			var module = moduleDto.ToModel();
 
-			try
-			{
-				await _context.SaveChangesAsync();
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!ModuleExists(id))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
-			}
+			_context.Entry(module).State = EntityState.Modified;
+			await _context.SaveChangesAsync();
 
 			return NoContent();
 		}
+
 
 		// POST: api/Module
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -79,9 +100,25 @@ namespace LOM.API.Controllers
 			return CreatedAtAction("GetModule", new { id = @module.Id }, @module);
 		}
 
+		//// DELETE: api/Module/5
+		//[HttpDelete("{id}")]
+		//public async Task<IActionResult> DeleteModule(int id)
+		//{
+		//	var @module = await _context.Modules.FindAsync(id);
+		//	if (@module == null)
+		//	{
+		//		return NotFound();
+		//	}
+
+		//	_context.Modules.Remove(@module);
+		//	await _context.SaveChangesAsync();
+
+		//	return NoContent();
+		//}
+
 		// DELETE: api/Module/5
 		[HttpDelete("{id}")]
-		public async Task<IActionResult> DeleteModule(int id)
+		public async Task<IActionResult> SoftDeleteModule(int id)
 		{
 			var @module = await _context.Modules.FindAsync(id);
 			if (@module == null)
@@ -89,7 +126,8 @@ namespace LOM.API.Controllers
 				return NotFound();
 			}
 
-			_context.Modules.Remove(@module);
+			module.IsActive = false;
+			_context.Modules.Update(module);
 			await _context.SaveChangesAsync();
 
 			return NoContent();

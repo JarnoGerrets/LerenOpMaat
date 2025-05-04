@@ -8,20 +8,28 @@ export default class ModuleCard extends customElements.get("base-card") {
     set data(module) {
         const content = `
             <div>
-                <h4>${module.name}</h4>
+                <h4>${module.Name}</h4>
             </div>
             <div class="d-flex">
                 <div class="w-50">
-                    <p><b>code:</b> ${module.code}</p>
-                    <p><b>semester:</b> ${module.niveau}</p>
+                    <div class="module-info-row" style="font-weight: bold;">
+                    Code: <span id="code-text">${module.Code}</span>
+                    </div>
+                    <div class="module-info-row" style="font-weight: bold;">
+                    Periode: <span id="periode-text">${module.Periode}</span>
+                    </div>
                 </div>
-                <div class="w-50">
-                    <p><b>ec:</b> ${module.ec}</p>
-                    <p><b>niveau:</b> ${module.niveau}</p>
+                <div>
+                    <div class="module-info-row" style="font-weight: bold;">
+                    EC: <span id="ec-text">${module.Ec}</span>
+                    </div>
+                    <div class="module-info-row" style="font-weight: bold;">
+                    Niveau: <span id="niveau-text">${module.Niveau}</span>
+                    </div>
                 </div>
             </div>
         `;
-        this.renderCard(content, module);
+        this.renderCard(content, module.GraduateProfile.ColorCode);
     }
 }
 
