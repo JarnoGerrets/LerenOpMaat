@@ -83,8 +83,27 @@ namespace LOM.API.Controllers
 		// POST: api/Module
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
-		public async Task<ActionResult<Module>> PostModule(Module @module)
+		public async Task<ActionResult<Module>> PostModule(ModuleCreateDto @dto)
 		{
+			var roleClaim = HttpContext.User.FindFirst("role")?.Value;
+
+			if (roleClaim == "Student")
+				return Forbid();
+
+			var module = new Module
+			{
+				Name = dto.Name,
+				Code = dto.Code,
+				Description = dto.Description,
+				Ec = dto.Ec,
+				Niveau = dto.Niveau,
+				Periode = dto.Periode,
+				IsActive = dto.IsActive,
+				GraduateProfileId = dto.GraduateProfileId,
+				Requirements = _context.Requirements
+					.Where(r => dto.RequirementIds.Contains(r.Id)).ToList()
+			};
+
 			_context.Modules.Add(module);
 			await _context.SaveChangesAsync();
 

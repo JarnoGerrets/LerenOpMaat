@@ -20,7 +20,7 @@ public class Module
     [ForeignKey(nameof(GraduateProfile))]
     public int GraduateProfileId { get; set; }
 
-    public GraduateProfile GraduateProfile { get; set; }
+    public GraduateProfile? GraduateProfile { get; set; }
 
     public ICollection<Requirement> Requirements { get; set; } = new List<Requirement>();
 
