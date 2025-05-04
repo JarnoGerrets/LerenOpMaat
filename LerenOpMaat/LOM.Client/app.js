@@ -1,9 +1,11 @@
 import { RouteOrSelector } from "./views/cohort-selector.js";
 import { moduleOverview } from "./views/module-overview.js";
+import { oerView } from "./views/oer-view.js"
 
 const routes = {
   "": RouteOrSelector,
   "#module-overview": moduleOverview,
+  "#oer": oerView,
 };
 
 const navigateTo = url => {

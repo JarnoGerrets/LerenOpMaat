@@ -18,4 +18,6 @@ public class LOMContext : DbContext
         var seeder = new Seeder(modelBuilder);
         seeder.Seed();
     }
+
+public DbSet<LOM.API.Models.Oer> Oer { get; set; } = default!;
 }
