@@ -27,7 +27,7 @@ namespace LOM.API.Controllers
 
             if (requirements == null || !requirements.Any())
             {
-                return NotFound();
+                return Ok();
             }
 
             return Ok(requirements);
