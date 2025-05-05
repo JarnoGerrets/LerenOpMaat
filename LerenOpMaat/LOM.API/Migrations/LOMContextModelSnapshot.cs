@@ -45,43 +45,84 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 1, 10, 47, 31, 737, DateTimeKind.Local).AddTicks(7116)
+                            StartDate = new DateTime(2025, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3865)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 1, 10, 47, 31, 737, DateTimeKind.Local).AddTicks(7173)
+                            StartDate = new DateTime(2026, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3938)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 1, 10, 47, 31, 737, DateTimeKind.Local).AddTicks(7177)
+                            StartDate = new DateTime(2027, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3945)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 1, 10, 47, 31, 737, DateTimeKind.Local).AddTicks(7180)
+                            StartDate = new DateTime(2024, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3946)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 1, 10, 47, 31, 737, DateTimeKind.Local).AddTicks(7182)
+                            StartDate = new DateTime(2023, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3949)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 1, 10, 47, 31, 737, DateTimeKind.Local).AddTicks(7184)
+                            StartDate = new DateTime(2022, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3951)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 1, 10, 47, 31, 737, DateTimeKind.Local).AddTicks(7186)
+                            StartDate = new DateTime(2021, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3952)
+                        });
+                });
+
+            modelBuilder.Entity("LOM.API.Models.GraduateProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ColorCode")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GraduateProfiles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ColorCode = "#F16682",
+                            Name = "BIM"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ColorCode = "#F5A61A",
+                            Name = "SE"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ColorCode = "#4594D3",
+                            Name = "IDNS"
                         });
                 });
 
@@ -93,6 +134,10 @@ namespace LOM.API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.HasKey("Id");
 
                     b.ToTable("LearningRoutes");
@@ -100,7 +145,8 @@ namespace LOM.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1
+                            Id = 1,
+                            Name = "Test Route"
                         });
                 });
 
@@ -112,19 +158,21 @@ namespace LOM.API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Category")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("Ec")
                         .HasColumnType("int");
+
+                    b.Property<int>("GraduateProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -133,7 +181,12 @@ namespace LOM.API.Migrations
                     b.Property<int>("Niveau")
                         .HasColumnType("int");
 
+                    b.Property<int>("Periode")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("GraduateProfileId");
 
                     b.ToTable("Modules");
 
@@ -141,152 +194,251 @@ namespace LOM.API.Migrations
                         new
                         {
                             Id = 1,
-                            Category = "SE",
-                            Code = "TMP.01.DT",
+                            Code = "IP.01",
                             Description = "Introduction to Programming",
                             Ec = 30,
+                            GraduateProfileId = 3,
+                            IsActive = true,
                             Name = "Introduction to Programming",
-                            Niveau = 2
+                            Niveau = 1,
+                            Periode = 1
                         },
                         new
                         {
                             Id = 2,
-                            Category = "BIM",
-                            Code = "TMP.01.DT",
+                            Code = "WDB.02",
                             Description = "Web Development Basics",
                             Ec = 30,
+                            GraduateProfileId = 1,
+                            IsActive = true,
                             Name = "Web Development Basics",
-                            Niveau = 2
+                            Niveau = 2,
+                            Periode = 2
                         },
                         new
                         {
                             Id = 3,
-                            Category = "IDNS",
-                            Code = "TMP.01.DT",
+                            Code = "DSA.03",
                             Description = "Data Structures and Algorithms",
                             Ec = 30,
+                            GraduateProfileId = 2,
+                            IsActive = true,
                             Name = "Data Structures and Algorithms",
-                            Niveau = 2
+                            Niveau = 3,
+                            Periode = 1
                         },
                         new
                         {
                             Id = 4,
-                            Category = "SE",
-                            Code = "TMP.01.DT",
+                            Code = "DBMS.04",
                             Description = "Database Management Systems",
                             Ec = 30,
+                            GraduateProfileId = 3,
+                            IsActive = true,
                             Name = "Database Management Systems",
-                            Niveau = 2
+                            Niveau = 1,
+                            Periode = 2
                         },
                         new
                         {
                             Id = 5,
-                            Category = "BIM",
-                            Code = "TMP.01.DT",
+                            Code = "IP.05",
                             Description = "Introduction to Programming",
                             Ec = 30,
+                            GraduateProfileId = 1,
+                            IsActive = true,
                             Name = "Introduction to Programming",
-                            Niveau = 2
+                            Niveau = 2,
+                            Periode = 2
                         },
                         new
                         {
                             Id = 6,
-                            Category = "IDNS",
-                            Code = "TMP.01.DT",
+                            Code = "WDB.06",
                             Description = "Web Development Basics",
                             Ec = 30,
+                            GraduateProfileId = 2,
+                            IsActive = true,
                             Name = "Web Development Basics",
-                            Niveau = 2
+                            Niveau = 3,
+                            Periode = 1
                         },
                         new
                         {
                             Id = 7,
-                            Category = "SE",
-                            Code = "TMP.01.DT",
+                            Code = "DSA.07",
                             Description = "Data Structures and Algorithms",
                             Ec = 30,
+                            GraduateProfileId = 3,
+                            IsActive = true,
                             Name = "Data Structures and Algorithms",
-                            Niveau = 2
+                            Niveau = 1,
+                            Periode = 1
                         },
                         new
                         {
                             Id = 8,
-                            Category = "BIM",
-                            Code = "TMP.01.DT",
+                            Code = "DBMS.08",
                             Description = "Database Management Systems",
                             Ec = 30,
+                            GraduateProfileId = 1,
+                            IsActive = true,
                             Name = "Database Management Systems",
-                            Niveau = 2
+                            Niveau = 2,
+                            Periode = 2
                         },
                         new
                         {
                             Id = 9,
-                            Category = "IDNS",
-                            Code = "TMP.01.DT",
+                            Code = "IP.09",
                             Description = "Introduction to Programming",
                             Ec = 30,
+                            GraduateProfileId = 2,
+                            IsActive = true,
                             Name = "Introduction to Programming",
-                            Niveau = 2
+                            Niveau = 3,
+                            Periode = 2
                         },
                         new
                         {
                             Id = 10,
-                            Category = "SE",
-                            Code = "TMP.01.DT",
+                            Code = "WDB.10",
                             Description = "Web Development Basics",
                             Ec = 30,
+                            GraduateProfileId = 3,
+                            IsActive = true,
                             Name = "Web Development Basics",
-                            Niveau = 2
+                            Niveau = 1,
+                            Periode = 1
                         },
                         new
                         {
                             Id = 11,
-                            Category = "BIM",
-                            Code = "TMP.01.DT",
+                            Code = "DSA.11",
                             Description = "Data Structures and Algorithms",
                             Ec = 30,
+                            GraduateProfileId = 1,
+                            IsActive = true,
                             Name = "Data Structures and Algorithms",
-                            Niveau = 2
+                            Niveau = 2,
+                            Periode = 1
                         },
                         new
                         {
                             Id = 12,
-                            Category = "IDNS",
-                            Code = "TMP.01.DT",
+                            Code = "DBMS.12",
                             Description = "Database Management Systems",
                             Ec = 30,
+                            GraduateProfileId = 2,
+                            IsActive = true,
                             Name = "Database Management Systems",
-                            Niveau = 2
+                            Niveau = 3,
+                            Periode = 1
                         },
                         new
                         {
                             Id = 13,
-                            Category = "SE",
-                            Code = "TMP.01.DT",
+                            Code = "DSA.13",
                             Description = "Data Structures and Algorithms",
                             Ec = 30,
+                            GraduateProfileId = 3,
+                            IsActive = true,
                             Name = "Data Structures and Algorithms",
-                            Niveau = 2
+                            Niveau = 1,
+                            Periode = 1
                         },
                         new
                         {
                             Id = 14,
-                            Category = "BIM",
-                            Code = "TMP.01.DT",
+                            Code = "DBMS.14",
                             Description = "Database Management Systems",
                             Ec = 30,
+                            GraduateProfileId = 1,
+                            IsActive = true,
                             Name = "Database Management Systems",
-                            Niveau = 2
+                            Niveau = 2,
+                            Periode = 2
                         },
                         new
                         {
                             Id = 15,
-                            Category = "IDNS",
-                            Code = "TMP.01.DT",
+                            Code = "DBMS.15",
                             Description = "Database Management Systems",
                             Ec = 30,
+                            GraduateProfileId = 2,
+                            IsActive = true,
                             Name = "Database Management Systems",
-                            Niveau = 2
+                            Niveau = 3,
+                            Periode = 1
+                        });
+                });
+
+            modelBuilder.Entity("LOM.API.Models.Requirement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ModuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModuleId");
+
+                    b.ToTable("Requirements");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ModuleId = 1,
+                            Type = 0,
+                            Value = "50"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ModuleId = 2,
+                            Type = 2,
+                            Value = "9"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ModuleId = 3,
+                            Type = 1,
+                            Value = "120"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ModuleId = 4,
+                            Type = 2,
+                            Value = "2"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ModuleId = 5,
+                            Type = 0,
+                            Value = "50"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ModuleId = 5,
+                            Type = 2,
+                            Value = "3"
                         });
                 });
 
@@ -304,7 +456,7 @@ namespace LOM.API.Migrations
                     b.Property<int?>("ModuleId")
                         .HasColumnType("int");
 
-                    b.Property<byte>("SemesterNumber")
+                    b.Property<byte>("Periode")
                         .HasColumnType("tinyint unsigned");
 
                     b.Property<int>("Year")
@@ -324,7 +476,7 @@ namespace LOM.API.Migrations
                             Id = 1,
                             LearningRouteId = 1,
                             ModuleId = 1,
-                            SemesterNumber = (byte)1,
+                            Periode = (byte)1,
                             Year = 1
                         },
                         new
@@ -332,7 +484,7 @@ namespace LOM.API.Migrations
                             Id = 2,
                             LearningRouteId = 1,
                             ModuleId = 2,
-                            SemesterNumber = (byte)2,
+                            Periode = (byte)2,
                             Year = 1
                         },
                         new
@@ -340,7 +492,7 @@ namespace LOM.API.Migrations
                             Id = 3,
                             LearningRouteId = 1,
                             ModuleId = 3,
-                            SemesterNumber = (byte)1,
+                            Periode = (byte)1,
                             Year = 2
                         },
                         new
@@ -348,7 +500,7 @@ namespace LOM.API.Migrations
                             Id = 4,
                             LearningRouteId = 1,
                             ModuleId = 4,
-                            SemesterNumber = (byte)2,
+                            Periode = (byte)2,
                             Year = 2
                         },
                         new
@@ -356,7 +508,7 @@ namespace LOM.API.Migrations
                             Id = 5,
                             LearningRouteId = 1,
                             ModuleId = 5,
-                            SemesterNumber = (byte)1,
+                            Periode = (byte)1,
                             Year = 3
                         },
                         new
@@ -364,7 +516,7 @@ namespace LOM.API.Migrations
                             Id = 6,
                             LearningRouteId = 1,
                             ModuleId = 6,
-                            SemesterNumber = (byte)2,
+                            Periode = (byte)2,
                             Year = 3
                         },
                         new
@@ -372,7 +524,7 @@ namespace LOM.API.Migrations
                             Id = 7,
                             LearningRouteId = 1,
                             ModuleId = 7,
-                            SemesterNumber = (byte)1,
+                            Periode = (byte)1,
                             Year = 4
                         },
                         new
@@ -380,7 +532,7 @@ namespace LOM.API.Migrations
                             Id = 8,
                             LearningRouteId = 1,
                             ModuleId = 8,
-                            SemesterNumber = (byte)2,
+                            Periode = (byte)2,
                             Year = 4
                         });
                 });
@@ -431,6 +583,28 @@ namespace LOM.API.Migrations
                         });
                 });
 
+            modelBuilder.Entity("LOM.API.Models.Module", b =>
+                {
+                    b.HasOne("LOM.API.Models.GraduateProfile", "GraduateProfile")
+                        .WithMany()
+                        .HasForeignKey("GraduateProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GraduateProfile");
+                });
+
+            modelBuilder.Entity("LOM.API.Models.Requirement", b =>
+                {
+                    b.HasOne("LOM.API.Models.Module", "Module")
+                        .WithMany("Requirements")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Module");
+                });
+
             modelBuilder.Entity("LOM.API.Models.Semester", b =>
                 {
                     b.HasOne("LOM.API.Models.LearningRoute", "LearningRoute")
@@ -440,8 +614,9 @@ namespace LOM.API.Migrations
                         .IsRequired();
 
                     b.HasOne("LOM.API.Models.Module", "Module")
-                        .WithMany("Semesters")
-                        .HasForeignKey("ModuleId");
+                        .WithMany()
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("LearningRoute");
 
@@ -466,7 +641,7 @@ namespace LOM.API.Migrations
 
             modelBuilder.Entity("LOM.API.Models.Module", b =>
                 {
-                    b.Navigation("Semesters");
+                    b.Navigation("Requirements");
                 });
 #pragma warning restore 612, 618
         }
