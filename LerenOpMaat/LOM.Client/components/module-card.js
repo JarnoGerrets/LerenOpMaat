@@ -13,10 +13,10 @@ export default class ModuleCard extends customElements.get("base-card") {
                 </a>`
             : "";
             const content = `
-            <div style="margin-bottom: 25px;">
-                <h4 mb-3 >${module.Name}</h4>
+            <div>
+                <h4 mb-3 class="title-module-card">${module.Name}</h4>
             </div>
-            <div class="d-flex">
+            <div class="d-flex text-module-card">
                 <div class="w-50">
                     <div class="module-info-row" style="font-weight: bold;">
                     Code: <span id="code-text">${module.Code}</span>

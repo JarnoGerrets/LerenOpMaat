@@ -1,21 +1,22 @@
 import Popup from "../../components/Popup.js";
-import { getProfiles, addModule} from "../../client/api-client.js";
+import { getProfiles, addModule } from "../../client/api-client.js";
 let mijnPopup;
 
 export default async function addModulePopup() {
-    mijnPopup = new Popup({
-        maxWidth: 'auto',
-        height: 'auto',
-        sizeCloseButton: '0',
-        extraButtons: false,
-        closeButtonStyle: 'popup-confirmation-closebutton',
-        header: `
+    return new Promise(async (resolve) => {
+        mijnPopup = new Popup({
+            maxWidth: 'auto',
+            height: 'auto',
+            sizeCloseButton: '0',
+            extraButtons: false,
+            closeButtonStyle: 'popup-confirmation-closebutton',
+            header: `
                 <h3 class="popup-header-confirmation">
                     Toevoegen module
                 </h3>
             `,
-        titleWrapperClass: 'popup-title-confirmation',
-        content: `
+            titleWrapperClass: 'popup-title-confirmation',
+            content: `
         <form id="add-module-form" novalidate>
                 <div class="add-module-popup-content">
                     <div class="row-save-module">
@@ -66,60 +67,60 @@ export default async function addModulePopup() {
                 </div>
                 </form>
             `
-    });
+        });
 
-    mijnPopup.open();
-    const graduateProfiles = await getProfiles();
-    const select = document.getElementById("graduateProfile");
-    graduateProfiles.forEach(profile => {
-        const option = document.createElement("option");
-        option.value = profile.Id;
-        option.textContent = profile.Name;
-        select.appendChild(option);
-    });
+        mijnPopup.open();
+        const graduateProfiles = await getProfiles();
+        const select = document.getElementById("graduateProfile");
+        graduateProfiles.forEach(profile => {
+            const option = document.createElement("option");
+            option.value = profile.Id;
+            option.textContent = profile.Name;
+            select.appendChild(option);
+        });
 
-    document.getElementById("add-module-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
+        document.getElementById("add-module-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-        const form = e.target;
-        if (!form.checkValidity()) {
-            form.reportValidity(); // This shows built-in browser messages
-            return;
-        }
+            const form = e.target;
+            if (!form.checkValidity()) {
+                form.reportValidity(); // This shows built-in browser messages
+                return;
+            }
 
-        const moduleToSend = {
-            Name: form.querySelector("#name").value,
-            Code: form.querySelector("#code").value,
-            EC: parseInt(form.querySelector("#ec").value),
-            Niveau: parseInt(form.querySelector("#niveau").value),
-            Periode: parseInt(form.querySelector("#period").value),
-            IsActive: true,
-            GraduateProfileId: parseInt(form.querySelector("#graduateProfile").value),
-            Requirements: []
-        };
-        try {
-            const result = await addModule(moduleToSend);
-            console.log(result);
-            console.log(result.Name);
-            showToast(`${result.Name} succesvol toegevoegd`, 'success');
+            const moduleToSend = {
+                Name: form.querySelector("#name").value,
+                Code: form.querySelector("#code").value,
+                EC: parseInt(form.querySelector("#ec").value),
+                Niveau: parseInt(form.querySelector("#niveau").value),
+                Periode: parseInt(form.querySelector("#period").value),
+                IsActive: true,
+                GraduateProfileId: parseInt(form.querySelector("#graduateProfile").value),
+                Requirements: []
+            };
+            try {
+                const result = await addModule(moduleToSend);
+                showToast(`${result.Name} succesvol toegevoegd`, 'success');
+                resolve(true);
+                mijnPopup.close();
+            } catch (error) {
+                resolve(false);
+                showToast(`Er is een fout opgetreden, probeer opnieuw: ${error}`, 'error')
+            }
+        });
+
+        window.addEventListener('beforeunload', handleUnload);
+        window.addEventListener('popstate', handleUnload);
+
+        function handleUnload() {
             mijnPopup.close();
-        } catch (error) {
-            showToast(`Er is een fout opgetreden, probeer opnieuw: ${error}`, 'error')
         }
-    });
+        document.getElementById("cancel-save").addEventListener("click", () => {
+            resolve(false);
+            mijnPopup.close();
+        });
 
-    window.addEventListener('beforeunload', handleUnload);
-    window.addEventListener('popstate', handleUnload);
-
-    function handleUnload() {
-        mijnPopup.close();
-    }
-    document.getElementById("cancel-save").addEventListener("click", () => {
-        mijnPopup.close();
     });
 
 }
 
-function createModule(data) {
-
-}
