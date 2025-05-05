@@ -3,6 +3,7 @@
     padding-top: 15px;
     display: flex;
     gap: 400px;
+    width: 100%;
 }
 
 .extra-module-buttons {
@@ -21,7 +22,7 @@
 .bi-chevron-left {
     -webkit-text-stroke: 1px;
     text-align: center;
-    align-items: center center;
+    align-items: center;
     text-decoration: underline;
     color: black;
 }
@@ -176,6 +177,9 @@ button {
 /*-----------------------------mobile section----------------------------------------------------------------------------------*/
 
 @media (max-width: 768px) {
+    .buttons-container-module-info {
+        gap: 250px;
+    }
     .module-info-container {
         flex-direction: column;
         align-items: center;

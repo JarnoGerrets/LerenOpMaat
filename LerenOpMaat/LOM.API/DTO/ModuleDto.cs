@@ -50,7 +50,7 @@ namespace LOM.API.DTO
 				Niveau = this.Niveau,
 				Periode = this.Periode,
 				IsActive = this.IsActive,
-				GraduateProfile = this.GraduateProfile,
+				GraduateProfileId = this.GraduateProfile.Id,
 				Requirements = requirements
 			};
 		}
