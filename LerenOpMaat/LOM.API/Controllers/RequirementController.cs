@@ -19,7 +19,7 @@ namespace LOM.API.Controllers
 
         // GET: api/Requirement/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<Requirement>>> GetRequirements(int moduleId)
+        public async Task<ActionResult<IEnumerable<Requirement>>> GetRequirementsbyModule(int moduleId)
         {
             var requirements = await _context.Requirements
                 .Where(r => r.ModuleId == moduleId)

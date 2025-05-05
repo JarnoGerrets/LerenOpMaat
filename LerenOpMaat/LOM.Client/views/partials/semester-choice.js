@@ -3,7 +3,7 @@ import SemesterModule from "../../components/SemesterModule.js";
 import { getModules } from "../../client/api-client.js";
 
 let filterDropdown;
-let mijnPopup;
+let moduleSelectionPopup;
 let closeFilterDropdownHandler;
 let modules = [];
 let apiResponse = [];
@@ -59,13 +59,13 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
     const semesterModules = new SemesterModule(
         modules,
         (selectedModule) => {
-            mijnPopup.close(selectedModule); // Sluit popup met geselecteerde module
+            moduleSelectionPopup.close(selectedModule); // Sluit popup met geselecteerde module
             return selectedModule;
         }
     );
     const renderedSemesterModules = await semesterModules.render();
 
-    mijnPopup = new Popup({
+    moduleSelectionPopup = new Popup({
         maxWidth: 'auto',
         maxHeight: '620px',
         sizeCloseButton: '16',
@@ -88,9 +88,9 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
             }
         ]
     });
-    mijnPopup.contentContainer.appendChild(renderedSemesterModules);
+    moduleSelectionPopup.contentContainer.appendChild(renderedSemesterModules);
 
-    const selectedModule = await mijnPopup.open();
+    const selectedModule = await moduleSelectionPopup.open();
     if (selectedModule) {
         return selectedModule;
     }
@@ -177,7 +177,7 @@ function showFilter(Data) {
 }
 
 function openPopup(filterDropdown) {
-    const filterButtonWrapper = mijnPopup.popup.querySelector('.filter-button')?.closest('.popup-button-wrapper');
+    const filterButtonWrapper = moduleSelectionPopup.popup.querySelector('.filter-button')?.closest('.popup-button-wrapper');
     if (filterButtonWrapper) {
         filterButtonWrapper.appendChild(filterDropdown);
     }
@@ -220,16 +220,16 @@ function filterData(searchTerm = '') {
     //doe 'Geen Keuze' altijd als eerste optie
     filtered.unshift({ Name: 'Geen Keuze', Description: 'Geen Keuze' });
     let popupWidth = 0;
-    popupWidth = mijnPopup.popup.getBoundingClientRect().width - 58;
+    popupWidth = moduleSelectionPopup.popup.getBoundingClientRect().width - 58;
 
     const data = new SemesterModule(filtered, (selectedModule) => {
-        mijnPopup.close(selectedModule);
+        moduleSelectionPopup.close(selectedModule);
         return selectedModule;
     });
 
-    mijnPopup.contentContainer.innerHTML = '';
-    mijnPopup.contentContainer.style.minWidth = `${popupWidth}px`;
+    moduleSelectionPopup.contentContainer.innerHTML = '';
+    moduleSelectionPopup.contentContainer.style.minWidth = `${popupWidth}px`;
     data.render().then(rendered => {
-        mijnPopup.contentContainer.appendChild(rendered);
+        moduleSelectionPopup.contentContainer.appendChild(rendered);
     });
 }

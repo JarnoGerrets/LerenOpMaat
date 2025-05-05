@@ -99,9 +99,7 @@ namespace LOM.API.Controllers
 				Niveau = dto.Niveau,
 				Periode = dto.Periode,
 				IsActive = dto.IsActive,
-				GraduateProfileId = dto.GraduateProfileId,
-				Requirements = _context.Requirements
-					.Where(r => dto.RequirementIds.Contains(r.Id)).ToList()
+				GraduateProfileId = dto.GraduateProfileId
 			};
 
 			_context.Modules.Add(module);

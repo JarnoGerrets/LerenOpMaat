@@ -44,6 +44,8 @@ class ModuleOverview extends HTMLElement {
         const addModuleInput = this.querySelector('#add-module-button');
         addModuleInput.addEventListener('click', async () => {
             await addModulePopup();
+            const modules = await getModules();
+            this.renderModules(modules);
         });
     }
 

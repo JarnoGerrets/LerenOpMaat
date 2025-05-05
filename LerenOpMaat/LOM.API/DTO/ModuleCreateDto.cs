@@ -10,7 +10,6 @@
 		public int Periode { get; set; }
 		public bool IsActive { get; set; }
 		public int GraduateProfileId { get; set; }
-		public List<int> RequirementIds { get; set; } = new();
 	}
 
 }
