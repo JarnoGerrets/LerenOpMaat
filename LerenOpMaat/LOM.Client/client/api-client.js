@@ -192,3 +192,15 @@ export async function uploadOerPdf(file, userId) {
 
   return await res.json();
 }
+
+export async function getCurrentOerPdf() {
+  const res = await fetch(`${API_BASE}/Oer/current`, {
+    method: "GET"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Ophalen OER mislukt: ${res.status}`);
+  }
+
+  return await res.blob();
+}

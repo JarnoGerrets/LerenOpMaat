@@ -110,10 +110,6 @@ namespace LOM.API.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> UploadOer(IFormFile file)
         {
-            var userIdString = Request.Form["userId"];
-            if (!int.TryParse(userIdString, out int userId))
-                return BadRequest("Ongeldig gebruikers-ID.");
-
             if (file == null || file.Length == 0)
                 return BadRequest("Geen bestand geüpload.");
 
@@ -132,8 +128,7 @@ namespace LOM.API.Controllers
             var oer = new Oer
             {
                 Base64PDF = base64String,
-                UploadDate = DateTime.UtcNow,
-                UserId = userId
+                UploadDate = DateTime.UtcNow
             };
 
             _context.Oer.Add(oer);

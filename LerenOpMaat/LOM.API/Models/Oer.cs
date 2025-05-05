@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LOM.API.Models
 {
@@ -12,11 +11,5 @@ namespace LOM.API.Models
 
         [Required]
         public DateTime UploadDate { get; set; }
-
-        [Required]
-        public int UserId { get; set; }
-
-        [ForeignKey("UserId")]
-        public User UploadedBy { get; set; }
     }
 }

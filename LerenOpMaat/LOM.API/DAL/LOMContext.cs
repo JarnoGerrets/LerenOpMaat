@@ -11,6 +11,7 @@ public class LOMContext : DbContext
     public DbSet<User> User { get; set; }
     public DbSet<Semester> Semesters { get; set; }
     public DbSet<LearningRoute> LearningRoutes { get; set; }
+    public DbSet<Oer> Oer { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -18,6 +19,4 @@ public class LOMContext : DbContext
         var seeder = new Seeder(modelBuilder);
         seeder.Seed();
     }
-
-public DbSet<LOM.API.Models.Oer> Oer { get; set; } = default!;
 }
