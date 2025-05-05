@@ -97,7 +97,7 @@ export async function postLearningRoute(learningRoute) {
 }
 
 export async function updateSemester(learningRouteId, semesterData) {
-  const res = await fetch(`${API_BASE}/Semester/UpdateSemesters/${learningRouteId}`, {
+  const res = await fetch(`${API_BASE}/Semester/updateSemesters/${learningRouteId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
