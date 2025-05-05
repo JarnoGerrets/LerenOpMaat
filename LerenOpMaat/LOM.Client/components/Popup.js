@@ -12,8 +12,8 @@ export default class Popup {
         this.overlay = document.createElement('div');
         this.overlay.classList.add('popup-overlay');
 
-        this.overlay.addEventListener('click', (event) => {
-            if (!this.popup.contains(event.target)) {
+        document.addEventListener('click', (event) => {
+            if (this.overlay.parentElement && !this.popup.contains(event.target)) {
                 this.close();
             }
         });
@@ -132,4 +132,5 @@ export default class Popup {
             if (this._resolve) this._resolve(result);
         }, 300);
     }
+
 }
