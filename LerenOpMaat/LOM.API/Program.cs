@@ -10,7 +10,12 @@ builder.Services.AddCors(options =>
 	options.AddPolicy("CorsPolicy",
 		policy => policy
 			.SetIsOriginAllowedToAllowWildcardSubdomains()
-			.WithOrigins("https://lom.robhutten.nl","https://lerenopmaat.info")
+			.WithOrigins(
+				"https://lom.robhutten.nl",
+				"https://lerenopmaat.info",
+				"http://localhost:3000", // Add local development
+				"http://localhost:5173"  // Add Vite default port
+			)
 			.AllowAnyMethod()
 			.AllowCredentials()
 			.AllowAnyHeader()
@@ -34,17 +39,18 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-	app.UseSwagger();
-	app.UseSwaggerUI();
-// }
-
+// Configure forwarded headers first
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
-	ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+	ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
 });
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+	app.UseSwagger();
+	app.UseSwaggerUI();
+}
 
 // Enable CORS before other middleware
 app.UseCors("CorsPolicy");

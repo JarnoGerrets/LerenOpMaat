@@ -1,4 +1,4 @@
-const API_BASE = "https://api.robhutten.nl/api";
+const API_BASE = "https://lom.robhutten.nl/api";
 
 export async function getModules(q) {
   const res = await fetch(`${API_BASE}/Module?q=${q||''}`, {
