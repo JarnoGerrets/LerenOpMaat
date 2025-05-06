@@ -19,7 +19,7 @@ export default async function SemesterCard({ semester, module, locked = false, o
   if (!locked && button) {
     button.addEventListener("click", async () => {
       const selectedModule = await SemesterChoice(button.textContent.trim());
-      if (selectedModule.Name !== "Geen Keuze") {
+      if (selectedModule && selectedModule.Name !== "Geen Keuze") {
         button.innerHTML = `
               ${selectedModule.Name} 
               <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
@@ -35,7 +35,10 @@ export default async function SemesterCard({ semester, module, locked = false, o
       if (onModuleChange) {
         onModuleChange({
           semester,
-          moduleId: selectedModule.Name === "Geen Keuze" ? null : selectedModule.Id,
+          moduleId:
+            !selectedModule || selectedModule.Name === "Geen Keuze"
+              ? null
+              : selectedModule.Id,
         });
       }
     });

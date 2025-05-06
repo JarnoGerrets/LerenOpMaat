@@ -1,4 +1,7 @@
+using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 using LOM.API.DAL;
+using LOM.API.DTO;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +20,34 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 builder.Services.AddControllers();
-//builder.Services.AddDbContext<LOMContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Local-LOM-DB")));
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
+        {
+            Modifiers =
+            {
+                ti =>
+                {
+                    if (ti.Type == typeof(RequirementDto))
+                    {
+                        ti.PolymorphismOptions = new JsonPolymorphismOptions
+                        {
+                            TypeDiscriminatorPropertyName = "$type",
+                            IgnoreUnrecognizedTypeDiscriminators = true,
+                            DerivedTypes =
+                            {
+                                new JsonDerivedType(typeof(ModuleRequirementDto), "module"),
+                                new JsonDerivedType(typeof(EcRequirementDto), "ec")
+                            }
+                        };
+                    }
+                }
+            }
+        };
+    });
+// builder.Services.AddDbContext<LOMContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Local-LOM-DB")));
 builder.Services.AddDbContext<LOMContext>(options =>
 	options.UseMySql(
 			builder.Configuration.GetConnectionString("ExternMySql"),
@@ -44,7 +74,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     app.UseSwaggerUI();
 // }
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseCors("AppCorsPolicy");
 app.UseAuthorization();
 app.MapControllers();
