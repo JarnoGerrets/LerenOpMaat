@@ -17,30 +17,20 @@ namespace LOM.API.Controllers
 			_context = context;
 		}
 
+		// GET: api/Module
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules([FromQuery] string? q)
+		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules()
 		{
-			var query = _context.Modules
-				.Where(m => m.IsActive);
+			var modules = await _context.Modules
+				.Where(m => m.IsActive)
+				.Include(m => m.Requirements)
+				.Include(m => m.GraduateProfile)
+				.ToListAsync();
 
-			if (!string.IsNullOrWhiteSpace(q))
-			{
-				string lowerQ = q.ToLower();
-				query = query.Where(m =>
-					m.Name.ToLower().Contains(lowerQ) ||
-					m.Code.ToLower().Contains(lowerQ) ||
-					m.Description.ToLower().Contains(lowerQ));
-			}
+			// Use Task.WhenAll to await all DTO mappings
+			var result = await Task.WhenAll(modules.Select(m => ModuleDto.FromModelAsync(m, _context)));
 
-			var modules = await query.Include(m => m.Requirements).ToListAsync();
-
-			var result = new List<ModuleDto>();
-			foreach (var module in modules)
-			{
-				result.Add(await ModuleDto.FromModelAsync(module, _context));
-			}
-
-			return result;
+			return result.ToList();
 		}
 
 		// GET: api/Module/5
@@ -50,6 +40,7 @@ namespace LOM.API.Controllers
 			var module = await _context.Modules
 				.Where(m => m.Id == id)
 				.Include(m => m.Requirements)
+				.Include(m => m.GraduateProfile)
 				.FirstOrDefaultAsync();
 
 			if (module == null)
@@ -92,8 +83,25 @@ namespace LOM.API.Controllers
 		// POST: api/Module
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[HttpPost]
-		public async Task<ActionResult<Module>> PostModule(Module @module)
+		public async Task<ActionResult<Module>> PostModule(ModuleCreateDto @dto)
 		{
+			var roleClaim = HttpContext.User.FindFirst("role")?.Value;
+
+			if (roleClaim == "Student")
+				return Forbid();
+
+			var module = new Module
+			{
+				Name = dto.Name,
+				Code = dto.Code,
+				Description = dto.Description,
+				Ec = dto.Ec,
+				Niveau = dto.Niveau,
+				Periode = dto.Periode,
+				IsActive = dto.IsActive,
+				GraduateProfileId = dto.GraduateProfileId
+			};
+
 			_context.Modules.Add(module);
 			await _context.SaveChangesAsync();
 

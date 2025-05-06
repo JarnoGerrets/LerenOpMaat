@@ -49,10 +49,10 @@ export default async function LearningRoute() {
     const sortedYears = Object.entries(semesterDataGroupedByYear).sort(([yearA], [yearB]) => yearA - yearB);
 
     for (const [year, semesterGroup] of sortedYears) {
-        semesterGroup.sort((a, b) => a.SemesterNumber - b.semester);
+        semesterGroup.sort((a, b) => a.Periode - b.Periode);
 
-        const semester1 = semesterGroup.find(s => s.SemesterNumber === 1);
-        const semester2 = semesterGroup.find(s => s.SemesterNumber === 2);
+        const semester1 = semesterGroup.find(s => s.Periode === 1);
+        const semester2 = semesterGroup.find(s => s.Periode === 2);
 
         const semesterPair = await SemesterPair(semester1, semester2, index, totalAmountOfYears);
 
@@ -87,7 +87,7 @@ export default async function LearningRoute() {
 
     //Opslaan knop als de gebruiker al een route heeft dan wordt het aangepast
     //Als er nog geen route is gekoppeld aan de  gebruiker dan maakt hij een nieuwe route
-    const saveButton = document.getElementById("saveLearningRoute");
+    const saveButton = fragment.getElementById("saveLearningRoute");
     if (saveButton) {
         saveButton.addEventListener("click", async () => {
             JSON.stringify(learningRouteArray, null, 2);
@@ -109,29 +109,76 @@ export default async function LearningRoute() {
         });
     };
 
-    //De export knop werkt alleen als er een apiResponse is dus het werkt niet met dummy data.
-    const exportButton = document.getElementById("exportLearningRoute");
+    const exportButton = fragment.getElementById("exportLearningRoute");
     if (exportButton) {
-        exportButton.addEventListener("click", () => {
-            if (apiResponse) {
-                const jsonString = JSON.stringify(apiResponse, null, 2);
-                const blob = new Blob([jsonString], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "learning-route.json";
-                a.click();
-
-                URL.revokeObjectURL(url);
-            } else {
-                console.error("Geen API Response beschikbaar om te exporteren.");
+        exportButton.addEventListener("click", async () => {
+            if (!apiResponse || !apiResponse.Users || !apiResponse.Semesters) {
+                console.error("Geen geldige API Response beschikbaar om te exporteren.");
+                return;
             }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Afbeelding configuratie
+            const logoUrl = "../images/Windesheim_logo_Zwart.png";
+            const imgWidth = 50;
+            const imgHeight = 20;
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const xPosition = pageWidth - imgWidth - 10;
+            const yPosition = 10;
+
+            const img = new Image();
+            img.src = logoUrl;
+
+            img.onload = () => {
+                doc.addImage(img, "PNG", xPosition, yPosition, imgWidth, imgHeight);
+
+                const user = apiResponse.Users[0];
+                doc.setFontSize(12);
+                doc.text(`Voornaam: ${user.FirstName}`, 10, 40);
+                doc.text(`Achternaam: ${user.LastName}`, 10, 50);
+                doc.text(`Begin jaar: ${user.StartYear}`, 10, 60);
+
+                doc.setLineWidth(0.5);
+                doc.line(10, 65, 200, 65);
+
+                let currentYPosition = 70; 
+                currentYPosition = 75;
+                
+                const groupedByYear = apiResponse.Semesters.reduce((acc, semester) => {
+                    if (!acc[semester.Year]) {
+                        acc[semester.Year] = [];
+                    }
+                    acc[semester.Year].push(semester);
+                    return acc;
+                }, {});
+
+                
+                for (const year in groupedByYear) {
+                    doc.text(`Jaar ${year}:`, 10, currentYPosition);
+                    currentYPosition += 10;
+
+                    groupedByYear[year].forEach(semester => {
+                        doc.text(
+                            `Periode ${semester.Periode}: ${semester.Module.Name}`,
+                            20,
+                            currentYPosition
+                        );
+                        currentYPosition += 10;
+                    });
+                }                
+                doc.save("learning-route.pdf");
+            };
+
+            img.onerror = () => {
+                console.error("Fout bij het laden van de afbeelding.");
+            };
         });
-    };
+    }
 
     //Willen wij een popup of window.alert gebruiken om het te bevestigen?
-    const deleteButton = document.getElementById("deleteRoute");
+    const deleteButton = fragment.getElementById("deleteRoute");
     if (deleteButton) {
         deleteButton.addEventListener("click", async () => {
             if (routeId !== null) {
@@ -175,7 +222,7 @@ async function saveLearningRoute(learningRouteArray) {
                 ],
                 Semesters: learningRouteArray.map(item => ({
                     Year: item.Year,
-                    SemesterNumber: item.SemesterNumber,
+                    Periode: item.Periode,
                     ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
                 }))
             };
@@ -195,7 +242,7 @@ async function updateLearningRoute(routeId, semesterData) {
     }
     const body = semesterData.map(item => ({
         Year: item.Year,
-        SemesterNumber: item.SemesterNumber,
+        Periode: item.Periode,
         ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
     }));
 

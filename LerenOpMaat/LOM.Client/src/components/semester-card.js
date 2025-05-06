@@ -1,4 +1,5 @@
 import SemesterChoice from "../views/partials/semester-choice.js";
+import { learningRouteArray } from "./semester-pair.js";
 
 export default async function SemesterCard({ semester, module, locked = false, onModuleChange }) {
   const template = document.createElement("template");
@@ -18,24 +19,24 @@ export default async function SemesterCard({ semester, module, locked = false, o
   if (!locked && button) {
     button.addEventListener("click", async () => {
       const selectedModule = await SemesterChoice(button.textContent.trim());
-      if (selectedModule.Name !== "Geen Keuze") {
+      if (selectedModule && selectedModule.Name !== "Geen Keuze") {
         button.innerHTML = `
               ${selectedModule.Name} 
               <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
           `;
-        // Roep de callback aan om de learningRouteArray bij te werken
-        if (onModuleChange) {
-          onModuleChange({
-            semester,
-            moduleId: selectedModule.Id,
-          });
-        }
-      }
-      else {
+      } else {
         button.innerHTML = `
               Selecteer je module
               <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
           `;
+      }
+
+      // Roep de callback aan om de learningRouteArray bij te werken
+      if (onModuleChange) {
+        onModuleChange({
+          semester,
+          moduleId: selectedModule.Name === "Geen Keuze" ? null : selectedModule.Id,
+        });
       }
     });
   }

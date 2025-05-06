@@ -9,11 +9,11 @@ namespace LOM.API.DTO
 		public string Name { get; set; }
 		public string Code { get; set; }
 		public string Description { get; set; }
-		public string Category { get; set; }
 		public int Ec { get; set; }
 		public int Niveau { get; set; }
 		public int Periode { get; set; }
 		public bool IsActive { get; set; }
+		public GraduateProfile GraduateProfile { get; set; }
 		public List<RequirementDto> Requirements { get; set; }
 
 		public static async Task<ModuleDto> FromModelAsync(Module module, LOMContext context)
@@ -28,14 +28,15 @@ namespace LOM.API.DTO
 				Name = module.Name,
 				Code = module.Code,
 				Description = module.Description,
-				Category = module.Category,
 				Ec = module.Ec,
 				Niveau = module.Niveau,
 				Periode = module.Periode,
 				IsActive = module.IsActive,
+				GraduateProfile = module.GraduateProfile,
 				Requirements = requirementDtos.ToList()
 			};
 		}
+
 		public Module ToModel()
 		{
 			List<Requirement> requirements = RequirementDtoFactory.ToModelList(this.Requirements);
@@ -45,11 +46,11 @@ namespace LOM.API.DTO
 				Name = this.Name,
 				Code = this.Code,
 				Description = this.Description,
-				Category = this.Category,
 				Ec = this.Ec,
 				Niveau = this.Niveau,
 				Periode = this.Periode,
 				IsActive = this.IsActive,
+				GraduateProfileId = this.GraduateProfile.Id,
 				Requirements = requirements
 			};
 		}

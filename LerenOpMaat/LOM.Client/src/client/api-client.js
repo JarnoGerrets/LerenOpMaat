@@ -50,6 +50,26 @@ export async function updateModule(id, moduleData) {
     return;
 }
 
+export async function addModule(moduleData) {
+  console.log(moduleData);
+  const res = await fetch(`${API_BASE}/Module`, {
+      method: "POST",
+      credentials: 'include',
+      headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+      },
+      body: JSON.stringify(moduleData)
+  });
+
+  if (!res.ok) {
+      throw new Error(`Failed to save module: ${res.status}`);
+  }
+
+  return res.json();
+}
+
+
 export async function deleteModule(id) {
     const res = await fetch(`${API_BASE}/Module/${id}`, {
         method: "DELETE",
@@ -64,7 +84,42 @@ export async function deleteModule(id) {
     }
 
     return res.text();
+
 }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+export async function getProfiles(q) {
+  const res = await fetch(`${API_BASE}/GraduateProfile?q=${q||''}`, {
+    method: "GET", 
+    credentials: 'include',
+    headers: {
+      "Accept": "text/plain"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch modules: ${res.status}`);
+  }
+
+    return await res.json();
+}
+
+export async function getProfile(id) {
+  const res = await fetch(`${API_BASE}/GraduateProfile/${id}`, {
+    method: "GET",
+      credentials: 'include',
+    headers: {
+      "Accept": "text/plain"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch profile: ${res.status}`);
+  }
+
+    return await res.json();
+}
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 export async function getLearningRoutesByUserId(id) {
   const res = await fetch(`${API_BASE}/LearningRoute/User/${id}`, {
@@ -100,8 +155,26 @@ export async function postLearningRoute(learningRoute) {
   return;
 }
 
+export async function deleteRoute(learningRouteId) {
+  const res = await fetch(`${API_BASE}/LearningRoute/${learningRouteId}`, {
+    method: "DELETE",
+      credentials: 'include',
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to delete learning route: ${res.status}`);
+  }
+
+  return res.ok; // Return true if the request was successful
+}
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
 export async function updateSemester(learningRouteId, semesterData) {
-  const res = await fetch(`${API_BASE}/Semester/UpdateSemesters/${learningRouteId}`, {
+  const res = await fetch(`${API_BASE}/Semester/updateSemesters/${learningRouteId}`, {
     method: "PUT",
     credentials: 'include',
     headers: {
@@ -124,30 +197,15 @@ export async function updateSemester(learningRouteId, semesterData) {
     return { message: "Semesters updated successfully (geen JSON)" };
   }
 }
-
-export async function deleteRoute(learningRouteId) {
-  const res = await fetch(`${API_BASE}/LearningRoute/${learningRouteId}`, {
-    method: "DELETE",
-    credentials: 'include',
-    headers: {
-      "Accept": "application/json"
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to delete learning route: ${res.status}`);
-  }
-
-  return res.ok;
-}
-
+---------------------------------------------------------------------------------------------------------------------------------------------------------------//
 export async function getStartYear(id) {
   try {
     const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
       method: 'GET',
       credentials: 'include',
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
       }
     });
 
@@ -169,8 +227,8 @@ export async function setStartYear(id, startYear) {
       method: 'POST',
       credentials: 'include',
       headers: {
-        'Content-Type': 'application/json',
         'Accept': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(startYear)
     });
