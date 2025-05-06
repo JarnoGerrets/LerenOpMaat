@@ -1,6 +1,8 @@
 export default class Popup {
     constructor({ maxWidth = 'auto', maxHeight = 'auto', sizeCloseButton = '', extraButtons = false, closeButtonStyle, header = '', titleWrapperClass = '',content = '', buttons = [] }) {
 
+        this._handleOutsideClick = this._handleOutsideClick.bind(this);
+
         this.result = null;
         this._resolve = null;
 
@@ -11,12 +13,6 @@ export default class Popup {
 
         this.overlay = document.createElement('div');
         this.overlay.classList.add('popup-overlay');
-
-        document.addEventListener('click', (event) => {
-            if (this.overlay.parentElement && !this.popup.contains(event.target)) {
-                this.close();
-            }
-        });
 
         // Close button
         const closeButton = document.createElement('button');
@@ -116,14 +112,19 @@ export default class Popup {
             this.overlay.style.pointerEvents = 'auto';
             this.popup.style.transform = 'scale(1)';
             this.popup.style.opacity = 1;
+    
+            setTimeout(() => {
+                document.addEventListener('click', this._handleOutsideClick);
+            }, 10);
         }, 10);
-
+    
         return new Promise((resolve) => {
             this._resolve = resolve;
         });
     }
 
     close(result = null) {
+        document.removeEventListener('click', this._handleOutsideClick);
         this.overlay.style.opacity = 0;
         this.popup.style.transform = 'scale(0)';
         this.popup.style.opacity = 0;
@@ -131,6 +132,12 @@ export default class Popup {
             document.body.removeChild(this.overlay);
             if (this._resolve) this._resolve(result);
         }, 300);
+    }
+
+    _handleOutsideClick(event) {
+        if (this.overlay.parentElement && !this.popup.contains(event.target)) {
+            this.close();
+        }
     }
 
 }
