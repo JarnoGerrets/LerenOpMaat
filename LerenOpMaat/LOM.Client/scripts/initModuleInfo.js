@@ -23,7 +23,7 @@ export default async function initModuleInfo(id) {
 
     // Create Module Info Card 
     const infoCard = document.createElement('module-card');
-    infoCard.data = savedModule;
+    infoCard.data = {module: savedModule};
     CardContainer.appendChild(infoCard);
 
     // Create Requirements Card
@@ -43,4 +43,8 @@ export default async function initModuleInfo(id) {
     function handleUnload() {
         localStorage.removeItem(`module-${moduleId}`);
     }
+
+    document.getElementById("go-back-button").addEventListener("click", () => {
+        history.back();
+    });
 }

@@ -14,9 +14,9 @@ export default class RequirementsCard extends customElements.get("base-card") {
 
         const content = `
             <div>
-                <h4>Toegangseisen</h4>
+                <h4 class="title-requirement-card">Toegangseisen</h4>
             </div>
-            <div class="d-flex flex-column gap-2" style="font-weight: bold;">
+            <div class="d-flex flex-column gap-2 text-requirement-card" style="font-weight: bold;">
                 ${items}
             </div>
         `;

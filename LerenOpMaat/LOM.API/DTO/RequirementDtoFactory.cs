@@ -1,6 +1,8 @@
-﻿using LOM.API.DAL;
+﻿using System.Diagnostics;
+using LOM.API.DAL;
 using LOM.API.Enums;
 using LOM.API.Models;
+using Newtonsoft.Json;
 
 namespace LOM.API.DTO
 {
@@ -17,6 +19,20 @@ namespace LOM.API.DTO
 			};
 		}
 
+		public static RequirementDto RehydrateFromBase(RequirementDto dto)
+		{
+			return dto.Type switch
+			{
+				ModulePreconditionType.RequiredModule => JsonConvert.DeserializeObject<ModuleRequirementDto>(
+					JsonConvert.SerializeObject(dto)),
+				ModulePreconditionType.RequiredEc => JsonConvert.DeserializeObject<EcRequirementDto>(
+					JsonConvert.SerializeObject(dto)),
+				ModulePreconditionType.RequiredEcFromPropedeuse => JsonConvert.DeserializeObject<EcRequirementDto>(
+					JsonConvert.SerializeObject(dto)),
+				_ => throw new NotImplementedException()
+			};
+		}
+
 
 		public static List<Requirement> ToModelList(IEnumerable<RequirementDto> dtos)
 		{
@@ -24,7 +40,8 @@ namespace LOM.API.DTO
 
 			foreach (var dto in dtos)
 			{
-				result.Add(dto.ToModel());
+				var rehydrated = RehydrateFromBase(dto);
+				result.Add(rehydrated.ToModel());
 			}
 
 			return result;

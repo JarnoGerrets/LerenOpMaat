@@ -8,7 +8,6 @@ a.rm-a-style, a.rm-a-style:hover, a.rm-a-style:focus, a.rm-a-style:active {
 }
 
 /*------------------------------------toast message------------------------------------------------------------*/
-
 #toast-container {
     position: fixed;
     top: 90px;
@@ -90,7 +89,7 @@ a.rm-a-style, a.rm-a-style:hover, a.rm-a-style:focus, a.rm-a-style:active {
 
     #toast-container {
         position:fixed;
-        right: 110px;
+        right: 40px;
     }
 
     

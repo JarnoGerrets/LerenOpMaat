@@ -17,12 +17,35 @@ export default class SemesterModule {
             let link = '';
             if (module.Id) {
                 link = `<a href="#Module/${module.Id}" class="material-icons module-icon" title="Go to ${module.Description}">
-                    i
+                    info_outline
                 </a>`;
+            }
+            let cardText = "";
+
+            if (module.Name != "Geen Keuze") {
+                cardText = `<div class="d-flex flex-column justify-content-between">
+                <div class="d-flex">
+                    <div class="w-50">
+                        <div class="module-info-row">
+                        Code: <span id="code-text">${module.Code}</span>
+                        </div>
+                        <div class="module-info-row">
+                        Periode: <span id="periode-text">${module.Periode}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="module-info-row">
+                        EC: <span id="ec-text">${module.Ec}</span>
+                        </div>
+                        <div class="module-info-row">
+                        Niveau: <span id="niveau-text">${module.Niveau}</span>
+                        </div>
+                    </div>
+                </div>`;
             }
             const populatedTemplate = template
                 .replace('{{id}}', module.Id)
-                .replace('{{card_text}}', module.Description)
+                .replace('{{card_text}}', cardText)
                 .replace('{{title}}', module.Name)
                 .replace('{{link}}', link);
 
