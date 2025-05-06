@@ -4,6 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Sentry
+builder.WebHost.UseSentry((Action<Sentry.AspNetCore.SentryAspNetCoreOptions>)(options =>
+{
+	options.Dsn = builder.Configuration["Sentry:Dsn"];
+	options.TracesSampleRate = 1.0;
+	options.Environment = builder.Environment.EnvironmentName;
+	options.MinimumBreadcrumbLevel = LogLevel.Information;
+	options.MinimumEventLevel = LogLevel.Warning;
+	options.MaxBreadcrumbs = 100;
+	options.AttachStacktrace = true;
+	options.SendDefaultPii = true;
+	options.Debug = builder.Environment.IsDevelopment();
+}));
+
 // Add CORS services
 builder.Services.AddCors(options =>
 {
@@ -43,6 +57,39 @@ var app = builder.Build();
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
 	ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+});
+
+// Global exception handling
+app.Use(async (context, next) =>
+{
+	try
+	{
+		await next();
+	}
+	catch (Exception ex)
+	{
+		// Capture the exception in Sentry
+		SentrySdk.CaptureException(ex, scope =>
+		{
+			scope.SetTag("endpoint", context.Request.Path);
+			scope.SetTag("method", context.Request.Method);
+			scope.SetExtra("query_string", context.Request.QueryString.ToString());
+			scope.SetExtra("headers", context.Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString()));
+			
+			// Add user information if available
+			if (context.User?.Identity?.IsAuthenticated == true)
+			{
+				scope.User = new Sentry.User
+				{
+					Id = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
+					Username = context.User.Identity.Name
+				};
+			}
+		});
+
+		// Re-throw the exception to maintain the original behavior
+		throw;
+	}
 });
 
 // Configure the HTTP request pipeline.
