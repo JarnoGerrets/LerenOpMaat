@@ -30,7 +30,7 @@ export default class SemesterModule {
                         Code: <span id="code-text">${module.Code}</span>
                         </div>
                         <div class="module-info-row">
-                        Periode: <span id="periode-text">${module.Periode}</span>
+                        Periode: <span id="period-text">${module.Period}</span>
                         </div>
                     </div>
                     <div>
@@ -38,7 +38,7 @@ export default class SemesterModule {
                         EC: <span id="ec-text">${module.Ec}</span>
                         </div>
                         <div class="module-info-row">
-                        Niveau: <span id="niveau-text">${module.Niveau}</span>
+                        Niveau: <span id="level-text">${module.Level}</span>
                         </div>
                     </div>
                 </div>`;

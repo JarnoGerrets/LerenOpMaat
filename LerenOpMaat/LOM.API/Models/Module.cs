@@ -14,8 +14,8 @@ public class Module
     public string? Description { get; set; }
 
     public int Ec { get; set; }
-    public int Niveau {get; set; }
-    public int Periode {get; set; }
+    public int Level {get; set; }
+    public int Period {get; set; }
     public Boolean IsActive { get; set; } = false;
     [ForeignKey(nameof(GraduateProfile))]
     public int GraduateProfileId { get; set; }

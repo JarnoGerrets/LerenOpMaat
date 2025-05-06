@@ -6,6 +6,10 @@ export default class RequirementsCard extends customElements.get("base-card") {
     }
 
     set data(requirements) {
+        if (!requirements || requirements.length === 0) {
+            return;
+        }
+
         const items = requirements.map(req => `
             <div class="requirement">
                 <p>${req.Description}</p>

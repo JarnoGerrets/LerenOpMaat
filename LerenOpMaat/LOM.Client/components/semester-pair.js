@@ -32,13 +32,13 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card1 = await SemesterCard({
             id: semester1.id,
-            semester: semester1.Periode,
+            semester: semester1.Period,
             module: semester1.Module.Name,
             moduleId: semester1.ModuleId,
             locked: semester1.locked,
             onModuleChange: ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(
-                    (item) => item.Year === index + 1 && item.Periode === semester
+                    (item) => item.Year === index + 1 && item.Period === semester
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
@@ -55,7 +55,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         learningRouteArray.push({
             Year: index + 1,
-            Periode: semester1.Periode,
+            Period: semester1.Period,
             moduleId: semester1.Module.Id,
         });
     }
@@ -76,13 +76,13 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card2 = await SemesterCard({
             id: semester2.id,
-            semester: semester2.Periode,
+            semester: semester2.Period,
             module: semester2.Module.Name,
             moduleId: semester2.Module.Id,
             locked: semester2.locked,
             onModuleChange: ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(
-                    (item) => item.Year === index + 1 && item.Periode === semester
+                    (item) => item.Year === index + 1 && item.Period === semester
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
@@ -99,7 +99,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         learningRouteArray.push({
             Year: index + 1,
-            Periode: semester2.Periode,
+            Period: semester2.Period,
             moduleId: semester2.Module.Id,
         });
 

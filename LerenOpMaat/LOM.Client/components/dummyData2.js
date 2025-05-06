@@ -2,7 +2,7 @@
 export const dummySemester1 = {
     Id: 600000,
     Year: new Date().getFullYear(),
-    Periode: 1,
+    Period: 1,
     Module: {
         Id: 200000,
         Name: "Selecteer je module",
@@ -15,7 +15,7 @@ export const dummySemester1 = {
 export const dummySemester2 = {
     Id: 500000,
     Year: new Date().getFullYear(),
-    Periode: 2,
+    Period: 2,
     Module: {
         Id: 300000,
         Name: "Selecteer je module",

@@ -1,4 +1,4 @@
-import Popup from "../../components/Popup.js";
+import Popup from "../../components/popup.js";
 import { getProfiles, addModule } from "../../client/api-client.js";
 let mijnPopup;
 
@@ -43,7 +43,7 @@ export default async function addModulePopup() {
                         </div>
                         <div class="field-wrapper">
                             <span class="field-text-2 spacer-row-1">Niveau:</span>
-                            <select id="niveau" type="number" class="save-module-select" required>
+                            <select id="level" type="number" class="save-module-select" required>
                             <option id=1>1</option>
                             <option id=2>2</option>
                             <option id=2>3</option>
@@ -92,8 +92,8 @@ export default async function addModulePopup() {
                 Name: form.querySelector("#name").value,
                 Code: form.querySelector("#code").value,
                 EC: parseInt(form.querySelector("#ec").value),
-                Niveau: parseInt(form.querySelector("#niveau").value),
-                Periode: parseInt(form.querySelector("#period").value),
+                Level: parseInt(form.querySelector("#level").value),
+                Period: parseInt(form.querySelector("#period").value),
                 IsActive: true,
                 GraduateProfileId: parseInt(form.querySelector("#graduateProfile").value),
                 Requirements: []
