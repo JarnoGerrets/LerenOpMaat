@@ -45,7 +45,7 @@ namespace LOM.API.Controllers
                 UploadDate = DateTime.UtcNow
             };
 
-            _context.Oer.Add(oer);
+            _context.Oers.Add(oer);
             await _context.SaveChangesAsync();
 
             return Ok(new { id = oer.Id });
@@ -55,7 +55,7 @@ namespace LOM.API.Controllers
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrentOer()
         {
-            var latest = await _context.Oer
+            var latest = await _context.Oers
                 .OrderByDescending(o => o.UploadDate)
                 .FirstOrDefaultAsync();
 
