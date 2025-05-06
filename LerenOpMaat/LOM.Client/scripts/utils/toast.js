@@ -35,6 +35,6 @@ function selectIcon(type) {
             break;
     }
 
-    return icon; // Return the correct icon based on the type
+    return icon;
 }
 window.showToast = showToast;

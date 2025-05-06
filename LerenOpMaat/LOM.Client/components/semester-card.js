@@ -35,7 +35,10 @@ export default async function SemesterCard({ semester, module, locked = false, o
       if (onModuleChange) {
         onModuleChange({
           semester,
-          moduleId: selectedModule.Name === "Geen Keuze" ? null : selectedModule.Id,
+          moduleId:
+            !selectedModule || selectedModule.Name === "Geen Keuze"
+              ? null
+              : selectedModule.Id,
         });
       }
     });
