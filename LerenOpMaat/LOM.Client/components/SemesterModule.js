@@ -20,11 +20,10 @@ export default class SemesterModule {
                     i
                 </a>`;
             }
-
             const populatedTemplate = template
-                .replace('{{id}}', module.id)
-                .replace('{{card_text}}', module.description)
-                .replace('{{title}}', module.name)
+                .replace('{{id}}', module.Id)
+                .replace('{{card_text}}', module.Description)
+                .replace('{{title}}', module.Name)
                 .replace('{{link}}', link);
 
             const tile = document.createElement('div');
