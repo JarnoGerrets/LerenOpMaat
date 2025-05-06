@@ -75,16 +75,6 @@ app.Use(async (context, next) =>
 			scope.SetTag("method", context.Request.Method);
 			scope.SetExtra("query_string", context.Request.QueryString.ToString());
 			scope.SetExtra("headers", context.Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString()));
-			
-			// Add user information if available
-			if (context.User?.Identity?.IsAuthenticated == true)
-			{
-				scope.User = new Sentry.User
-				{
-					Id = context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
-					Username = context.User.Identity.Name
-				};
-			}
 		});
 
 		// Re-throw the exception to maintain the original behavior
