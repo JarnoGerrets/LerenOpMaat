@@ -5,21 +5,18 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS services
-// builder.Services.AddCors(options =>
-// {
-// 	options.AddPolicy("AppCorsPolicy", policy =>
-// 	{
-// 		policy.WithOrigins(
-// 				"https://lom.robhutten.nl",
-// 				"http://lom.robhutten.nl",
-// 				"https://www.lom.robhutten.nl",
-// 				"http://www.lom.robhutten.nl"
-// 			)
-// 			.AllowAnyHeader()
-// 			.AllowAnyMethod()
-// 			.AllowCredentials();
-// 	});
-// });
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("CorsPolicy",
+		policy => policy
+			.SetIsOriginAllowedToAllowWildcardSubdomains()
+			.WithOrigins("https://lom.robhutten.nl","https://lerenopmaat.info")
+			.AllowAnyMethod()
+			.AllowCredentials()
+			.AllowAnyHeader()
+			.Build()
+	);
+});
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -30,8 +27,6 @@ builder.Services.AddDbContext<LOMContext>(options =>
 			ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ExternMySql"))
 		)
 		.LogTo(Console.WriteLine, LogLevel.Information)
-		.EnableSensitiveDataLogging()
-		.EnableDetailedErrors()
 );
 
 builder.Services.AddEndpointsApiExplorer();
@@ -40,11 +35,11 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
 	app.UseSwagger();
 	app.UseSwaggerUI();
-}
+// }
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
@@ -52,9 +47,9 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 
 // Enable CORS before other middleware
-app.UseCors("AppCorsPolicy");
+app.UseCors("CorsPolicy");
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.UseStaticFiles();
