@@ -48,16 +48,16 @@ builder.Services.AddControllers()
             }
         };
     });
-builder.Services.AddDbContext<LOMContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Local-LOM-DB")));
-//builder.Services.AddDbContext<LOMContext>(options =>
-//	options.UseMySql(
-//			builder.Configuration.GetConnectionString("ExternMySql"),
-//			ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ExternMySql"))
-//		)
-//		.LogTo(Console.WriteLine, LogLevel.Information)
-//		.EnableSensitiveDataLogging()
-//		.EnableDetailedErrors()
-//);
+//builder.Services.AddDbContext<LOMContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Local-LOM-DB")));
+builder.Services.AddDbContext<LOMContext>(options =>
+    options.UseMySql(
+            builder.Configuration.GetConnectionString("ExternMySql"),
+            ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ExternMySql"))
+        )
+        .LogTo(Console.WriteLine, LogLevel.Information)
+        .EnableSensitiveDataLogging()
+        .EnableDetailedErrors()
+);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

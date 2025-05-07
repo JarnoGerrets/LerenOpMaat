@@ -45,43 +45,43 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9519)
+                            StartDate = new DateTime(2025, 5, 7, 18, 33, 18, 669, DateTimeKind.Local).AddTicks(9887)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9586)
+                            StartDate = new DateTime(2026, 5, 7, 18, 33, 18, 669, DateTimeKind.Local).AddTicks(9946)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9590)
+                            StartDate = new DateTime(2027, 5, 7, 18, 33, 18, 669, DateTimeKind.Local).AddTicks(9952)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9593)
+                            StartDate = new DateTime(2024, 5, 7, 18, 33, 18, 669, DateTimeKind.Local).AddTicks(9954)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9596)
+                            StartDate = new DateTime(2023, 5, 7, 18, 33, 18, 669, DateTimeKind.Local).AddTicks(9956)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9598)
+                            StartDate = new DateTime(2022, 5, 7, 18, 33, 18, 669, DateTimeKind.Local).AddTicks(9959)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9600)
+                            StartDate = new DateTime(2021, 5, 7, 18, 33, 18, 669, DateTimeKind.Local).AddTicks(9961)
                         });
                 });
 
@@ -169,14 +169,14 @@ namespace LOM.API.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Niveau")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Periode")
+                    b.Property<int>("Period")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -194,9 +194,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 3,
                             IsActive = true,
+                            Level = 1,
                             Name = "Introduction to Programming",
-                            Niveau = 1,
-                            Periode = 1
+                            Period = 1
                         },
                         new
                         {
@@ -206,9 +206,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 1,
                             IsActive = true,
+                            Level = 2,
                             Name = "Web Development Basics",
-                            Niveau = 2,
-                            Periode = 2
+                            Period = 2
                         },
                         new
                         {
@@ -218,9 +218,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 2,
                             IsActive = true,
+                            Level = 3,
                             Name = "Data Structures and Algorithms",
-                            Niveau = 3,
-                            Periode = 1
+                            Period = 1
                         },
                         new
                         {
@@ -230,9 +230,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 3,
                             IsActive = true,
+                            Level = 1,
                             Name = "Database Management Systems",
-                            Niveau = 1,
-                            Periode = 2
+                            Period = 2
                         },
                         new
                         {
@@ -242,9 +242,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 1,
                             IsActive = true,
+                            Level = 2,
                             Name = "Introduction to Programming",
-                            Niveau = 2,
-                            Periode = 2
+                            Period = 2
                         },
                         new
                         {
@@ -254,9 +254,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 2,
                             IsActive = true,
+                            Level = 3,
                             Name = "Web Development Basics",
-                            Niveau = 3,
-                            Periode = 1
+                            Period = 1
                         },
                         new
                         {
@@ -266,9 +266,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 3,
                             IsActive = true,
+                            Level = 1,
                             Name = "Data Structures and Algorithms",
-                            Niveau = 1,
-                            Periode = 1
+                            Period = 1
                         },
                         new
                         {
@@ -278,9 +278,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 1,
                             IsActive = true,
+                            Level = 2,
                             Name = "Database Management Systems",
-                            Niveau = 2,
-                            Periode = 2
+                            Period = 2
                         },
                         new
                         {
@@ -290,9 +290,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 2,
                             IsActive = true,
+                            Level = 3,
                             Name = "Introduction to Programming",
-                            Niveau = 3,
-                            Periode = 2
+                            Period = 2
                         },
                         new
                         {
@@ -302,9 +302,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 3,
                             IsActive = true,
+                            Level = 1,
                             Name = "Web Development Basics",
-                            Niveau = 1,
-                            Periode = 1
+                            Period = 1
                         },
                         new
                         {
@@ -314,9 +314,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 1,
                             IsActive = true,
+                            Level = 2,
                             Name = "Data Structures and Algorithms",
-                            Niveau = 2,
-                            Periode = 1
+                            Period = 1
                         },
                         new
                         {
@@ -326,9 +326,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 2,
                             IsActive = true,
+                            Level = 3,
                             Name = "Database Management Systems",
-                            Niveau = 3,
-                            Periode = 1
+                            Period = 1
                         },
                         new
                         {
@@ -338,9 +338,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 3,
                             IsActive = true,
+                            Level = 1,
                             Name = "Data Structures and Algorithms",
-                            Niveau = 1,
-                            Periode = 1
+                            Period = 1
                         },
                         new
                         {
@@ -350,9 +350,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 1,
                             IsActive = true,
+                            Level = 2,
                             Name = "Database Management Systems",
-                            Niveau = 2,
-                            Periode = 2
+                            Period = 2
                         },
                         new
                         {
@@ -362,9 +362,9 @@ namespace LOM.API.Migrations
                             Ec = 30,
                             GraduateProfileId = 2,
                             IsActive = true,
+                            Level = 3,
                             Name = "Database Management Systems",
-                            Niveau = 3,
-                            Periode = 1
+                            Period = 1
                         });
                 });
 
@@ -471,7 +471,7 @@ namespace LOM.API.Migrations
                     b.Property<int?>("ModuleId")
                         .HasColumnType("int");
 
-                    b.Property<byte>("Periode")
+                    b.Property<byte>("Period")
                         .HasColumnType("tinyint unsigned");
 
                     b.Property<int>("Year")
@@ -491,7 +491,7 @@ namespace LOM.API.Migrations
                             Id = 1,
                             LearningRouteId = 1,
                             ModuleId = 1,
-                            Periode = (byte)1,
+                            Period = (byte)1,
                             Year = 1
                         },
                         new
@@ -499,7 +499,7 @@ namespace LOM.API.Migrations
                             Id = 2,
                             LearningRouteId = 1,
                             ModuleId = 2,
-                            Periode = (byte)2,
+                            Period = (byte)2,
                             Year = 1
                         },
                         new
@@ -507,7 +507,7 @@ namespace LOM.API.Migrations
                             Id = 3,
                             LearningRouteId = 1,
                             ModuleId = 3,
-                            Periode = (byte)1,
+                            Period = (byte)1,
                             Year = 2
                         },
                         new
@@ -515,7 +515,7 @@ namespace LOM.API.Migrations
                             Id = 4,
                             LearningRouteId = 1,
                             ModuleId = 4,
-                            Periode = (byte)2,
+                            Period = (byte)2,
                             Year = 2
                         },
                         new
@@ -523,7 +523,7 @@ namespace LOM.API.Migrations
                             Id = 5,
                             LearningRouteId = 1,
                             ModuleId = 5,
-                            Periode = (byte)1,
+                            Period = (byte)1,
                             Year = 3
                         },
                         new
@@ -531,7 +531,7 @@ namespace LOM.API.Migrations
                             Id = 6,
                             LearningRouteId = 1,
                             ModuleId = 6,
-                            Periode = (byte)2,
+                            Period = (byte)2,
                             Year = 3
                         },
                         new
@@ -539,7 +539,7 @@ namespace LOM.API.Migrations
                             Id = 7,
                             LearningRouteId = 1,
                             ModuleId = 7,
-                            Periode = (byte)1,
+                            Period = (byte)1,
                             Year = 4
                         },
                         new
@@ -547,7 +547,7 @@ namespace LOM.API.Migrations
                             Id = 8,
                             LearningRouteId = 1,
                             ModuleId = 8,
-                            Periode = (byte)2,
+                            Period = (byte)2,
                             Year = 4
                         });
                 });
