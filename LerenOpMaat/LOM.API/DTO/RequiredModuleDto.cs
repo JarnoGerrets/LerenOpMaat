@@ -16,7 +16,7 @@ namespace LOM.API.DTO
 				Description = module.Description,
 				GraduateProfile = module.GraduateProfile,
 				Ec = module.Ec,
-				Level = module.Level,
+				Niveau = module.Niveau,
 				Period = module.Period,
 				IsActive = module.IsActive,
 			};

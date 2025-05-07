@@ -29,21 +29,21 @@ public class Seeder
            new LearningRoute { Id = 1 });
 
         _modelBuilder.Entity<Module>().HasData(
-            new Module { Id = 1, Name = "Introduction to Programming", Code = "IP.01", Description = "Introduction to Programming", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
-            new Module { Id = 2, Name = "Web Development Basics", Code = "WDB.02", Description = "Web Development Basics", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
-            new Module { Id = 3, Name = "Data Structures and Algorithms", Code = "DSA.03", Description = "Data Structures and Algorithms", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
-            new Module { Id = 4, Name = "Database Management Systems", Code = "DBMS.04", Description = "Database Management Systems", Ec = 30, Level = 1, Period = 2, IsActive = true, GraduateProfileId = 3 },
-            new Module { Id = 5, Name = "Introduction to Programming", Code = "IP.05", Description = "Introduction to Programming", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
-            new Module { Id = 6, Name = "Web Development Basics", Code = "WDB.06", Description = "Web Development Basics", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
-            new Module { Id = 7, Name = "Data Structures and Algorithms", Code = "DSA.07", Description = "Data Structures and Algorithms", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
-            new Module { Id = 8, Name = "Database Management Systems", Code = "DBMS.08", Description = "Database Management Systems", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
-            new Module { Id = 9, Name = "Introduction to Programming", Code = "IP.09", Description = "Introduction to Programming", Ec = 30, Level = 3, Period = 2, IsActive = true, GraduateProfileId = 2 },
-            new Module { Id = 10, Name = "Web Development Basics", Code = "WDB.10", Description = "Web Development Basics", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
-            new Module { Id = 11, Name = "Data Structures and Algorithms", Code = "DSA.11", Description = "Data Structures and Algorithms", Ec = 30, Level = 2, Period = 1, IsActive = true, GraduateProfileId = 1},
-            new Module { Id = 12, Name = "Database Management Systems", Code = "DBMS.12", Description = "Database Management Systems", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
-            new Module { Id = 13, Name = "Data Structures and Algorithms", Code = "DSA.13", Description = "Data Structures and Algorithms", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
-            new Module { Id = 14, Name = "Database Management Systems", Code = "DBMS.14", Description = "Database Management Systems", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
-            new Module { Id = 15, Name = "Database Management Systems", Code = "DBMS.15", Description = "Database Management Systems", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 }
+            new Module { Id = 1, Name = "Introduction to Programming", Code = "IP.01", Description = "Introduction to Programming", Ec = 30, Niveau = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
+            new Module { Id = 2, Name = "Web Development Basics", Code = "WDB.02", Description = "Web Development Basics", Ec = 30, Niveau = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
+            new Module { Id = 3, Name = "Data Structures and Algorithms", Code = "DSA.03", Description = "Data Structures and Algorithms", Ec = 30, Niveau = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
+            new Module { Id = 4, Name = "Database Management Systems", Code = "DBMS.04", Description = "Database Management Systems", Ec = 30, Niveau = 1, Period = 2, IsActive = true, GraduateProfileId = 3 },
+            new Module { Id = 5, Name = "Introduction to Programming", Code = "IP.05", Description = "Introduction to Programming", Ec = 30, Niveau = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
+            new Module { Id = 6, Name = "Web Development Basics", Code = "WDB.06", Description = "Web Development Basics", Ec = 30, Niveau = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
+            new Module { Id = 7, Name = "Data Structures and Algorithms", Code = "DSA.07", Description = "Data Structures and Algorithms", Ec = 30, Niveau = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
+            new Module { Id = 8, Name = "Database Management Systems", Code = "DBMS.08", Description = "Database Management Systems", Ec = 30, Niveau = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
+            new Module { Id = 9, Name = "Introduction to Programming", Code = "IP.09", Description = "Introduction to Programming", Ec = 30, Niveau = 3, Period = 2, IsActive = true, GraduateProfileId = 2 },
+            new Module { Id = 10, Name = "Web Development Basics", Code = "WDB.10", Description = "Web Development Basics", Ec = 30, Niveau = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
+            new Module { Id = 11, Name = "Data Structures and Algorithms", Code = "DSA.11", Description = "Data Structures and Algorithms", Ec = 30, Niveau = 2, Period = 1, IsActive = true, GraduateProfileId = 1},
+            new Module { Id = 12, Name = "Database Management Systems", Code = "DBMS.12", Description = "Database Management Systems", Ec = 30, Niveau = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
+            new Module { Id = 13, Name = "Data Structures and Algorithms", Code = "DSA.13", Description = "Data Structures and Algorithms", Ec = 30, Niveau = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
+            new Module { Id = 14, Name = "Database Management Systems", Code = "DBMS.14", Description = "Database Management Systems", Ec = 30, Niveau = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
+            new Module { Id = 15, Name = "Database Management Systems", Code = "DBMS.15", Description = "Database Management Systems", Ec = 30, Niveau = 3, Period = 1, IsActive = true, GraduateProfileId = 2 }
         );
 
         _modelBuilder.Entity<User>().HasData(

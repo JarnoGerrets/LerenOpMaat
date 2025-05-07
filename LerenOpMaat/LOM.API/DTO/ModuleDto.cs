@@ -1,4 +1,5 @@
 ﻿using LOM.API.DAL;
+using LOM.API.DTO.Mappers;
 using LOM.API.Models;
 
 namespace LOM.API.DTO
@@ -10,7 +11,7 @@ namespace LOM.API.DTO
 		public string Code { get; set; }
 		public string Description { get; set; }
 		public int Ec { get; set; }
-		public int Level { get; set; }
+		public int Niveau { get; set; }
 		public int Period { get; set; }
 		public bool IsActive { get; set; }
 		public GraduateProfile GraduateProfile { get; set; }
@@ -19,7 +20,7 @@ namespace LOM.API.DTO
 		public static async Task<ModuleDto> FromModelAsync(Module module, LOMContext context)
 		{
 			var requirementDtos = await Task.WhenAll(
-				module.Requirements.Select(r => RequirementDtoFactory.CreateAsync(r, context))
+				module.Requirements.Select(r => RequirementDtoMapper.CreateAsync(r, context))
 			);
 
 			return new ModuleDto
@@ -29,7 +30,7 @@ namespace LOM.API.DTO
 				Code = module.Code,
 				Description = module.Description,
 				Ec = module.Ec,
-				Level = module.Level,
+				Niveau = module.Niveau,
 				Period = module.Period,
 				IsActive = module.IsActive,
 				GraduateProfile = module.GraduateProfile,
@@ -39,7 +40,7 @@ namespace LOM.API.DTO
 
 		public Module ToModel()
 		{
-			List<Requirement> requirements = RequirementDtoFactory.ToModelList(this.Requirements);
+			List<Requirement> requirements = RequirementDtoMapper.ToModelList(this.Requirements);
 			return new Module
 			{
 				Id = this.Id,
@@ -47,7 +48,7 @@ namespace LOM.API.DTO
 				Code = this.Code,
 				Description = this.Description,
 				Ec = this.Ec,
-				Level = this.Level,
+				Niveau = this.Niveau,
 				Period = this.Period,
 				IsActive = this.IsActive,
 				GraduateProfileId = this.GraduateProfile.Id,
