@@ -19,13 +19,13 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-builder.Services.AddControllers();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-		options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve PascalCase
-		options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
+        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve PascalCase
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+		options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+		options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
         {
             Modifiers =
             {
