@@ -86,20 +86,20 @@ function setupDeleteButton(module) {
 
 function ToggleFields(module) {
     const codeText = document.getElementById("code-text");
-    const periodeText = document.getElementById("periode-text");
+    const periodText = document.getElementById("period-text");
     const ecText = document.getElementById("ec-text");
-    const niveauText = document.getElementById("niveau-text");
+    const levelText = document.getElementById("level-text");
 
     if (codeText.querySelector("input")) {
         module.Code = document.getElementById("code-input").value;
-        module.Periode = document.getElementById("periode-input").value;
+        module.Period = document.getElementById("period-input").value;
         module.Ec = document.getElementById("ec-input").value;
-        module.Niveau = document.getElementById("niveau-input").value;
+        module.Level = document.getElementById("level-input").value;
 
         codeText.innerHTML = `${module.Code}`;
-        periodeText.innerHTML = `${module.Periode}`;
+        periodText.innerHTML = `${module.Period}`;
         ecText.innerHTML = `${module.Ec}`;
-        niveauText.innerHTML = `${module.Niveau}`;
+        levelText.innerHTML = `${module.Level}`;
     } else {
         codeText.innerHTML = `
         <div><input class="card-input" type="text" id="code-input" value="${module.Code}"></div>
@@ -107,10 +107,10 @@ function ToggleFields(module) {
 
         let optionsPeriod = '';
         for (let i = 1; i <= 2; i++) {
-            optionsPeriod += `<option value="${i}" ${module.Periode === i ? 'selected' : ''}>${i}</option>`;
+            optionsPeriod += `<option value="${i}" ${module.Period === i ? 'selected' : ''}>${i}</option>`;
         }
-        periodeText.innerHTML = `
-        <div><select class="card-input" id="periode-input">
+        periodText.innerHTML = `
+        <div><select class="card-input" id="period-input">
           ${optionsPeriod}
         </select>
         </div>
@@ -120,13 +120,13 @@ function ToggleFields(module) {
         <div><input class="card-input" type="number" id="ec-input" value="${module.Ec}"></div>
         `;
 
-        let optionsNiveau = '';
+        let optionsLevel = '';
         for (let i = 1; i <= 3; i++) {
-            optionsNiveau += `<option value="${i}" ${module.Niveau === i ? 'selected' : ''}>${i}</option>`;
+            optionsLevel += `<option value="${i}" ${module.Level === i ? 'selected' : ''}>${i}</option>`;
         }
-        niveauText.innerHTML = `
-        <div><select class="card-input" id="niveau-input">
-          ${optionsNiveau}
+        levelText.innerHTML = `
+        <div><select class="card-input" id="level-input">
+          ${optionsLevel}
         </select></div>
       `;
     }
@@ -135,18 +135,12 @@ function ToggleFields(module) {
 async function saveChanges(module, textArea) {
 
     module.Code = document.getElementById("code-input").value;
-    module.Periode = document.getElementById("periode-input").value;
+    module.Period = document.getElementById("period-input").value;
     module.Ec = document.getElementById("ec-input").value;
-    module.Niveau = document.getElementById("niveau-input").value;
+    module.Level = document.getElementById("level-input").value;
     module.Description = textArea.value;
     module.GraduateProfile = module.GraduateProfile;
     console.log(module);
     const response = await updateModule(module.Id, module);
     showToast(`${module.Name} succesvol gewijzigd`, 'success');
-
 }
-
-
-
-
-
