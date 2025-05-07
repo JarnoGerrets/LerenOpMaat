@@ -229,3 +229,33 @@ export async function setStartYear(id, startYear) {
     console.error('Fout bij opslaan startjaar:', error);
   }
 }
+
+export async function uploadOerPdf(file, userId) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("userId", userId);
+
+  const res = await fetch(`${API_BASE}/Oer/upload`, {
+    method: "POST",
+    body: formData
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Upload mislukt: ${errorText}`);
+  }
+
+  return await res.json();
+}
+
+export async function getCurrentOerPdf() {
+  const res = await fetch(`${API_BASE}/Oer/current`, {
+    method: "GET"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Ophalen OER mislukt: ${res.status}`);
+  }
+
+  return await res.blob();
+}

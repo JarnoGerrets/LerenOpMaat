@@ -13,6 +13,7 @@ public class LOMContext : DbContext
     public DbSet<Requirement> Requirements { get; set; }
     public DbSet<LearningRoute> LearningRoutes { get; set; }
     public DbSet<GraduateProfile> GraduateProfiles { get; set; }
+    public DbSet<Oer> Oers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

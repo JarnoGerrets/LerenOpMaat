@@ -45,43 +45,43 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3865)
+                            StartDate = new DateTime(2025, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9519)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3938)
+                            StartDate = new DateTime(2026, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9586)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3945)
+                            StartDate = new DateTime(2027, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9590)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3946)
+                            StartDate = new DateTime(2024, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9593)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3949)
+                            StartDate = new DateTime(2023, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9596)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3951)
+                            StartDate = new DateTime(2022, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9598)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 5, 13, 27, 7, 543, DateTimeKind.Local).AddTicks(3952)
+                            StartDate = new DateTime(2021, 5, 7, 7, 34, 25, 275, DateTimeKind.Local).AddTicks(9600)
                         });
                 });
 
@@ -134,10 +134,6 @@ namespace LOM.API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.HasKey("Id");
 
                     b.ToTable("LearningRoutes");
@@ -145,8 +141,7 @@ namespace LOM.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            Name = "Test Route"
+                            Id = 1
                         });
                 });
 
@@ -371,6 +366,26 @@ namespace LOM.API.Migrations
                             Niveau = 3,
                             Periode = 1
                         });
+                });
+
+            modelBuilder.Entity("LOM.API.Models.Oer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Base64PDF")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Oers");
                 });
 
             modelBuilder.Entity("LOM.API.Models.Requirement", b =>
