@@ -117,7 +117,7 @@ namespace LOM.API.Controllers
             {
                 // Zoek het semester obv de Year, senester en learningRouteId
                 var semesterToUpdate = await _context.Semesters
-                    .FirstOrDefaultAsync(s => s.Year == semester.Year && s.Periode == semester.Periode && s.LearningRouteId == learningRouteId);
+                    .FirstOrDefaultAsync(s => s.Year == semester.Year && s.Period == semester.Period && s.LearningRouteId == learningRouteId);
 
                 if (semesterToUpdate == null)
                 {
@@ -125,7 +125,7 @@ namespace LOM.API.Controllers
                 }
 
                 semesterToUpdate.Year = semester.Year;
-                semesterToUpdate.Periode = semester.Periode;
+                semesterToUpdate.Period = semester.Period;
                 semesterToUpdate.ModuleId = semester.ModuleId;
             }
             try

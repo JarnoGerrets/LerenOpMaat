@@ -23,7 +23,8 @@ builder.Services.AddControllers();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+		options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve PascalCase
+		options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
         {
             Modifiers =
@@ -47,15 +48,15 @@ builder.Services.AddControllers()
             }
         };
     });
-// builder.Services.AddDbContext<LOMContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Local-LOM-DB")));
+//builder.Services.AddDbContext<LOMContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Local-LOM-DB")));
 builder.Services.AddDbContext<LOMContext>(options =>
-	options.UseMySql(
-			builder.Configuration.GetConnectionString("ExternMySql"),
-			ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ExternMySql"))
-		)
-		.LogTo(Console.WriteLine, LogLevel.Information)
-		.EnableSensitiveDataLogging()
-		.EnableDetailedErrors()
+    options.UseMySql(
+            builder.Configuration.GetConnectionString("ExternMySql"),
+            ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("ExternMySql"))
+        )
+        .LogTo(Console.WriteLine, LogLevel.Information)
+        .EnableSensitiveDataLogging()
+        .EnableDetailedErrors()
 );
 
 builder.Services.AddEndpointsApiExplorer();

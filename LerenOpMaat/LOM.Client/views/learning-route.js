@@ -49,10 +49,10 @@ export default async function LearningRoute() {
     const sortedYears = Object.entries(semesterDataGroupedByYear).sort(([yearA], [yearB]) => yearA - yearB);
 
     for (const [year, semesterGroup] of sortedYears) {
-        semesterGroup.sort((a, b) => a.Periode - b.Periode);
+        semesterGroup.sort((a, b) => a.Period - b.Period);
 
-        const semester1 = semesterGroup.find(s => s.Periode === 1);
-        const semester2 = semesterGroup.find(s => s.Periode === 2);
+        const semester1 = semesterGroup.find(s => s.Period === 1);
+        const semester2 = semesterGroup.find(s => s.Period === 2);
 
         const semesterPair = await SemesterPair(semester1, semester2, index, totalAmountOfYears);
 
@@ -161,7 +161,7 @@ export default async function LearningRoute() {
 
                     groupedByYear[year].forEach(semester => {
                         doc.text(
-                            `Periode ${semester.Periode}: ${semester.Module.Name}`,
+                            `Periode ${semester.Period}: ${semester.Module.Name}`,
                             20,
                             currentYPosition
                         );
@@ -222,7 +222,7 @@ async function saveLearningRoute(learningRouteArray) {
                 ],
                 Semesters: learningRouteArray.map(item => ({
                     Year: item.Year,
-                    Periode: item.Periode,
+                    Period: item.Period,
                     ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
                 }))
             };
@@ -242,7 +242,7 @@ async function updateLearningRoute(routeId, semesterData) {
     }
     const body = semesterData.map(item => ({
         Year: item.Year,
-        Periode: item.Periode,
+        Period: item.Period,
         ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
     }));
 

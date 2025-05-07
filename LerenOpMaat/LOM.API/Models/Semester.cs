@@ -10,7 +10,7 @@ namespace LOM.API.Models
         public int Id { get; set; }
 
         public int Year { get; set; }
-        public byte Periode { get; set; }
+        public byte Period { get; set; }
 
         [ForeignKey(nameof(LearningRoute))]
         public int LearningRouteId { get; set; }

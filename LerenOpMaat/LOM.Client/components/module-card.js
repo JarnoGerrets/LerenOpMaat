@@ -22,7 +22,7 @@ export default class ModuleCard extends customElements.get("base-card") {
                     Code: <span id="code-text">${module.Code}</span>
                     </div>
                     <div class="module-info-row" style="font-weight: bold;">
-                    Periode: <span id="periode-text">${module.Periode}</span>
+                    Periode: <span id="period-text">${module.Period}</span>
                     </div>
                 </div>
                 <div class="w-50">
@@ -30,14 +30,14 @@ export default class ModuleCard extends customElements.get("base-card") {
                     EC: <span id="ec-text">${module.Ec}</span>
                     </div>
                     <div class="module-info-row" style="font-weight: bold;">
-                    Niveau: <span id="niveau-text">${module.Niveau}</span>
+                    Niveau: <span id="level-text">${module.Level}</span>
                     </div>
                 </div>
             </div>
             ${infoIcon}
         `;
         this.dataset.id = module.Id;
-        this.renderCard(content, module.GraduateProfile.ColorCode);
+        this.renderCard(content, module.GraduateProfile?.ColorCode || "");
     }
 }
 

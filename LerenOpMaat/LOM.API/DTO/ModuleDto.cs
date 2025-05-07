@@ -10,8 +10,8 @@ namespace LOM.API.DTO
 		public string Code { get; set; }
 		public string Description { get; set; }
 		public int Ec { get; set; }
-		public int Niveau { get; set; }
-		public int Periode { get; set; }
+		public int Level { get; set; }
+		public int Period { get; set; }
 		public bool IsActive { get; set; }
 		public GraduateProfile GraduateProfile { get; set; }
 		public List<RequirementDto> Requirements { get; set; }
@@ -29,8 +29,8 @@ namespace LOM.API.DTO
 				Code = module.Code,
 				Description = module.Description,
 				Ec = module.Ec,
-				Niveau = module.Niveau,
-				Periode = module.Periode,
+				Level = module.Level,
+				Period = module.Period,
 				IsActive = module.IsActive,
 				GraduateProfile = module.GraduateProfile,
 				Requirements = requirementDtos.ToList()
@@ -47,8 +47,8 @@ namespace LOM.API.DTO
 				Code = this.Code,
 				Description = this.Description,
 				Ec = this.Ec,
-				Niveau = this.Niveau,
-				Periode = this.Periode,
+				Level = this.Level,
+				Period = this.Period,
 				IsActive = this.IsActive,
 				GraduateProfileId = this.GraduateProfile.Id,
 				Requirements = requirements
