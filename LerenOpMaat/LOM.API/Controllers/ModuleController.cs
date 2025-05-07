@@ -96,7 +96,7 @@ namespace LOM.API.Controllers
 				Code = dto.Code,
 				Description = dto.Description,
 				Ec = dto.Ec,
-				Niveau = dto.Niveau,
+				Level = dto.Level,
 				Period = dto.Period,
 				IsActive = dto.IsActive,
 				GraduateProfileId = dto.GraduateProfileId
