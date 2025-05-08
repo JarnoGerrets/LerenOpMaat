@@ -1,9 +1,11 @@
 import SemesterPair from "../components/semester-pair.js";
 import { getLearningRoutesByUserId, postLearningRoute, updateSemester, deleteRoute } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
-
+import confirmationPopup from "./partials/confirmation-delete-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
+
 let apiResponse = [];
+
 export default async function LearningRoute() {
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
 
@@ -143,9 +145,9 @@ export default async function LearningRoute() {
                 doc.setLineWidth(0.5);
                 doc.line(10, 65, 200, 65);
 
-                let currentYPosition = 70; 
+                let currentYPosition = 70;
                 currentYPosition = 75;
-                
+
                 const groupedByYear = apiResponse.Semesters.reduce((acc, semester) => {
                     if (!acc[semester.Year]) {
                         acc[semester.Year] = [];
@@ -154,7 +156,7 @@ export default async function LearningRoute() {
                     return acc;
                 }, {});
 
-                
+
                 for (const year in groupedByYear) {
                     doc.text(`Jaar ${year}:`, 10, currentYPosition);
                     currentYPosition += 10;
@@ -167,7 +169,7 @@ export default async function LearningRoute() {
                         );
                         currentYPosition += 10;
                     });
-                }                
+                }
                 doc.save("learning-route.pdf");
             };
 
@@ -177,20 +179,22 @@ export default async function LearningRoute() {
         });
     }
 
-    //Willen wij een popup of window.alert gebruiken om het te bevestigen?
     const deleteButton = fragment.getElementById("deleteRoute");
     if (deleteButton) {
         deleteButton.addEventListener("click", async () => {
             if (routeId !== null) {
-                try {
-                    const isDeleted = await deleteRoute(routeId);
-                    if (isDeleted) {
-                        location.reload();
-                    } else {
-                        console.error("Fout bij het verwijderen van de leerroute.");
+                const confirmed = await confirmationPopup(routeId, "de leerroute");
+                if (confirmed) {
+                    try {
+                        const isDeleted = await deleteRoute(routeId);
+                        if (isDeleted) {
+                            location.reload();
+                        } else {
+                            console.error("Fout bij het verwijderen van de leerroute.");
+                        }
+                    } catch (error) {
+                        console.error("Fout bij het verwijderen van de leerroute:", error.message);
                     }
-                } catch (error) {
-                    console.error("Fout bij het verwijderen van de leerroute:", error.message);
                 }
             } else {
                 console.error("Geen routeId beschikbaar om te verwijderen.");
@@ -198,7 +202,7 @@ export default async function LearningRoute() {
         });
     }
 
-    return { fragment, init: () => null };
+    return { fragment };
 }
 
 async function saveLearningRoute(learningRouteArray) {
@@ -227,6 +231,7 @@ async function saveLearningRoute(learningRouteArray) {
                 }))
             };
             await postLearningRoute(jsonData);
+            location.reload();
         } catch (error) {
             console.error("Er is een fout opgetreden bij het opslaan van de leerroute:", error.message);
         }
@@ -254,6 +259,7 @@ async function updateLearningRoute(routeId, semesterData) {
             return;
         } else {
             console.log("Learning route succesvol gepdatet.");
+            location.reload();
         }
     } catch (error) {
         if (error && error.message) {
