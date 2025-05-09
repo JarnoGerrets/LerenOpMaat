@@ -31,6 +31,9 @@ export default async function initModuleInfo(id) {
     reqCard.data = savedModule.Requirements;
     CardContainer.appendChild(reqCard);
 
+    //add description
+    textArea.value = savedModule.Description;
+
     // Add admin buttons for editing and deleting
     if (correctRole) {
         setupButtons(savedModule, textArea);
