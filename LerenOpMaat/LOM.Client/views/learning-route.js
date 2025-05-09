@@ -20,7 +20,6 @@ export default async function LearningRoute() {
 
     try {
         apiResponse = await getLearningRoutesByUserId(1);
-
         if (
             !apiResponse.Semesters ||
             !Array.isArray(apiResponse.Semesters) ||
@@ -162,12 +161,14 @@ export default async function LearningRoute() {
                     currentYPosition += 10;
 
                     groupedByYear[year].forEach(semester => {
-                        doc.text(
-                            `Periode ${semester.Period}: ${semester.Module.Name}`,
-                            20,
-                            currentYPosition
-                        );
-                        currentYPosition += 10;
+                        if (semester.Module) { // Controleer of Module niet null is
+                            doc.text(
+                                `Periode ${semester.Period}: ${semester.Module.Name}`,
+                                20,
+                                currentYPosition
+                            );
+                            currentYPosition += 10;
+                        }
                     });
                 }
                 doc.save("learning-route.pdf");
