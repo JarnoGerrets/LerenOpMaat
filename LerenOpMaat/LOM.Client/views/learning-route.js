@@ -20,7 +20,6 @@ export default async function LearningRoute() {
 
     try {
         apiResponse = await getLearningRoutesByUserId(1);
-        console.log("API Response:", apiResponse);
         if (
             !apiResponse.Semesters ||
             !Array.isArray(apiResponse.Semesters) ||
