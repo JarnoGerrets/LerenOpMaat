@@ -47,8 +47,8 @@ public class Seeder
         );
 
         _modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", LearningRouteId = 1, StartYear = 2023 },
-            new User { Id = 2, FirstName = "Robin", LastName = "Hood" }
+            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", LearningRouteId = 1, StartYear = 2023, ExternalID="TEST123" },
+            new User { Id = 2, FirstName = "Robin", LastName = "Hood", ExternalID="TEST345" }
             );
         _modelBuilder.Entity<Semester>()
             .HasOne(s => s.Module)

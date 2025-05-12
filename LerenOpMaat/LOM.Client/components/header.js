@@ -1,3 +1,5 @@
+import { getLoginUrl, getUserData } from '../client/api-client.js';
+
 export default class Header extends HTMLElement {
   constructor() {
     super();
@@ -16,6 +18,7 @@ export default class Header extends HTMLElement {
   }
 
   runScripts(root) {
+    this.initializeLogin()
     const scripts = root.querySelectorAll("script");
     scripts.forEach(oldScript => {
       const newScript = document.createElement("script");
@@ -26,6 +29,17 @@ export default class Header extends HTMLElement {
       }
       document.body.appendChild(newScript);
     });
+  }
+
+  async initializeLogin () {
+    const loginObj = this.querySelector("#login-url")
+    const userData = await getUserData()
+    
+    if (userData){
+      loginObj.innerHTML = userData.Username
+    } else {
+      loginObj.href = getLoginUrl()
+    }
   }
 }
 

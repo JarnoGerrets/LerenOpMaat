@@ -1,4 +1,26 @@
-const API_BASE = "https://localhost:7024/api";
+const BASE = "http://localhost:5073";
+const API_BASE = `${BASE}/api`;
+
+
+export function getLoginUrl() {
+  return `${BASE}/authenticate`;
+}
+
+export async function getUserData() {
+  try {
+    const res = await fetch(`${API_BASE}/account`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    })
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
 
 export async function getModules(q) {
   const res = await fetch(`${API_BASE}/Module?q=${q||''}`, {
