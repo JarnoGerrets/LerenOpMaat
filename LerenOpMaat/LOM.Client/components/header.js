@@ -1,4 +1,4 @@
-import { getLoginUrl, getUserData } from '../client/api-client.js';
+import { getLoginUrl, getUserData, logout } from '../client/api-client.js';
 
 export default class Header extends HTMLElement {
   constructor() {
@@ -33,10 +33,14 @@ export default class Header extends HTMLElement {
 
   async initializeLogin () {
     const loginObj = this.querySelector("#login-url")
+    const logoutObj = this.querySelector("#logout")
+
     const userData = await getUserData()
     
     if (userData){
       loginObj.innerHTML = userData.Username
+      logoutObj.classList.remove("d-none")
+      logoutObj.addEventListener("click", () => logout())
     } else {
       loginObj.href = getLoginUrl()
     }

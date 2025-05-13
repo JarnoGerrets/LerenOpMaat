@@ -1,9 +1,25 @@
-const BASE = "https://localhost:7024";
+const BASE = "http://localhost:5073";
 const API_BASE = `${BASE}/api`;
 
 
 export function getLoginUrl() {
   return `${BASE}/authenticate`;
+}
+
+export async function logout() {
+  try {
+    await fetch(`${BASE}/authenticate/logout`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    localStorage.removeItem("userData");
+    location.reload();
+
+  } catch {}
 }
 
 export async function getUserData() {

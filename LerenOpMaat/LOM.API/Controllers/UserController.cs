@@ -32,7 +32,17 @@ namespace LOM.API.Controllers
                 RedirectUri = returnUrl
             }, OpenIdConnectDefaults.AuthenticationScheme);
         }
+
+        [HttpGet("logout")]
+        public async Task Logout()
+        {
+            await HttpContext.SignOutAsync("Cookies");
+
+            //Important, this method should never return anything.
+        }
     }
+
+    
 
     [Authorize]
     [ApiController]
