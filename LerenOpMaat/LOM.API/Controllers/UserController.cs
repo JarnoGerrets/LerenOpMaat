@@ -65,6 +65,7 @@ namespace LOM.API.Controllers
                 // Create new user (basic defaults)
                 user = new User
                 {
+                    ExternalID = userId,
                     FirstName = "",
                     LastName = "",
                     StartYear = DateTime.Now.Year

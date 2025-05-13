@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
 using LOM.API.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LOM.API.Controllers
 {
@@ -71,6 +72,7 @@ namespace LOM.API.Controllers
 		}
 		// PUT: api/Module/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[Authorize(Roles = "Lecturer")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutModule(int id, ModuleDto moduleDto)
 		{
@@ -96,6 +98,7 @@ namespace LOM.API.Controllers
 
 		// POST: api/Module
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[Authorize(Roles = "Lecturer")]
 		[HttpPost]
 		public async Task<ActionResult<Module>> PostModule(ModuleCreateDto @dto)
 		{
@@ -139,6 +142,7 @@ namespace LOM.API.Controllers
 		//}
 
 		// DELETE: api/Module/5
+		[Authorize(Roles = "Lecturer")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> SoftDeleteModule(int id)
 		{

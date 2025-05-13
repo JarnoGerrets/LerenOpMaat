@@ -1,4 +1,4 @@
-const BASE = "http://localhost:5073";
+const BASE = "https://localhost:7024";
 const API_BASE = `${BASE}/api`;
 
 
@@ -14,8 +14,12 @@ export async function getUserData() {
       headers: {
         "Accept": "application/json"
       }
-    })
-    return await res.json();
+    });
+
+    const userData = await res.json();
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    return userData;
   } catch {
     return null;
   }
