@@ -1,16 +1,104 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LOM.API.Controllers
 {
+    [Route("authenticate")]
+    public class AuthController : Controller
+    {
+        [HttpGet]
+        public IActionResult Authenticate(string? returnUrl = null)
+        {
+            // 1. Gebruik de opgegeven returnUrl of de Referer-header als fallback
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                returnUrl = Request.Headers["Referer"].ToString();
+            }
+
+            // 2. Fallback naar root als er geen geldige returnUrl is
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                returnUrl = "/";
+            }
+
+            return Challenge(new AuthenticationProperties
+            {
+                RedirectUri = returnUrl
+            }, OpenIdConnectDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("logout")]
+        public async Task Logout()
+        {
+            await HttpContext.SignOutAsync("Cookies");
+
+            //Important, this method should never return anything.
+        }
+    }
+
+    
+
+    [Authorize]
+    [ApiController]
+    [Route("api/account")]
+    public class AccountController : Controller
+    {
+        private readonly LOMContext _context;
+
+        public AccountController(LOMContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet]
+        public IActionResult GetUser()
+        {
+            // Get user claims
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // sub
+            var email = User.FindFirstValue("preferred_username");       // usually email
+            var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("No user ID found in claims.");
+
+            // Try to find existing user
+            var user = _context.User.FirstOrDefault(u => u.ExternalID == userId);
+
+            if (user == null)
+            {
+                // Create new user (basic defaults)
+                user = new User
+                {
+                    ExternalID = userId,
+                    FirstName = "",
+                    LastName = "",
+                    StartYear = DateTime.Now.Year
+                };
+
+                _context.User.Add(user);
+                _context.SaveChanges();
+            }
+
+            // Store user ID in session
+            HttpContext.Session.SetInt32("UserId", user.Id);
+
+            return Ok(new
+            {
+                Roles = roles,
+                Username = email,
+                InternalId = user.Id,
+                ExternalID = userId,
+            });
+        }
+    }
+
+
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase

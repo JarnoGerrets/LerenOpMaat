@@ -1,4 +1,46 @@
-const API_BASE = "https://localhost:7024/api";
+const BASE = "http://localhost:5073";
+const API_BASE = `${BASE}/api`;
+
+
+export function getLoginUrl() {
+  return `${BASE}/authenticate`;
+}
+
+export async function logout() {
+  try {
+    await fetch(`${BASE}/authenticate/logout`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    localStorage.removeItem("userData");
+    location.reload();
+
+  } catch {}
+}
+
+export async function getUserData() {
+  try {
+    const res = await fetch(`${API_BASE}/account`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const userData = await res.json();
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    return userData;
+  } catch {
+    return null;
+  }
+}
+
 
 export async function getModules(q) {
   const res = await fetch(`${API_BASE}/Module?q=${q||''}`, {
