@@ -1,8 +1,10 @@
-﻿using LOM.API.DAL;
+﻿using System.Diagnostics;
+using LOM.API.DAL;
 using LOM.API.Enums;
 using LOM.API.Models;
 using LOM.API.Validator.Specifications;
 using LOM.API.Validator.ValidationResults;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace LOM.API.Validator
 {
@@ -32,6 +34,15 @@ namespace LOM.API.Validator
                     continue;
                 }
 
+                if (IsModuleInRoute(semesters, currentModule, i))
+                {
+                    var validation = new ValidationResult(false,
+                        $"Module {currentModule.Name} komt al voor in de leerroute.",
+                        currentModule.Id);
+                    resultCollection.Add(validation);
+                    continue;
+                }
+
                 if (!IsModuleInCorrectPeriod(currentSemester, currentModule))
                 {
                     var validation = new ValidationResult(false,
@@ -54,6 +65,12 @@ namespace LOM.API.Validator
         private bool IsModuleInCorrectPeriod(Semester semester, Module currentModule)
         {
             return currentModule.Period == semester.Period || currentModule.Period == FlexiblePeriod;
+        }
+
+        private bool IsModuleInRoute(List<Semester> semesters, Module module, int currentIndex)
+        {
+            return semesters.Where((s, idx) => idx != currentIndex)
+                .Any(s => s.Module != null && s.Module.Id == module.Id);
         }
 
         private void ValidateModuleRequirements(Module currentModule, List<Semester> semesters, int index, ICollection<IValidationResult> resultCollection)

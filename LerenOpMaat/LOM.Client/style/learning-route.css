@@ -210,6 +210,10 @@
   cursor: pointer;
 }
 
+.tool-tip-style .tooltip-inner {
+  font-size: 22px !important; /* or your desired size */
+}
+
 .invalid-module {
     box-shadow: 0 0 8px 3px rgba(220, 53, 69, 0.7);
     border-radius: 8px;

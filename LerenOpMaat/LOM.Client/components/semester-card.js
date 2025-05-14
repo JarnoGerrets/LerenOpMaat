@@ -25,7 +25,9 @@ function updateAllCardsStyling(validationResults = {}) {
       if (!card.classList.contains("invalid-module")) {
         card.classList.add("invalid-module");
       }
-      const validationMsg = validationResults[moduleId] || "Er is een validatiefout";
+      const validationMsg = validationResults[moduleId]
+        ? validationResults[moduleId].join('\n')
+        : "Er is een validatiefout";
       updateExclamationIcon(card, validationMsg, false);
     }
   });
@@ -42,7 +44,7 @@ export default async function SemesterCard({ semester, module, locked = false, o
           <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i> 
         </button>
 
-      <div class="exclamation-icon" data-bs-toggle="tooltip" title="">
+      <div class="exclamation-icon" data-bs-toggle="tooltip" data-bs-custom-class="tool-tip-style" title="">
         <i class="bi bi-exclamation-triangle-fill"></i>
       </div>
       </div>
@@ -82,13 +84,17 @@ export default async function SemesterCard({ semester, module, locked = false, o
               ? null
               : selectedModule.Id,
         });
-        console.log(learningRouteArray);
 
         let result = await validateRoute(learningRouteArray);
         let validationResults = {};
         for (const validation of result) {
           const moduleId = validation.ViolatingModuleId;
-          validationResults[moduleId] = validation.Message;
+
+          if (!validationResults[moduleId]) {
+            validationResults[moduleId] = [];
+          }
+          validationResults[moduleId].push("- " + validation.Message);
+
           updateValidationState(moduleId, validation.IsValid);
           if (!validation.IsValid) {
             showToast(validation.Message, "error");
@@ -107,10 +113,9 @@ export default async function SemesterCard({ semester, module, locked = false, o
 
 function updateExclamationIcon(cardElement, validationMsg, isValid) {
   const icon = cardElement.querySelector('.exclamation-icon');
-  console.log(icon);
   if (!icon) return;
 
-   if (!isValid) {
+  if (!isValid) {
     icon.classList.add('show');
     icon.setAttribute('title', validationMsg);
   } else {
