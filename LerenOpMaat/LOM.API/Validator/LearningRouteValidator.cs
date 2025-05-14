@@ -1,56 +1,77 @@
-﻿using LOM.API.Enums;
+﻿using LOM.API.DAL;
+using LOM.API.Enums;
 using LOM.API.Models;
 using LOM.API.Validator.Specifications;
+using LOM.API.Validator.ValidationResults;
 
 namespace LOM.API.Validator
 {
     public class LearningRouteValidator
     {
-            private readonly Dictionary<ModulePreconditionType, Func<string, int, ISpecification<LearningRoute>>>
-                _specifications;
+            private const int FlexiblePeriod = 3;
 
-            public LearningRouteValidator()
+            private readonly Dictionary<ModulePreconditionType, Func<string, int, ISpecification<IEnumerable<Semester>>>> _specifications;
+
+            public LearningRouteValidator(LOMContext context)
             {
-                _specifications =
-                    new Dictionary<ModulePreconditionType, Func<string, int, ISpecification<LearningRoute>>>
-                    {
-                        {
-                            ModulePreconditionType.RequiredModule,
-                            (value, index) => new RequiredModuleSpecification(int.Parse(value), index)
-                        },
-                        { ModulePreconditionType.Graduating, (_, _) => new GraduatingSpecification() }
-                        // Add new requirements here after adding their respective files in the /Validator/Specifications folder
-                    };
+                var specificationsFactory = new SpecificationFactory(context);
+                _specifications = specificationsFactory.CreateSpecifications();
             }
 
-            public bool ValidateLearningRoute(LearningRoute learningRoute)
+        public ICollection<IValidationResult> ValidateLearningRoute(List<Semester> semesters)
+        {
+            var resultCollection = new List<IValidationResult>();
+
+            for (int i = 0; i < semesters.Count; i++)
             {
-                var semesters = learningRoute.Semesters.ToList();
+                var currentSemester = semesters[i];
+                var currentModule = currentSemester.Module;
 
-                for (int i = 0; i < learningRoute.Semesters.Count; i++)
+                if (currentModule == null)
                 {
-                    var currentModule = semesters[i].Module;
-
-                    foreach (var requirement in currentModule.Requirements)
-                    {
-                        if (_specifications.TryGetValue(requirement.Type, out var specFactory))
-                        {
-                            var specification = specFactory(requirement.Value, i);
-                            if (!specification.IsSatisfiedBy(learningRoute))
-                            {
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            throw new InvalidOperationException(
-                                $"No specification found for requirement type {requirement.Type}");
-                        }
-                    }
+                    continue;
                 }
 
-                return true;
+                if (!IsModuleInCorrectPeriod(currentSemester, currentModule))
+                {
+                    var validation = new ValidationResult(false,
+                        $"Module {currentModule.Name} moet in periode {currentModule.Period} gevolgd worden.",
+                        currentModule.Id);
+                    resultCollection.Add(validation);
+                }
+
+                ValidateModuleRequirements(currentModule, semesters, i, resultCollection);
+            }
+
+            if (resultCollection.Count == 0)
+            {
+                resultCollection.Add(new ValidationResult(true, "Leerroute is correct."));
+            }
+
+            return resultCollection;
+        }
+
+        private bool IsModuleInCorrectPeriod(Semester semester, Module currentModule)
+        {
+            return currentModule.Period == semester.Period || currentModule.Period == FlexiblePeriod;
+        }
+
+        private void ValidateModuleRequirements(Module currentModule, List<Semester> semesters, int index, ICollection<IValidationResult> resultCollection)
+        {
+            foreach (var requirement in currentModule.Requirements)
+            {
+                if (_specifications.TryGetValue(requirement.Type, out var specBuilder))
+                {
+                    var specification = specBuilder(requirement.Value, index);
+                    var result = specification.IsSatisfiedBy(semesters);
+                    resultCollection.Add(result);
+                }
+                else
+                {
+                    throw new InvalidOperationException($"No specification found for requirement type {requirement.Type}");
+                }
             }
         }
+    }
 
 }

@@ -1,7 +1,9 @@
-﻿namespace LOM.API.Validator.Specifications
+﻿using LOM.API.Validator.ValidationResults;
+
+namespace LOM.API.Validator.Specifications
 {
     public interface ISpecification<T>
     {
-        bool IsSatisfiedBy(T entity);
+        IValidationResult IsSatisfiedBy(T entity);
     }
 }

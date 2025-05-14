@@ -51,7 +51,7 @@
     justify-content: space-between;
 }
 
-.year-container{
+.year-container {
     display: flex;
     align-items: center;
 }
@@ -173,23 +173,28 @@
 
 .circle-button:hover {
     transform: scale(1.1);
-  }
-  
-  .circle-button.blue {
+}
+
+.circle-button.blue {
     background-color: #003366;
-  }
-  
-  .circle-button.light-blue {
+}
+
+.circle-button.light-blue {
     background-color: #3b93d3;
-  }
+}
 
-  .circle-button.red {
-      background-color: #d94d4d;
-  }
+.circle-button.red {
+    background-color: #d94d4d;
+}
 
-  .circle-button.green {
-      background-color: #45b97c;
-  }
+.circle-button.green {
+    background-color: #45b97c;
+}
+
+.invalid-module {
+  box-shadow: 0 0 8px 3px rgba(220, 53, 69, 0.7);
+  border-radius: 8px;
+}
 
 @media screen and (max-width: 1040px) {
     .semester-grid {
@@ -232,9 +237,11 @@
     .semester-connector::after {
         display: none;
     }
+
     .semester-connector::before {
         display: none;
     }
+
     .corner-connector::after {
         display: none;
     }
@@ -268,6 +275,7 @@
         padding: 10px;
     }
 }
+
 @media screen and (max-width: 555px) {
     .top-right-buttons {
         right: 2vh;

@@ -1,7 +1,7 @@
 import SemesterPair from "../components/semester-pair.js";
 import { getLearningRoutesByUserId, postLearningRoute, updateSemester, deleteRoute } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
-import confirmationPopup from "./partials/confirmation-delete-popup.js";
+import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 
 let apiResponse = [];
@@ -202,7 +202,6 @@ export default async function LearningRoute() {
             }
         });
     }
-
     return { fragment };
 }
 

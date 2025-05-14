@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
+using LOM.API.Validator.ValidationResults;
+using LOM.API.Validator;
 
 namespace LOM.API.Controllers
 {
@@ -178,6 +180,30 @@ namespace LOM.API.Controllers
             learningRoute.Users ??= new List<User>();
 
             return learningRoute;
+        }
+
+        
+        [HttpPost("ValidateRoute")]
+        public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
+        {
+            foreach (var semester in semesters)
+            {
+                if (semester.ModuleId.HasValue)
+                {
+                    var module = await _context.Modules
+                        .Include(m => m.Requirements)
+                        .FirstOrDefaultAsync(m => m.Id == semester.ModuleId);
+                    if (module != null)
+                    {
+                        semester.Module = module;
+                    }
+                }
+            }
+
+            var validator = new LearningRouteValidator(_context);
+            var results = validator.ValidateLearningRoute(semesters);
+
+            return Ok(results);
         }
 
         private bool learningRouteExists(int id)

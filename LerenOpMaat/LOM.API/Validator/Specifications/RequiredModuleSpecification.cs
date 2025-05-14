@@ -1,14 +1,30 @@
-﻿using LOM.API.Models;
+﻿using System.Diagnostics;
+using LOM.API.DAL;
+using LOM.API.Models;
+using LOM.API.Validator.ValidationResults;
 
 namespace LOM.API.Validator.Specifications
 {
-    public class RequiredModuleSpecification(int requiredModuleId, int currentSemesterIndex) : ISpecification<LearningRoute>
+    public class RequiredModuleSpecification(int requiredModuleId, int currentSemesterIndex, LOMContext context) : ISpecification<IEnumerable<Semester>>
     {
-        public bool IsSatisfiedBy(LearningRoute route)
+        public IValidationResult IsSatisfiedBy(IEnumerable<Semester> semesters)
         {
-            return route.Semesters
+            var semestersList = semesters.ToList();
+            bool exists = semesters
                 .Take(currentSemesterIndex)
-                .Any(s => s.Module.Id == requiredModuleId);
+                .Any(s => s.Module != null && s.Module.Id == requiredModuleId);
+
+            if (!exists)
+            {
+                var requiredModule = context.Modules.FirstOrDefault(m => m.Id == requiredModuleId);
+                if (requiredModule != null)
+                {
+                    return new ValidationResult(false,
+                        $"{requiredModule.Name} ({requiredModule.Code}) moet eerst worden gevolgd.", semestersList[currentSemesterIndex].ModuleId);
+                }
+            }
+            return new ValidationResult(true, "Required module is satisfied.", semestersList[currentSemesterIndex].ModuleId);
         }
     }
+
 }
