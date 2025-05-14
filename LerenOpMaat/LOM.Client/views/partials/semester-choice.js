@@ -1,6 +1,6 @@
 import Popup from "../../components/Popup.js";
 import SemesterModule from "../../components/SemesterModule.js";
-import { getModules } from "../../client/api-client.js";
+import { getActiveModules } from "../../client/api-client.js";
 
 let filterDropdown;
 let moduleSelectionPopup;
@@ -13,7 +13,7 @@ let selectedCategory;
 export default async function SemesterChoice(selectedModuleName = "Selecteer je module") {
 
     try {
-        apiResponse = await getModules();
+        apiResponse = await getActiveModules();
         console.log(apiResponse);
         if (
             !apiResponse ||
