@@ -34,29 +34,8 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve PascalCase
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 		options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-		options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
-        {
-            Modifiers =
-            {
-                ti =>
-                {
-                    if (ti.Type == typeof(RequirementDto))
-                    {
-                        ti.PolymorphismOptions = new JsonPolymorphismOptions
-                        {
-                            TypeDiscriminatorPropertyName = "$type",
-                            IgnoreUnrecognizedTypeDiscriminators = true,
-                            DerivedTypes =
-                            {
-                                new JsonDerivedType(typeof(ModuleRequirementDto), "module"),
-                                new JsonDerivedType(typeof(EcRequirementDto), "ec")
-                            }
-                        };
-                    }
-                }
-            }
-        };
     });
+
 //builder.Services.AddDbContext<LOMContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Local-LOM-DB")));
 builder.Services.AddDbContext<LOMContext>(options =>
     options.UseMySql(

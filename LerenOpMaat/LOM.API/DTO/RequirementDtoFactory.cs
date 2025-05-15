@@ -13,8 +13,10 @@ namespace LOM.API.DTO
 			return r.Type switch
 			{
 				ModulePreconditionType.RequiredModule => await ModuleRequirementDto.FromModelAsync(r, context),
-				ModulePreconditionType.RequiredEc => EcRequirementDto.FromModel(r),
-				ModulePreconditionType.RequiredEcFromPropedeuse => EcRequirementDto.FromModel(r),
+				ModulePreconditionType.RequiredEc => NumericRequirementDto.FromModel(r),
+				ModulePreconditionType.RequiredEcFromPropedeuse => NumericRequirementDto.FromModel(r),
+				ModulePreconditionType.RequiredLevel3ModulesCount => NumericRequirementDto.FromModel(r),
+				ModulePreconditionType.RequiredLevel2ModulesCount => NumericRequirementDto.FromModel(r),
 				_ => throw new NotImplementedException($"Requirement type {r.Type} not supported.")
 			};
 		}
@@ -25,9 +27,9 @@ namespace LOM.API.DTO
 			{
 				ModulePreconditionType.RequiredModule => JsonConvert.DeserializeObject<ModuleRequirementDto>(
 					JsonConvert.SerializeObject(dto)),
-				ModulePreconditionType.RequiredEc => JsonConvert.DeserializeObject<EcRequirementDto>(
+				ModulePreconditionType.RequiredEc => JsonConvert.DeserializeObject<NumericRequirementDto>(
 					JsonConvert.SerializeObject(dto)),
-				ModulePreconditionType.RequiredEcFromPropedeuse => JsonConvert.DeserializeObject<EcRequirementDto>(
+				ModulePreconditionType.RequiredEcFromPropedeuse => JsonConvert.DeserializeObject<NumericRequirementDto>(
 					JsonConvert.SerializeObject(dto)),
 				_ => throw new NotImplementedException()
 			};

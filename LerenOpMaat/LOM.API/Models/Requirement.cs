@@ -13,7 +13,7 @@ namespace LOM.API.Models
         [ForeignKey(nameof(Module))]
         public int ModuleId { get; set; }
         
-        public Module Module { get; set; }
+        public Module? Module { get; set; }
 
         public ModulePreconditionType Type { get; set; }
         public string Value {get; set; }

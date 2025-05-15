@@ -125,6 +125,87 @@ export async function deleteModule(id) {
 
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+export async function getRequirement(id) {
+  const res = await fetch(`${API_BASE}/Requirement/${id}`, {
+    method: "GET",
+    headers: {
+      "Accept": "text/plain"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch requirement: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+export async function postRequirement(requirement) {
+  const res = await fetch(`${API_BASE}/Requirement`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "text/plain"
+    },
+    body: JSON.stringify(requirement)
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to post requirement: ${res.status}`);
+  }
+
+  return;
+}
+
+export async function deleteRequirement(id) {
+  const res = await fetch(`${API_BASE}/Requirement/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Accept": "text/plain"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to delete requirement: ${res.status}`);
+  }
+
+  return res.text();
+}
+
+export async function updateRequirement(id, requirement) {
+  const res = await fetch(`${API_BASE}/Requirement/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "text/plain"
+    },
+    body: JSON.stringify(requirement)
+  });
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Server error response:", errorText);
+    throw new Error(`Failed to update requirement: ${res.status}`);
+  }
+
+  return;
+}
+
+export async function getRequirementTypes() {
+  const res = await fetch(`${API_BASE}/Requirement/types`, {
+    method: "GET",
+    headers: {
+      "Accept": "text/plain"
+    }
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch requirement types: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 export async function getProfiles(q) {
   const res = await fetch(`${API_BASE}/GraduateProfile?q=${q||''}`, {
     method: "GET",
