@@ -1,4 +1,5 @@
 import SemesterPair from "../components/semester-pair.js";
+import Feedback from "./feedback.js";
 import { getLearningRoutesByUserId, postLearningRoute, updateSemester, deleteRoute } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-delete-popup.js";
@@ -200,6 +201,14 @@ export default async function LearningRoute() {
             } else {
                 console.error("Geen routeId beschikbaar om te verwijderen.");
             }
+        });
+    }
+
+    const feedbackButton = fragment.getElementById("feedBack");
+    if (feedbackButton) {
+        feedbackButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            window.location.hash = "#feedback";
         });
     }
 

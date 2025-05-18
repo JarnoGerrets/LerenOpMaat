@@ -39,16 +39,22 @@ public class Seeder
             new Module { Id = 8, Name = "Database Management Systems", Code = "DBMS.08", Description = "Database Management Systems", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
             new Module { Id = 9, Name = "Introduction to Programming", Code = "IP.09", Description = "Introduction to Programming", Ec = 30, Level = 3, Period = 2, IsActive = true, GraduateProfileId = 2 },
             new Module { Id = 10, Name = "Web Development Basics", Code = "WDB.10", Description = "Web Development Basics", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
-            new Module { Id = 11, Name = "Data Structures and Algorithms", Code = "DSA.11", Description = "Data Structures and Algorithms", Ec = 30, Level = 2, Period = 1, IsActive = true, GraduateProfileId = 1},
+            new Module { Id = 11, Name = "Data Structures and Algorithms", Code = "DSA.11", Description = "Data Structures and Algorithms", Ec = 30, Level = 2, Period = 1, IsActive = true, GraduateProfileId = 1 },
             new Module { Id = 12, Name = "Database Management Systems", Code = "DBMS.12", Description = "Database Management Systems", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
             new Module { Id = 13, Name = "Data Structures and Algorithms", Code = "DSA.13", Description = "Data Structures and Algorithms", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
             new Module { Id = 14, Name = "Database Management Systems", Code = "DBMS.14", Description = "Database Management Systems", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
             new Module { Id = 15, Name = "Database Management Systems", Code = "DBMS.15", Description = "Database Management Systems", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 }
         );
 
+        _modelBuilder.Entity<Role>().HasData(
+           new Role { Id = 1, RoleName = "Teacher" },
+           new Role { Id = 2, RoleName = "Student" }
+           );
+
         _modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", LearningRouteId = 1, StartYear = 2023, ExternalID="TEST123" },
-            new User { Id = 2, FirstName = "Robin", LastName = "Hood", ExternalID="TEST345" }
+            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", LearningRouteId = 1, StartYear = 2023, ExternalID = "TEST123", RoleId = 2 },
+            new User { Id = 2, FirstName = "Robin", LastName = "Hood", ExternalID = "TEST345", RoleId = 2 },
+            new User { Id = 3, FirstName = "Begeleider", LastName = "Begeleider", ExternalID = "Test54321", RoleId = 1 }
             );
         _modelBuilder.Entity<Semester>()
             .HasOne(s => s.Module)
@@ -89,8 +95,8 @@ public class Seeder
 
         _modelBuilder.Entity<GraduateProfile>().HasData(
             new GraduateProfile { Id = 1, Name = "BIM", ColorCode = "#F16682" },
-            new GraduateProfile { Id = 2, Name = "SE", ColorCode = "#F5A61A"},
-            new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3"}
+            new GraduateProfile { Id = 2, Name = "SE", ColorCode = "#F5A61A" },
+            new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3" }
         );
 
     }

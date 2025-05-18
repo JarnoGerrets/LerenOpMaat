@@ -14,6 +14,9 @@ public class LOMContext : DbContext
     public DbSet<LearningRoute> LearningRoutes { get; set; }
     public DbSet<GraduateProfile> GraduateProfiles { get; set; }
     public DbSet<Oer> Oers { get; set; }
+    public DbSet<Role> Roles { get; set; }
+    public DbSet<Conversation> Conversations { get; set; }
+    public DbSet<Message> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
