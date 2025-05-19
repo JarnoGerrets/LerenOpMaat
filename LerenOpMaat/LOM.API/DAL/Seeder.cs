@@ -99,5 +99,16 @@ public class Seeder
             new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3" }
         );
 
+        _modelBuilder.Entity<Conversation>().HasData(
+            new Conversation { Id = 1, LearningRouteId = 1, StudentId = 1, TeacherId = 3 }
+            );
+
+        _modelBuilder.Entity<Message>().HasData(
+            new Message { Id = 1, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Hoi, mag ik een feedback krijgen op mijn leerroute?", UserId = 1 },
+            new Message { Id = 2, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Ik zou semester 2 van het jaar 2 aanpassen naar iets anders.", UserId = 3 },
+            new Message { Id = 1, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Hoi, Ik heb het aangepast", UserId = 1 },
+            new Message { Id = 2, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Leerroute ziet er goed uit!", UserId = 3 }
+            );
+
     }
 }
