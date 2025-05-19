@@ -1,16 +1,20 @@
 <link rel="stylesheet" href="../style/feedback.css">
 
-
 <div class="container">
-    <a href="#" class="back-link">← Terug naar overzicht</a> 
-    <textarea class="feedback-box" placeholder="Typ hier je feedback..."></textarea>
-    
-    <div class="dummy-feedback-container">
-        <div class="dummy-feedback-box">
-            <div style="font-weight: bold; margin-bottom: 6px;">Student</div>
-            Hier komt de feedback te staan
+    <div class="feedback-header-row"
+        style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <a href="#" class="back-link">← Terug naar overzicht</a>
+        <div class="feedback-dropdown-row" style="display: flex; align-items: center; gap: 12px;">
+            <select class="feedback-dropdown" style="margin-bottom: 8px;"></select>
+            <div class="feedback-error" style="color: red; display: none; font-size: 1rem;"></div>
         </div>
     </div>
-</div>
 
-<button class="opslaan-btn">Opslaan</button>
+    <textarea class="feedback-box" placeholder="Typ hier je feedback..."></textarea>
+
+    <div class="message-feedback-container"></div>
+
+    <div class="save-btn-wrapper">
+        <button class="save-btn">Opslaan</button>
+    </div>
+</div>

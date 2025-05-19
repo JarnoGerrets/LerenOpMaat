@@ -100,13 +100,14 @@ namespace LOM.API.Controllers
             return NoContent();
         }
 
-        [HttpGet("conversationByLearningRoute/{learningRouteId}")]
-        public async Task<ActionResult<Conversation>> getConversationByRouteId(int learningRouteId)
+        [HttpGet("conversationByStudentId/{userId}")]
+        public async Task<ActionResult<Conversation>> getConversationByStudentId(int userId)
         {
             var conversation = await _context.Conversations.Include(m => m.Message)
                 .Include(t => t.Teacher)
+                .Include(lr => lr.LearningRoute)
                 .Include(s => s.Student)
-                .FirstOrDefaultAsync(lr => lr.LearningRouteId == learningRouteId);
+                .FirstOrDefaultAsync(s => s.StudentId == userId);
             if (conversation == null)
             {
                 return NotFound();

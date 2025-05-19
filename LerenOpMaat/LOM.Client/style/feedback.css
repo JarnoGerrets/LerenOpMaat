@@ -13,7 +13,7 @@ body {
     transition: width 0.3s, margin-left 0.3s;
 }
 
-.opslaan-btn {
+.save-btn {
     position: fixed;
     right: 40px;
     bottom: 40px;
@@ -27,7 +27,7 @@ body {
     box-shadow: 0 2px 6px #0002;
 }
 
-.opslaan-btn:hover {
+.save-btn:hover {
     background: #1256a3;
 }
 
@@ -42,15 +42,24 @@ body {
     box-sizing: border-box;
 }
 
-.dummy-feedback-container {
+.feedback-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.message-feedback-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     width: 100%;
     margin-top: 24px;
-    display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     box-sizing: border-box;
 }
 
-.dummy-feedback-box {
+.message-feedback-box {
     width: 100%;
     margin: 0 auto;
     padding: 14px;
@@ -78,4 +87,39 @@ body {
 
 .back-link:hover {
     background: #e0e0e0;
+}
+
+.feedback-dropdown {
+    appearance: none;
+    text-align: center;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0 32px 0 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #222;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    outline: none;
+    transition: border 0.2s;
+    min-width: 90px;
+    height: 32px;
+    line-height: 32px;
+    position: relative;
+}
+
+.feedback-dropdown:focus {
+    border: 1.5px solid #888;
+}
+
+.feedback-dropdown::-ms-expand {
+    display: none;
+}
+
+.feedback-dropdown {
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 18px 18px;
 }

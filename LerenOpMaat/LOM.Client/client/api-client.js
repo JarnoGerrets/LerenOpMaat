@@ -54,55 +54,55 @@ export async function getModules(q) {
     throw new Error(`Failed to fetch modules: ${res.status}`);
   }
 
-    return await res.json();
+  return await res.json();
 }
 
 export async function getModule(id) {
-    const res = await fetch(`${API_BASE}/Module/${id}`, {
-        method: "GET",
-        headers: {
-            "Accept": "text/plain"
-        }
-    });
-
-    if (!res.ok) {
-        throw new Error(`Failed to fetch modules: ${res.status}`);
+  const res = await fetch(`${API_BASE}/Module/${id}`, {
+    method: "GET",
+    headers: {
+      "Accept": "text/plain"
     }
+  });
 
-    return await res.json();
+  if (!res.ok) {
+    throw new Error(`Failed to fetch modules: ${res.status}`);
+  }
+
+  return await res.json();
 
 }
 
 export async function updateModule(id, moduleData) {
-    const res = await fetch(`${API_BASE}/Module/${id}`, {
-        method: "PUT",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(moduleData)
-    });
+  const res = await fetch(`${API_BASE}/Module/${id}`, {
+    method: "PUT",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(moduleData)
+  });
 
-    if (!res.ok) {
-        throw new Error(`Failed to update module: ${res.status}`);
-    }
+  if (!res.ok) {
+    throw new Error(`Failed to update module: ${res.status}`);
+  }
 
-    return;
+  return;
 }
 
 export async function addModule(moduleData) {
   console.log(moduleData);
   const res = await fetch(`${API_BASE}/Module`, {
-      method: "POST",
-      headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify(moduleData)
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(moduleData)
   });
 
   if (!res.ok) {
-      throw new Error(`Failed to save module: ${res.status}`);
+    throw new Error(`Failed to save module: ${res.status}`);
   }
 
   return res.json();
@@ -110,18 +110,18 @@ export async function addModule(moduleData) {
 
 
 export async function deleteModule(id) {
-    const res = await fetch(`${API_BASE}/Module/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Accept": "text/plain"
-        }
-    });
-
-    if (!res.ok) {
-        throw new Error(`Failed to fetch modules: ${res.status}`);
+  const res = await fetch(`${API_BASE}/Module/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Accept": "text/plain"
     }
+  });
 
-    return res.text();
+  if (!res.ok) {
+    throw new Error(`Failed to fetch modules: ${res.status}`);
+  }
+
+  return res.text();
 
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
@@ -137,7 +137,7 @@ export async function getProfiles(q) {
     throw new Error(`Failed to fetch modules: ${res.status}`);
   }
 
-    return await res.json();
+  return await res.json();
 }
 
 export async function getProfile(id) {
@@ -152,7 +152,7 @@ export async function getProfile(id) {
     throw new Error(`Failed to fetch profile: ${res.status}`);
   }
 
-    return await res.json();
+  return await res.json();
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
@@ -229,6 +229,72 @@ export async function updateSemester(learningRouteId, semesterData) {
     console.warn("Response bevat geen JSON, retourneer een standaardwaarde.");
     return { message: "Semesters updated successfully (geen JSON)" }; // Standaardwaarde
   }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+export async function getConversationByUserId(userId) {
+  const res = await fetch(`${API_BASE}/Conversations/conversationByStudentId/${userId}`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+
+  if (res.status === 404) {
+    return null;
+  }
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch conversation: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+export async function getAllTeachers() {
+  const res = await fetch(`${API_BASE}/User/teachers`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch teachers: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+export async function postConversation(body) {
+  const res = await fetch(`${API_BASE}/Conversations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to post conversation: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+export async function postMessage(messageBody) {
+  const res = await fetch(`${API_BASE}/Messages`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(messageBody)
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to post message: ${res.status}`);
+  }
+  return await res.json();
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
