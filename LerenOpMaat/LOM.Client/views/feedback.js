@@ -7,7 +7,6 @@ export default async function Feedback() {
     const currentUserId = localStorage.getItem("currentUserId");
     const currentLearningRouteId = localStorage.getItem("learningRouteId");
 
-    // Maak een tijdelijke DOM om alleen de body-content te pakken
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
     const bodyContent = tempDiv.querySelector("body") ? tempDiv.querySelector("body").innerHTML : html;
@@ -15,6 +14,16 @@ export default async function Feedback() {
     const template = document.createElement("template");
     template.innerHTML = bodyContent;
     const fragment = template.content.cloneNode(true);
+
+    // Voeg CSS toe voor rode placeholder
+    const style = document.createElement("style");
+    style.textContent = `
+        .lom-feedback-placeholder-error::placeholder {
+            color: red !important;
+            opacity: 0.6 !important;
+        }
+    `;
+    fragment.appendChild(style);
 
     // Messages ophalen en tonen + gekoppelde teacher bepalen
     let conversation = null;
@@ -24,7 +33,6 @@ export default async function Feedback() {
         messageContainer.innerHTML = "";
         try {
             conversation = await getConversationByUserId(currentUserId);
-            console.log("Conversation:", conversation);
             if (conversation && conversation.TeacherId) {
                 selectedTeacherIdFromConversation = conversation.TeacherId;
             }
@@ -44,10 +52,10 @@ export default async function Feedback() {
                     const msgBox = document.createElement("div");
                     msgBox.className = "message-feedback-box";
                     msgBox.innerHTML = `
-                            <div style="font-weight: bold; margin-bottom: 6px;">
-                            ${senderName}
-                            </div>
-                            ${msg.Commentary}`;
+                        <div style="font-weight: bold; margin-bottom: 6px;">
+                        ${senderName}
+                        </div>
+                        ${msg.Commentary}`;
                     messageContainer.appendChild(msgBox);
                 });
             } else {
@@ -62,7 +70,7 @@ export default async function Feedback() {
     // Vul de dropdown met leraren en selecteer gekoppelde indien aanwezig
     const dropdown = fragment.querySelector(".feedback-dropdown");
 
-    // Validatie error element boven de dropdown
+    // Validatie error element naast de dropdown
     const errorMsg = document.createElement("div");
     errorMsg.style.color = "red";
     errorMsg.style.marginBottom = "6px";
@@ -104,7 +112,8 @@ export default async function Feedback() {
             errorMsg.style.display = "none";
             textarea.placeholder = "Typ hier je feedback...";
             textarea.style.borderColor = "";
-            textarea.style.setProperty("color", "");
+            textarea.classList.remove("lom-feedback-placeholder-error");
+            dropdown.style.borderColor = "";
 
             if (!selectedTeacherId) {
                 errorMsg.textContent = "Selecteer een leraar.";
@@ -115,10 +124,10 @@ export default async function Feedback() {
             if (!feedback) {
                 textarea.placeholder = "Feedback mag niet leeg zijn!";
                 textarea.style.borderColor = "red";
-                textarea.style.setProperty("color", "red", "important");
+                textarea.classList.add("lom-feedback-placeholder-error");
                 valid = false;
             } else {
-                textarea.style.setProperty("color", "", "important");
+                textarea.classList.remove("lom-feedback-placeholder-error");
             }
             if (!valid) return;
 
@@ -152,8 +161,9 @@ export default async function Feedback() {
                 textarea.value = "";
                 textarea.placeholder = "Typ hier je feedback...";
                 textarea.style.borderColor = "";
-                textarea.style.setProperty("color", "");
+                textarea.classList.remove("lom-feedback-placeholder-error");
                 errorMsg.style.display = "none";
+                dropdown.style.borderColor = "";
                 await renderMessages();
             } catch (err) {
                 // Geen foutmelding tonen
