@@ -70,6 +70,7 @@ namespace LOM.API.Controllers
 			var result = await ModuleDto.FromModelAsync(module, _context);
 			return result;
 		}
+
 		// PUT: api/Module/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[Authorize(Roles = "Lecturer")]
@@ -125,22 +126,6 @@ namespace LOM.API.Controllers
 			return CreatedAtAction("GetModule", new { id = @module.Id }, @module);
 		}
 
-		//// DELETE: api/Module/5
-		//[HttpDelete("{id}")]
-		//public async Task<IActionResult> DeleteModule(int id)
-		//{
-		//	var @module = await _context.Modules.FindAsync(id);
-		//	if (@module == null)
-		//	{
-		//		return NotFound();
-		//	}
-
-		//	_context.Modules.Remove(@module);
-		//	await _context.SaveChangesAsync();
-
-		//	return NoContent();
-		//}
-
 		// DELETE: api/Module/5
 		[Authorize(Roles = "Lecturer")]
 		[HttpDelete("{id}")]
@@ -157,11 +142,6 @@ namespace LOM.API.Controllers
 			await _context.SaveChangesAsync();
 
 			return NoContent();
-		}
-
-		private bool ModuleExists(int id)
-		{
-			return _context.Modules.Any(e => e.Id == id);
 		}
 	}
 }
