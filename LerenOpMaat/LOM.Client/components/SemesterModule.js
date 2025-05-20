@@ -30,7 +30,7 @@ export default class SemesterModule {
                         Code: <span id="code-text">${module.Code}</span>
                         </div>
                         <div class="module-info-row">
-                        Periode: <span id="period-text">${module.Period}</span>
+                        Periode: <span id="period-text">${mapPeriodToPresentableString(module.Period)}</span>
                         </div>
                     </div>
                     <div>
