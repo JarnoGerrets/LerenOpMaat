@@ -72,6 +72,7 @@ export default async function Feedback() {
             messageContainer.innerHTML = "<div class='message-feedback-box' style='opacity: 0.6;'>Geen berichten gevonden.</div>";
         }
     }
+
     await renderMessages();
 
     // Dropdown vullen
@@ -133,8 +134,8 @@ export default async function Feedback() {
             textarea.classList.remove("lom-feedback-placeholder-error");
             dropdown.style.borderColor = "";
 
-            // Haal altijd de laatste conversatie op
-            conversation = await getConversationByUserId(currentUserId);
+            // Haal altijd de laatste conversatie op of maak aan
+            let conversation = await getConversationByUserId(currentUserId);
             let conversationId = conversation && conversation.Id ? conversation.Id : null;
 
             // Alleen valideren op begeleider als er nog GEEN conversatie is
@@ -155,32 +156,14 @@ export default async function Feedback() {
             }
             if (!valid) return;
 
-            // Als er nog geen conversatie is, maak er een aan
-            if (!conversationId) {
-                const body = {
-                    LearningRouteId: Number(currentLearningRouteId),
-                    TeacherId: Number(selectedTeacherId),
-                    StudentId: Number(currentUserId)
-                };
-                try {
-                    const newConversation = await postConversation(body);
-                    conversationId = newConversation.Id;
-                    conversation = newConversation;
-                } catch (err) {
-                    errorMsg.textContent = "Kon conversatie niet aanmaken.";
-                    errorMsg.style.display = "block";
-                    return;
-                }
-            }
-
-            const messageBody = {
-                DateTime: new Date().toISOString(),
-                Commentary: feedback,
-                ConversationId: conversationId,
-                UserId: currentUserId
-            };
             try {
-                await postMessage(messageBody);
+                // 1. Haal conversatie op of maak aan
+                conversation = await getOrCreateConversation(currentUserId, currentLearningRouteId, selectedTeacherId);
+                conversationId = conversation.Id;
+
+                // 2. Post het bericht
+                await postFeedbackMessage(conversationId, feedback, currentUserId);
+
                 textarea.value = "";
                 textarea.placeholder = "Typ hier je feedback...";
                 textarea.style.borderColor = "";
@@ -189,11 +172,44 @@ export default async function Feedback() {
                 dropdown.style.borderColor = "";
                 await renderMessages();
             } catch (err) {
-                errorMsg.textContent = "Kon bericht niet plaatsen.";
+                if (!conversationId) {
+                    errorMsg.textContent = "Kon conversatie niet aanmaken.";
+                } else {
+                    errorMsg.textContent = "Kon bericht niet plaatsen.";
+                }
                 errorMsg.style.display = "block";
             }
         });
     }
 
     return { fragment };
+}
+
+
+async function getOrCreateConversation(currentUserId, currentLearningRouteId, selectedTeacherId) {
+    let conversation = await getConversationByUserId(currentUserId);
+    if (conversation && conversation.Id) {
+        return conversation;
+    }
+
+    return await createConversation(currentLearningRouteId, selectedTeacherId, currentUserId);
+}
+
+async function createConversation(currentLearningRouteId, selectedTeacherId, currentUserId) {
+    const body = {
+        LearningRouteId: Number(currentLearningRouteId),
+        TeacherId: Number(selectedTeacherId),
+        StudentId: Number(currentUserId)
+    };
+    return await postConversation(body);
+}
+
+async function postFeedbackMessage(conversationId, feedback, currentUserId) {
+    const messageBody = {
+        DateTime: new Date().toISOString(),
+        Commentary: feedback,
+        ConversationId: conversationId,
+        UserId: currentUserId
+    };
+    await postMessage(messageBody);
 }
