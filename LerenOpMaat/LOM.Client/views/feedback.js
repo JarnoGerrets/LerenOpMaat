@@ -24,20 +24,30 @@ export default async function Feedback() {
         messageContainer.innerHTML = "";
         try {
             conversation = await getConversationByUserId(currentUserId);
+            console.log("Conversation:", conversation);
             if (conversation && conversation.TeacherId) {
                 selectedTeacherIdFromConversation = conversation.TeacherId;
             }
             if (conversation && conversation.Message && Array.isArray(conversation.Message)) {
                 const sortedMessages = conversation.Message.slice().sort((a, b) => b.Id - a.Id);
                 sortedMessages.forEach(msg => {
+                    let senderName = "";
+                    if (msg.UserId === conversation.StudentId && conversation.Student) {
+                        senderName = `${conversation.Student.FirstName} ${conversation.Student.LastName}`;
+                    } else if (msg.UserId === conversation.TeacherId && conversation.Teacher) {
+                        senderName = `${conversation.Teacher.FirstName} ${conversation.Teacher.LastName}`;
+                    } else if (msg.User && msg.User.FirstName && msg.User.LastName) {
+                        senderName = `${msg.User.FirstName} ${msg.User.LastName}`;
+                    } else {
+                        senderName = "Onbekend";
+                    }
                     const msgBox = document.createElement("div");
                     msgBox.className = "message-feedback-box";
                     msgBox.innerHTML = `
-                        <div style="font-weight: bold; margin-bottom: 6px;">
-                            ${msg.UserType || (msg.UserId === conversation.StudentId ? "Student" : "Begeleider")}
-                        </div>
-                        ${msg.Commentary}
-                    `;
+                            <div style="font-weight: bold; margin-bottom: 6px;">
+                            ${senderName}
+                            </div>
+                            ${msg.Commentary}`;
                     messageContainer.appendChild(msgBox);
                 });
             } else {
@@ -51,6 +61,7 @@ export default async function Feedback() {
 
     // Vul de dropdown met leraren en selecteer gekoppelde indien aanwezig
     const dropdown = fragment.querySelector(".feedback-dropdown");
+
     // Validatie error element boven de dropdown
     const errorMsg = document.createElement("div");
     errorMsg.style.color = "red";
@@ -68,7 +79,6 @@ export default async function Feedback() {
         placeholder.hidden = true;
         placeholder.textContent = "Kies de leraar";
         dropdown.appendChild(placeholder);
-
 
         const teachers = await getAllTeachers();
         teachers.forEach(teacher => {
