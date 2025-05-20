@@ -19,7 +19,7 @@ export async function logout() {
     localStorage.removeItem("userData");
     location.reload();
 
-  } catch {}
+  } catch { }
 }
 
 export async function getUserData() {
@@ -251,6 +251,28 @@ export async function getConversationByUserId(userId) {
   return await res.json();
 }
 
+export async function updateConversation(id, conversationData) {
+  const res = await fetch(`${API_BASE}/Conversations/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(conversationData)
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to update conversation: ${res.status}`);
+  }
+
+  const contentType = res.headers.get("Content-Type");
+  if (contentType && contentType.includes("application/json")) {
+    return await res.json();
+  }
+  
+  return;
+}
+
 export async function getAllTeachers() {
   const res = await fetch(`${API_BASE}/User/teachers`, {
     method: "GET",
@@ -277,6 +299,21 @@ export async function postConversation(body) {
 
   if (!res.ok) {
     throw new Error(`Failed to post conversation: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+export async function getMessagesByConversationId(conversationId) {
+  const res = await fetch(`${API_BASE}/Messages/messagesByConversationId/${conversationId}`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch messages: ${res.status}`);
   }
 
   return await res.json();

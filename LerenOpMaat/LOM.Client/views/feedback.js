@@ -1,4 +1,11 @@
-import { getConversationByUserId, getAllTeachers, postConversation, postMessage } from "../client/api-client.js";
+import {
+    getConversationByUserId,
+    getAllTeachers,
+    postConversation,
+    postMessage,
+    updateConversation,
+    getMessagesByConversationId
+} from "../client/api-client.js";
 
 export default async function Feedback() {
     const response = await fetch("/templates/feedback.html");
@@ -15,20 +22,20 @@ export default async function Feedback() {
     template.innerHTML = bodyContent;
     const fragment = template.content.cloneNode(true);
 
-    // Voeg CSS toe voor rode placeholder
-    const style = document.createElement("style");
-    style.textContent = `
-        .lom-feedback-placeholder-error::placeholder {
-            color: red !important;
-            opacity: 0.6 !important;
-        }
-    `;
-    fragment.appendChild(style);
-
-    // Messages ophalen en tonen + gekoppelde teacher bepalen
     let conversation = null;
     let selectedTeacherIdFromConversation = null;
+
     const messageContainer = fragment.querySelector(".message-feedback-container");
+    const dropdown = fragment.querySelector(".feedback-dropdown");
+    const textarea = fragment.querySelector(".feedback-box");
+    const saveButton = fragment.querySelector(".save-btn");
+
+    const errorMsg = document.createElement("div");
+    errorMsg.style.color = "red";
+    errorMsg.style.marginBottom = "6px";
+    errorMsg.style.display = "none";
+    dropdown.parentNode.insertBefore(errorMsg, dropdown);
+
     async function renderMessages() {
         messageContainer.innerHTML = "";
         try {
@@ -36,28 +43,28 @@ export default async function Feedback() {
             if (conversation && conversation.TeacherId) {
                 selectedTeacherIdFromConversation = conversation.TeacherId;
             }
-            if (conversation && conversation.Message && Array.isArray(conversation.Message)) {
-                const sortedMessages = conversation.Message.slice().sort((a, b) => b.Id - a.Id);
-                sortedMessages.forEach(msg => {
-                    let senderName = "";
-                    if (msg.UserId === conversation.StudentId && conversation.Student) {
-                        senderName = `${conversation.Student.FirstName} ${conversation.Student.LastName}`;
-                    } else if (msg.UserId === conversation.TeacherId && conversation.Teacher) {
-                        senderName = `${conversation.Teacher.FirstName} ${conversation.Teacher.LastName}`;
-                    } else if (msg.User && msg.User.FirstName && msg.User.LastName) {
-                        senderName = `${msg.User.FirstName} ${msg.User.LastName}`;
-                    } else {
-                        senderName = "Onbekend";
-                    }
-                    const msgBox = document.createElement("div");
-                    msgBox.className = "message-feedback-box";
-                    msgBox.innerHTML = `
-                        <div style="font-weight: bold; margin-bottom: 6px;">
-                        ${senderName}
-                        </div>
-                        ${msg.Commentary}`;
-                    messageContainer.appendChild(msgBox);
-                });
+            if (conversation && conversation.Id) {
+                let messages = await getMessagesByConversationId(conversation.Id);
+                messages = Array.isArray(messages) ? messages : (messages ? [messages] : []);
+                if (messages.length > 0) {
+                    const sortedMessages = messages.slice().sort((a, b) => b.Id - a.Id);
+                    sortedMessages.forEach(msg => {
+                        let senderName = "Onbekend";
+                        if (msg.User && msg.User.FirstName && msg.User.LastName) {
+                            senderName = `${msg.User.FirstName} ${msg.User.LastName}`;
+                        }
+                        const msgBox = document.createElement("div");
+                        msgBox.className = "message-feedback-box";
+                        msgBox.innerHTML = `
+                            <div style="font-weight: bold; margin-bottom: 6px;">
+                            ${senderName}
+                            </div>
+                            ${msg.Commentary}`;
+                        messageContainer.appendChild(msgBox);
+                    });
+                } else {
+                    messageContainer.innerHTML = "<div class='message-feedback-box' style='opacity: 0.6;'>Geen berichten gevonden.</div>";
+                }
             } else {
                 messageContainer.innerHTML = "<div class='message-feedback-box' style='opacity: 0.6;'>Geen berichten gevonden.</div>";
             }
@@ -67,16 +74,7 @@ export default async function Feedback() {
     }
     await renderMessages();
 
-    // Vul de dropdown met leraren en selecteer gekoppelde indien aanwezig
-    const dropdown = fragment.querySelector(".feedback-dropdown");
-
-    // Validatie error element naast de dropdown
-    const errorMsg = document.createElement("div");
-    errorMsg.style.color = "red";
-    errorMsg.style.marginBottom = "6px";
-    errorMsg.style.display = "none";
-    dropdown.parentNode.insertBefore(errorMsg, dropdown);
-
+    // Dropdown vullen
     if (dropdown) {
         dropdown.innerHTML = "";
 
@@ -98,24 +96,50 @@ export default async function Feedback() {
             }
             dropdown.appendChild(option);
         });
+
+        // Direct begeleider aanpassen bij wijzigen dropdown
+        dropdown.addEventListener("change", async () => {
+            const selectedTeacherId = dropdown.value;
+            conversation = await getConversationByUserId(currentUserId);
+
+            // Alleen updaten als conversation bestaat en TeacherId echt anders is
+            if (conversation && String(conversation.TeacherId) !== String(selectedTeacherId)) {
+                try {
+                    await updateConversation(conversation.Id, {
+                        ...conversation,
+                        TeacherId: Number(selectedTeacherId)
+                    });
+                    conversation = await getConversationByUserId(currentUserId);
+                    await renderMessages();
+                } catch (err) {
+                    errorMsg.textContent = "Kon begeleider niet aanpassen.";
+                    errorMsg.style.display = "block";
+                }
+            } else {
+                errorMsg.style.display = "none";
+            }
+        });
     }
 
-    const saveButton = fragment.querySelector(".save-btn");
-    const textarea = fragment.querySelector(".feedback-box");
+    // Opslaan knop
     if (saveButton && textarea && dropdown) {
         saveButton.addEventListener("click", async () => {
-            const feedback = textarea.value.trim();
+            let feedback = textarea.value.trim();
             const selectedTeacherId = dropdown.value;
 
-            // Validatie
-            let valid = true;
             errorMsg.style.display = "none";
             textarea.placeholder = "Typ hier je feedback...";
             textarea.style.borderColor = "";
             textarea.classList.remove("lom-feedback-placeholder-error");
             dropdown.style.borderColor = "";
 
-            if (!selectedTeacherId) {
+            // Haal altijd de laatste conversatie op
+            conversation = await getConversationByUserId(currentUserId);
+            let conversationId = conversation && conversation.Id ? conversation.Id : null;
+
+            // Alleen valideren op begeleider als er nog GEEN conversatie is
+            let valid = true;
+            if (!conversationId && !selectedTeacherId) {
                 errorMsg.textContent = "Selecteer een leraar.";
                 errorMsg.style.display = "block";
                 dropdown.style.borderColor = "red";
@@ -131,10 +155,7 @@ export default async function Feedback() {
             }
             if (!valid) return;
 
-            // Controleer of er al een conversatie is
-            let conversationId = conversation && conversation.Id ? conversation.Id : null;
-
-            // Als er geen conversatie is, maak er eerst een aan
+            // Als er nog geen conversatie is, maak er een aan
             if (!conversationId) {
                 const body = {
                     LearningRouteId: Number(currentLearningRouteId),
@@ -146,6 +167,8 @@ export default async function Feedback() {
                     conversationId = newConversation.Id;
                     conversation = newConversation;
                 } catch (err) {
+                    errorMsg.textContent = "Kon conversatie niet aanmaken.";
+                    errorMsg.style.display = "block";
                     return;
                 }
             }
@@ -166,7 +189,8 @@ export default async function Feedback() {
                 dropdown.style.borderColor = "";
                 await renderMessages();
             } catch (err) {
-                // Geen foutmelding tonen
+                errorMsg.textContent = "Kon bericht niet plaatsen.";
+                errorMsg.style.display = "block";
             }
         });
     }

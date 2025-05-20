@@ -122,3 +122,8 @@ body {
     background-position: right 10px center;
     background-size: 18px 18px;
 }
+
+.lom-feedback-placeholder-error::placeholder {
+    color: red !important;
+    opacity: 0.6 !important;
+}

@@ -17,7 +17,5 @@ namespace LOM.API.Models
         [ForeignKey(nameof(Student))]
         public int StudentId { get; set; }
         public User? Student { get; set; }
-
-        public ICollection<Message>? Message { get; set; }
     }
 }

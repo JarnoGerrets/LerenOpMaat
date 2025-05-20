@@ -100,6 +100,20 @@ namespace LOM.API.Controllers
             return NoContent();
         }
 
+        [HttpGet("messagesByConversationId/{id}")]
+        public async Task<ActionResult<IEnumerable<Message>>> GetMessagesByConversationId(int id)
+        {
+            var messages = await _context.Messages.Include(u => u.User)
+                .Where(s => s.ConversationId == id).ToListAsync();
+
+            if (messages == null)
+            {
+                return NotFound();
+            }
+
+            return messages;
+        }
+
         private bool MessageExists(int id)
         {
             return _context.Messages.Any(e => e.Id == id);

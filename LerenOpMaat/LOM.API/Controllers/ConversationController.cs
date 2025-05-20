@@ -103,7 +103,7 @@ namespace LOM.API.Controllers
         [HttpGet("conversationByStudentId/{userId}")]
         public async Task<ActionResult<Conversation>> getConversationByStudentId(int userId)
         {
-            var conversation = await _context.Conversations.Include(m => m.Message)
+            var conversation = await _context.Conversations
                 .Include(t => t.Teacher)
                 .Include(lr => lr.LearningRoute)
                 .Include(s => s.Student)
