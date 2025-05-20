@@ -1,6 +1,5 @@
-const BASE = "http://localhost:5073";
+const BASE = "https://localhost:7024";
 const API_BASE = `${BASE}/api`;
-
 
 export function getLoginUrl() {
   return `${BASE}/authenticate`;
@@ -74,40 +73,49 @@ export async function getModule(id) {
 }
 
 export async function updateModule(id, moduleData) {
-    const res = await fetch(`${API_BASE}/Module/${id}`, {
-        method: "PUT",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(moduleData)
-    });
+  const res = await fetch(`${API_BASE}/Module/${id}`, {
+    method: "PUT",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(moduleData)
+  });
 
-    if (!res.ok) {
-        throw new Error(`Failed to update module: ${res.status}`);
-    }
+  if (res.status === 409) {
+    const errorBody = await res.json().catch(() => null);
+    throw new Error(errorBody?.message);
+  }
 
-    return;
+  if (!res.ok) {
+    throw new Error(`Failed to update module: ${res.status}`);
+  }
+
+  return;
 }
 
 export async function addModule(moduleData) {
   console.log(moduleData);
   const res = await fetch(`${API_BASE}/Module`, {
-      method: "POST",
-      headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify(moduleData)
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(moduleData)
   });
 
+  if (res.status === 409) {
+    const errorBody = await res.json().catch(() => null);
+    throw new Error(errorBody?.message);
+  }
+
   if (!res.ok) {
-      throw new Error(`Failed to save module: ${res.status}`);
+    throw new Error(`Failed to save module: ${res.status}`);
   }
 
   return res.json();
 }
-
 
 export async function deleteModule(id) {
     const res = await fetch(`${API_BASE}/Module/${id}`, {
