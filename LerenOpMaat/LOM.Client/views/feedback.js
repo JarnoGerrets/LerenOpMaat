@@ -59,10 +59,10 @@ export default async function Feedback() {
                     messageContainer.appendChild(msgBox);
                 });
             } else {
-                messageContainer.innerHTML = "<div class='message-feedback-box'>Geen berichten gevonden.</div>";
+                messageContainer.innerHTML = "<div class='message-feedback-box' style='opacity: 0.6;'>Geen berichten gevonden.</div>";
             }
         } catch (error) {
-            messageContainer.innerHTML = "<div class='message-feedback-box'>Geen berichten gevonden.</div>";
+            messageContainer.innerHTML = "<div class='message-feedback-box' style='opacity: 0.6;'>Geen berichten gevonden.</div>";
         }
     }
     await renderMessages();
