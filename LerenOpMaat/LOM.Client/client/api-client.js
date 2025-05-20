@@ -1,7 +1,6 @@
 const BASE = "http://localhost:5073";
 const API_BASE = `${BASE}/api`;
 
-
 export function getLoginUrl() {
   return `${BASE}/authenticate`;
 }
@@ -96,6 +95,7 @@ export async function updateModule(id, moduleData) {
       "Accept": "application/json",
       "Content-Type": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(moduleData)
   });
 
@@ -113,8 +113,14 @@ export async function addModule(moduleData) {
       "Accept": "application/json",
       "Content-Type": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(moduleData)
   });
+
+  if (res.status === 409) {
+    const errorBody = await res.json().catch(() => null);
+    throw new Error(errorBody?.message);
+  }
 
   if (!res.ok) {
     throw new Error(`Failed to save module: ${res.status}`);
@@ -122,7 +128,6 @@ export async function addModule(moduleData) {
 
   return res.json();
 }
-
 
 export async function deleteModule(id) {
   const res = await fetch(`${API_BASE}/Module/${id}`, {
