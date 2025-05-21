@@ -1,11 +1,8 @@
 import Popup from "../../components/Popup.js";
-import { deleteModule, deleteRoute } from "../../client/api-client.js";
 
-let mijnPopup;
-
-
-export default async function confirmationPopup(id, name) {
-    mijnPopup = new Popup({
+let popup;
+export default async function confirmationPopup(name, type, callback) {
+    popup = new Popup({
         maxWidth: 'auto',
         height: 'auto',
         sizeCloseButton: '0',
@@ -13,7 +10,7 @@ export default async function confirmationPopup(id, name) {
         closeButtonStyle: 'popup-confirmation-closebutton',
         header: `
             <h3 class="popup-header-confirmation">
-                Verwijderen module
+                Verwijderen ${type}
             </h3>
         `,
         titleWrapperClass: 'popup-title-confirmation',
@@ -28,37 +25,22 @@ export default async function confirmationPopup(id, name) {
         `
     });
 
-    mijnPopup.open();
+    popup.open();
 
     setTimeout(() => {
         document.getElementById("confirm-delete")?.addEventListener("click", async () => {
-            await deleteModule(id);
-            window.location.href = "/";
-        });
-
-        document.getElementById("cancel-delete")?.addEventListener("click", () => {
-            mijnPopup.close();
-        });
-    }, 0);
-
-    setTimeout(() => {
-        document.getElementById("confirm-delete")?.addEventListener("click", async () => {
-            if (id && name === "de leerroute") { // Controleer of het om een leerroute gaat
-                try {
-                    const isDeleted = await deleteRoute(id);
-                    if (isDeleted) {
-                        window.location.reload();
-                    } else {
-                        console.error("Fout bij het verwijderen van de leerroute.");
-                    }
-                } catch (error) {
-                    console.error("Fout bij het verwijderen van de leerroute:", error.message);
-                }
+            if (callback) {
+                callback();
             }
+            else {
+                console.error("No callback provided.");
+            }
+
+            handleUnload();
         });
 
         document.getElementById("cancel-delete")?.addEventListener("click", () => {
-            mijnPopup.close();
+            popup.close();
         });
     }, 0);
 
@@ -66,9 +48,6 @@ export default async function confirmationPopup(id, name) {
     window.addEventListener('popstate', handleUnload);
 
     function handleUnload() {
-        mijnPopup.close();
+        popup.close();
     }
-
-
 }
-
