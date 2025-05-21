@@ -4,11 +4,17 @@ import { setStartYear } from "../client/api-client.js";
 
 export async function RouteOrSelector() {
   let cohortYear = localStorage.getItem("cohortYear");
-  let userId = '';//userId moet nog toegevoegd worden zodra authenticatie rond is.
+  localStorage.setItem("userData", JSON.stringify({ Roles: ["Lecturer"],Username:"s1203962@student.windesheim.nl",InternalId: 4, ExternalID:"M5IlHoZaiDWDS0krdVkSR9NBmfhoHqlFN1ob_6WLeoE"}));
+  let userData = localStorage.getItem("userData");
+  let parsedUserData = JSON.parse(userData);
+  console.log(parsedUserData.Username);
+  let userId = parsedUserData.InternalId;
+  console.log(userId);
 
   if (!cohortYear) {
     if (userId) {
       const startYearFromUser = await getStartYear(userId);
+      console.log(userId);
 
       if (startYearFromUser) {
         cohortYear = startYearFromUser;
@@ -45,7 +51,7 @@ export default async function CohortSelector() {
     button.className = "cohort-button";
     button.addEventListener("click", () => {
       selected = year;
-      fragment.querySelectorAll(".cohort-button").forEach(b => b.classList.remove("selected"));
+      cohortButtonsContainer.querySelectorAll(".cohort-button").forEach(b => b.classList.remove("selected"));
       button.classList.add("selected");
       submitBtn.disabled = false;
     });

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LOM.API.Controllers
 {
@@ -20,7 +21,8 @@ namespace LOM.API.Controllers
         {
             _context = context;
         }
-        
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("upload")]
         public async Task<IActionResult> UploadOer(IFormFile file)
         {
