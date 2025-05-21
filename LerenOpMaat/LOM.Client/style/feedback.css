@@ -32,14 +32,20 @@ body {
 }
 
 .feedback-box {
+    margin: 0 0 12px 0;
+    display: block;
     width: 100%;
-    min-height: 120px;
-    border: 1.5px solid #ccc;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 1em;
-    resize: vertical;
+    min-height: 60px;
+    border-radius: 12px;
+    font-size: 1.1em;
+    padding: 16px;
     box-sizing: border-box;
+}
+
+.feedback-box::placeholder {
+    color: #b0b0b0;
+    opacity: 1; 
+    font-weight: normal;
 }
 
 .feedback-header-row {
@@ -50,25 +56,27 @@ body {
 }
 
 .message-feedback-container {
+    width: 100%;
+    margin: 24px 0 0 0;
+    padding: 0 8px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    width: 100%;
-    margin-top: 24px;
-    justify-content: flex-start;
+    gap: 18px;
     box-sizing: border-box;
 }
 
 .message-feedback-box {
-    width: 100%;
-    margin: 0 auto;
-    padding: 14px;
-    background: #f0f0f0;
-    border: 1.5px dashed #bbb;
-    border-radius: 8px;
-    color: black;
-    box-sizing: border-box;
+    border-radius: 14px;
+    max-width: 800px;
+    padding: 16px 22px;
+    font-size: 1.08em;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    min-width: 300px;
+    word-break: break-word;
+    margin-bottom: 0;
+    margin-top: 0;
 }
+
 
 .back-link {
     display: block;
@@ -126,4 +134,22 @@ body {
 .lom-feedback-placeholder-error::placeholder {
     color: red !important;
     opacity: 0.6 !important;
+}
+
+.message-feedback-box.role-1 {
+    background-color: #ffffff;
+    align-self: flex-start;
+    margin-left: 0;
+}
+
+.message-feedback-box.role-2 {
+    background-color: #cecece;
+    align-self: flex-end;
+    margin-right: 0;
+}
+
+.message-date {
+    font-size: 0.90em;
+    color: #000000;
+    font-weight: normal;
 }

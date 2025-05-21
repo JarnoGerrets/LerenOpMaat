@@ -36,6 +36,16 @@ export default async function Feedback() {
     errorMsg.style.display = "none";
     dropdown.parentNode.insertBefore(errorMsg, dropdown);
 
+    // Helper om placeholder te zetten
+    function updateTextareaPlaceholder() {
+        const selectedOption = dropdown.options[dropdown.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            textarea.placeholder = `Vraag feedback aan ${selectedOption.textContent}`;
+        } else {
+            textarea.placeholder = "Typ hier je feedback...";
+        }
+    }
+
     async function renderMessages() {
         messageContainer.innerHTML = "";
         try {
@@ -53,13 +63,27 @@ export default async function Feedback() {
                         if (msg.User && msg.User.FirstName && msg.User.LastName) {
                             senderName = `${msg.User.FirstName} ${msg.User.LastName}`;
                         }
+                        const formattedDate = msg.DateTime ? formatDateTime(msg.DateTime) : "";
                         const msgBox = document.createElement("div");
                         msgBox.className = "message-feedback-box";
-                        msgBox.innerHTML = `
-                            <div style="font-weight: bold; margin-bottom: 6px;">
-                            ${senderName}
+
+                        if (msg.User && msg.User.RoleId === 2) {
+                            msgBox.classList.add("role-2");
+                            msgBox.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin-bottom: 6px;">
+                                <span class="message-date">${formattedDate}</span>
+                                <span>${senderName}</span>
                             </div>
-                            ${msg.Commentary}`;
+                            <div class="message-right">${msg.Commentary}</div>`;
+                        } else {
+                            msgBox.classList.add("role-1");
+                            msgBox.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin-bottom: 6px;">
+                                <span>${senderName}</span>
+                                <span class="message-date">${formattedDate}</span>
+                            </div>
+                            <div>${msg.Commentary}</div>`;
+                        }
                         messageContainer.appendChild(msgBox);
                     });
                 } else {
@@ -98,8 +122,12 @@ export default async function Feedback() {
             dropdown.appendChild(option);
         });
 
+        updateTextareaPlaceholder();
+
         // Direct begeleider aanpassen bij wijzigen dropdown
         dropdown.addEventListener("change", async () => {
+            updateTextareaPlaceholder();
+
             const selectedTeacherId = dropdown.value;
             conversation = await getConversationByUserId(currentUserId);
 
@@ -122,19 +150,19 @@ export default async function Feedback() {
         });
     }
 
-    // Opslaan knop
+
     if (saveButton && textarea && dropdown) {
         saveButton.addEventListener("click", async () => {
             let feedback = textarea.value.trim();
             const selectedTeacherId = dropdown.value;
 
             errorMsg.style.display = "none";
-            textarea.placeholder = "Typ hier je feedback...";
+            updateTextareaPlaceholder();
             textarea.style.borderColor = "";
             textarea.classList.remove("lom-feedback-placeholder-error");
             dropdown.style.borderColor = "";
 
-            // Haal altijd de laatste conversatie op of maak aan
+            // Haal altijd de conversatie op of maak aan
             let conversation = await getConversationByUserId(currentUserId);
             let conversationId = conversation && conversation.Id ? conversation.Id : null;
 
@@ -157,15 +185,13 @@ export default async function Feedback() {
             if (!valid) return;
 
             try {
-                // 1. Haal conversatie op of maak aan
                 conversation = await getOrCreateConversation(currentUserId, currentLearningRouteId, selectedTeacherId);
                 conversationId = conversation.Id;
 
-                // 2. Post het bericht
                 await postFeedbackMessage(conversationId, feedback, currentUserId);
 
                 textarea.value = "";
-                textarea.placeholder = "Typ hier je feedback...";
+                updateTextareaPlaceholder();
                 textarea.style.borderColor = "";
                 textarea.classList.remove("lom-feedback-placeholder-error");
                 errorMsg.style.display = "none";
@@ -185,13 +211,11 @@ export default async function Feedback() {
     return { fragment };
 }
 
-
 async function getOrCreateConversation(currentUserId, currentLearningRouteId, selectedTeacherId) {
     let conversation = await getConversationByUserId(currentUserId);
     if (conversation && conversation.Id) {
         return conversation;
     }
-
     return await createConversation(currentLearningRouteId, selectedTeacherId, currentUserId);
 }
 
@@ -205,11 +229,25 @@ async function createConversation(currentLearningRouteId, selectedTeacherId, cur
 }
 
 async function postFeedbackMessage(conversationId, feedback, currentUserId) {
+    const now = new Date();
+    const pad = n => n.toString().padStart(2, "0");
+    const localDateTime = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     const messageBody = {
-        DateTime: new Date().toISOString(),
+        DateTime: localDateTime, // lokale tijd in ISO-formaat
         Commentary: feedback,
         ConversationId: conversationId,
         UserId: currentUserId
     };
     await postMessage(messageBody);
+}
+
+function formatDateTime(dateString) {
+    const date = new Date(dateString);
+    const pad = n => n.toString().padStart(2, "0");
+    const day = pad(date.getDate());
+    const month = pad(date.getMonth() + 1);
+    const year = date.getFullYear();
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
 }
