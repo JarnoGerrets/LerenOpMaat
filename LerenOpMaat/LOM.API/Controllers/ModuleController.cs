@@ -48,6 +48,26 @@ namespace LOM.API.Controllers
 			return result;
 		}
 
+
+		// GET: api/Module/Active
+		[HttpGet("Active")]
+		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetActiveModules([FromQuery] string? q)
+		{
+			var modules = await _context.Modules
+				.Where(m => m.IsActive)
+				.Include(m => m.Requirements)
+				.Include(m => m.GraduateProfile)
+				.ToListAsync();
+
+			var result = new List<ModuleDto>();
+			foreach (var module in modules)
+			{
+				result.Add(await ModuleDto.FromModelAsync(module, _context));
+			}
+
+			return result;
+		}
+
 		// GET: api/Module/5
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ModuleDto>> GetModule(int id)

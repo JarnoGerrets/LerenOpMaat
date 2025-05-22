@@ -17,7 +17,7 @@ namespace LOM.API.Validator.Specifications
 
 			if (!ismet)
 			{
-				return new ValidationResult(false, "Minimaal één module van niveau 3 is vereist", currentModuleId);
+				return new ValidationResult(false, "Minimaal twee modules van niveau 2 zijn vereist", currentModuleId);
 			}
 			return new ValidationResult(true, "Module van niveau 3 gevonden in leerroute", currentModuleId);
 		}
