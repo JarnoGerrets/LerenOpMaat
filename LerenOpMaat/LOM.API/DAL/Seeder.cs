@@ -43,12 +43,14 @@ public class Seeder
             new Module { Id = 12, Name = "Database Management Systems", Code = "DBMS.12", Description = "Database Management Systems", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
             new Module { Id = 13, Name = "Data Structures and Algorithms", Code = "DSA.13", Description = "Data Structures and Algorithms", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
             new Module { Id = 14, Name = "Database Management Systems", Code = "DBMS.14", Description = "Database Management Systems", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
-            new Module { Id = 15, Name = "Database Management Systems", Code = "DBMS.15", Description = "Database Management Systems", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 }
-        );
+            new Module { Id = 15, Name = "Database Management Systems", Code = "DBMS.15", Description = "Database Management Systems", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
+            new Module { Id = 16, Name = "Afstuderen", Code = "A.01", Description = "Afstuderen", Ec = 30, Level = 3, Period = 2, IsActive = true, GraduateProfileId = 2},
+            new Module { Id = 17, Name = "Multidisciplinaire Opdracht", Code = "MDO.01", Description = "Multidisciplinaire Opdracht", Ec = 30, Level = 3, Period = 2, IsActive = true, GraduateProfileId = 2}
+            );
 
         _modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", LearningRouteId = 1, StartYear = 2023 },
-            new User { Id = 2, FirstName = "Robin", LastName = "Hood" }
+            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", LearningRouteId = 1, StartYear = 2023, ExternalID="TEST123" },
+            new User { Id = 2, FirstName = "Robin", LastName = "Hood", ExternalID="TEST345" }
             );
         _modelBuilder.Entity<Semester>()
             .HasOne(s => s.Module)
@@ -84,7 +86,10 @@ public class Seeder
             new Requirement { Id = 3, ModuleId = 3, Type = ModulePreconditionType.RequiredEc, Value = "120" },
             new Requirement { Id = 4, ModuleId = 4, Type = ModulePreconditionType.RequiredModule, Value = "2" },
             new Requirement { Id = 5, ModuleId = 5, Type = ModulePreconditionType.RequiredEcFromPropedeuse, Value = "50" },
-            new Requirement { Id = 6, ModuleId = 5, Type = ModulePreconditionType.RequiredModule, Value = "3" }
+            new Requirement { Id = 6, ModuleId = 5, Type = ModulePreconditionType.RequiredModule, Value = "3" },
+            new Requirement { Id = 7, ModuleId = 16, Type = ModulePreconditionType.RequiredModule, Value = "17" },
+            new Requirement { Id = 8, ModuleId = 16, Type = ModulePreconditionType.RequiredEcFromPropedeuse, Value = "60" },
+            new Requirement { Id = 9, ModuleId = 16, Type = ModulePreconditionType.RequiredLevel2ModulesCount, Value = "2" }
         );
 
         _modelBuilder.Entity<GraduateProfile>().HasData(

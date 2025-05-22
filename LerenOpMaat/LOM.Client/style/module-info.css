@@ -173,6 +173,30 @@ button {
     margin-bottom: 25px;
 }
 
+.requirement-card-title-row{
+    display: flex;
+    justify-content: space-between;
+}
+
+.requirement-card-add-button{
+    align-self: start;
+    cursor: pointer;
+}
+
+.requirement-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.requirement-row p{
+    max-width: 250px;
+}
+
+.requirement-card-action-button{
+    cursor: pointer;
+    font-size: 25px;
+}
+
 .title-requirement-card{
     margin-bottom: 25px;
 }
@@ -247,7 +271,7 @@ button {
         height: 100%;
         min-height: 151px;
     }
-    
+
     .text-module-card, .text-requirement-card {
         flex: 1;
         font-size: 10px;

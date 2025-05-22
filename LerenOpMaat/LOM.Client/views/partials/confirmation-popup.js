@@ -1,11 +1,8 @@
 import Popup from "../../components/Popup.js";
-import { deleteModule, deleteRoute } from "../../client/api-client.js";
 
-let mijnPopup;
-
-
-export default async function confirmationPopup(id, name) {
-    mijnPopup = new Popup({
+let popup;
+export default async function confirmationPopup(name, type, callback) {
+    popup = new Popup({
         maxWidth: 'auto',
         height: 'auto',
         sizeCloseButton: '0',
@@ -28,7 +25,7 @@ export default async function confirmationPopup(id, name) {
         `
     });
 
-    mijnPopup.open();
+    popup.open();
 
     setTimeout(() => {
         document.getElementById("confirm-deactivate")?.addEventListener("click", async () => {
@@ -58,7 +55,7 @@ export default async function confirmationPopup(id, name) {
         });
 
         document.getElementById("cancel-delete")?.addEventListener("click", () => {
-            mijnPopup.close();
+            popup.close();
         });
     }, 0);
 
@@ -66,9 +63,6 @@ export default async function confirmationPopup(id, name) {
     window.addEventListener('popstate', handleUnload);
 
     function handleUnload() {
-        mijnPopup.close();
+        popup.close();
     }
-
-
 }
-

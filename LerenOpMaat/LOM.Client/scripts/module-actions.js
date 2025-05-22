@@ -1,5 +1,6 @@
 import confirmationPopup from "../views/partials/confirmation-popup.js";
 import { updateModule } from "../../client/api-client.js";
+import { deleteModule } from "../client/api-client.js";
 
 export function setupButtons(module, textArea) {
     let editButton = setupEditButton(module, textArea)
@@ -78,17 +79,21 @@ function setupDeleteButton(module) {
     trashButton.className = "bi bi-trash trash-button";
     trashButton.title = "Verwijderen";
     trashButton.addEventListener('click', async () => {
-        await confirmationPopup(module.Id, module.Name);
+        await confirmationPopup(module.Name, 'module', async () => {
+            await deleteModule(module.Id);
+            window.location.href = "#module-overview";
+        });
     });
     return trashButton;
 }
-
 
 function ToggleFields(module) {
     const codeText = document.getElementById("code-text");
     const periodText = document.getElementById("period-text");
     const ecText = document.getElementById("ec-text");
     const levelText = document.getElementById("level-text");
+    const addRequirementButton = document.getElementById("add-requirement-button");
+    const requirementActions = document.querySelectorAll(".requirement-actions");
 
     if (codeText.querySelector("input")) {
         module.Code = document.getElementById("code-input").value;
@@ -100,6 +105,10 @@ function ToggleFields(module) {
         periodText.innerHTML = `${module.Period}`;
         ecText.innerHTML = `${module.Ec}`;
         levelText.innerHTML = `${module.Level}`;
+        addRequirementButton.style.display = "none";
+        requirementActions.forEach(action => {
+            action.style.display = "none";
+        });
     } else {
         codeText.innerHTML = `
         <div><input class="card-input" type="text" id="code-input" value="${module.Code}"></div>
@@ -129,6 +138,11 @@ function ToggleFields(module) {
           ${optionsLevel}
         </select></div>
       `;
+
+        addRequirementButton.style.display = "flex";
+        requirementActions.forEach(action => {
+            action.style.display = "flex";
+        });
     }
 }
 

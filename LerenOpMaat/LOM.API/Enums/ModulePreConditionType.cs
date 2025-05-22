@@ -5,6 +5,7 @@
         RequiredEcFromPropedeuse = 0,
         RequiredEc = 1,
         RequiredModule = 2,
-        Graduating = 3
+        RequiredLevel3ModulesCount = 3,
+        RequiredLevel2ModulesCount = 4
     }
 }
