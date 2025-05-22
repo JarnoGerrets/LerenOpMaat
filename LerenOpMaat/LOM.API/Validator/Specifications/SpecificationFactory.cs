@@ -33,9 +33,13 @@ namespace LOM.API.Validator.Specifications
 						}
 					}
 				},
+								{
+					ModulePreconditionType.RequiredLevel2ModulesCount,
+					(_, index) => new RequiredLevel2ModulesCountSpecification(index)
+				},
 				{
-					ModulePreconditionType.Graduating,
-					(_, index) => new GraduatingSpecification(index)
+					ModulePreconditionType.RequiredLevel3ModulesCount,
+					(_, index) => new RequiredLevel3ModulesCountSpecification(index)
 				},
 				{
 					ModulePreconditionType.RequiredEc,
