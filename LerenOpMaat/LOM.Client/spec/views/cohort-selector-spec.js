@@ -1,34 +1,54 @@
 import { RouteOrSelector } from "../../views/cohort-selector.js";
-import { JSDOM } from 'jsdom';
-// import fs from "fs";
-// import path from "path";
+import { JSDOM } from "jsdom";
 
-// Set up a DOM environment for testing
-// This is necessary because the code being tested relies on DOM APIs
-const dom = new JSDOM(`<!DOCTYPE html><body></body>`);
+const dom = new JSDOM(`<!DOCTYPE html><body></body>`, {
+  url: "https://localhost" // geldige origin voor localStorage
+});
+
 global.window = dom.window;
 global.document = dom.window.document;
-global.customElements = dom.window.customElements;
 global.HTMLElement = dom.window.HTMLElement;
+global.localStorage = dom.window.localStorage;
+global.customElements = dom.window.customElements;
 
 describe("RouteOrSelector", () => {
-  // let htmlContent;
-  // let storage = {};
+  beforeEach(() => {
 
-  // beforeAll(() => {
-  //   const htmlPath = path.resolve(__dirname, "/templates/cohort-selector.html");
-  //   htmlContent = fs.readFileSync(htmlPath, "utf8");
-  // });
+      global.fetch = jasmine.createSpy("fetch").and.callFake((url) => {
+      if (url === "/templates/cohort-selector.html") {
+        return Promise.resolve({
+          text: () => Promise.resolve(`
+            <div class="cohort-wrapper" id="cohortSelector">
+              <div class="cohort-container">
+                <h1 class="cohort-title">Wanneer ben je gestart met je studie?</h1>
+                <div class="cohort-options" id="cohortButtons"></div>
+                <button class="cohort-submit" id="submitBtn" disabled>Ga verder</button>
+              </div>
+            </div>
+          `)
+        });
+      }
+      return Promise.reject(new Error("Unknown URL: " + url));
+    });
 
-  // beforeEach(() => {
-  //   global.fetch = jasmine.createSpy("fetch").and.returnValue(
-  //     Promise.resolve({
-  //       text: () => Promise.resolve(htmlContent),
-  //     })
-  //   );
+    const mockLocalStorage = {
+    getItem: (key) => localStore[key] || null,
+    setItem: (key, value) => {
+      localStore[key] = value.toString();
+    },
+    clear: () => {
+      for (let key in localStore) {
+        delete localStore[key];
+      }
+    },
+  };
 
-  //   window.location.reload = jasmine.createSpy("reload");
-  // });
+  Object.defineProperty(window, 'localStorage', {
+    value: mockLocalStorage,
+    writable: true,
+    configurable: true,
+  });
+  });
 
   it("Test of submit button zonder selectie niet werkt", async () => {
     const fragment = await RouteOrSelector();
@@ -76,6 +96,6 @@ describe("RouteOrSelector", () => {
     expect(buttons[0].classList.contains("selected")).toBeTrue();
 
     submitBtn.click();
-    expect(storage["cohortYear"]).toBe(buttons[0].dataset.year);
+    expect(localStorage.getItem("cohortYear")).toBe(buttons[0].dataset.year);
   });
 });

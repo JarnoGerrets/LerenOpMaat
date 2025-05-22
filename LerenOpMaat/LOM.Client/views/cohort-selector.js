@@ -1,21 +1,16 @@
 import LearningRoute from "../views/learning-route.js";
-import { getStartYear } from "../client/api-client.js";
-import { setStartYear } from "../client/api-client.js";
+import { setStartYear, getStartYear } from "../client/api-client.js";
 
 export async function RouteOrSelector() {
   let cohortYear = localStorage.getItem("cohortYear");
   localStorage.setItem("userData", JSON.stringify({ Roles: ["Lecturer"],Username:"s1203962@student.windesheim.nl",InternalId: 4, ExternalID:"M5IlHoZaiDWDS0krdVkSR9NBmfhoHqlFN1ob_6WLeoE"}));
   let userData = localStorage.getItem("userData");
   let parsedUserData = JSON.parse(userData);
-  console.log(parsedUserData.Username);
   let userId = parsedUserData.InternalId;
-  console.log(userId);
 
   if (!cohortYear) {
     if (userId) {
       const startYearFromUser = await getStartYear(userId);
-      console.log(userId);
-
       if (startYearFromUser) {
         cohortYear = startYearFromUser;
         localStorage.setItem('cohortYear', cohortYear);
