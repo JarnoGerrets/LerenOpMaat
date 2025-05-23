@@ -1,14 +1,16 @@
 import SemesterPair from "../components/semester-pair.js";
+import Feedback from "./feedback.js";
 import { getLearningRoutesByUserId, postLearningRoute, updateSemester, deleteRoute } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-delete-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 
 let apiResponse = [];
+export let currentUserId = null;
+export let learningRouteId = null;
 
 export default async function LearningRoute() {
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
-
     const response = await fetch("/templates/learning-route.html");
     const html = await response.text();
     const template = document.createElement("template");
@@ -20,6 +22,7 @@ export default async function LearningRoute() {
 
     try {
         apiResponse = await getLearningRoutesByUserId(1);
+
         if (
             !apiResponse.Semesters ||
             !Array.isArray(apiResponse.Semesters) ||
@@ -202,41 +205,46 @@ export default async function LearningRoute() {
         });
     }
 
+    const feedbackButton = fragment.getElementById("feedBack");
+    if (feedbackButton) {
+        feedbackButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            window.location.hash = "#feedback";
+        });
+    }
+
     return { fragment };
 }
 
 async function saveLearningRoute(learningRouteArray) {
     if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
-        try {
-            const user = apiResponse?.Users?.[0]; // Pak de gebruiker uit de API-response
-
-            if (!user) {
-                console.error("Geen gebruikersgegevens gevonden in de API-response.");
-                return;
-            }
-
-            const jsonData = {
-                Users: [
-                    {
-                        Id: user.Id,
-                        FirstName: user.FirstName,
-                        LastName: user.LastName,
-                        StartYear: 2025
-                    }
-                ],
-                Semesters: learningRouteArray.map(item => ({
-                    Year: item.Year,
-                    Period: item.Period,
-                    ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
-                }))
-            };
-            await postLearningRoute(jsonData);
-            location.reload();
-        } catch (error) {
-            console.error("Er is een fout opgetreden bij het opslaan van de leerroute:", error.message);
+        const user = apiResponse?.Users?.[0];
+        if (!user) {
+            throw new Error("Geen gebruikersgegevens gevonden in de API-response.");
         }
+        const jsonData = {
+            Users: [
+                {
+                    Id: user.Id,
+                    ExternalID: user.ExternalID,
+                    FirstName: user.FirstName,
+                    LastName: user.LastName,
+                }
+            ],
+            StartYear: 2025,
+            Semesters: learningRouteArray.map(item => ({
+                Year: item.Year,
+                Period: item.Period,
+                ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
+            }))
+        };
+        const result = await postLearningRoute(jsonData);
+        if (!result) {
+            throw new Error("De server gaf geen geldige respons terug bij het aanmaken van de leerroute.");
+        }
+        location.reload();
     } else {
-        console.error("learningRouteArray is leeg of geen array!");
+        throw new Error("learningRouteArray is leeg of geen array!");
     }
 };
 

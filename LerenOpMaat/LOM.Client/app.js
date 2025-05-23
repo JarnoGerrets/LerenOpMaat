@@ -2,6 +2,7 @@ import ModuleInfo from "./views/module-info.js";
 import { RouteOrSelector } from "./views/cohort-selector.js";
 import { moduleOverview } from "./views/module-overview.js";
 import oerView from './views/oer-view.js';
+import feedback from './views/feedback.js';
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
@@ -16,6 +17,9 @@ const routes = {
   },
   "#oer-view": async () => {
     return await oerView();
+  },
+  "#feedback": async () => {
+    return await feedback();
   },
 };
 

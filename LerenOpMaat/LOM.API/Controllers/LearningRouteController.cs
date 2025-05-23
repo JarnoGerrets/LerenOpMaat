@@ -168,6 +168,7 @@ namespace LOM.API.Controllers
                             new User
                             {
                                 Id = getUser.Id,
+                                ExternalID = getUser.ExternalID,
                                 FirstName = getUser.FirstName,
                                 LastName = getUser.LastName
                             }

@@ -20,5 +20,9 @@ namespace LOM.API.Models
         [ForeignKey(nameof(LearningRoute))]
         public int? LearningRouteId { get; set; }
         public LearningRoute? LearningRoute { get; set; }
+
+        [ForeignKey(nameof(Role))]
+        public int RoleId { get; set; }
+        public Role? Role { get; set; }
     }
 }
