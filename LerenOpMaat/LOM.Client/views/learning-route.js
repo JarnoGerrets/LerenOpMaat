@@ -11,7 +11,6 @@ export let learningRouteId = null;
 
 export default async function LearningRoute() {
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
-
     const response = await fetch("/templates/learning-route.html");
     const html = await response.text();
     const template = document.createElement("template");
@@ -23,15 +22,6 @@ export default async function LearningRoute() {
 
     try {
         apiResponse = await getLearningRoutesByUserId(1);
-        console.log("API Response:", apiResponse);
-
-        //deze slaat de userId op van de gebruiker die is ingelogd
-        if (apiResponse.Users && apiResponse.Users.length > 0) {
-            currentUserId = apiResponse.Users[0].Id;
-            learningRouteId = apiResponse.Users[0].LearningRouteId;
-            localStorage.setItem("currentUserId", currentUserId);
-            localStorage.setItem("learningRouteId", apiResponse.Users[0].LearningRouteId);
-        }
 
         if (
             !apiResponse.Semesters ||
@@ -228,38 +218,31 @@ export default async function LearningRoute() {
 
 async function saveLearningRoute(learningRouteArray) {
     if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
-        try {
-            const user = apiResponse?.Users?.[0]; // Pak de gebruiker uit de API-response
-
-            if (!user) {
-                throw new Error("Geen gebruikersgegevens gevonden in de API-response.");
-            }
-
-            const jsonData = {
-                Users: [
-                    {
-                        Id: user.Id,
-                        ExternalID: user.ExternalID,
-                        FirstName: user.FirstName,
-                        LastName: user.LastName,
-                    }
-                ],
-                StartYear: 2025,
-                Semesters: learningRouteArray.map(item => ({
-                    Year: item.Year,
-                    Period: item.Period,
-                    ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
-                }))
-            };
-            const result = await postLearningRoute(jsonData);
-            if (!result) {
-                throw new Error("De server gaf geen geldige respons terug bij het aanmaken van de leerroute.");
-            }
-            location.reload();
-        } catch (error) {
-            // Gooi de error door zodat de bovenliggende catch hem kan afhandelen
-            throw error;
+        const user = apiResponse?.Users?.[0];
+        if (!user) {
+            throw new Error("Geen gebruikersgegevens gevonden in de API-response.");
         }
+        const jsonData = {
+            Users: [
+                {
+                    Id: user.Id,
+                    ExternalID: user.ExternalID,
+                    FirstName: user.FirstName,
+                    LastName: user.LastName,
+                }
+            ],
+            StartYear: 2025,
+            Semesters: learningRouteArray.map(item => ({
+                Year: item.Year,
+                Period: item.Period,
+                ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
+            }))
+        };
+        const result = await postLearningRoute(jsonData);
+        if (!result) {
+            throw new Error("De server gaf geen geldige respons terug bij het aanmaken van de leerroute.");
+        }
+        location.reload();
     } else {
         throw new Error("learningRouteArray is leeg of geen array!");
     }

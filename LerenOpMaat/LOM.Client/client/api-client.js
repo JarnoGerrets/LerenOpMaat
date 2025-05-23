@@ -43,7 +43,7 @@ export async function getUserData() {
 
 
 export async function getModules(q) {
-  const res = await fetch(`${API_BASE}/Module?q=${q||''}`, {
+  const res = await fetch(`${API_BASE}/Module?q=${q || ''}`, {
     method: "GET",
     headers: {
       "Accept": "text/plain"
@@ -207,7 +207,7 @@ export async function getRequirementTypes() {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 export async function getProfiles(q) {
-  const res = await fetch(`${API_BASE}/GraduateProfile?q=${q||''}`, {
+  const res = await fetch(`${API_BASE}/GraduateProfile?q=${q || ''}`, {
     method: "GET",
     headers: {
       "Accept": "text/plain"
@@ -321,10 +321,6 @@ export async function getConversationByUserId(userId) {
     }
   });
 
-  if (res.status === 404) {
-    return null;
-  }
-
   if (!res.ok) {
     throw new Error(`Failed to fetch conversation: ${res.status}`);
   }
@@ -350,8 +346,8 @@ export async function updateConversation(id, conversationData) {
   if (contentType && contentType.includes("application/json")) {
     return await res.json();
   }
-  
-  return;
+
+  throw new Error("Response bevat geen JSON");
 }
 
 export async function getAllTeachers() {

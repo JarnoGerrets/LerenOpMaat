@@ -1,20 +1,21 @@
 <link rel="stylesheet" href="../style/feedback.css">
 
-<div class="container">
-    <div class="feedback-header-row"
-        style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+<div class="container chat-layout">
+    <div class="feedback-header-row">
         <a href="#" class="back-link">← Terug naar overzicht</a>
-        <div class="feedback-dropdown-row" style="display: flex; align-items: center; gap: 12px;">
-            <select class="feedback-dropdown" style="margin-bottom: 8px;"></select>
-            <div class="feedback-error" style="color: red; display: none; font-size: 1rem;"></div>
+        <div class="feedback-dropdown-row">
+            <select class="feedback-dropdown"></select>
+            <div class="feedback-error"></div>
         </div>
     </div>
 
-    <textarea class="feedback-box" placeholder="Typ hier je feedback..."></textarea>
+    <div class="message-feedback-outer">
+        <div class="message-feedback-container">
+        </div>
+    </div>
 
-    <div class="message-feedback-container"></div>
-
-    <div class="save-btn-wrapper">
+    <div class="feedback-input-row">
+        <textarea class="feedback-box" placeholder="Typ hier je feedback..."></textarea>
         <button class="save-btn">Verzenden</button>
     </div>
 </div>
