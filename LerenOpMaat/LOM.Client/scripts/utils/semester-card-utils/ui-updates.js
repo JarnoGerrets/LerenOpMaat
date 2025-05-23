@@ -1,4 +1,6 @@
 import { calculateAchievedECs} from "./utils.js";
+import {handleValidationResult} from "./validations.js";
+import { validateRoute, addCompletedEvl, removeCompletedEvl } from "../../../client/api-client.js";
 
 export function updateExclamationIcon(cardElement, validationMsg, isValid) {
   const icon = cardElement.querySelector('.exclamation-icon');
@@ -41,7 +43,7 @@ export function updateCardStyle(card, moduleId, validationMessages = []) {
   }
 }
 
-export function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null) {
+export function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null, learningRouteArray = null) {
   button.innerHTML = `
     ${selectedModule ? selectedModule.Name : 'Selecteer je module'}
     <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>

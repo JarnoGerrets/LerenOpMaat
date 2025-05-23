@@ -1,5 +1,5 @@
 import SemesterChoice from "../views/partials/semester-choice.js";
-import { validateRoute, getModuleProgress, addCompletedEvl, removeCompletedEvl } from "../../client/api-client.js";
+import { validateRoute, getModuleProgress} from "../../client/api-client.js";
 import { learningRouteArray } from "./semester-pair.js";
 import { handleValidationResult } from "../scripts/utils/semester-card-utils/validations.js";
 import { updateModuleUI, updateAllCardsStyling, updateExclamationIcon} from "../scripts/utils/semester-card-utils/ui-updates.js";
@@ -57,7 +57,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
   const clearSelection = () => {
     const moduleId = parseInt(cardElement.getAttribute("data-module-id"));
 
-    updateModuleUI(button, coursePoints, locked, null);
+    updateModuleUI(button, coursePoints, locked, null, learningRouteArray);
     cardElement.setAttribute("data-module-id", '');
     cardElement.classList.remove("invalid-module");
 
@@ -101,7 +101,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
     return;
   }
 
-  updateModuleUI(button, coursePoints, locked, selectedModule, progress);
+  updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
   cardElement.setAttribute("data-module-id", selectedModule.Id);
   onModuleChange({ semester, moduleId: selectedModule.Id });
 

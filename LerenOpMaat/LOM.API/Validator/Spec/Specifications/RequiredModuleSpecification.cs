@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics;
 using LOM.API.DAL;
 using LOM.API.Models;
+using LOM.API.Validator.Spec.Specifications;
 using LOM.API.Validator.ValidationResults;
 
-namespace LOM.API.Validator.Specifications
+namespace LOM.API.Validator.Spec.Specifications
 {
     public class RequiredModuleSpecification(int requiredModuleId, int currentSemesterIndex, LOMContext context) : ISpecification<IEnumerable<Semester>>
     {

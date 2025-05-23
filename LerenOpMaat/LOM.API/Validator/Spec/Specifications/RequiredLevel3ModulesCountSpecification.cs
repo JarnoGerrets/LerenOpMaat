@@ -1,7 +1,8 @@
 ﻿using LOM.API.Models;
+using LOM.API.Validator.Spec.Specifications;
 using LOM.API.Validator.ValidationResults;
 
-namespace LOM.API.Validator.Specifications
+namespace LOM.API.Validator.Spec.Specifications
 {
 	public class RequiredLevel3ModulesCountSpecification(int currentModuleId) : ISpecification<IEnumerable<Semester>>
 	{

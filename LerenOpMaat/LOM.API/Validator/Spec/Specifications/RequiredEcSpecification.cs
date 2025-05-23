@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace LOM.API.Validator.Spec.Specificiations
+namespace LOM.API.Validator.Spec.Specifications
 {
     public class RequiredEcSpecification(int value, int currentSemesterIndex, int userId, LOMContext context) : ISpecification<IEnumerable<Semester>>
     {

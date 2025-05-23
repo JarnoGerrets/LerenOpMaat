@@ -1,12 +1,9 @@
 ﻿using LOM.API.DAL;
 using LOM.API.Enums;
 using LOM.API.Models;
-using LOM.API.Validator.Spec;
-using LOM.API.Validator.Spec.Specificiations;
+using LOM.API.Validator.Spec.Specifications;
 using LOM.API.Validator.Specifications;
 using LOM.API.Validator.ValidationResults;
-using System.Diagnostics;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace LOM.API.Validator
 {

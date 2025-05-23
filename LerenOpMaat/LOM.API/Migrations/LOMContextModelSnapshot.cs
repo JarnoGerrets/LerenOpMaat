@@ -45,43 +45,86 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4171)
+                            StartDate = new DateTime(2025, 5, 23, 12, 39, 20, 398, DateTimeKind.Local).AddTicks(2086)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4224)
+                            StartDate = new DateTime(2026, 5, 23, 12, 39, 20, 398, DateTimeKind.Local).AddTicks(2161)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4228)
+                            StartDate = new DateTime(2027, 5, 23, 12, 39, 20, 398, DateTimeKind.Local).AddTicks(2167)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4231)
+                            StartDate = new DateTime(2024, 5, 23, 12, 39, 20, 398, DateTimeKind.Local).AddTicks(2170)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4234)
+                            StartDate = new DateTime(2023, 5, 23, 12, 39, 20, 398, DateTimeKind.Local).AddTicks(2176)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4236)
+                            StartDate = new DateTime(2022, 5, 23, 12, 39, 20, 398, DateTimeKind.Local).AddTicks(2179)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4238)
+                            StartDate = new DateTime(2021, 5, 23, 12, 39, 20, 398, DateTimeKind.Local).AddTicks(2182)
+                        });
+                });
+
+            modelBuilder.Entity("LOM.API.Models.CompletedEvl", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ModuleEvlId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ModuleProgressId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModuleEvlId");
+
+                    b.HasIndex("ModuleProgressId");
+
+                    b.ToTable("CompletedEvls");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ModuleEvlId = 1,
+                            ModuleProgressId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ModuleEvlId = 2,
+                            ModuleProgressId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ModuleEvlId = 3,
+                            ModuleProgressId = 2
                         });
                 });
 
@@ -109,19 +152,19 @@ namespace LOM.API.Migrations
                         new
                         {
                             Id = 1,
-                            ColorCode = "#F16682",
+                            ColorCode = "#F16682A0",
                             Name = "BIM"
                         },
                         new
                         {
                             Id = 2,
-                            ColorCode = "#F5A61A",
+                            ColorCode = "#F5A61AA0",
                             Name = "SE"
                         },
                         new
                         {
                             Id = 3,
-                            ColorCode = "#4594D3",
+                            ColorCode = "#4594D3A0",
                             Name = "IDNS"
                         });
                 });
@@ -731,48 +774,43 @@ namespace LOM.API.Migrations
                             Ec = 10,
                             ModuleId = 15,
                             Name = "EVL 3"
+                        });
+                });
+
+            modelBuilder.Entity("LOM.API.Models.ModuleProgress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ModuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModuleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ModuleProgresses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ModuleId = 1,
+                            UserId = 1
                         },
                         new
                         {
-                            Id = 46,
-                            Ec = 10,
-                            ModuleId = 16,
-                            Name = "EVL 1"
-                        },
-                        new
-                        {
-                            Id = 47,
-                            Ec = 10,
-                            ModuleId = 16,
-                            Name = "EVL 2"
-                        },
-                        new
-                        {
-                            Id = 48,
-                            Ec = 10,
-                            ModuleId = 16,
-                            Name = "EVL 3"
-                        },
-                        new
-                        {
-                            Id = 49,
-                            Ec = 10,
-                            ModuleId = 17,
-                            Name = "EVL 1"
-                        },
-                        new
-                        {
-                            Id = 50,
-                            Ec = 10,
-                            ModuleId = 17,
-                            Name = "EVL 2"
-                        },
-                        new
-                        {
-                            Id = 51,
-                            Ec = 10,
-                            ModuleId = 17,
-                            Name = "EVL 3"
+                            Id = 2,
+                            ModuleId = 1,
+                            UserId = 2
                         });
                 });
 
@@ -1033,6 +1071,25 @@ namespace LOM.API.Migrations
                         });
                 });
 
+            modelBuilder.Entity("LOM.API.Models.CompletedEvl", b =>
+                {
+                    b.HasOne("LOM.API.Models.ModuleEVL", "ModuleEvl")
+                        .WithMany()
+                        .HasForeignKey("ModuleEvlId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LOM.API.Models.ModuleProgress", "ModuleProgress")
+                        .WithMany("CompletedEVLs")
+                        .HasForeignKey("ModuleProgressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ModuleEvl");
+
+                    b.Navigation("ModuleProgress");
+                });
+
             modelBuilder.Entity("LOM.API.Models.Module", b =>
                 {
                     b.HasOne("LOM.API.Models.GraduateProfile", "GraduateProfile")
@@ -1053,6 +1110,25 @@ namespace LOM.API.Migrations
                         .IsRequired();
 
                     b.Navigation("Module");
+                });
+
+            modelBuilder.Entity("LOM.API.Models.ModuleProgress", b =>
+                {
+                    b.HasOne("LOM.API.Models.Module", "Module")
+                        .WithMany()
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LOM.API.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Module");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("LOM.API.Models.Requirement", b =>
@@ -1105,6 +1181,11 @@ namespace LOM.API.Migrations
                     b.Navigation("Evls");
 
                     b.Navigation("Requirements");
+                });
+
+            modelBuilder.Entity("LOM.API.Models.ModuleProgress", b =>
+                {
+                    b.Navigation("CompletedEVLs");
                 });
 #pragma warning restore 612, 618
         }

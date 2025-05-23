@@ -1,10 +1,7 @@
 ﻿using LOM.API.DAL;
 using LOM.API.Enums;
 using LOM.API.Models;
-using LOM.API.Validator.Spec.Specificiations;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
+using LOM.API.Validator.Spec.Specifications;
 
 namespace LOM.API.Validator.Specifications
 {

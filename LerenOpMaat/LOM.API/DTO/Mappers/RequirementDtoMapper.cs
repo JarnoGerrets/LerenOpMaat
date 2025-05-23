@@ -15,6 +15,8 @@ namespace LOM.API.DTO.Mappers
                 ModulePreconditionType.RequiredModule => await ModuleRequirementDto.FromModelAsync(r, context),
                 ModulePreconditionType.RequiredEc => EcRequirementDto.FromModel(r),
                 ModulePreconditionType.RequiredEcFromPropedeuse => EcRequirementDto.FromModel(r),
+                ModulePreconditionType.RequiredLevel3ModulesCount => NumericRequirementDto.FromModel(r),
+                ModulePreconditionType.RequiredLevel2ModulesCount => NumericRequirementDto.FromModel(r),
                 _ => throw new NotImplementedException($"Requirement type {r.Type} not supported.")
             };
         }

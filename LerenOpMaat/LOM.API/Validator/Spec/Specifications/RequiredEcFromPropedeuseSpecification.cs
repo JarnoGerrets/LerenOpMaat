@@ -1,4 +1,5 @@
 ﻿using LOM.API.Models;
+using LOM.API.Validator.Spec.Specifications;
 using LOM.API.Validator.ValidationResults;
 
 namespace LOM.API.Validator.Specifications

@@ -165,7 +165,26 @@ namespace LOM.API.Controllers
 			return NoContent();
 		}
 
-				// POST: api/Module/5/completedevl
+		// GET: api/Module/5/progress
+		[HttpGet("{id}/progress")]
+		public async Task<ActionResult<ModuleProgressDto>> GetModuleProgress(int id)
+		{
+			var progress = await _context.ModuleProgresses
+				.Where(m => m.ModuleId == id && m.UserId == 1) // change when logging in works
+				.Include(m => m.CompletedEVLs)
+					.ThenInclude(evl => evl.ModuleEvl)
+				.FirstOrDefaultAsync();
+
+			if (progress == null)
+			{
+				return NoContent();
+			}
+
+			var result = ModuleProgressDto.FromModel(progress);
+			return Ok(result);
+		}
+
+		// POST: api/Module/5/completedevl
 		//[Authorize()] this needs to be uncommented when authentication works
 		[HttpPost("{id}/addcompletedevl")]
 		public async Task<ActionResult<ModuleProgressDto>> AddCompletedEvl(int id, [FromBody] int evlId)
