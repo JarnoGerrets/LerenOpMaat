@@ -37,6 +37,7 @@ namespace LOM.API.Controllers
 			var modules = await query
 				.Include(m => m.Requirements)
 				.Include(m => m.GraduateProfile)
+				.Include(m => m.Evls)
 				.ToListAsync();
 
 			var result = new List<ModuleDto>();
@@ -77,6 +78,7 @@ namespace LOM.API.Controllers
 				.Where(m => m.Id == id)
 				.Include(m => m.Requirements)
 				.Include(m => m.GraduateProfile)
+				.Include(m => m.Evls)
 				.FirstOrDefaultAsync();
 
 			if (module == null)
