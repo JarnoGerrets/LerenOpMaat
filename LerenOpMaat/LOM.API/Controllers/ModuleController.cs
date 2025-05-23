@@ -169,8 +169,9 @@ namespace LOM.API.Controllers
 		[HttpGet("{id}/progress")]
 		public async Task<ActionResult<ModuleProgressDto>> GetModuleProgress(int id)
 		{
+			int userId = HttpContext.Session.GetInt32("UserId") ?? 0; 
 			var progress = await _context.ModuleProgresses
-				.Where(m => m.ModuleId == id && m.UserId == 1) // change when logging in works
+				.Where(m => m.ModuleId == id && m.UserId == userId)
 				.Include(m => m.CompletedEVLs)
 					.ThenInclude(evl => evl.ModuleEvl)
 				.FirstOrDefaultAsync();
@@ -185,11 +186,11 @@ namespace LOM.API.Controllers
 		}
 
 		// POST: api/Module/5/completedevl
-		//[Authorize()] this needs to be uncommented when authentication works
+		[Authorize]
 		[HttpPost("{id}/addcompletedevl")]
 		public async Task<ActionResult<ModuleProgressDto>> AddCompletedEvl(int id, [FromBody] int evlId)
 		{
-			int userId = 1; // when logging in works, replace with actual user ID
+			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
 			var progress = await _context.ModuleProgresses
 				.Include(m => m.CompletedEVLs)
@@ -241,11 +242,11 @@ namespace LOM.API.Controllers
 
 
 		// DELETE: api/Module/5/completedevl/10
-		//[Authorize()] this needs to be uncommented when authentication works
+		[Authorize]
 		[HttpDelete("{moduleId}/removecompletedevl/{evlId}")]
 		public async Task<ActionResult<ModuleProgressDto>> RemoveCompletedEvl(int moduleId, int evlId)
 		{
-			int userId = 1; // when logging in works, replace with actual user ID
+			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
 
 			var progress = await _context.ModuleProgresses
 				.Where(m => m.ModuleId == moduleId && m.UserId == userId)

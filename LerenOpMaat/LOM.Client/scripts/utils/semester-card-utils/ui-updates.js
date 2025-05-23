@@ -1,6 +1,6 @@
 import { calculateAchievedECs} from "./utils.js";
 import {handleValidationResult} from "./validations.js";
-import { validateRoute, addCompletedEvl, removeCompletedEvl } from "../../../client/api-client.js";
+import { validateRoute, addCompletedEvl, removeCompletedEvl, checkLoginStatus } from "../../../client/api-client.js";
 
 export function updateExclamationIcon(cardElement, validationMsg, isValid) {
   const icon = cardElement.querySelector('.exclamation-icon');
@@ -43,7 +43,7 @@ export function updateCardStyle(card, moduleId, validationMessages = []) {
   }
 }
 
-export function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null, learningRouteArray = null) {
+export async function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null, learningRouteArray = null) {
   button.innerHTML = `
     ${selectedModule ? selectedModule.Name : 'Selecteer je module'}
     <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
@@ -53,7 +53,8 @@ export function updateModuleUI(button, coursePoints, locked, selectedModule, pro
   const evlList = evlWrapper.querySelector(".evl-list");
 
   const achievedECs = calculateAchievedECs(progress, selectedModule);
-  if (selectedModule?.Evls) {
+  const loggedIn = await checkLoginStatus();
+  if (selectedModule?.Evls && loggedIn) {
     evlList.innerHTML = selectedModule.Evls.map(ev => {
       const isChecked = progress?.CompletedEvls?.some(completed => completed.ModuleEvl.Id === ev.Id);
 
@@ -73,7 +74,6 @@ export function updateModuleUI(button, coursePoints, locked, selectedModule, pro
     `;
     }).join('');
 
-    // Add event listeners to checkboxes after rendering
     evlList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
       checkbox.addEventListener('change', async (e) => {
         const evlId = parseInt(e.target.getAttribute('data-evl-id'));
@@ -100,7 +100,7 @@ export function updateModuleUI(button, coursePoints, locked, selectedModule, pro
     evlList.innerHTML = "";
   }
 
-  if (selectedModule) {
+  if (selectedModule && loggedIn) {
     coursePoints.innerHTML = `Behaalde ec's (${achievedECs}/${selectedModule.Ec}) ↓`;
     coursePoints.style.cursor = "pointer";
     coursePoints.onclick = () => {

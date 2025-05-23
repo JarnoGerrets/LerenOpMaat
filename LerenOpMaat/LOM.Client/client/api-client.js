@@ -22,6 +22,19 @@ export async function logout() {
   } catch { }
 }
 
+export async function checkLoginStatus() {
+  const response = await fetch(`${API_BASE}/account/check`, {
+    method: "GET",
+    credentials: "include"
+  });
+
+  if (response.ok) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export async function getUserData() {
   try {
     const res = await fetch(`${API_BASE}/account`, {
@@ -166,6 +179,7 @@ export async function addCompletedEvl(id, evlId) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(evlId),
+    credentials: "include"
   });
 
   if (!res.ok) {
@@ -182,7 +196,8 @@ export async function removeCompletedEvl(id, evlId) {
     headers: {
       "Accept": "application/json",
       "Content-Type": "application/json"
-    }
+    },
+    credentials: "include"
   });
     if (!res.ok) {
     throw new Error(`Failed to update progress: ${res.status}`);

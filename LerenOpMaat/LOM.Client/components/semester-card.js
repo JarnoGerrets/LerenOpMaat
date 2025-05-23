@@ -1,14 +1,14 @@
 import SemesterChoice from "../views/partials/semester-choice.js";
-import { validateRoute, getModuleProgress} from "../../client/api-client.js";
+import { validateRoute, getModuleProgress, getModule } from "../../client/api-client.js";
 import { learningRouteArray } from "./semester-pair.js";
 import { handleValidationResult } from "../scripts/utils/semester-card-utils/validations.js";
-import { updateModuleUI, updateAllCardsStyling, updateExclamationIcon} from "../scripts/utils/semester-card-utils/ui-updates.js";
-import { debounce} from "../scripts/utils/semester-card-utils/utils.js";
+import { updateModuleUI, updateAllCardsStyling, updateExclamationIcon } from "../scripts/utils/semester-card-utils/ui-updates.js";
+import { debounce } from "../scripts/utils/semester-card-utils/utils.js";
 
 let validationState = {};
 const moduleMessagesMap = {};
 
-export default async function SemesterCard({ semester, module, locked = false, onModuleChange }) {
+export default async function SemesterCard({ semester, module, locked = false, onModuleChange, moduleId }) {
   const template = document.createElement("template");
   template.innerHTML = `
   <div class="semester-card-container">
@@ -48,16 +48,30 @@ export default async function SemesterCard({ semester, module, locked = false, o
     );
   }
 
+  if (moduleId) {
+    cardElement.setAttribute("data-module-id", moduleId);
+  }
+
+  if (moduleId) {
+    const selectedModule = await getModule(moduleId);
+    try {
+      const progress = await getModuleProgress(moduleId);
+      await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
+    } catch (error) {
+      console.error("Failed to load progress for initial module:", error);
+    }
+  }
+
   return fragment;
 }
 
 async function handleModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement }) {
   const selectedModule = await SemesterChoice(button.textContent.trim());
 
-  const clearSelection = () => {
+  const clearSelection = async () => {
     const moduleId = parseInt(cardElement.getAttribute("data-module-id"));
 
-    updateModuleUI(button, coursePoints, locked, null, learningRouteArray);
+    await updateModuleUI(button, coursePoints, locked, null, learningRouteArray);
     cardElement.setAttribute("data-module-id", '');
     cardElement.classList.remove("invalid-module");
 
@@ -101,7 +115,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
     return;
   }
 
-  updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
+  await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
   cardElement.setAttribute("data-module-id", selectedModule.Id);
   onModuleChange({ semester, moduleId: selectedModule.Id });
 
