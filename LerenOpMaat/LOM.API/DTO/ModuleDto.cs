@@ -4,7 +4,7 @@ using LOM.API.Models;
 
 namespace LOM.API.DTO
 {
-	public class ModuleDto
+    public class ModuleDto
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
@@ -16,6 +16,7 @@ namespace LOM.API.DTO
 		public bool IsActive { get; set; }
 		public GraduateProfile GraduateProfile { get; set; }
 		public List<RequirementDto> Requirements { get; set; }
+		public List<ModuleEvlDto> Evls { get; set; }
 
 		public static async Task<ModuleDto> FromModelAsync(Module module, LOMContext context)
 		{
@@ -34,7 +35,8 @@ namespace LOM.API.DTO
 				Period = module.Period,
 				IsActive = module.IsActive,
 				GraduateProfile = module.GraduateProfile,
-				Requirements = requirementDtos.ToList()
+				Requirements = requirementDtos.ToList(),
+				Evls = module.Evls.Select(ModuleEvlDto.FromModel).ToList()
 			};
 		}
 
@@ -52,7 +54,8 @@ namespace LOM.API.DTO
 				Period = this.Period,
 				IsActive = this.IsActive,
 				GraduateProfileId = this.GraduateProfile.Id,
-				Requirements = requirements
+				Requirements = requirements,
+				Evls = this.Evls.Select(evlDto => evlDto.ToModel(this.Id)).ToList()
 			};
 		}
 	}

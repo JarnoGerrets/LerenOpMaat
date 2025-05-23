@@ -176,7 +176,7 @@ export async function addCompletedEvl(id, evlId) {
 
 }
 
-export async function removeCompeltedEvl(id, evlId) {
+export async function removeCompletedEvl(id, evlId) {
   const res = await fetch(`${API_BASE}/Module/${id}/removecompletedevl/${evlId}`, {
     method: 'DELETE',
     headers: {

@@ -98,10 +98,15 @@ public class Seeder
             new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3" }
         );
 
+        _modelBuilder.Entity<ModuleProgress>().HasData(
+            new ModuleProgress { Id = 1, UserId = 1, ModuleId = 1},
+			new ModuleProgress { Id = 2, UserId = 2, ModuleId = 1}
+		);
+
 		int evlId = 1;
 		var moduleEVLs = new List<ModuleEVL>();
 
-		for (int moduleId = 1; moduleId <= 17; moduleId++)
+		for (int moduleId = 1; moduleId <= 15; moduleId++)
 		{
 			for (int i = 1; i <= 3; i++)
 			{
@@ -116,6 +121,12 @@ public class Seeder
 		}
 
 		_modelBuilder.Entity<ModuleEVL>().HasData(moduleEVLs);
+
+		_modelBuilder.Entity<CompletedEvl>().HasData(
+	        new CompletedEvl { Id = 1, ModuleProgressId = 1, ModuleEvlId = 1 },
+	        new CompletedEvl { Id = 2, ModuleProgressId = 1, ModuleEvlId = 2 },
+	        new CompletedEvl { Id = 3, ModuleProgressId = 2, ModuleEvlId = 3 }
+        );
 
     }
 }

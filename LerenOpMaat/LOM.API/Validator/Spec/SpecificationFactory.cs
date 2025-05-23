@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using LOM.API.DAL;
-using LOM.API.Models;
+﻿using LOM.API.DAL;
 using LOM.API.Enums;
+using LOM.API.Models;
+using LOM.API.Validator.Spec.Specificiations;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace LOM.API.Validator.Specifications
 {
 	public class SpecificationFactory
 	{
 		private readonly LOMContext _context;
+		private readonly int _userId;
 
-		public SpecificationFactory(LOMContext context)
+		public SpecificationFactory(LOMContext context, int userId)
 		{
 			_context = context;
+			_userId = userId;
 		}
 
 		public Dictionary<ModulePreconditionType, Func<string, int, ISpecification<IEnumerable<Semester>>>> CreateSpecifications()
@@ -43,7 +47,17 @@ namespace LOM.API.Validator.Specifications
 				},
 				{
 					ModulePreconditionType.RequiredEc,
-					(_, _) => new RequiredEcSpecification()
+					(value, index) =>
+					{
+						if (int.TryParse(value, out var requiredEc))
+						{
+								return new RequiredEcSpecification(requiredEc,  index, _userId, _context); // 1 needs to change once logging in is possible
+						}
+						else
+						{
+							throw new ArgumentException($"Invalid ec value '{value}' for this requirement.");
+						}
+					}
 				},
 				{
 					ModulePreconditionType.RequiredEcFromPropedeuse,

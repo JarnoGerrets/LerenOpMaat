@@ -164,5 +164,102 @@ namespace LOM.API.Controllers
 
 			return NoContent();
 		}
+
+				// POST: api/Module/5/completedevl
+		//[Authorize()] this needs to be uncommented when authentication works
+		[HttpPost("{id}/addcompletedevl")]
+		public async Task<ActionResult<ModuleProgressDto>> AddCompletedEvl(int id, [FromBody] int evlId)
+		{
+			int userId = 1; // when logging in works, replace with actual user ID
+
+			var progress = await _context.ModuleProgresses
+				.Include(m => m.CompletedEVLs)
+					.ThenInclude(c => c.ModuleEvl)
+				.FirstOrDefaultAsync(m => m.ModuleId == id && m.UserId == userId);
+
+			if (progress == null)
+			{
+				progress = new ModuleProgress
+				{
+					ModuleId = id,
+					UserId = userId,
+					CompletedEVLs = new List<CompletedEvl>()
+				};
+				_context.ModuleProgresses.Add(progress);
+				await _context.SaveChangesAsync();
+			}
+
+			bool alreadyCompleted = progress.CompletedEVLs.Any(c => c.ModuleEvlId == evlId);
+
+			if (!alreadyCompleted)
+			{
+				var completedEvl = new CompletedEvl
+				{
+					ModuleProgressId = progress.Id,
+					ModuleEvlId = evlId
+				};
+
+				_context.Set<CompletedEvl>().Add(completedEvl);
+				await _context.SaveChangesAsync();
+			}
+
+			var updatedProgress = await _context.ModuleProgresses
+				.Where(m => m.ModuleId == id && m.UserId == userId)
+				.Include(m => m.CompletedEVLs)
+					.ThenInclude(c => c.ModuleEvl)
+				.FirstOrDefaultAsync();
+
+			if (updatedProgress == null)
+			{
+				return NoContent();
+			}
+
+			var result = ModuleProgressDto.FromModel(updatedProgress);
+			return Ok(result);
+		}
+
+
+
+
+		// DELETE: api/Module/5/completedevl/10
+		//[Authorize()] this needs to be uncommented when authentication works
+		[HttpDelete("{moduleId}/removecompletedevl/{evlId}")]
+		public async Task<ActionResult<ModuleProgressDto>> RemoveCompletedEvl(int moduleId, int evlId)
+		{
+			int userId = 1; // when logging in works, replace with actual user ID
+
+			var progress = await _context.ModuleProgresses
+				.Where(m => m.ModuleId == moduleId && m.UserId == userId)
+				.Include(m => m.CompletedEVLs)
+					.ThenInclude(evl => evl.ModuleEvl)
+				.FirstOrDefaultAsync();
+
+			if (progress == null)
+			{
+				return NoContent();
+			}
+
+			var completedEvl = progress.CompletedEVLs.FirstOrDefault(c => c.ModuleEvlId == evlId);
+
+			if (completedEvl != null)
+			{
+				_context.CompletedEvls.Remove(completedEvl);
+				await _context.SaveChangesAsync();
+			}
+
+			var updatedProgress = await _context.ModuleProgresses
+				.Where(m => m.ModuleId == moduleId && m.UserId == userId)
+				.Include(m => m.CompletedEVLs)
+					.ThenInclude(c => c.ModuleEvl)
+				.FirstOrDefaultAsync();
+
+			if (updatedProgress == null)
+			{
+				return NoContent();
+			}
+
+			var result = ModuleProgressDto.FromModel(updatedProgress);
+			return Ok(result);
+		}
 	}
 }

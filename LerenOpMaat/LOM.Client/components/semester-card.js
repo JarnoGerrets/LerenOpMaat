@@ -1,7 +1,9 @@
 import SemesterChoice from "../views/partials/semester-choice.js";
-import { validateRoute, getModuleProgress, addCompletedEvl, removeCompeltedEvl } from "../../client/api-client.js";
+import { validateRoute, getModuleProgress, addCompletedEvl, removeCompletedEvl } from "../../client/api-client.js";
 import { learningRouteArray } from "./semester-pair.js";
-
+import { handleValidationResult } from "../scripts/utils/semester-card-utils/validations.js";
+import { updateModuleUI, updateAllCardsStyling, updateExclamationIcon} from "../scripts/utils/semester-card-utils/ui-updates.js";
+import { debounce} from "../scripts/utils/semester-card-utils/utils.js";
 
 let validationState = {};
 const moduleMessagesMap = {};
@@ -42,148 +44,11 @@ export default async function SemesterCard({ semester, module, locked = false, o
 
   if (!locked && button) {
     button.addEventListener("click", () =>
-    debouncedModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement })
+      debouncedModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement })
     );
   }
 
   return fragment;
-}
-
-
-function updateValidationState(moduleId, isValid) {
-  validationState[moduleId] = isValid;
-}
-
-function updateExclamationIcon(cardElement, validationMsg, isValid) {
-  const icon = cardElement.querySelector('.exclamation-icon');
-  if (!icon) return;
-
-  if (!isValid) {
-    icon.classList.add('show');
-    icon.setAttribute('title', validationMsg);
-  } else {
-    icon.classList.remove('show');
-    icon.removeAttribute('title');
-  }
-}
-
-function updateAllCardsStyling(validationResults = {}) {
-  const allCards = document.querySelectorAll(".semester-card");
-  allCards.forEach((card) => {
-    const moduleId = parseInt(card.getAttribute("data-module-id"));
-    const isValid = validationState[moduleId] !== undefined ? validationState[moduleId] : true;
-
-    if (isValid === true) {
-      if (card.classList.contains("invalid-module")) {
-        showToast("Geen conflicten meer", "success");
-        card.classList.remove("invalid-module");
-      }
-      updateExclamationIcon(card, '', true);
-    } else {
-      if (!card.classList.contains("invalid-module")) {
-        card.classList.add("invalid-module");
-      }
-      const validationMsg = validationResults[moduleId]
-        ? validationResults[moduleId].join('\n')
-        : "Er is een validatiefout";
-      updateExclamationIcon(card, validationMsg, false);
-    }
-  });
-}
-
-function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null) {
-  button.innerHTML = `
-    ${selectedModule ? selectedModule.Name : 'Selecteer je module'}
-    <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
-  `
-  const card = button.closest('.semester-card');
-  const evlWrapper = card.nextElementSibling;
-  const evlList = evlWrapper.querySelector(".evl-list");
-
-  const achievedECs = calculateAchievedECs(progress, selectedModule);
-  if (selectedModule?.Evls) {
-    evlList.innerHTML = selectedModule.Evls.map(ev => {
-      const isChecked = progress?.CompletedEvls?.some(completed => completed.ModuleEvl.Id === ev.Id);
-
-      return `
-      <div class="form-check d-flex align-items-center justify-content-between">
-        <label class="form-check-label me-2" for="${ev.Id}">
-          ${ev.Name} (${ev.Ec || 10} EC's)
-        </label>
-        <input style="margin-right: 5px;" 
-               class="form-check-input" 
-               type="checkbox" 
-               id="${ev.Id}" 
-               data-evl-id="${ev.Id}" 
-               ${isChecked ? 'checked' : ''}>
-      </div>
-      </div>
-    `;
-    }).join('');
-
-    // Add event listeners to checkboxes after rendering
-    evlList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-      checkbox.addEventListener('change', async (e) => {
-        const evlId = parseInt(e.target.getAttribute('data-evl-id'));
-        const moduleId = selectedModule.Id;
-
-        let updatedProgress;
-        if (e.target.checked) {
-          updatedProgress = await addCompletedEvl(moduleId, evlId);
-          updateAllCardsStyling();
-        } else {
-          updatedProgress = await removeCompeltedEvl(moduleId, evlId);
-          updateAllCardsStyling();
-        }
-        progress = updatedProgress;
-
-        const achievedECs = calculateAchievedECs(progress, selectedModule);
-
-        coursePoints.innerHTML = `Studiepunten (${achievedECs}/${selectedModule.Ec}) ↓`;
-      });
-    });
-  } else {
-    evlList.innerHTML = "";
-  }
-
-  if (selectedModule) {
-    coursePoints.innerHTML = `Studiepunten (${achievedECs}/${selectedModule.Ec}) ↓`;
-    coursePoints.style.cursor = "pointer";
-    coursePoints.onclick = () => {
-      evlWrapper.classList.toggle("expand");
-    }
-  } else {
-    coursePoints.innerHTML = "";
-    coursePoints.style.cursor = "default";
-  }
-
-}
-
-function handleValidationResult(result) {
-  let validationResults = {};
-
-  for (const validation of result) {
-    const moduleId = validation.ViolatingModuleId;
-
-    if (!validationResults[moduleId]) {
-      validationResults[moduleId] = [];
-    }
-    validationResults[moduleId].push("- " + validation.Message);
-
-    updateValidationState(moduleId, validation.IsValid);
-
-    if (!moduleMessagesMap[moduleId]) {
-      moduleMessagesMap[moduleId] = new Set();
-    }
-
-    if (!validation.IsValid && !moduleMessagesMap[moduleId].has(validation.Message)) {
-      moduleMessagesMap[moduleId].add(validation.Message);
-      showToast(validation.Message, "error");
-    }
-
-  }
-
-  updateAllCardsStyling(validationResults);
 }
 
 async function handleModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement }) {
@@ -209,7 +74,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
     updateExclamationIcon(cardElement, '', true);
 
-    updateAllCardsStyling();
+    updateAllCardsStyling({ [moduleId]: [] });
 
     onModuleChange({ semester, moduleId: null });
   };
@@ -245,23 +110,8 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
 }
 
-function calculateAchievedECs(progress, selectedModule) {
-  if (!progress?.CompletedEvls || !selectedModule?.Evls) return 0;
-
-  return progress.CompletedEvls.reduce((sum, completed) => {
-    const evl = selectedModule.Evls.find(ev => ev.Id === completed.ModuleEvl.Id);
-    return sum + (evl?.Ec || 10);
-  }, 0);
-}
-
-function debounce(fn, delay) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), delay);
-  };
-}
-
+window.validationState = validationState;
+window.moduleMessagesMap = moduleMessagesMap;
 
 document.addEventListener("click", (event) => {
   const allEvlWrappers = document.querySelectorAll(".evl-list-wrapper");
