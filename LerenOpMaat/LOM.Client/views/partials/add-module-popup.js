@@ -55,9 +55,7 @@ export default async function addModulePopup() {
                             <span class="field-text" >Uitstroomprofiel:</span>
                             <select id="graduateProfile" type="number" class="save-module-select" required></select>
                         </div>
-                        <div class="field-wrapper">
-                            <span class="field-text-2 spacer-row-1">Toegangseisen:</span>
-                            <select id="requirement" type="number" class="save-module-select"></select>
+                        <div class="spacing-row">
                         </div>
                     </div>
                 <div class="add-module-popup-buttons"> 

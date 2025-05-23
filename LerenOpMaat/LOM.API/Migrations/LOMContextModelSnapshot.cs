@@ -45,43 +45,43 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 12, 15, 59, 25, 108, DateTimeKind.Local).AddTicks(6370)
+                            StartDate = new DateTime(2025, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4544)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 12, 15, 59, 25, 108, DateTimeKind.Local).AddTicks(6453)
+                            StartDate = new DateTime(2026, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4608)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 12, 15, 59, 25, 108, DateTimeKind.Local).AddTicks(6459)
+                            StartDate = new DateTime(2027, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4611)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 12, 15, 59, 25, 108, DateTimeKind.Local).AddTicks(6461)
+                            StartDate = new DateTime(2024, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4613)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 12, 15, 59, 25, 108, DateTimeKind.Local).AddTicks(6465)
+                            StartDate = new DateTime(2023, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4616)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 12, 15, 59, 25, 108, DateTimeKind.Local).AddTicks(6467)
+                            StartDate = new DateTime(2022, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4618)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 12, 15, 59, 25, 108, DateTimeKind.Local).AddTicks(6469)
+                            StartDate = new DateTime(2021, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4620)
                         });
                 });
 
@@ -365,6 +365,30 @@ namespace LOM.API.Migrations
                             Level = 3,
                             Name = "Database Management Systems",
                             Period = 1
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Code = "A.01",
+                            Description = "Afstuderen",
+                            Ec = 30,
+                            GraduateProfileId = 2,
+                            IsActive = true,
+                            Level = 3,
+                            Name = "Afstuderen",
+                            Period = 2
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Code = "MDO.01",
+                            Description = "Multidisciplinaire Opdracht",
+                            Ec = 30,
+                            GraduateProfileId = 2,
+                            IsActive = true,
+                            Level = 3,
+                            Name = "Multidisciplinaire Opdracht",
+                            Period = 2
                         });
                 });
 
@@ -454,6 +478,27 @@ namespace LOM.API.Migrations
                             ModuleId = 5,
                             Type = 2,
                             Value = "3"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ModuleId = 16,
+                            Type = 2,
+                            Value = "17"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ModuleId = 16,
+                            Type = 0,
+                            Value = "60"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ModuleId = 16,
+                            Type = 4,
+                            Value = "2"
                         });
                 });
 

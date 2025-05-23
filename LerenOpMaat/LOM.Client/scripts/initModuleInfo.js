@@ -10,15 +10,12 @@ export default async function initModuleInfo(id) {
     textArea.readOnly = true; // by default it's not editable to prevent issues (not secure but without saving options not a real issue)
 
     const path = window.location.hash;
-    console.log(path);
     const pathParts = path.split('/');
     const moduleId = pathParts[1];
     let savedModule = JSON.parse(localStorage.getItem(`module-${moduleId}`));
 
     if (!savedModule) {
-        console.log('Module data not found in localStorage, fetch from DB...');
         savedModule = await getModule(moduleId);
-        console.log(savedModule);
     }
 
     // Create Module Info Card 
@@ -28,7 +25,13 @@ export default async function initModuleInfo(id) {
 
     // Create Requirements Card
     const reqCard = document.createElement('requirements-card');
-    reqCard.data = savedModule.Requirements;
+    reqCard.moduleId = savedModule.Id;
+    reqCard.refreshCallback = async () => {
+        const module = await getModule(moduleId);
+        reqCard.requirements = module.Requirements;
+    };
+    reqCard.requirements = savedModule.Requirements;
+
     CardContainer.appendChild(reqCard);
 
     // Add admin buttons for editing and deleting
