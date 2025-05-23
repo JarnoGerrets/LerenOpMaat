@@ -13,8 +13,8 @@ namespace LOM.API.DTO
 		public int Level { get; set; }
 		public int Period { get; set; }
 		public bool IsActive { get; set; }
-		public GraduateProfile GraduateProfile { get; set; }
-		public List<RequirementDto> Requirements { get; set; }
+		public GraduateProfile GraduateProfile { get; set; } = new GraduateProfile();
+		public List<RequirementDto> Requirements { get; set; } = [];
 
 		public static async Task<ModuleDto> FromModelAsync(Module module, LOMContext context)
 		{
