@@ -4,6 +4,8 @@ import '../components/module-card.js';
 import '../components/requirements-card.js';
 
 export default async function initModuleInfo(id) {
+
+    // role based selection of modules, when student opens do not show inactive modules, when docent does show them
     const correctRole = true;
     const CardContainer = document.getElementById('card-column');
     const textArea = document.getElementById('moduleTextArea');
@@ -33,6 +35,15 @@ export default async function initModuleInfo(id) {
     reqCard.requirements = savedModule.Requirements;
 
     CardContainer.appendChild(reqCard);
+
+    textArea.value = savedModule.Description;
+    textArea.addEventListener('scroll', () => {
+        textArea.classList.add('scrolling');
+        clearTimeout(textArea._scrollTimer);
+        textArea._scrollTimer = setTimeout(() => {
+            textArea.classList.remove('scrolling');
+        }, 700);
+    });
 
     // Add admin buttons for editing and deleting
     if (correctRole) {

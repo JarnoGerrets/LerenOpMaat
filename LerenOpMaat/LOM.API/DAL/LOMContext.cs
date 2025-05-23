@@ -7,6 +7,9 @@ public class LOMContext : DbContext
 {
     public LOMContext(DbContextOptions<LOMContext> options) : base(options) { }
     public DbSet<Module> Modules { get; set; }
+	public DbSet<ModuleEVL> ModuleEVLs { get; set; }
+	public DbSet<ModuleProgress> ModuleProgresses { get; set; }
+	public DbSet<CompletedEvl> CompletedEvls { get; set; }
     public DbSet<Cohort> Cohorts { get; set; }
     public DbSet<User> User { get; set; }
     public DbSet<Semester> Semesters { get; set; }

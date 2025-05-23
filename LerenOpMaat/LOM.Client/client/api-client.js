@@ -19,7 +19,20 @@ export async function logout() {
     localStorage.removeItem("userData");
     location.reload();
 
-  } catch {}
+  } catch { }
+}
+
+export async function checkLoginStatus() {
+  const response = await fetch(`${API_BASE}/account/check`, {
+    method: "GET",
+    credentials: "include"
+  });
+
+  if (response.ok) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 export async function getUserData() {
@@ -43,7 +56,7 @@ export async function getUserData() {
 
 
 export async function getModules(q) {
-  const res = await fetch(`${API_BASE}/Module?q=${q||''}`, {
+  const res = await fetch(`${API_BASE}/Module?q=${q || ''}`, {
     method: "GET",
     headers: {
       "Accept": "text/plain"
@@ -54,55 +67,69 @@ export async function getModules(q) {
     throw new Error(`Failed to fetch modules: ${res.status}`);
   }
 
-    return await res.json();
+  return await res.json();
+}
+
+export async function getActiveModules(q) {
+  const res = await fetch(`${API_BASE}/Module/Active?q=${q || ''}`, {
+    method: "GET",
+    headers: {
+      "Accept": "text/plain"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch modules: ${res.status}`);
+  }
+
+  return await res.json();
 }
 
 export async function getModule(id) {
-    const res = await fetch(`${API_BASE}/Module/${id}`, {
-        method: "GET",
-        headers: {
-            "Accept": "text/plain"
-        }
-    });
-
-    if (!res.ok) {
-        throw new Error(`Failed to fetch modules: ${res.status}`);
+  const res = await fetch(`${API_BASE}/Module/${id}`, {
+    method: "GET",
+    headers: {
+      "Accept": "text/plain"
     }
+  });
 
-    return await res.json();
+  if (!res.ok) {
+    throw new Error(`Failed to fetch modules: ${res.status}`);
+  }
+
+  return await res.json();
 
 }
 
 export async function updateModule(id, moduleData) {
-    const res = await fetch(`${API_BASE}/Module/${id}`, {
-        method: "PUT",
-        headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(moduleData)
-    });
-
-    if (!res.ok) {
-        throw new Error(`Failed to update module: ${res.status}`);
-    }
-
-    return;
-}
-
-export async function addModule(moduleData) {
-  console.log(moduleData);
-  const res = await fetch(`${API_BASE}/Module`, {
-      method: "POST",
-      headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify(moduleData)
+  const res = await fetch(`${API_BASE}/Module/${id}`, {
+    method: "PUT",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(moduleData)
   });
 
   if (!res.ok) {
-      throw new Error(`Failed to save module: ${res.status}`);
+    throw new Error(`Failed to update module: ${res.status}`);
+  }
+
+  return;
+}
+
+export async function addModule(moduleData) {
+  const res = await fetch(`${API_BASE}/Module`, {
+    method: "POST",
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(moduleData)
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to save module: ${res.status}`);
   }
 
   return res.json();
@@ -110,20 +137,76 @@ export async function addModule(moduleData) {
 
 
 export async function deleteModule(id) {
-    const res = await fetch(`${API_BASE}/Module/${id}`, {
-        method: "DELETE",
-        headers: {
-            "Accept": "text/plain"
-        }
-    });
-
-    if (!res.ok) {
-        throw new Error(`Failed to fetch modules: ${res.status}`);
+  const res = await fetch(`${API_BASE}/Module/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Accept": "text/plain"
     }
+  });
 
-    return res.text();
+  if (!res.ok) {
+    throw new Error(`Failed to fetch modules: ${res.status}`);
+  }
+
+  return res.text();
 
 }
+
+
+export async function getModuleProgress(id) {
+  const res = await fetch(`${API_BASE}/Module/${id}/progress`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch progress: ${res.status}`);
+  }
+  if (res.status === 204) {
+    return null;
+  }
+  return await res.json();
+
+}
+
+export async function addCompletedEvl(id, evlId) {
+  const res = await fetch(`${API_BASE}/Module/${id}/addcompletedevl`, {
+    method: 'POST',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(evlId),
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to update progress: ${res.status}`);
+  }
+
+  return await res.json();
+
+}
+
+export async function removeCompletedEvl(id, evlId) {
+  const res = await fetch(`${API_BASE}/Module/${id}/removecompletedevl/${evlId}`, {
+    method: 'DELETE',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    credentials: "include"
+  });
+    if (!res.ok) {
+    throw new Error(`Failed to update progress: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 export async function getRequirement(id) {
@@ -207,7 +290,7 @@ export async function getRequirementTypes() {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 export async function getProfiles(q) {
-  const res = await fetch(`${API_BASE}/GraduateProfile?q=${q||''}`, {
+  const res = await fetch(`${API_BASE}/GraduateProfile?q=${q || ''}`, {
     method: "GET",
     headers: {
       "Accept": "text/plain"
@@ -218,7 +301,7 @@ export async function getProfiles(q) {
     throw new Error(`Failed to fetch modules: ${res.status}`);
   }
 
-    return await res.json();
+  return await res.json();
 }
 
 export async function getProfile(id) {
@@ -233,11 +316,34 @@ export async function getProfile(id) {
     throw new Error(`Failed to fetch profile: ${res.status}`);
   }
 
-    return await res.json();
+  return await res.json();
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+export async function validateRoute(learningRoute) {
+  const res = await fetch(`${API_BASE}/LearningRoute/ValidateRoute`, {
+    method: "Post",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(learningRoute)
+  });
 
+
+  if (!res.ok) {
+    let errorMessage;
+    try {
+      const errorData = await res.json();
+      errorMessage = errorData.message || JSON.stringify(errorData);
+    } catch {
+      errorMessage = await res.text();
+    }
+
+    throw new Error(`Failed to validate learning route: ${res.status} - ${errorMessage}`);
+  }
+  return await res.json();
+}
 export async function getLearningRoutesByUserId(id) {
   const res = await fetch(`${API_BASE}/LearningRoute/User/${id}`, {
     method: "GET",
