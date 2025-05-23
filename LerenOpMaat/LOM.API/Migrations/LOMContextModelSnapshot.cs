@@ -45,43 +45,43 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4544)
+                            StartDate = new DateTime(2025, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4171)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4608)
+                            StartDate = new DateTime(2026, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4224)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4611)
+                            StartDate = new DateTime(2027, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4228)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4613)
+                            StartDate = new DateTime(2024, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4231)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4616)
+                            StartDate = new DateTime(2023, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4234)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4618)
+                            StartDate = new DateTime(2022, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4236)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4620)
+                            StartDate = new DateTime(2021, 5, 22, 16, 36, 39, 218, DateTimeKind.Local).AddTicks(4238)
                         });
                 });
 
@@ -392,6 +392,390 @@ namespace LOM.API.Migrations
                         });
                 });
 
+            modelBuilder.Entity("LOM.API.Models.ModuleEVL", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Ec")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ModuleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModuleId");
+
+                    b.ToTable("ModuleEVLs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Ec = 10,
+                            ModuleId = 1,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Ec = 10,
+                            ModuleId = 1,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Ec = 10,
+                            ModuleId = 1,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Ec = 10,
+                            ModuleId = 2,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Ec = 10,
+                            ModuleId = 2,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Ec = 10,
+                            ModuleId = 2,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Ec = 10,
+                            ModuleId = 3,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Ec = 10,
+                            ModuleId = 3,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Ec = 10,
+                            ModuleId = 3,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Ec = 10,
+                            ModuleId = 4,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Ec = 10,
+                            ModuleId = 4,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Ec = 10,
+                            ModuleId = 4,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Ec = 10,
+                            ModuleId = 5,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Ec = 10,
+                            ModuleId = 5,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Ec = 10,
+                            ModuleId = 5,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Ec = 10,
+                            ModuleId = 6,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Ec = 10,
+                            ModuleId = 6,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Ec = 10,
+                            ModuleId = 6,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Ec = 10,
+                            ModuleId = 7,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Ec = 10,
+                            ModuleId = 7,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Ec = 10,
+                            ModuleId = 7,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Ec = 10,
+                            ModuleId = 8,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Ec = 10,
+                            ModuleId = 8,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Ec = 10,
+                            ModuleId = 8,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Ec = 10,
+                            ModuleId = 9,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Ec = 10,
+                            ModuleId = 9,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Ec = 10,
+                            ModuleId = 9,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Ec = 10,
+                            ModuleId = 10,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Ec = 10,
+                            ModuleId = 10,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Ec = 10,
+                            ModuleId = 10,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Ec = 10,
+                            ModuleId = 11,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Ec = 10,
+                            ModuleId = 11,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Ec = 10,
+                            ModuleId = 11,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Ec = 10,
+                            ModuleId = 12,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Ec = 10,
+                            ModuleId = 12,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Ec = 10,
+                            ModuleId = 12,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Ec = 10,
+                            ModuleId = 13,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Ec = 10,
+                            ModuleId = 13,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Ec = 10,
+                            ModuleId = 13,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Ec = 10,
+                            ModuleId = 14,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Ec = 10,
+                            ModuleId = 14,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Ec = 10,
+                            ModuleId = 14,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Ec = 10,
+                            ModuleId = 15,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Ec = 10,
+                            ModuleId = 15,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Ec = 10,
+                            ModuleId = 15,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Ec = 10,
+                            ModuleId = 16,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Ec = 10,
+                            ModuleId = 16,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Ec = 10,
+                            ModuleId = 16,
+                            Name = "EVL 3"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Ec = 10,
+                            ModuleId = 17,
+                            Name = "EVL 1"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Ec = 10,
+                            ModuleId = 17,
+                            Name = "EVL 2"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            Ec = 10,
+                            ModuleId = 17,
+                            Name = "EVL 3"
+                        });
+                });
+
             modelBuilder.Entity("LOM.API.Models.Oer", b =>
                 {
                     b.Property<int>("Id")
@@ -660,6 +1044,17 @@ namespace LOM.API.Migrations
                     b.Navigation("GraduateProfile");
                 });
 
+            modelBuilder.Entity("LOM.API.Models.ModuleEVL", b =>
+                {
+                    b.HasOne("LOM.API.Models.Module", "Module")
+                        .WithMany("Evls")
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Module");
+                });
+
             modelBuilder.Entity("LOM.API.Models.Requirement", b =>
                 {
                     b.HasOne("LOM.API.Models.Module", "Module")
@@ -707,6 +1102,8 @@ namespace LOM.API.Migrations
 
             modelBuilder.Entity("LOM.API.Models.Module", b =>
                 {
+                    b.Navigation("Evls");
+
                     b.Navigation("Requirements");
                 });
 #pragma warning restore 612, 618

@@ -57,6 +57,7 @@ namespace LOM.API.Controllers
 				.Where(m => m.IsActive)
 				.Include(m => m.Requirements)
 				.Include(m => m.GraduateProfile)
+				.Include(m => m.Evls)
 				.ToListAsync();
 
 			var result = new List<ModuleDto>();

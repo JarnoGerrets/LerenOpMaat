@@ -11,7 +11,6 @@ namespace LOM.API.Validator.Specifications
 				.Select(s => s.Module)
 				.ToList();
 
-			// int level2Count = previousModules.Count(m => m.Level == 2);
 			int level3Count = previousModules.Count(m => m.Level == 3);
 
 			bool ismet = level3Count >= 1;

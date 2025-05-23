@@ -59,7 +59,7 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
     const semesterModules = new SemesterModule(
         modules,
         (selectedModule) => {
-            moduleSelectionPopup.close(selectedModule); // Sluit popup met geselecteerde module
+            moduleSelectionPopup.close(selectedModule);
             return selectedModule;
         }
     );

@@ -19,7 +19,7 @@ export async function logout() {
     localStorage.removeItem("userData");
     location.reload();
 
-  } catch {}
+  } catch { }
 }
 
 export async function getUserData() {
@@ -138,6 +138,60 @@ export async function deleteModule(id) {
   return res.text();
 
 }
+
+
+export async function getModuleProgress(id) {
+  const res = await fetch(`${API_BASE}/Module/${id}/progress`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch progress: ${res.status}`);
+  }
+  if (res.status === 204) {
+    return null;
+  }
+  return await res.json();
+
+}
+
+export async function addCompletedEvl(id, evlId) {
+  const res = await fetch(`${API_BASE}/Module/${id}/addcompletedevl`, {
+    method: 'POST',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(evlId),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to update progress: ${res.status}`);
+  }
+
+  return await res.json();
+
+}
+
+export async function removeCompeltedEvl(id, evlId) {
+  const res = await fetch(`${API_BASE}/Module/${id}/removecompletedevl/${evlId}`, {
+    method: 'DELETE',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+  });
+    if (!res.ok) {
+    throw new Error(`Failed to update progress: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 export async function getRequirement(id) {
@@ -265,10 +319,10 @@ export async function validateRoute(learningRoute) {
   if (!res.ok) {
     let errorMessage;
     try {
-      const errorData = await res.json(); // Try to read JSON error response
+      const errorData = await res.json();
       errorMessage = errorData.message || JSON.stringify(errorData);
     } catch {
-      errorMessage = await res.text(); // Fallback to plain text if not JSON
+      errorMessage = await res.text();
     }
 
     throw new Error(`Failed to validate learning route: ${res.status} - ${errorMessage}`);
