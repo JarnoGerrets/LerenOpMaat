@@ -1,4 +1,5 @@
 import './card.js';
+import { mapPeriodToPresentableString } from '../scripts/utils/presentationMapper.js';
 
 export default class ModuleCard extends customElements.get("base-card") {
     constructor() {
@@ -22,7 +23,7 @@ export default class ModuleCard extends customElements.get("base-card") {
                     Code: <span id="code-text">${module.Code}</span>
                     </div>
                     <div class="module-info-row" style="font-weight: bold;">
-                    Periode: <span id="period-text">${module.Period}</span>
+                    Periode: <span id="period-text">${mapPeriodToPresentableString(module.Period)}</span>
                     </div>
                 </div>
                 <div class="w-50">
