@@ -1,7 +1,7 @@
 import Popup from "../../components/Popup.js";
-
+import { deleteModule, deleteRoute } from '../../client/api-client.js';
 let popup;
-export default async function confirmationPopup(name, type, callback) {
+export default async function confirmationPopup(name, type, id, callback) {
     popup = new Popup({
         maxWidth: 'auto',
         height: 'auto',

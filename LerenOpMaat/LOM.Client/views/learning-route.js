@@ -1,6 +1,5 @@
 import SemesterPair from "../components/semester-pair.js";
-import Feedback from "./feedback.js";
-import { getLearningRoutesByUserId, postLearningRoute, updateSemester, deleteRoute } from "../../client/api-client.js";
+import { getLearningRoutesByUserId, postLearningRoute, updateSemester, deleteRoute, getUserData, postConversation, getConversationByUserId } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
@@ -9,11 +8,11 @@ import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
 let apiResponse = [];
 export let currentUserId = null;
 export let learningRouteId = null;
+const cohortYear = parseInt(localStorage.getItem("cohortYear"));
 
 export default async function LearningRoute() {
     showLoading();
 
-    const cohortYear = parseInt(localStorage.getItem("cohortYear"));
     const response = await fetch("/templates/learning-route.html");
     const html = await response.text();
     const template = document.createElement("template");
@@ -24,17 +23,27 @@ export default async function LearningRoute() {
     let routeId = null;
 
     try {
-        apiResponse = await getLearningRoutesByUserId(1);
+        const userData = await getUserData();
+        if (userData && userData.InternalId) {
+            apiResponse = await getLearningRoutesByUserId(userData.InternalId);
 
-        if (
-            !apiResponse.Semesters ||
-            !Array.isArray(apiResponse.Semesters) ||
-            apiResponse.Semesters.length === 0
-        ) {
-            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
+            if (
+                !apiResponse.Semesters ||
+                !Array.isArray(apiResponse.Semesters) ||
+                apiResponse.Semesters.length === 0
+            ) {
+                console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
+            } else {
+                semesterData = apiResponse.Semesters;
+                routeId = apiResponse.Id;
+            }
         } else {
-            semesterData = apiResponse.Semesters;
-            routeId = apiResponse.Id;
+            semesterData = [dummySemester1, dummySemester2];
+            //document.querySelector("#app").appendChild(fragment);
+            ["saveLearningRoute", "deleteRoute", "feedBack"].forEach(id => {
+                const btn = fragment.getElementById(id);
+                if (btn) btn.disabled = true;
+            });
         }
 
         const semesterDataGroupedByYear = semesterData.reduce((acc, data) => {
@@ -212,8 +221,36 @@ export default async function LearningRoute() {
 
     const feedbackButton = fragment.getElementById("feedBack");
     if (feedbackButton) {
-        feedbackButton.addEventListener("click", (e) => {
+        feedbackButton.addEventListener("click", async (e) => {
             e.preventDefault();
+
+            // Haal gebruiker en routeId op
+            const user = apiResponse?.Users?.[0];
+            if (!user || !routeId) {
+                console.error("Gebruiker of routeId niet gevonden.");
+                window.location.hash = "#feedback";
+                return;
+            }
+
+            // Controleer of conversatie al bestaat
+            let conversation = await getConversationByUserId(user.Id);
+
+            if (!conversation) {
+                // Conversation bestaat niet, maak een nieuwe aan
+                const conversationBody = {
+                    LearningRouteId: routeId,
+                    TeacherId: 4, // Pas eventueel aan
+                    StudentId: user.Id
+                };
+                try {
+                    await postConversation(conversationBody);
+                } catch (err) {
+                    console.error("Kon conversatie niet aanmaken:", err);
+                    return;
+                }
+            }
+
+            // Open feedbackpagina
             window.location.hash = "#feedback";
         });
     }
@@ -236,7 +273,7 @@ async function saveLearningRoute(learningRouteArray) {
                     LastName: user.LastName,
                 }
             ],
-            StartYear: 2025,
+            StartYear: cohortYear,
             Semesters: learningRouteArray.map(item => ({
                 Year: item.Year,
                 Period: item.Period,

@@ -7,11 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LOM.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class ConversationController : ControllerBase
     {
         private readonly LOMContext _context;
@@ -78,6 +81,30 @@ namespace LOM.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Conversation>> PostConversation(Conversation conversation)
         {
+            var externalId = User?.Identity?.Name;
+            if (string.IsNullOrEmpty(externalId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _context.User
+                .Include(u => u.LearningRoute)
+                .FirstOrDefaultAsync(u => u.ExternalID == externalId);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            conversation.StudentId = user.Id;
+            conversation.LearningRouteId = user.LearningRouteId ?? 0;
+
+            var teacher = await _context.User.FirstOrDefaultAsync(u => u.Id == conversation.TeacherId && u.Role.RoleName == "Administrator");
+            if (teacher == null)
+            {
+                return BadRequest("Invalid teacher.");
+            }
+
             _context.Conversations.Add(conversation);
             await _context.SaveChangesAsync();
 
