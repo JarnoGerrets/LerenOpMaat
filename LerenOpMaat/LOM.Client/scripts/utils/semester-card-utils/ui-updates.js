@@ -1,6 +1,6 @@
 import { calculateAchievedECs} from "./utils.js";
 import {handleValidationResult} from "./validations.js";
-import { validateRoute, addCompletedEvl, removeCompletedEvl, checkLoginStatus } from "../../../client/api-client.js";
+import { validateRoute, addCompletedEvl, removeCompletedEvl } from "../../../client/api-client.js";
 
 export function updateExclamationIcon(cardElement, validationMsg, isValid) {
   const icon = cardElement.querySelector('.exclamation-icon');
@@ -53,7 +53,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
   const evlList = evlWrapper.querySelector(".evl-list");
 
   const achievedECs = calculateAchievedECs(progress, selectedModule);
-  const loggedIn = await checkLoginStatus();
+  const loggedIn = localStorage.getItem("userData");
   if (selectedModule?.Evls && loggedIn) {
     evlList.innerHTML = selectedModule.Evls.map(ev => {
       const isChecked = progress?.CompletedEvls?.some(completed => completed.ModuleEvl.Id === ev.Id);
