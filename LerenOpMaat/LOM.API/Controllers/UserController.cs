@@ -69,7 +69,7 @@ namespace LOM.API.Controllers
                 return Unauthorized("No user ID found in claims.");
 
             // Bepaal RoleId op basis van de claims
-            int roleId = (roles.Contains("Administrator")) ? 1 : 2;
+            int roleId = (roles.Contains("Administrator") || roles.Contains("Teacher")) ? 1 : 2;
 
             var user = _context.User.FirstOrDefault(u => u.ExternalID == userId);
 
