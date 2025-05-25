@@ -9,6 +9,7 @@ using LOM.API.DAL;
 using LOM.API.Models;
 using LOM.API.Validator.ValidationResults;
 using LOM.API.Validator;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace LOM.API.Controllers
 {
@@ -186,6 +187,7 @@ namespace LOM.API.Controllers
         [HttpPost("ValidateRoute")]
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
             foreach (var semester in semesters)
             {
                 if (semester.ModuleId.HasValue)
@@ -200,7 +202,7 @@ namespace LOM.API.Controllers
                 }
             }
 
-            var validator = new LearningRouteValidator(_context);
+            var validator = new LearningRouteValidator(_context, userId);
             var results = validator.ValidateLearningRoute(semesters);
 
             return Ok(results);

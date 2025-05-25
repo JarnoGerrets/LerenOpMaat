@@ -21,16 +21,68 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
                 new Module { Id = 1, Name = "Introduction to Programming", Code = "IP.01", Period = 1 },
                 new Module { Id = 2, Name = "Web Development Basics", Code = "WDB.01", Period = 2 },
                 new Module { Id = 3, Name = "Introduction to Programming V2", Code = "IP.02", Period = 1 },
-                new Module { Id = 4, Name = "Web Development Basics V2", Code = "WDB.02", Period = 2 }
+                new Module { Id = 4, Name = "Web Development Basics V2", Code = "WDB.02", Period = 2 },
+                new Module { Id = 5, Name = "Introduction to Programming V2", Code = "IP.02", Period = 1 },
+                new Module { Id = 6, Name = "Web Development Basics V2", Code = "WDB.02", Period = 2 }
             );
 
-            context.Requirements.Add(new Requirement
+            context.Requirements.AddRange(new Requirement
             {
                 Id = 1,
                 ModuleId = 2,
                 Type = ModulePreconditionType.RequiredModule,
                 Value = "1"
+            },
+            new Requirement
+            {
+                Id = 2,
+                ModuleId = 5,
+                Type = ModulePreconditionType.RequiredEc,
+                Value = "30"
+            },
+            new Requirement
+            {
+                Id = 3,
+                ModuleId = 6,
+                Type = ModulePreconditionType.RequiredEc,
+                Value = "20"
             });
+
+
+            context.ModuleProgresses.AddRange(
+                new ModuleProgress { Id = 1, ModuleId = 1, UserId = 1 },
+                new ModuleProgress { Id = 2, ModuleId = 2, UserId = 2 }
+            );
+
+            context.User.AddRange(
+                new User { Id = 1, FirstName = "John", LastName = "Doe", ExternalID = "12345" },
+                new User { Id = 2, FirstName = "Bob", LastName = "Smith", ExternalID = "67890" }
+            );
+
+            int evlId = 1;
+            var moduleEVLs = new List<ModuleEVL>();
+
+            for (int moduleId = 1; moduleId <= 4; moduleId++)
+            {
+                for (int i = 1; i <= 3; i++)
+                {
+                    moduleEVLs.Add(new ModuleEVL
+                    {
+                        Id = evlId++,
+                        ModuleId = moduleId,
+                        Name = $"EVL {i}",
+                        Ec = 10
+                    });
+                }
+            }
+
+            context.ModuleEVLs.AddRange(moduleEVLs);
+
+            context.CompletedEvls.AddRange(
+                new CompletedEvl { Id = 1, ModuleProgressId = 1, ModuleEvlId = 1 },
+                new CompletedEvl { Id = 2, ModuleProgressId = 1, ModuleEvlId = 2 },
+                new CompletedEvl { Id = 3, ModuleProgressId = 2, ModuleEvlId = 3 }
+            );
             context.SaveChanges();
 
             return context;
@@ -167,7 +219,104 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
             Assert.False(error.IsValid);
         }
 
-        
+        [Fact]
+        [Description("Should fail when there are not enough ECs in the learning route")]
+        public void ValidateLearningRoute_NotEoughEcs()
+        {
+            // Arrange
+            var context = CreateInMemoryContext();
+
+            var module1 = context.Modules.Find(1);
+            var module2 = context.Modules.Find(2);
+            var requirementmodule = context.Modules.Find(5);
+
+            var user = context.User.Find(1);
+
+
+            var semesters = new List<Semester>
+        {
+            new Semester { Period = 1, Module = module1, ModuleId = module1.Id },
+            new Semester { Period = 2, Module = module2, ModuleId = module2.Id },
+            new Semester { Period = 1, Module = requirementmodule, ModuleId = requirementmodule.Id }
+        };
+
+            var requirement = context.Requirements.Find(2);
+
+            var validator = new LearningRouteValidator(context, user.Id);
+
+            // Act
+            var results = validator.ValidateLearningRoute(semesters);
+
+            // Assert
+            var error = results.FirstOrDefault(r => !r.IsValid && r.Message.Contains($"Niet genoeg Ec's behaald, minimaal {requirement.Value} vereist, u heeft op dit moment 20 behaald."));
+            Assert.NotNull(error);
+            Assert.False(error.IsValid);
+        }
+
+        [Fact]
+        [Description("Should succeed when there are enough ECs in the learning route")]
+        public void ValidateLearningRoute_EnoughEcs()
+        {
+            // Arrange
+            var context = CreateInMemoryContext();
+
+            var module1 = context.Modules.Find(1);
+            var module2 = context.Modules.Find(2);
+            var requirementmodule = context.Modules.Find(6);
+
+            var user = context.User.Find(1);
+
+
+            var semesters = new List<Semester>
+        {
+            new Semester { Period = 1, Module = module1, ModuleId = module1.Id },
+            new Semester { Period = 2, Module = module2, ModuleId = module2.Id },
+            new Semester { Period = 1, Module = requirementmodule, ModuleId = requirementmodule.Id }
+        };
+
+            var validator = new LearningRouteValidator(context, user.Id);
+
+            // Act
+            var results = validator.ValidateLearningRoute(semesters);
+
+            // Assert
+            var success = results.FirstOrDefault(r => r.IsValid && r.Message.Contains("Genoeg EC's."));
+            Assert.NotNull(success);
+            Assert.True(success.IsValid);
+        }
+
+        [Fact]
+        [Description("Should skip validation when no user ID is provided and return a success message")]
+        public void ValidateLearningRoute_NoUserId()
+        {
+            // Arrange
+            var context = CreateInMemoryContext();
+
+            var module1 = context.Modules.Find(1);
+            var module2 = context.Modules.Find(2);
+            var requirementmodule = context.Modules.Find(5); // choosing a module that otherwise would fail validation
+
+            var semesters = new List<Semester>
+        {
+            new Semester { Period = 1, Module = module1, ModuleId = module1.Id },
+            new Semester { Period = 2, Module = module2, ModuleId = module2.Id },
+            new Semester { Period = 1, Module = requirementmodule, ModuleId = requirementmodule.Id }
+        };
+
+            var validator = new LearningRouteValidator(context);
+
+            // Act
+            var results = validator.ValidateLearningRoute(semesters);
+
+            // Assert
+            var success = results.FirstOrDefault(r => r.IsValid && r.Message.Contains("Validatie niet vereist"));
+            
+            Assert.NotNull(success);
+            Assert.True(success.IsValid);
+        }
+
+
+
 
     }
 }
