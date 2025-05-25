@@ -97,13 +97,7 @@ public class Seeder
             new Requirement { Id = 8, ModuleId = 16, Type = ModulePreconditionType.RequiredEcFromPropedeuse, Value = "60" },
             new Requirement { Id = 9, ModuleId = 16, Type = ModulePreconditionType.RequiredLevel2ModulesCount, Value = "2" }
         );
-
-        _modelBuilder.Entity<GraduateProfile>().HasData(
-            new GraduateProfile { Id = 1, Name = "BIM", ColorCode = "#F16682" },
-            new GraduateProfile { Id = 2, Name = "SE", ColorCode = "#F5A61A" },
-            new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3" }
-        );
-
+        
         _modelBuilder.Entity<Conversation>().HasData(
             new Conversation { Id = 1, LearningRouteId = 1, StudentId = 1, TeacherId = 3 }
             );
