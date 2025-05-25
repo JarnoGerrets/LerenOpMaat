@@ -78,7 +78,7 @@ namespace LOM.API.Controllers
                     ExternalID = userId,
                     FirstName = "",
                     LastName = "",
-                    StartYear = DateTime.Now.Year
+                    StartYear = null
                 };
 
                 _context.User.Add(user);

@@ -45,43 +45,43 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4544)
+                            StartDate = new DateTime(2025, 5, 25, 11, 49, 40, 379, DateTimeKind.Local).AddTicks(8771)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4608)
+                            StartDate = new DateTime(2026, 5, 25, 11, 49, 40, 379, DateTimeKind.Local).AddTicks(8814)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4611)
+                            StartDate = new DateTime(2027, 5, 25, 11, 49, 40, 379, DateTimeKind.Local).AddTicks(8818)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4613)
+                            StartDate = new DateTime(2024, 5, 25, 11, 49, 40, 379, DateTimeKind.Local).AddTicks(8820)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4616)
+                            StartDate = new DateTime(2023, 5, 25, 11, 49, 40, 379, DateTimeKind.Local).AddTicks(8822)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4618)
+                            StartDate = new DateTime(2022, 5, 25, 11, 49, 40, 379, DateTimeKind.Local).AddTicks(8825)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 15, 18, 51, 5, 297, DateTimeKind.Local).AddTicks(4620)
+                            StartDate = new DateTime(2021, 5, 25, 11, 49, 40, 379, DateTimeKind.Local).AddTicks(8827)
                         });
                 });
 
@@ -620,7 +620,7 @@ namespace LOM.API.Migrations
                     b.Property<int?>("LearningRouteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StartYear")
+                    b.Property<int?>("StartYear")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -644,8 +644,7 @@ namespace LOM.API.Migrations
                             Id = 2,
                             ExternalID = "TEST345",
                             FirstName = "Robin",
-                            LastName = "Hood",
-                            StartYear = 0
+                            LastName = "Hood"
                         });
                 });
 

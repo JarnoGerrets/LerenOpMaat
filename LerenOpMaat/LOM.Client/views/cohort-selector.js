@@ -1,31 +1,31 @@
 import LearningRoute from "../views/learning-route.js";
-import { setStartYear, getStartYear } from "../client/api-client.js";
 
-export async function RouteOrSelector() {
+export async function RouteOrSelector(setStartYear, getStartYear) {
   let cohortYear = localStorage.getItem("cohortYear");
-  localStorage.setItem("userData", JSON.stringify({ Roles: ["Lecturer"],Username:"s1203962@student.windesheim.nl",InternalId: 4, ExternalID:"M5IlHoZaiDWDS0krdVkSR9NBmfhoHqlFN1ob_6WLeoE"}));
-  let userData = localStorage.getItem("userData");
-  let parsedUserData = JSON.parse(userData);
-  let userId = parsedUserData.InternalId;
-
-  if (!cohortYear) {
+  let userId = null;
+  setTimeout(async function () {
+    let userData = localStorage.getItem("userData");
+    let parsedUserData = JSON.parse(userData);
+    if(parsedUserData) {
+      userId = parsedUserData.InternalId;
+    }
     if (userId) {
+      localStorage.removeItem('cohortYear');
       const startYearFromUser = await getStartYear(userId);
       if (startYearFromUser) {
         cohortYear = startYearFromUser;
         localStorage.setItem('cohortYear', cohortYear);
       }
     }
-  }
-
+  }, 1000);
   if (!cohortYear) {
-    return await CohortSelector();
+    return await CohortSelector(setStartYear);
   }
 
   return await LearningRoute();
 }
 
-export default async function CohortSelector() {
+export default async function CohortSelector(setStartYear) {
   const response = await fetch("/templates/cohort-selector.html");
   const html = await response.text();
   const template = document.createElement("template");
@@ -55,8 +55,9 @@ export default async function CohortSelector() {
 
   submitBtn.addEventListener("click", async () => {
     if (selected) {
-      const userId = localStorage.getItem("userId");
-
+      let userData = localStorage.getItem("userData");
+      let parsedUserData = JSON.parse(userData);
+      let userId = parsedUserData.InternalId;
       if (userId) {
         await setStartYear(userId, selected);
       }

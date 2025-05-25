@@ -330,7 +330,6 @@ export async function getStartYear(id) {
     const startYear = await response.json();
     return startYear;
   } catch (error) {
-    console.error('Fout bij ophalen startjaar:', error);
     return null;
   }
 }
