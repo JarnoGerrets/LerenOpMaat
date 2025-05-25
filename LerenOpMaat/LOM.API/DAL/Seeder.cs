@@ -115,5 +115,43 @@ public class Seeder
             new Message { Id = 4, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Leerroute ziet er goed uit!", UserId = 3 }
             );
 
+        _modelBuilder.Entity<GraduateProfile>().HasData(
+            new GraduateProfile { Id = 1, Name = "BIM", ColorCode = "#F16682A0" },
+            new GraduateProfile { Id = 2, Name = "SE", ColorCode = "#F5A61AA0" },
+            new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3A0" }
+        );
+
+        _modelBuilder.Entity<ModuleProgress>().HasData(
+            new ModuleProgress { Id = 1, UserId = 1, ModuleId = 1 },
+            new ModuleProgress { Id = 2, UserId = 2, ModuleId = 1 }
+        );
+
+        int evlId = 1;
+        var moduleEVLs = new List<ModuleEVL>();
+
+        for (int moduleId = 1; moduleId <= 15; moduleId++)
+        {
+            for (int i = 1; i <= 3; i++)
+            {
+                moduleEVLs.Add(new ModuleEVL
+                {
+                    Id = evlId++,
+                    ModuleId = moduleId,
+                    Name = $"EVL {i}",
+                    Ec = 10
+                });
+            }
+        }
+
+        _modelBuilder.Entity<ModuleEVL>().HasData(moduleEVLs);
+
+        _modelBuilder.Entity<CompletedEvl>().HasData(
+            new CompletedEvl { Id = 1, ModuleProgressId = 1, ModuleEvlId = 1 },
+            new CompletedEvl { Id = 2, ModuleProgressId = 1, ModuleEvlId = 2 },
+            new CompletedEvl { Id = 3, ModuleProgressId = 2, ModuleEvlId = 3 }
+        );
+
     }
+
+    
 }
