@@ -14,7 +14,7 @@ export default async function SemesterCard({ semester, module, locked = false, o
   <div class="semester-card-container">
     <div class="semester-card ${locked ? 'locked' : ''}">
       <h3>Semester ${semester}</h3>
-      <button id="select-module" class="semester-button btn btn-light border">
+      <button id="select-module" class="semester-button btn btn-light border" style="margin-bottom: 5px;">
         ${module}
         <i class="ms-1 bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i> 
       </button>
@@ -23,7 +23,7 @@ export default async function SemesterCard({ semester, module, locked = false, o
         <i class="bi bi-exclamation-triangle-fill"></i>
       </div>
     </div>
-    <div class="evl-list-wrapper">
+    <div class="evl-list-wrapper rounded p-2 mt-2">
       <div class="evl-list border rounded p-2 mt-2 bg-light">
         
       </div>

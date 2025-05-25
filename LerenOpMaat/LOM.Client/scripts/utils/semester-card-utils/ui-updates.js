@@ -60,7 +60,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
 
       return `
         <label class="checkbox-wrapper-30">
-          <span class="checkbox" style="margin-right: 10px;">
+          <span class="checkbox" style="margin-right: 15px;">
               <input type="checkbox" 
                 class="checkbox" 
                 id="${ev.Id}" 
@@ -78,7 +78,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
               <symbol id="checkbox-30" viewBox="0 0 22 22">
                 <path
                   fill="none"
-                  stroke="#10adf2"
+                  stroke="#003366"
                   d="M5.5,11.3L9,14.8L20.2,3.3l0,0c-0.5-1-1.5-1.8-2.7-1.8h-13c-1.7,0-3,1.3-3,3v13c0,1.7,1.3,3,3,3h13 c1.7,0,3-1.3,3-3v-13c0-0.4-0.1-0.8-0.3-1.2"
                 />
               </symbol>
@@ -118,6 +118,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
     coursePoints.style.cursor = "pointer";
     coursePoints.onclick = () => {
       evlWrapper.classList.toggle("expand");
+      evlList.classList.toggle("expand");
     }
   } else {
     coursePoints.innerHTML = "";

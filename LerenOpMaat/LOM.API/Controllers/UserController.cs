@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace LOM.API.Controllers
 {
@@ -79,7 +80,8 @@ namespace LOM.API.Controllers
                     ExternalID = userId,
                     FirstName = "",
                     LastName = "",
-                    StartYear = DateTime.Now.Year
+                    StartYear = DateTime.Now.Year,
+                    RoleId = 2
                 };
 
                 _context.User.Add(user);
