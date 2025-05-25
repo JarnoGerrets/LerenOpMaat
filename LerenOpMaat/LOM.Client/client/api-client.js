@@ -70,21 +70,6 @@ export async function getModules(q) {
   return await res.json();
 }
 
-export async function getActiveModules(q) {
-  const res = await fetch(`${API_BASE}/Module/Active?q=${q || ''}`, {
-    method: "GET",
-    headers: {
-      "Accept": "text/plain"
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch modules: ${res.status}`);
-  }
-
-  return await res.json();
-}
-
 export async function getModule(id) {
   const res = await fetch(`${API_BASE}/Module/${id}`, {
     method: "GET",
@@ -416,6 +401,105 @@ export async function updateSemester(learningRouteId, semesterData) {
     console.warn("Response bevat geen JSON, retourneer een standaardwaarde.");
     return { message: "Semesters updated successfully (geen JSON)" }; // Standaardwaarde
   }
+}
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+export async function getConversationByUserId(userId) {
+  const res = await fetch(`${API_BASE}/Conversations/conversationByStudentId/${userId}`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch conversation: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+export async function updateConversation(id, conversationData) {
+  const res = await fetch(`${API_BASE}/Conversations/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(conversationData)
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to update conversation: ${res.status}`);
+  }
+
+  const contentType = res.headers.get("Content-Type");
+  if (contentType && contentType.includes("application/json")) {
+    return await res.json();
+  }
+
+  throw new Error("Response bevat geen JSON");
+}
+
+export async function getAllTeachers() {
+  const res = await fetch(`${API_BASE}/User/teachers`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch teachers: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+export async function postConversation(body) {
+  const res = await fetch(`${API_BASE}/Conversations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to post conversation: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+export async function getMessagesByConversationId(conversationId) {
+  const res = await fetch(`${API_BASE}/Messages/messagesByConversationId/${conversationId}`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch messages: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+export async function postMessage(messageBody) {
+  const res = await fetch(`${API_BASE}/Messages`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(messageBody)
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to post message: ${res.status}`);
+  }
+  return await res.json();
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
