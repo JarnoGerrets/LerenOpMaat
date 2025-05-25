@@ -70,6 +70,22 @@ export async function getModules(q) {
   return await res.json();
 }
 
+export async function getActiveModules(q) {
+  const res = await fetch(`${API_BASE}/Module/Active?q=${q || ''}`, {
+    method: "GET",
+    headers: {
+      "Accept": "text/plain"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch modules: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+
 export async function getModule(id) {
   const res = await fetch(`${API_BASE}/Module/${id}`, {
     method: "GET",
@@ -184,7 +200,7 @@ export async function removeCompletedEvl(id, evlId) {
     },
     credentials: "include"
   });
-    if (!res.ok) {
+  if (!res.ok) {
     throw new Error(`Failed to update progress: ${res.status}`);
   }
 
