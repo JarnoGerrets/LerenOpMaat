@@ -34,7 +34,7 @@ export default async function confirmationPopup(name, type, callback) {
         });
 
         document.getElementById("cancel-deactivate")?.addEventListener("click", () => {
-            mijnPopup.close();
+            popup.close();
         });
     }, 0);
 
