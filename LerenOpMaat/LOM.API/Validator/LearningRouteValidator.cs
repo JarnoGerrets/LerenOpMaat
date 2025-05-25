@@ -28,29 +28,28 @@ namespace LOM.API.Validator
 				var currentSemester = semesters[i];
 				var currentModule = currentSemester.Module;
 
-				if (currentModule == null)
+				if (currentModule != null)
 				{
-					continue;
-				}
 
-				if (IsModuleInRoute(semesters, currentModule, i))
-				{
-					var validation = new ValidationResult(false,
-						$"Module {currentModule.Name} komt al voor in de leerroute.",
-						currentModule.Id);
-					resultCollection.Add(validation);
-					continue;
-				}
+					if (IsModuleInRoute(semesters, currentModule, i))
+					{
+						var validation = new ValidationResult(false,
+							$"Module {currentModule.Name} komt al voor in de leerroute.",
+							currentModule.Id);
+						resultCollection.Add(validation);
+						continue;
+					}
 
-				if (!IsModuleInCorrectPeriod(currentSemester, currentModule))
-				{
-					var validation = new ValidationResult(false,
-						$"Module {currentModule.Name} moet in periode {currentModule.Period} gevolgd worden.",
-						currentModule.Id);
-					resultCollection.Add(validation);
-				}
+					if (!IsModuleInCorrectPeriod(currentSemester, currentModule))
+					{
+						var validation = new ValidationResult(false,
+							$"Module {currentModule.Name} moet in periode {currentModule.Period} gevolgd worden.",
+							currentModule.Id);
+						resultCollection.Add(validation);
+					}
 
-				ValidateModuleRequirements(currentModule, semesters, i, resultCollection);
+					ValidateModuleRequirements(currentModule, semesters, i, resultCollection);
+				}
 			}
 
 			if (resultCollection.Count == 0)
