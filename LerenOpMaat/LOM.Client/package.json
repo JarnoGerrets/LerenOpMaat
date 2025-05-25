@@ -1,7 +1,6 @@
 {
   "name": "lerenopmaat",
   "version": "1.0.0",
-  "type": "module",
   "description": "Leerroute planner",
   "main": "index.js",
   "scripts": {

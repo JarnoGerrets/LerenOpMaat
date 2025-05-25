@@ -3,21 +3,23 @@ import LearningRoute from "../views/learning-route.js";
 export async function RouteOrSelector(setStartYear, getStartYear) {
   let cohortYear = localStorage.getItem("cohortYear");
   let userId = null;
-  setTimeout(async function () {
-    let userData = localStorage.getItem("userData");
-    let parsedUserData = JSON.parse(userData);
-    if(parsedUserData) {
-      userId = parsedUserData.InternalId;
+  let userData = localStorage.getItem("userData");
+  let parsedUserData = JSON.parse(userData);
+
+  if(parsedUserData) {
+    userId = parsedUserData.InternalId;
+  }
+
+  if (userId) {
+    localStorage.removeItem('cohortYear');
+    const startYearFromUser = await getStartYear(userId);
+    
+    if (startYearFromUser) {
+      cohortYear = startYearFromUser;
+      localStorage.setItem('cohortYear', cohortYear);
     }
-    if (userId) {
-      localStorage.removeItem('cohortYear');
-      const startYearFromUser = await getStartYear(userId);
-      if (startYearFromUser) {
-        cohortYear = startYearFromUser;
-        localStorage.setItem('cohortYear', cohortYear);
-      }
-    }
-  }, 1000);
+  }
+
   if (!cohortYear) {
     return await CohortSelector(setStartYear);
   }

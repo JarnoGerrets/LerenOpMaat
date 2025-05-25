@@ -17,6 +17,7 @@ export async function logout() {
     });
 
     localStorage.removeItem("userData");
+    localStorage.removeItem("cohortYear");
     location.reload();
 
   } catch { }

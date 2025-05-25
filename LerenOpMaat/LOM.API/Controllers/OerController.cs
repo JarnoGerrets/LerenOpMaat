@@ -62,8 +62,9 @@ namespace LOM.API.Controllers
                 .FirstOrDefaultAsync();
 
             if (latest == null)
+            {
                 return NotFound("Geen OER gevonden.");
-
+            }
             var fileBytes = Convert.FromBase64String(latest.Base64PDF);
             var stream = new MemoryStream(fileBytes);
 
