@@ -30,7 +30,14 @@ function bundleJs() {
         target: ['es2017'],
         minify: true,
         treeShaking: true,
-        legalComments: 'none'
+        legalComments: 'none',
+        platform: 'browser',
+        define: {
+            'process.env.NODE_ENV': '"production"'
+        },
+        loader: {
+            '.js': 'jsx'
+        }
     }).catch(() => process.exit(1));
 }
 
