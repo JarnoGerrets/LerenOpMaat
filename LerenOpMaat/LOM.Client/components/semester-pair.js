@@ -1,5 +1,6 @@
 import SemesterCard from "../components/semester-card.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
+import { validateRoute } from "../../client/api-client.js";
 export let learningRouteArray = [];
 
 export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
@@ -36,7 +37,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             module: semester1.Module.Name,
             moduleId: semester1.ModuleId,
             locked: semester1.locked,
-            onModuleChange: ({ semester, moduleId }) => {
+            onModuleChange: async ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(
                     (item) => item.Year === index + 1 && item.Period === semester
                 );

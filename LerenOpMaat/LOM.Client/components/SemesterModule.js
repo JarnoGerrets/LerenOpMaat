@@ -57,14 +57,24 @@ export default class SemesterModule {
             const infoLink = tile.querySelector('a');
             if (infoLink) {
                 infoLink.setAttribute('data-link', '');
-                infoLink.addEventListener('click', () => {
+                infoLink.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     if (module.Id) {
                         localStorage.setItem(`module-${module.Id}`, JSON.stringify(module));
+                    }
+                    const popupElement = document.querySelector('.popup-overlay');
+                    if (popupElement) {
+                        popupElement.remove();
+                        document.removeEventListener('click', this._handleOutsideClick);
                     }
                 });
             }
 
-            tile.addEventListener('click', () => {
+            tile.addEventListener('click', (event) => {
+                const clickedElement = event.target;
+                if (clickedElement.closest('a')) {
+                    return;
+                }
                 this.onModuleSelect(module);
             });
 

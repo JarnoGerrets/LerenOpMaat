@@ -39,18 +39,18 @@ public class Seeder
             new Module { Id = 8, Name = "Database Management Systems", Code = "DBMS.08", Description = "Database Management Systems", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
             new Module { Id = 9, Name = "Introduction to Programming", Code = "IP.09", Description = "Introduction to Programming", Ec = 30, Level = 3, Period = 2, IsActive = true, GraduateProfileId = 2 },
             new Module { Id = 10, Name = "Web Development Basics", Code = "WDB.10", Description = "Web Development Basics", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
-            new Module { Id = 11, Name = "Data Structures and Algorithms", Code = "DSA.11", Description = "Data Structures and Algorithms", Ec = 30, Level = 2, Period = 1, IsActive = true, GraduateProfileId = 1},
+            new Module { Id = 11, Name = "Data Structures and Algorithms", Code = "DSA.11", Description = "Data Structures and Algorithms", Ec = 30, Level = 2, Period = 1, IsActive = true, GraduateProfileId = 1 },
             new Module { Id = 12, Name = "Database Management Systems", Code = "DBMS.12", Description = "Database Management Systems", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
             new Module { Id = 13, Name = "Data Structures and Algorithms", Code = "DSA.13", Description = "Data Structures and Algorithms", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
             new Module { Id = 14, Name = "Database Management Systems", Code = "DBMS.14", Description = "Database Management Systems", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
             new Module { Id = 15, Name = "Database Management Systems", Code = "DBMS.15", Description = "Database Management Systems", Ec = 30, Level = 3, Period = 1, IsActive = true, GraduateProfileId = 2 },
-            new Module { Id = 16, Name = "Afstuderen", Code = "A.01", Description = "Afstuderen", Ec = 30, Level = 3, Period = 2, IsActive = true, GraduateProfileId = 2},
-            new Module { Id = 17, Name = "Multidisciplinaire Opdracht", Code = "MDO.01", Description = "Multidisciplinaire Opdracht", Ec = 30, Level = 3, Period = 2, IsActive = true, GraduateProfileId = 2}
+            new Module { Id = 16, Name = "Afstuderen", Code = "A.01", Description = "Afstuderen", Ec = 30, Level = 3, Period = 2, IsActive = true, GraduateProfileId = 2 },
+            new Module { Id = 17, Name = "Multidisciplinaire Opdracht", Code = "MDO.01", Description = "Multidisciplinaire Opdracht", Ec = 30, Level = 3, Period = 2, IsActive = true, GraduateProfileId = 2 }
             );
 
         _modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", LearningRouteId = 1, StartYear = 2023, ExternalID="TEST123" },
-            new User { Id = 2, FirstName = "Robin", LastName = "Hood", ExternalID="TEST345" }
+            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", LearningRouteId = 1, StartYear = 2023, ExternalID = "TEST123" },
+            new User { Id = 2, FirstName = "Robin", LastName = "Hood", ExternalID = "TEST345" }
             );
         _modelBuilder.Entity<Semester>()
             .HasOne(s => s.Module)
@@ -93,9 +93,39 @@ public class Seeder
         );
 
         _modelBuilder.Entity<GraduateProfile>().HasData(
-            new GraduateProfile { Id = 1, Name = "BIM", ColorCode = "#F16682" },
-            new GraduateProfile { Id = 2, Name = "SE", ColorCode = "#F5A61A"},
-            new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3"}
+            new GraduateProfile { Id = 1, Name = "BIM", ColorCode = "#F16682A0" },
+            new GraduateProfile { Id = 2, Name = "SE", ColorCode = "#F5A61AA0" },
+            new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3A0" }
+        );
+
+        _modelBuilder.Entity<ModuleProgress>().HasData(
+            new ModuleProgress { Id = 1, UserId = 1, ModuleId = 1},
+			new ModuleProgress { Id = 2, UserId = 2, ModuleId = 1}
+		);
+
+		int evlId = 1;
+		var moduleEVLs = new List<ModuleEVL>();
+
+		for (int moduleId = 1; moduleId <= 15; moduleId++)
+		{
+			for (int i = 1; i <= 3; i++)
+			{
+				moduleEVLs.Add(new ModuleEVL
+				{
+					Id = evlId++,
+					ModuleId = moduleId,
+					Name = $"EVL {i}",
+					Ec = 10
+				});
+			}
+		}
+
+		_modelBuilder.Entity<ModuleEVL>().HasData(moduleEVLs);
+
+		_modelBuilder.Entity<CompletedEvl>().HasData(
+	        new CompletedEvl { Id = 1, ModuleProgressId = 1, ModuleEvlId = 1 },
+	        new CompletedEvl { Id = 2, ModuleProgressId = 1, ModuleEvlId = 2 },
+	        new CompletedEvl { Id = 3, ModuleProgressId = 2, ModuleEvlId = 3 }
         );
 
     }

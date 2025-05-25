@@ -71,6 +71,9 @@ button {
     border-radius: 22px;
     padding: 12px;
     outline: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    overflow-y: scroll;
 }
 
 .module-tile {
@@ -196,6 +199,39 @@ button {
 
 .title-requirement-card{
     margin-bottom: 25px;
+}
+
+.text-area::-webkit-scrollbar-button {
+    display: none;
+}
+
+.text-area::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.text-area::-webkit-scrollbar {
+    width: 10px;
+    transition: opacity 0.3s;
+    background: transparent;
+}
+
+.text-area::-webkit-scrollbar-track {
+    background: transparent;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.text-area::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    transition: background-color 0.3s;
+    border-radius: 10px;
+    margin-right: 5px;
+    background-clip: padding-box;
+    border: 0 solid transparent;
+}
+
+.scrolling::-webkit-scrollbar-thumb {
+    background-color: rgb(177, 210, 073);
 }
 
 /*-----------------------------mobile section----------------------------------------------------------------------------------*/
