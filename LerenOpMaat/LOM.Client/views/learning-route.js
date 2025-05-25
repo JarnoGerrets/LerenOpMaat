@@ -36,9 +36,6 @@ export default async function LearningRoute() {
             semesterData = apiResponse.Semesters;
             routeId = apiResponse.Id;
         }
-    } catch (error) {
-        console.error("Error fetching semester data:", error.message);
-    }
 
         const semesterDataGroupedByYear = semesterData.reduce((acc, data) => {
             const year = data.Year;
@@ -207,10 +204,11 @@ export default async function LearningRoute() {
                 }
             });
         }
-    }finally {
+    } catch (error) {
+        console.error("Error fetching semester data:", error.message);
+    } finally {
         hideLoading();
     }
-    return { fragment };
 
     const feedbackButton = fragment.getElementById("feedBack");
     if (feedbackButton) {
