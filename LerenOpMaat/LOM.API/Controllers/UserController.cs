@@ -100,16 +100,6 @@ namespace LOM.API.Controllers
                 ExternalID = userId,
             });
         }
-        // check if user is logged in
-        [Authorize]
-        [HttpGet("check")]
-        public IActionResult CheckLogin()
-        {
-            if (User.Identity?.IsAuthenticated == true)
-                return Ok();
-            else
-                return Unauthorized();
-        }
     }
 
 
