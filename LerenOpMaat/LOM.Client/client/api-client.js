@@ -22,6 +22,19 @@ export async function logout() {
   } catch { }
 }
 
+export async function checkLoginStatus() {
+  const response = await fetch(`${API_BASE}/account/check`, {
+    method: "GET",
+    credentials: "include"
+  });
+
+  if (response.ok) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export async function getUserData() {
   try {
     const res = await fetch(`${API_BASE}/account`, {
@@ -91,7 +104,6 @@ export async function updateModule(id, moduleData) {
 }
 
 export async function addModule(moduleData) {
-  console.log(moduleData);
   const res = await fetch(`${API_BASE}/Module`, {
     method: "POST",
     headers: {
@@ -124,6 +136,62 @@ export async function deleteModule(id) {
   return res.text();
 
 }
+
+
+export async function getModuleProgress(id) {
+  const res = await fetch(`${API_BASE}/Module/${id}/progress`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch progress: ${res.status}`);
+  }
+  if (res.status === 204) {
+    return null;
+  }
+  return await res.json();
+
+}
+
+export async function addCompletedEvl(id, evlId) {
+  const res = await fetch(`${API_BASE}/Module/${id}/addcompletedevl`, {
+    method: 'POST',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(evlId),
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to update progress: ${res.status}`);
+  }
+
+  return await res.json();
+
+}
+
+export async function removeCompletedEvl(id, evlId) {
+  const res = await fetch(`${API_BASE}/Module/${id}/removecompletedevl/${evlId}`, {
+    method: 'DELETE',
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    credentials: "include"
+  });
+    if (!res.ok) {
+    throw new Error(`Failed to update progress: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 export async function getRequirement(id) {
@@ -237,7 +305,30 @@ export async function getProfile(id) {
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+export async function validateRoute(learningRoute) {
+  const res = await fetch(`${API_BASE}/LearningRoute/ValidateRoute`, {
+    method: "Post",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(learningRoute)
+  });
 
+
+  if (!res.ok) {
+    let errorMessage;
+    try {
+      const errorData = await res.json();
+      errorMessage = errorData.message || JSON.stringify(errorData);
+    } catch {
+      errorMessage = await res.text();
+    }
+
+    throw new Error(`Failed to validate learning route: ${res.status} - ${errorMessage}`);
+  }
+  return await res.json();
+}
 export async function getLearningRoutesByUserId(id) {
   const res = await fetch(`${API_BASE}/LearningRoute/User/${id}`, {
     method: "GET",
