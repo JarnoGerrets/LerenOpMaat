@@ -23,7 +23,6 @@ namespace LOM.API.DTO
 		public static async Task<ModuleRequirementDto> FromModelAsync(Requirement r, LOMContext context)
 		{
 			var module = await context.Modules.FindAsync(int.Parse(r.Value));
-			Debug.WriteLine(RequiredModuleDto.FromModel(module).Id);
 			return new ModuleRequirementDto
 			{
 				Id = r.Id,

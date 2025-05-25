@@ -40,9 +40,10 @@ namespace LOM.API.Controllers
 
             //Important, this method should never return anything.
         }
+
     }
 
-    
+
 
     [Authorize]
     [ApiController]
@@ -95,6 +96,16 @@ namespace LOM.API.Controllers
                 InternalId = user.Id,
                 ExternalID = userId,
             });
+        }
+        // check if user is logged in
+        [Authorize]
+        [HttpGet("check")]
+        public IActionResult CheckLogin()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+                return Ok();
+            else
+                return Unauthorized();
         }
     }
 
@@ -210,7 +221,7 @@ namespace LOM.API.Controllers
         public async Task<IActionResult> SetStartYear(int id, [FromBody] int startYear)
         {
             var currentYear = DateTime.Now.Year + 1;
-            var validYears = Enumerable.Range(currentYear - 3, 4); 
+            var validYears = Enumerable.Range(currentYear - 3, 4);
 
             if (!validYears.Contains(startYear))
             {

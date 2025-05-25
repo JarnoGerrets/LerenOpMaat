@@ -1,4 +1,4 @@
-import confirmationPopup from "../views/partials/confirmation-delete-popup.js";
+import confirmationPopup from "../views/partials/confirmation-popup.js";
 import { updateModule } from "../../client/api-client.js";
 import { deleteModule } from "../client/api-client.js";
 

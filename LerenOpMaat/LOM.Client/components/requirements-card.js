@@ -1,6 +1,6 @@
 import './card.js';
 import editRequirementPopup from '../views/partials/edit-requirement-popup.js';
-import confirmationPopup from "../views/partials/confirmation-delete-popup.js";
+import confirmationPopup from "../views/partials/confirmation-popup.js";
 import { deleteRequirement } from '../client/api-client.js';
 
 export default class RequirementsCard extends customElements.get("base-card") {
