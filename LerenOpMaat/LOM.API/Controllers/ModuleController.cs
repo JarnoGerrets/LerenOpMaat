@@ -201,10 +201,10 @@ namespace LOM.API.Controllers
 		{
 			return _context.Modules.Any(m => m.Code == code);
 		}
-		// DELETE: api/Module/5
-		[Authorize(Roles = "Lecturer")]
-		[HttpDelete("{id}")]
-		public async Task<IActionResult> SoftDeleteModule(int id)
+		// deactivate: api/Module/deactivate/5
+		[Authorize(Roles = "Lecturer, Administrator")]
+		[HttpPatch("deactivate/{id}")]
+		public async Task<IActionResult> DeactivateModule(int id)
 		{
 			var @module = await _context.Modules.FindAsync(id);
 			if (@module == null)
@@ -213,6 +213,24 @@ namespace LOM.API.Controllers
 			}
 
 			module.IsActive = false;
+			_context.Modules.Update(module);
+			await _context.SaveChangesAsync();
+
+			return NoContent();
+		}
+
+		// activate: api/Module/activate/5
+		[Authorize(Roles = "Lecturer, Administrator")]
+		[HttpPatch("activate/{id}")]
+		public async Task<IActionResult> ActivateModule(int id)
+		{
+			var @module = await _context.Modules.FindAsync(id);
+			if (@module == null)
+			{
+				return NotFound();
+			}
+
+			module.IsActive = true;
 			_context.Modules.Update(module);
 			await _context.SaveChangesAsync();
 

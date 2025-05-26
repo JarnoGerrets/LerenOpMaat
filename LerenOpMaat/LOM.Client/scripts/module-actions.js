@@ -1,13 +1,14 @@
 import confirmationPopup from "../views/partials/confirmation-popup.js";
-import { mapPeriodToPresentableString } from "./utils/presentationMapper.js"; 
+import { mapPeriodToPresentableString } from "./utils/presentationMapper.js";
 import { updateModule } from "../../client/api-client.js";
-import { deactivateModule, deleteModule } from "../client/api-client.js";
+import { activateModule, deactivateModule, deleteModule } from "../client/api-client.js";
 import { setupListeners, getSelectedEVLs, updateEvlSelectionHeader, hideDropdown } from "./utils/evl-dropdown/evl-dropdown-utils.js";
 
 
 export function setupButtons(module, textArea, canBeDeleted = false) {
     let editButton = setupEditButton(module, textArea)
     let deactivateButton = setupDeactivationButton(module)
+    let activateButton = setupActivationButton(module);
     let trashButton = setupDeleteButton(module);
 
     const extraButtonsDiv = document.createElement("div");
@@ -15,7 +16,11 @@ export function setupButtons(module, textArea, canBeDeleted = false) {
     extraButtonsDiv.className = "extra-module-buttons";
 
     extraButtonsDiv.appendChild(editButton);
-    extraButtonsDiv.appendChild(deactivateButton);
+    if (!module.IsActive) {
+        extraButtonsDiv.appendChild(activateButton);
+    } else {
+        extraButtonsDiv.appendChild(deactivateButton);
+    }
     if (canBeDeleted) {
         extraButtonsDiv.appendChild(trashButton);
     }
@@ -83,23 +88,36 @@ const header = `
                 Deactiveren module
             </h3>
         `;
-const content = `
-            <div class="confirmation-popup-content">
-            <p>Weet u zeker dat u ${name} wilt deactiveren?</p>
+function createContent(name, action){
+return `<div class="confirmation-popup-content">
+            <p>Weet u zeker dat u ${name} wilt ${action}?</p>
             <div class="confirmation-popup-buttons"> 
                 <button id="confirm-confirmation-popup" class="confirmation-accept-btn">Ja</button>
                 <button id="cancel-confirmation-popup"" class="confirmation-deny-btn">Nee</button>
                 </div>
-            </div>
-        `;
+            </div>`;
+}
+
+// Setup the activation button
+function setupActivationButton(module) {
+    const deactivateButton = document.createElement("a");
+    deactivateButton.className = "bi bi-eye activation-button";
+    deactivateButton.title = "Activeren";
+    deactivateButton.addEventListener('click', async () => {
+        await confirmationPopup(module.Name, module.Id, header, createContent(module.Name, "activeren"), activateModule, `#Module/${module.Id}`, async () => {
+            window.location.href = "#module-overview";
+        });
+    });
+    return deactivateButton;
+}
 
 // Setup the deactivation button
 function setupDeactivationButton(module) {
     const deactivateButton = document.createElement("a");
     deactivateButton.className = "bi bi-eye-slash deactivation-button";
-    deactivateButton.title = "Verwijderen";
+    deactivateButton.title = "Deactiveren";
     deactivateButton.addEventListener('click', async () => {
-        await confirmationPopup(module.Name, module.Id, header, content, deactivateModule, "#module-overview", async () => {
+        await confirmationPopup(module.Name, module.Id, header, createContent(module.Name, "deactiveren"), deactivateModule, `#Module/${module.Id}`, async () => {
             window.location.href = "#module-overview";
         });
     });
@@ -112,7 +130,7 @@ function setupDeleteButton(module) {
     trashButton.className = "bi bi-trash trash-button";
     trashButton.title = "Verwijderen";
     trashButton.addEventListener('click', async () => {
-        await confirmationPopup(module.Name, module.Id, header, content, deleteModule, "#module-overview", async () => {
+        await confirmationPopup(module.Name, module.Id, header, createContent(module.Name, "verwijderen"), deleteModule, "#module-overview", async () => {
             window.location.href = "#module-overview";
         });
     });

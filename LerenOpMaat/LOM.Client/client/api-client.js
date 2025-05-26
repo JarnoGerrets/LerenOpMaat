@@ -143,6 +143,23 @@ export async function existenceModule(id) {
    return await res.json();
 }
 
+export async function activateModule(id) {
+  const res = await fetch(`${API_BASE}/Module/activate/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Accept": "text/plain"
+    },
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to activate module: ${res.status}`);
+  }
+
+  return res.text();
+
+}
+
 export async function deactivateModule(id) {
   const res = await fetch(`${API_BASE}/Module/deactivate/${id}`, {
     method: "PATCH",
@@ -153,7 +170,7 @@ export async function deactivateModule(id) {
   });
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch modules: ${res.status}`);
+    throw new Error(`Failed to deactivate module: ${res.status}`);
   }
 
   return res.text();
