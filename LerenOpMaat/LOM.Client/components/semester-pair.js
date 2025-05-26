@@ -36,6 +36,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             semester: semester1.Period,
             module: semester1.Module.Name,
             moduleId: semester1.ModuleId,
+            isActive: semester1.Module.IsActive,
             locked: semester1.locked,
             onModuleChange: async ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(
@@ -78,8 +79,9 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         const card2 = await SemesterCard({
             id: semester2.id,
             semester: semester2.Period,
-            module: semester2.Module.Name,
-            moduleId: semester2.Module.Id,
+            module: semester2.Module?.Name ?? "Maak een keuze",
+            moduleId: semester2.Module?.Id ?? null,
+            isActive: semester2.Module?.IsActive,
             locked: semester2.locked,
             onModuleChange: ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(

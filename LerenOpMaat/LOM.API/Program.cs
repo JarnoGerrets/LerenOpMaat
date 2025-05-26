@@ -17,13 +17,13 @@ builder.Services.AddDownstreamApis(builder.Configuration.GetSection("DownstreamA
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy("AppCorsPolicy", policy =>
-	{
-		policy.WithOrigins(allowedOrigins ?? [])
-			  .AllowAnyHeader()
-			  .AllowAnyMethod()
+    options.AddPolicy("AppCorsPolicy", policy =>
+    {
+        policy.WithOrigins(allowedOrigins ?? [])
+              .AllowAnyHeader()
+              .AllowAnyMethod()
               .AllowCredentials();
-	});
+    });
 });
 
 
@@ -33,7 +33,30 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve PascalCase
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-		options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
+        {
+            Modifiers =
+           {
+               ti =>
+               {
+                   if (ti.Type == typeof(RequirementDto))
+                   {
+                       ti.PolymorphismOptions = new JsonPolymorphismOptions
+                       {
+                           TypeDiscriminatorPropertyName = "$type",
+                           IgnoreUnrecognizedTypeDiscriminators = true,
+                           DerivedTypes =
+                           {
+                                new JsonDerivedType(typeof(ModuleRequirementDto), "module"),
+                                new JsonDerivedType(typeof(EcRequirementDto), "ec"),
+                                new JsonDerivedType(typeof(NumericRequirementDto), "numeric")
+                           }
+                       };
+                   }
+               }
+           }
+        };
     });
 
 //builder.Services.AddDbContext<LOMContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Local-LOM-DB")));
@@ -62,8 +85,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {/
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 // }
 
 app.UseHttpsRedirection();

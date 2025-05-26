@@ -82,7 +82,7 @@ export async function getModule(id) {
   });
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch modules: ${res.status}`);
+    throw new Error(`Failed to fetch module: ${res.status}`);
   }
 
   return await res.json();
@@ -96,6 +96,7 @@ export async function updateModule(id, moduleData) {
       "Accept": "application/json",
       "Content-Type": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(moduleData)
   });
 
@@ -113,6 +114,7 @@ export async function addModule(moduleData) {
       "Accept": "application/json",
       "Content-Type": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(moduleData)
   });
 
@@ -123,13 +125,44 @@ export async function addModule(moduleData) {
   return res.json();
 }
 
+export async function existenceModule(id) {
+  const res = await fetch(`${API_BASE}/Module/existence/${id}`, {
+    method: "GET",
+    headers: {
+      "Accept": "text/plain"
+    },
+    credentials: "include"
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to check module existence: ${res.status}`);
+  }
+   return await res.json();
+}
+
+export async function deactivateModule(id) {
+  const res = await fetch(`${API_BASE}/Module/deactivate/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Accept": "text/plain"
+    },
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch modules: ${res.status}`);
+  }
+
+  return res.text();
+
+}
 
 export async function deleteModule(id) {
   const res = await fetch(`${API_BASE}/Module/${id}`, {
     method: "DELETE",
     headers: {
       "Accept": "text/plain"
-    }
+    },
+    credentials: "include"
   });
 
   if (!res.ok) {
@@ -348,12 +381,14 @@ export async function getLearningRoutesByUserId(id) {
 }
 
 export async function postLearningRoute(learningRoute) {
-  const res = await fetch(`${API_BASE}/LearningRoute`, {
+  console.log("Posting learning route:", learningRoute);
+  const res = await fetch(`${API_BASE}/learningRoute`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Accept": "text/plain"
     },
+    credentials: "include",
     body: JSON.stringify(learningRoute)
   });
 

@@ -4,6 +4,7 @@ using LOM.API.DAL;
 using LOM.API.Models;
 using LOM.API.DTO;
 using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace LOM.API.Controllers
 {
@@ -22,8 +23,7 @@ namespace LOM.API.Controllers
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules([FromQuery] string? q)
 		{
-			var query = _context.Modules
-				.Where(m => m.IsActive);
+			var query = _context.Modules.AsQueryable();
 
 			if (!string.IsNullOrWhiteSpace(q))
 			{
@@ -54,8 +54,19 @@ namespace LOM.API.Controllers
 		[HttpGet("Active")]
 		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetActiveModules([FromQuery] string? q)
 		{
-			var modules = await _context.Modules
-				.Where(m => m.IsActive)
+
+			var query = _context.Modules.Where(m => m.IsActive);
+
+			if (!string.IsNullOrWhiteSpace(q))
+			{
+				string lowerQ = q.ToLower();
+				query = query.Where(m =>
+					m.Name.ToLower().Contains(lowerQ) ||
+					m.Code.ToLower().Contains(lowerQ) ||
+					m.Description.ToLower().Contains(lowerQ));
+			}
+
+			var modules = await query
 				.Include(m => m.Requirements)
 				.Include(m => m.GraduateProfile)
 				.Include(m => m.Evls)
@@ -85,10 +96,6 @@ namespace LOM.API.Controllers
 			{
 				return NotFound();
 			}
-			else if (!module.IsActive)
-			{
-				return Forbid();
-			}
 
 			var result = await ModuleDto.FromModelAsync(module, _context);
 			return result;
@@ -96,63 +103,100 @@ namespace LOM.API.Controllers
 
 		// PUT: api/Module/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-		[Authorize(Roles = "Lecturer")]
+		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutModule(int id, ModuleDto moduleDto)
 		{
-			var roleClaim = HttpContext.User.FindFirst("role")?.Value;
 
-			if (roleClaim == "Student")
-				return Forbid();
+			var existingModule = await _context.Modules
+				.Include(m => m.Evls)
+				.FirstOrDefaultAsync(m => m.Id == id);
 
-			if (id != moduleDto.Id)
+			if (existingModule == null)
+				return NotFound();
+
+			existingModule.Name = moduleDto.Name;
+			existingModule.Code = moduleDto.Code;
+			existingModule.Description = moduleDto.Description;			
+			existingModule.Level = moduleDto.Level;
+			existingModule.Period = moduleDto.Period;
+			existingModule.IsActive = moduleDto.IsActive;
+			existingModule.GraduateProfileId = moduleDto.GraduateProfile.Id;
+
+			var updatedEcs = 0;
+			foreach (var evlDto in moduleDto.Evls)
 			{
-				return BadRequest();
+				var existingEvl = existingModule.Evls.FirstOrDefault(e => e.Id == evlDto.Id);
+
+				if (existingEvl != null)
+				{
+					existingEvl.Name = evlDto.Name;
+					existingEvl.Ec = evlDto.Ec;
+					updatedEcs += evlDto.Ec;
+				}
+				else
+				{
+					var newEvl = evlDto.ToModel();
+					newEvl.ModuleId = existingModule.Id;
+					existingModule.Evls.Add(newEvl);
+					updatedEcs += evlDto.Ec;
+				}
 			}
-
-			// Convert the DTO back to a model using the mapping method
-			var module = moduleDto.ToModel();
-
-			_context.Entry(module).State = EntityState.Modified;
+			existingModule.Ec = updatedEcs;
 			await _context.SaveChangesAsync();
-
 			return NoContent();
+		}
+
+		[Authorize(Roles = "Lecturer, Administrator")]
+		[HttpGet("existence/{id}")]
+		public async Task<IActionResult> CheckModuleExistence(int id)
+		{
+			var exists = await _context.Semesters.AnyAsync(s => s.ModuleId == id);
+			return Ok(exists);
 		}
 
 
 		// POST: api/Module
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-		[Authorize(Roles = "Lecturer")]
+		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPost]
 		public async Task<ActionResult<Module>> PostModule(ModuleCreateDto @dto)
 		{
-			var roleClaim = HttpContext.User.FindFirst("role")?.Value;
-
-			if (roleClaim == "Student")
-				return Forbid();
-
-			var module = new Module
+			if (dto == null)
 			{
-				Name = dto.Name,
-				Code = dto.Code,
-				Description = dto.Description,
-				Ec = dto.Ec,
-				Level = dto.Level,
-				Period = dto.Period,
-				IsActive = dto.IsActive,
-				GraduateProfileId = dto.GraduateProfileId
-			};
+				return BadRequest("Module data is required.");
+			}
+			try
+			{
+				var module = new Module
+				{
+					Name = dto.Name,
+					Code = dto.Code,
+					Description = dto.Description,
+					Ec = dto.Ec,
+					Level = dto.Level,
+					Period = dto.Period,
+					IsActive = dto.IsActive,
+					GraduateProfileId = dto.GraduateProfileId,
+					Evls = dto.Evls?.Select(evl => evl.ToModel()).ToList() ?? new List<ModuleEVL>(),
+				};
 
-			_context.Modules.Add(module);
-			await _context.SaveChangesAsync();
+				_context.Modules.Add(module);
+				await _context.SaveChangesAsync();
 
-			return CreatedAtAction("GetModule", new { id = @module.Id }, @module);
+				return CreatedAtAction("GetModule", new { id = @module.Id }, @module);
+			}
+			catch (DbUpdateException)
+			{
+				return BadRequest("An error occurred while saving the module. Please try again.");
+			}
+
 		}
 
-		// DELETE: api/Module/5
-		[Authorize(Roles = "Lecturer")]
-		[HttpDelete("{id}")]
-		public async Task<IActionResult> SoftDeleteModule(int id)
+		// Patch: api/Module/deactivate/5
+		[Authorize(Roles = "Lecturer, Administrator")]
+		[HttpPatch("deactivate/{id}")]
+		public async Task<IActionResult> DeactivateModule(int id)
 		{
 			var @module = await _context.Modules.FindAsync(id);
 			if (@module == null)
@@ -166,12 +210,27 @@ namespace LOM.API.Controllers
 
 			return NoContent();
 		}
+		// DELETE: api/Module/5
+		[Authorize(Roles = "Lecturer, Administrator")]
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> DeleteModule(int id)
+		{
+			var module = await _context.Modules.FindAsync(id);
+			if (module == null) return NotFound();
 
+			var isInUse = await _context.Semesters.AnyAsync(s => s.ModuleId == id);
+			if (isInUse) return BadRequest("Module is in use and cannot be deleted.");
+
+			_context.Modules.Remove(module);
+			await _context.SaveChangesAsync();
+
+			return NoContent();
+		}
 		// GET: api/Module/5/progress
 		[HttpGet("{id}/progress")]
 		public async Task<ActionResult<ModuleProgressDto>> GetModuleProgress(int id)
 		{
-			int userId = HttpContext.Session.GetInt32("UserId") ?? 0; 
+			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
 			var progress = await _context.ModuleProgresses
 				.Where(m => m.ModuleId == id && m.UserId == userId)
 				.Include(m => m.CompletedEVLs)

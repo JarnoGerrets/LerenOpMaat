@@ -53,7 +53,7 @@ class ModuleOverview extends HTMLElement {
 
     renderModules(modules) {
         const wrapper = this.querySelector('#module-wrapper');
-        wrapper.innerHTML = ''; // Clear old cards
+        wrapper.innerHTML = '';
 
         modules.forEach(mod => {
             const card = document.createElement('module-card');

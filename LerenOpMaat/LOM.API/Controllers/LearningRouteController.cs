@@ -79,11 +79,12 @@ namespace LOM.API.Controllers
         // POST: api/learningRoutes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<LearningRoute>> PostlearningRoute(LearningRoute learningRoute)
+        public async Task<ActionResult<LearningRoute>> PostlearningRoute([FromBody] LearningRoute learningRoute)
         {
             if (learningRoute == null)
             {
                 return BadRequest("Learning route cannot be null.");
+
             }
 
             if (learningRoute.Users != null && learningRoute.Users.Any())

@@ -1,36 +1,27 @@
 import Popup from "../../components/Popup.js";
 
+
 let popup;
-export default async function confirmationPopup(name, type, callback) {
+export default async function confirmationPopup(name, id, header, content, confirmationAction) {
     popup = new Popup({
         maxWidth: 'auto',
         height: 'auto',
         sizeCloseButton: '0',
         extraButtons: false,
         closeButtonStyle: 'popup-confirmation-closebutton',
-        header: `
-            <h3 class="popup-header-confirmation">
-                Deactiveren module
-            </h3>
-        `,
+        header: header,
         titleWrapperClass: 'popup-title-confirmation',
-        content: `
-            <div class="confirmation-popup-content">
-            <p>Weet u zeker dat u ${name} wilt deactiveren?</p>
-            <div class="confirmation-popup-buttons"> 
-                <button id="confirm-deactivate" class="confirmation-accept-btn">Ja</button>
-                <button id="cancel-deactivate" class="confirmation-deny-btn">Nee</button>
-                </div>
-            </div>
-        `
+        content: content
     });
 
     popup.open();
 
     setTimeout(() => {
         document.getElementById("confirm-deactivate")?.addEventListener("click", async () => {
-            await deleteModule(id);
-            window.location.href = "/";
+            await confirmationAction(id);
+            popup.close();
+            window.location.href = "#module-overview";
+            
         });
 
         document.getElementById("cancel-deactivate")?.addEventListener("click", () => {

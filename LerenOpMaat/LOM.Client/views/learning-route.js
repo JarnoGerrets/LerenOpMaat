@@ -22,9 +22,14 @@ export default async function LearningRoute() {
     const grid = fragment.querySelector(".semester-grid");
     let semesterData = [];
     let routeId = null;
-
+    let userData = localStorage.getItem("userData");
+    let extractedUserData = JSON.parse(userData);
+    let userId = extractedUserData?.InternalId || null;
+    if (!userId) {
+        userId = 0;
+    }
     try {
-        apiResponse = await getLearningRoutesByUserId(1);
+        apiResponse = await getLearningRoutesByUserId(userId);
 
         if (
             !apiResponse.Semesters ||
@@ -218,8 +223,11 @@ export default async function LearningRoute() {
         });
     }
 
+
+
     return { fragment };
 }
+
 
 async function saveLearningRoute(learningRouteArray) {
     if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
@@ -234,9 +242,9 @@ async function saveLearningRoute(learningRouteArray) {
                     ExternalID: user.ExternalID,
                     FirstName: user.FirstName,
                     LastName: user.LastName,
+                    StartYear: 2025,
                 }
             ],
-            StartYear: 2025,
             Semesters: learningRouteArray.map(item => ({
                 Year: item.Year,
                 Period: item.Period,

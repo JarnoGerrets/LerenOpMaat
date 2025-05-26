@@ -8,14 +8,14 @@ import { debounce } from "../scripts/utils/semester-card-utils/utils.js";
 let validationState = {};
 const moduleMessagesMap = {};
 
-export default async function SemesterCard({ semester, module, locked = false, onModuleChange, moduleId }) {
+export default async function SemesterCard({ semester, module, locked = false, isActive = true, onModuleChange, moduleId }) {
   const template = document.createElement("template");
   template.innerHTML = `
   <div class="semester-card-container">
     <div class="semester-card ${locked ? 'locked' : ''}">
       <h3>Semester ${semester}</h3>
-      <button id="select-module" class="semester-button btn btn-light border" style="margin-bottom: 5px;">
-        ${module}
+      <button id="select-module" class="semester-button btn btn-light border" style="margin-bottom: 5px; ${!isActive ? 'color: red;' : ''}">
+        ${module} ${!isActive ? '(inactief)' : ''}
         <i class="ms-1 bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i> 
       </button>
       <span id="coursePoints" class="text-start d-block course-points-link"></span>
@@ -52,7 +52,8 @@ export default async function SemesterCard({ semester, module, locked = false, o
     cardElement.setAttribute("data-module-id", moduleId);
   }
 
-  if (moduleId) {
+  if (moduleId && moduleId !== 200000 && moduleId !== 300000) {
+    console.log("Module ID provided:", moduleId);
     const selectedModule = await getModule(moduleId);
     try {
       const progress = await getModuleProgress(moduleId);
@@ -103,7 +104,12 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
   onModuleChange({ semester, moduleId: selectedModule.Id });
   const result = await validateRoute(learningRouteArray);
-  const progress = await getModuleProgress(selectedModule.Id);
+  let progress;
+  try{
+  progress = await getModuleProgress(selectedModule.Id);
+  }catch (error) {
+    console.error("Failed to load progress for selected module:", error);
+  }
 
   const hasDuplicate = result.some(v =>
     v.Message.toLowerCase().includes("komt al voor in de leerroute") && !v.IsValid
