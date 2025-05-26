@@ -4,15 +4,14 @@ import {
     postConversation,
     postMessage,
     updateConversation,
-    getMessagesByConversationId
+    getMessagesByConversationId,
+    getUserData
 } from "../client/api-client.js";
 
 export default async function Feedback() {
     const response = await fetch("/templates/feedback.html");
     const html = await response.text();
-
-    const currentUserId = localStorage.getItem("currentUserId");
-    const currentLearningRouteId = localStorage.getItem("learningRouteId");
+    const userData = await getUserData();
 
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
@@ -46,6 +45,7 @@ export default async function Feedback() {
         }
     }
 
+    const currentUserId = userData.InternalId;
     async function renderMessages() {
         messageContainer.innerHTML = "";
         try {
@@ -133,16 +133,20 @@ export default async function Feedback() {
 
             // Alleen updaten als conversation bestaat en TeacherId echt anders is
             if (conversation && String(conversation.TeacherId) !== String(selectedTeacherId)) {
+                const updateBody = {
+                    id: conversation.Id,
+                    LearningRouteId: conversation.LearningRouteId,
+                    TeacherId: Number(selectedTeacherId),
+                    StudentId: conversation.StudentId
+                };
                 try {
-                    await updateConversation(conversation.Id, {
-                        ...conversation,
-                        TeacherId: Number(selectedTeacherId)
-                    });
+                    await updateConversation(conversation.Id, updateBody);
                     conversation = await getConversationByUserId(currentUserId);
                     await renderMessages();
                 } catch (err) {
                     errorMsg.textContent = "Kon begeleider niet aanpassen.";
                     errorMsg.style.display = "block";
+                    console.error("Backend error bij updateConversation:", err);
                 }
             } else {
                 errorMsg.style.display = "none";
@@ -162,16 +166,14 @@ export default async function Feedback() {
             textarea.classList.remove("lom-feedback-placeholder-error");
             dropdown.style.borderColor = "";
 
-            // Haal altijd de conversatie op of maak aan
-            let conversation = await getConversationByUserId(currentUserId);
+            // Haal altijd de conversatie op
+            let conversation = await getOrCreateConversation(currentUserId);
             let conversationId = conversation && conversation.Id ? conversation.Id : null;
 
-            // Alleen valideren op begeleider als er nog GEEN conversatie is
             let valid = true;
-            if (!conversationId && !selectedTeacherId) {
-                errorMsg.textContent = "Selecteer een leraar.";
+            if (!conversationId) {
+                errorMsg.textContent = "Er bestaat nog geen conversatie. Vraag eerst een begeleider aan.";
                 errorMsg.style.display = "block";
-                dropdown.style.borderColor = "red";
                 valid = false;
             }
             if (!feedback) {
@@ -185,10 +187,16 @@ export default async function Feedback() {
             if (!valid) return;
 
             try {
-                conversation = await getOrCreateConversation(currentUserId, currentLearningRouteId, selectedTeacherId);
-                conversationId = conversation.Id;
+                // Alleen updateConversation aanroepen als TeacherId gewijzigd is
+                if (conversation.TeacherId != Number(selectedTeacherId)) {
+                    await updateConversation(conversation.Id, {
+                        ...conversation,
+                        TeacherId: Number(selectedTeacherId)
+                    });
+                    conversation = await getConversationByUserId(currentUserId);
+                }
 
-                await postFeedbackMessage(conversationId, feedback, currentUserId);
+                await postFeedbackMessage(conversation.Id, feedback, currentUserId);
 
                 textarea.value = "";
                 updateTextareaPlaceholder();
@@ -198,11 +206,7 @@ export default async function Feedback() {
                 dropdown.style.borderColor = "";
                 await renderMessages();
             } catch (err) {
-                if (!conversationId) {
-                    errorMsg.textContent = "Kon conversatie niet aanmaken.";
-                } else {
-                    errorMsg.textContent = "Kon bericht niet plaatsen.";
-                }
+                errorMsg.textContent = "Kon bericht niet plaatsen.";
                 errorMsg.style.display = "block";
             }
         });
@@ -211,21 +215,8 @@ export default async function Feedback() {
     return { fragment };
 }
 
-async function getOrCreateConversation(currentUserId, currentLearningRouteId, selectedTeacherId) {
-    let conversation = await getConversationByUserId(currentUserId);
-    if (conversation && conversation.Id) {
-        return conversation;
-    }
-    return await createConversation(currentLearningRouteId, selectedTeacherId, currentUserId);
-}
-
-async function createConversation(currentLearningRouteId, selectedTeacherId, currentUserId) {
-    const body = {
-        LearningRouteId: Number(currentLearningRouteId),
-        TeacherId: Number(selectedTeacherId),
-        StudentId: Number(currentUserId)
-    };
-    return await postConversation(body);
+async function getOrCreateConversation(currentUserId) {
+    return await getConversationByUserId(currentUserId);
 }
 
 async function postFeedbackMessage(conversationId, feedback, currentUserId) {

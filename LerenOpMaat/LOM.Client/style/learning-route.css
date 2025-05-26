@@ -319,6 +319,13 @@
     }
 }
 
+.circle-button:disabled,
+.circle-button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 @media screen and (max-width: 1227px) {
     .learning-route-actions {
         flex-direction: row-reverse;

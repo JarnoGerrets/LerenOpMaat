@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LOM.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SemesterController : ControllerBase
     {
         private readonly LOMContext _context;

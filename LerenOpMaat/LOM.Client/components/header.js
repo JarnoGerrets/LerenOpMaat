@@ -31,13 +31,14 @@ export default class Header extends HTMLElement {
     });
   }
 
-  async initializeLogin () {
+  async initializeLogin() {
     const loginObj = this.querySelector("#login-url")
     const logoutObj = this.querySelector("#logout")
 
     const userData = await getUserData()
-    
-    if (userData){
+
+    if (userData) {
+      localStorage.setItem("userData", JSON.stringify(userData));
       loginObj.innerHTML = userData.Username
       logoutObj.classList.remove("d-none")
       logoutObj.addEventListener("click", () => logout())
