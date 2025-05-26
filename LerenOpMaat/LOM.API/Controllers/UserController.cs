@@ -99,6 +99,8 @@ namespace LOM.API.Controllers
             {
                 Roles = roles,
                 Username = email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 InternalId = user.Id,
                 ExternalID = userId,
             });

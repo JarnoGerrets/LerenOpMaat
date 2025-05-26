@@ -49,7 +49,7 @@ public class Seeder
             );
 
         _modelBuilder.Entity<Role>().HasData(
-           new Role { Id = 1, RoleName = "Teacher" },
+           new Role { Id = 1, RoleName = "Administrator" },
            new Role { Id = 2, RoleName = "Student" }
            );
 

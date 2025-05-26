@@ -1,5 +1,5 @@
 import SemesterPair from "../components/semester-pair.js";
-import { getLearningRoutesByUserId, postLearningRoute, updateSemester, deleteRoute, getUserData, postConversation, getConversationByUserId } from "../../client/api-client.js";
+import { getLearningRoutesByUserId, postLearningRoute, updateSemester, postConversation, getConversationByUserId } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
@@ -9,7 +9,6 @@ let apiResponse = [];
 export let currentUserId = null;
 export let learningRouteId = null;
 const cohortYear = parseInt(localStorage.getItem("cohortYear"));
-
 export default async function LearningRoute() {
     showLoading();
 
@@ -22,8 +21,17 @@ export default async function LearningRoute() {
     let semesterData = [];
     let routeId = null;
 
+    let userData = null;
+    let tries = 0;
+    // Wacht tot userData in localStorage staat (max 2 seconden)
+    while (!userData && tries < 20) {
+        userData = JSON.parse(localStorage.getItem("userData"));
+        if (!userData) await new Promise(res => setTimeout(res, 100));
+        tries++;
+    }
+
     try {
-        const userData = await getUserData();
+        const userData = JSON.parse(localStorage.getItem("userData"));
         if (userData && userData.InternalId) {
             apiResponse = await getLearningRoutesByUserId(userData.InternalId);
 
@@ -257,7 +265,7 @@ async function saveLearningRoute(learningRouteArray) {
             Users: [
                 {
                     Id: user.Id,
-                    ExternalID: user.ExternalID,
+                    ExternalId: user.ExternalID,
                     FirstName: user.FirstName,
                     LastName: user.LastName,
                 }
