@@ -1,4 +1,5 @@
 import confirmationPopup from "../views/partials/confirmation-popup.js";
+import { mapPeriodToPresentableString } from "./utils/presentationMapper.js"; 
 import { updateModule } from "../../client/api-client.js";
 import { deleteModule } from "../client/api-client.js";
 
@@ -102,7 +103,7 @@ function ToggleFields(module) {
         module.Level = document.getElementById("level-input").value;
 
         codeText.innerHTML = `${module.Code}`;
-        periodText.innerHTML = `${module.Period}`;
+        periodText.innerHTML = `${mapPeriodToPresentableString(module.Period)}`;
         ecText.innerHTML = `${module.Ec}`;
         levelText.innerHTML = `${module.Level}`;
         addRequirementButton.style.display = "none";
@@ -115,8 +116,8 @@ function ToggleFields(module) {
         `;
 
         let optionsPeriod = '';
-        for (let i = 1; i <= 2; i++) {
-            optionsPeriod += `<option value="${i}" ${module.Period === i ? 'selected' : ''}>${i}</option>`;
+        for (let i = 1; i <= 3; i++) {
+            optionsPeriod += `<option value="${i}" ${module.Period === i ? 'selected' : ''}>${mapPeriodToPresentableString(i)}</option>`;
         }
         periodText.innerHTML = `
         <div><select class="card-input" id="period-input">
