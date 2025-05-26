@@ -1,7 +1,7 @@
 import confirmationPopup from "../views/partials/confirmation-popup.js";
 import { mapPeriodToPresentableString } from "./utils/presentationMapper.js"; 
 import { updateModule } from "../../client/api-client.js";
-import { deactivateModule } from "../client/api-client.js";
+import { deactivateModule, deleteModule } from "../client/api-client.js";
 import { setupListeners, getSelectedEVLs, updateEvlSelectionHeader, hideDropdown } from "./utils/evl-dropdown/evl-dropdown-utils.js";
 
 
@@ -99,7 +99,7 @@ function setupDeactivationButton(module) {
     deactivateButton.className = "bi bi-eye-slash deactivation-button";
     deactivateButton.title = "Verwijderen";
     deactivateButton.addEventListener('click', async () => {
-        await confirmationPopup(module.Name, module.Id, header, content, deactivateModule, 'module', async () => {
+        await confirmationPopup(module.Name, module.Id, header, content, deactivateModule, "#module-overview", async () => {
             window.location.href = "#module-overview";
         });
     });
@@ -112,7 +112,7 @@ function setupDeleteButton(module) {
     trashButton.className = "bi bi-trash trash-button";
     trashButton.title = "Verwijderen";
     trashButton.addEventListener('click', async () => {
-        await confirmationPopup(module.Name, module.Id, header, content, deactivateModule, 'module', async () => {
+        await confirmationPopup(module.Name, module.Id, header, content, deleteModule, "#module-overview", async () => {
             window.location.href = "#module-overview";
         });
     });

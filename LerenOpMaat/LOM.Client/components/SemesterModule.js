@@ -1,4 +1,5 @@
 import loadTemplate from "../scripts/loadTemplate.js";
+import { mapPeriodToPresentableString } from "../scripts/utils/presentationMapper.js"
 
 export default class SemesterModule {
     constructor(modules, onModuleSelect) {

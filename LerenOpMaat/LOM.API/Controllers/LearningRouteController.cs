@@ -82,6 +82,7 @@ namespace LOM.API.Controllers
         [HttpPost]
         public async Task<ActionResult<LearningRoute>> PostlearningRoute([FromBody] LearningRoute learningRoute)
         {
+
             if (learningRoute == null)
             {
                 return BadRequest("Learning route cannot be null.");

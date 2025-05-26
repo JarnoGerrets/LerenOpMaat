@@ -1,5 +1,5 @@
 import SemesterPair from "../components/semester-pair.js";
-import { getLearningRoutesByUserId, postLearningRoute, updateSemester, postConversation, getConversationByUserId } from "../../client/api-client.js";
+import { getLearningRoutesByUserId, postLearningRoute, updateSemester, postConversation, getConversationByUserId, deleteRoute } from "../client/api-client.js"
 import { learningRouteArray } from "../../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
@@ -199,12 +199,25 @@ export default async function LearningRoute() {
                 };
             });
         }
+        const header = `
+                    <h3 class="popup-header-confirmation">
+                        Verwijderen leerroute
+                    </h3>
+                `;
+        const content = `
+                    <div class="confirmation-popup-content">
+                    <p>Weet u zeker dat u uw leerroute wilt verwijderen?</p>
+                    <div class="confirmation-popup-buttons"> 
+                        <button id="confirm-confirmation-popup"" class="confirmation-accept-btn">Ja</button>
+                        <button id="cancel-confirmation-popup"" class="confirmation-deny-btn">Nee</button>
+                    </div>
+                    </div>`;
 
         const deleteButton = fragment.getElementById("deleteRoute");
         if (deleteButton) {
             deleteButton.addEventListener("click", async () => {
                 if (routeId !== null) {
-                    await confirmationPopup("de leerroute", "delete", routeId);
+                    await confirmationPopup("Leerroute", routeId, header, content, deleteRoute, "/");
                 } else {
                     console.error("Geen routeId beschikbaar om te verwijderen.");
                 }
@@ -257,7 +270,6 @@ export default async function LearningRoute() {
     return { fragment };
 }
 
-
 async function saveLearningRoute(learningRouteArray) {
     if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
         const user = apiResponse?.Users?.[0];
@@ -269,8 +281,8 @@ async function saveLearningRoute(learningRouteArray) {
                 {
                     Id: user.Id,
                     ExternalId: user.ExternalID,
-                    FirstName: user.FirstName,
-                    LastName: user.LastName,
+                    FirstName:  "Jarno",
+                    LastName: "Gerrets",
                     StartYear: 2025,
                 }
             ],
@@ -305,7 +317,7 @@ async function updateLearningRoute(routeId, semesterData) {
         const response = await updateSemester(routeId, body);
 
         if (!response) {
-            console.error(`Fout bij het updaten van de learning route: ${response.status}`);
+            console.error(`Fout bij het updaten van de learning route: ${response.status} `);
             return;
         } else {
             console.log("Learning route succesvol gepdatet.");

@@ -403,7 +403,7 @@ export async function postLearningRoute(learningRoute) {
     throw new Error(`Failed to post learning route: ${res.status}`);
   }
 
-  return;
+  return true;
 }
 
 export async function deleteRoute(learningRouteId) {
