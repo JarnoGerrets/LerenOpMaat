@@ -23,6 +23,9 @@ export default async function SemesterCard({ semester, module, locked = false, i
         <i class="bi bi-exclamation-triangle-fill"></i>
       </div>
     </div>
+    <div class="inactive-label-tag hidden">
+      Deze module is inactief
+    </div>
     <div class="evl-list-wrapper rounded p-2 mt-2">
       <div class="evl-list border rounded p-2 mt-2 bg-light">
         
@@ -57,6 +60,9 @@ export default async function SemesterCard({ semester, module, locked = false, i
     try {
       const progress = await getModuleProgress(moduleId);
       await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
+      const cardContainer = cardElement.closest(".semester-card-container");
+      updateInactiveLabel(cardContainer, selectedModule.IsActive);
+
     } catch (error) {
       console.error("Failed to load progress for initial module:", error);
     }
@@ -72,6 +78,9 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
     const moduleId = parseInt(cardElement.getAttribute("data-module-id"));
 
     await updateModuleUI(button, coursePoints, locked, null, learningRouteArray);
+    const cardContainer = cardElement.closest(".semester-card-container");
+    updateInactiveLabel(cardContainer, selectedModule.IsActive);
+
     cardElement.setAttribute("data-module-id", '');
     cardElement.classList.remove("invalid-module");
 
@@ -104,9 +113,9 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
   onModuleChange({ semester, moduleId: selectedModule.Id });
   const result = await validateRoute(learningRouteArray);
   let progress;
-  try{
-  progress = await getModuleProgress(selectedModule.Id);
-  }catch (error) {
+  try {
+    progress = await getModuleProgress(selectedModule.Id);
+  } catch (error) {
     console.error("Failed to load progress for selected module:", error);
   }
 
@@ -121,6 +130,9 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
   }
 
   await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
+  const cardContainer = cardElement.closest(".semester-card-container");
+  updateInactiveLabel(cardContainer, selectedModule.IsActive);
+
   cardElement.setAttribute("data-module-id", selectedModule.Id);
   onModuleChange({ semester, moduleId: selectedModule.Id });
 
@@ -129,14 +141,23 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
 }
 
-window.validationState = validationState;
-window.moduleMessagesMap = moduleMessagesMap;
+function updateInactiveLabel(cardContainer, isActive) {
+  let label = cardContainer.querySelector('.inactive-label-tag');
+  const button = cardContainer.querySelector('#select-module');
+  label.classList.toggle('hidden', isActive);
+  if (button.textContent.includes("Selecteer je module")) {
+    button.style.color = '';
+  } else {
+    button.style.color = isActive ? '' : 'red';
+  }
+}
+
 
 document.addEventListener("click", (event) => {
   const allEvlWrappers = document.querySelectorAll(".evl-list-wrapper");
 
   allEvlWrappers.forEach(wrapper => {
-    const card = wrapper.previousElementSibling;
+    const card = wrapper.closest(".semester-card-container")?.querySelector(".semester-card");
     const toggle = card?.querySelector("#coursePoints");
 
     if (!wrapper.contains(event.target) && !toggle.contains(event.target)) {
@@ -145,3 +166,6 @@ document.addEventListener("click", (event) => {
   });
 });
 
+
+window.validationState = validationState;
+window.moduleMessagesMap = moduleMessagesMap;

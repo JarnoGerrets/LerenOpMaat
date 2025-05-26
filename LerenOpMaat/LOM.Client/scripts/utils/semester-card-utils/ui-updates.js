@@ -49,7 +49,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
     <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
   `
   const card = button.closest('.semester-card');
-  const evlWrapper = card.nextElementSibling;
+  const evlWrapper = card.parentElement.querySelector(".evl-list-wrapper");
   const evlList = evlWrapper.querySelector(".evl-list");
 
   const achievedECs = calculateAchievedECs(progress, selectedModule);
