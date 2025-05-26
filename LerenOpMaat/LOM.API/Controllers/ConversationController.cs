@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LOM.API.DAL;
+using LOM.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using LOM.API.DAL;
-using LOM.API.Models;
-using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace LOM.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-
     public class ConversationController : ControllerBase
     {
         private readonly LOMContext _context;
@@ -55,7 +55,41 @@ namespace LOM.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(conversation).State = EntityState.Modified;
+            // Get the current user from the session (claims)
+            var externalId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(externalId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _context.User
+                .Include(u => u.LearningRoute)
+                .FirstOrDefaultAsync(u => u.ExternalID == externalId);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            // Fetch the existing conversation from the database
+            var existingConversation = await _context.Conversations.FindAsync(id);
+            if (existingConversation == null)
+            {
+                return NotFound();
+            }
+
+            // Only allow the student who owns the conversation to update it
+            if (existingConversation.StudentId != user.Id)
+            {
+                return Forbid();
+            }
+
+            // Update only allowed fields (example: TeacherId)
+            existingConversation.TeacherId = conversation.TeacherId;
+            // If you want to allow more fields, add them here
+
+            // Always set the LearningRouteId from the user, not from the client
+            existingConversation.LearningRouteId = user.LearningRouteId ?? 0;
 
             try
             {
@@ -81,7 +115,7 @@ namespace LOM.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Conversation>> PostConversation(Conversation conversation)
         {
-            var externalId = User?.Identity?.Name;
+            var externalId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(externalId))
             {
                 return Unauthorized();
@@ -99,7 +133,7 @@ namespace LOM.API.Controllers
             conversation.StudentId = user.Id;
             conversation.LearningRouteId = user.LearningRouteId ?? 0;
 
-            var teacher = await _context.User.FirstOrDefaultAsync(u => u.Id == conversation.TeacherId && u.Role.RoleName == "Administrator");
+            var teacher = await _context.User.FirstOrDefaultAsync(u => u.Id == conversation.TeacherId && u.Role.RoleName == "Teacher");
             if (teacher == null)
             {
                 return BadRequest("Invalid teacher.");

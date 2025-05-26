@@ -113,6 +113,7 @@ export async function addModule(moduleData) {
       "Accept": "application/json",
       "Content-Type": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(moduleData)
   });
 
@@ -336,6 +337,7 @@ export async function validateRoute(learningRoute) {
 export async function getLearningRoutesByUserId(id) {
   const res = await fetch(`${API_BASE}/LearningRoute/User/${id}`, {
     method: "GET",
+    credentials: "include",
     headers: {
       "Accept": "text/plain"
     }
@@ -355,6 +357,7 @@ export async function postLearningRoute(learningRoute) {
       "Content-Type": "application/json",
       "Accept": "text/plain"
     },
+    credentials: "include",
     body: JSON.stringify(learningRoute)
   });
 
@@ -366,18 +369,20 @@ export async function postLearningRoute(learningRoute) {
 }
 
 export async function deleteRoute(learningRouteId) {
+
   const res = await fetch(`${API_BASE}/LearningRoute/${learningRouteId}`, {
     method: "DELETE",
     headers: {
-      "Accept": "application/json"
-    }
+      "Accept": "application/json",
+    },
+    credentials: "include",
   });
 
   if (!res.ok) {
     throw new Error(`Failed to delete learning route: ${res.status}`);
   }
 
-  return res.ok; // Return true if the request was successful
+  return res.ok;
 }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
@@ -389,6 +394,7 @@ export async function updateSemester(learningRouteId, semesterData) {
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(semesterData) // Verstuur de array van semesters
   });
 
@@ -413,11 +419,11 @@ export async function getConversationByUserId(userId) {
     method: "GET",
     headers: {
       "Accept": "application/json"
-    }
+    },
+    credentials: "include"
   });
 
   if (res.status === 404) {
-    // Geen conversatie gevonden
     return null;
   }
 
@@ -435,6 +441,7 @@ export async function updateConversation(id, conversationData) {
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(conversationData)
   });
 
@@ -453,6 +460,7 @@ export async function updateConversation(id, conversationData) {
 export async function getAllTeachers() {
   const res = await fetch(`${API_BASE}/User/teachers`, {
     method: "GET",
+    credentials: "include",
     headers: {
       "Accept": "application/json"
     }
@@ -465,12 +473,13 @@ export async function getAllTeachers() {
 }
 
 export async function postConversation(body) {
-  const res = await fetch(`${API_BASE}/Conversations`, {
+  const res = await fetch(`${API_BASE}/Conversation`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(body)
   });
   if (!res.ok) {
@@ -482,6 +491,7 @@ export async function postConversation(body) {
 export async function getMessagesByConversationId(conversationId) {
   const res = await fetch(`${API_BASE}/Message/messagesByConversationId/${conversationId}`, {
     method: "GET",
+    credentials: "include",
     headers: {
       "Accept": "application/json"
     }
@@ -501,6 +511,7 @@ export async function postMessage(messageBody) {
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(messageBody)
   });
   if (!res.ok) {

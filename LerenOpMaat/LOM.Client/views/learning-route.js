@@ -196,18 +196,7 @@ export default async function LearningRoute() {
         if (deleteButton) {
             deleteButton.addEventListener("click", async () => {
                 if (routeId !== null) {
-                    await confirmationPopup("de leerroute", "leerroute", async () => {
-                        try {
-                            const isDeleted = await deleteRoute(routeId);
-                            if (isDeleted) {
-                                location.reload();
-                            } else {
-                                console.error("Fout bij het verwijderen van de leerroute.");
-                            }
-                        } catch (error) {
-                            console.error("Fout bij het verwijderen van de leerroute:", error.message);
-                        }
-                    });
+                    await confirmationPopup("de leerroute", "delete", routeId);
                 } else {
                     console.error("Geen routeId beschikbaar om te verwijderen.");
                 }
