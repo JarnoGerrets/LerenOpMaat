@@ -1,6 +1,7 @@
 import Popup from "../../components/Popup.js";
 import { getProfiles, addModule } from "../../client/api-client.js";
 import {getSelectedEVLs, setupListeners} from "../../scripts/utils/evl-dropdown/evl-dropdown-utils.js"
+import { mapPeriodToPresentableString } from "../../scripts/utils/presentationMapper.js";
 let mijnPopup;
 
 export default async function addModulePopup() {
@@ -87,8 +88,9 @@ export default async function addModulePopup() {
                         <div class="field-wrapper">
                             <span class="field-text" >Periode:</span>
                             <select id="period" type="number" class="save-module-select" required>
-                            <option id=1>1</option>
-                            <option id=2>2</option>
+                            <option id=1>${mapPeriodToPresentableString(1)}</option>
+                            <option id=2>${mapPeriodToPresentableString(2)}</option>
+                            <option id=3>${mapPeriodToPresentableString(3)}</option>
                             </select>
                         </div>
                         <div class="field-wrapper">

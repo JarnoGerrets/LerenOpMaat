@@ -117,7 +117,7 @@ namespace LOM.API.Controllers
 
 			existingModule.Name = moduleDto.Name;
 			existingModule.Code = moduleDto.Code;
-			existingModule.Description = moduleDto.Description;			
+			existingModule.Description = moduleDto.Description;
 			existingModule.Level = moduleDto.Level;
 			existingModule.Period = moduleDto.Period;
 			existingModule.IsActive = moduleDto.IsActive;
@@ -166,6 +166,12 @@ namespace LOM.API.Controllers
 			{
 				return BadRequest("Module data is required.");
 			}
+
+			if (ModuleCodeExists(dto.Code))
+			{
+				return Conflict(new { message = "Module code bestaat al." });
+			}
+
 			try
 			{
 				var module = new Module
@@ -190,13 +196,15 @@ namespace LOM.API.Controllers
 			{
 				return BadRequest("An error occurred while saving the module. Please try again.");
 			}
-
 		}
-
-		// Patch: api/Module/deactivate/5
-		[Authorize(Roles = "Lecturer, Administrator")]
-		[HttpPatch("deactivate/{id}")]
-		public async Task<IActionResult> DeactivateModule(int id)
+		private bool ModuleCodeExists(string code)
+		{
+			return _context.Modules.Any(m => m.Code == code);
+		}
+		// DELETE: api/Module/5
+		[Authorize(Roles = "Lecturer")]
+		[HttpDelete("{id}")]
+		public async Task<IActionResult> SoftDeleteModule(int id)
 		{
 			var @module = await _context.Modules.FindAsync(id);
 			if (@module == null)
@@ -232,7 +240,7 @@ namespace LOM.API.Controllers
 		public async Task<ActionResult<ModuleProgressDto>> GetModuleProgress(int id)
 		{
 			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
-			
+
 			var progress = await _context.ModuleProgresses
 				.Where(m => m.ModuleId == id && m.UserId == userId)
 				.Include(m => m.CompletedEVLs)
@@ -300,9 +308,6 @@ namespace LOM.API.Controllers
 			var result = ModuleProgressDto.FromModel(updatedProgress);
 			return Ok(result);
 		}
-
-
-
 
 		// DELETE: api/Module/5/completedevl/10
 		[Authorize]

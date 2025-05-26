@@ -61,31 +61,36 @@ namespace LOM.API.Controllers
         [HttpGet]
         public IActionResult GetUser()
         {
-            // Get user claims
+            // Haal user claims op
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // sub
-            var email = User.FindFirstValue("preferred_username");       // usually email
+            var email = User.FindFirstValue("preferred_username");       // meestal email
             var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
 
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("No user ID found in claims.");
 
-            // Try to find existing user
+            // Bepaal RoleId op basis van de claims
+            int roleId = (roles.Contains("Administrator")) ? 1 : 2;
+
             var user = _context.User.FirstOrDefault(u => u.ExternalID == userId);
 
             if (user == null)
             {
-                // Create new user (basic defaults)
+                // Maak nieuwe user aan met juiste RoleId
                 user = new User
                 {
                     ExternalID = userId,
                     FirstName = "",
                     LastName = "",
                     StartYear = DateTime.Now.Year,
-                    RoleId = 2
+                    RoleId = roleId
                 };
 
                 _context.User.Add(user);
                 _context.SaveChanges();
+
+                // Haal de user opnieuw op zodat user.Id correct is
+                user = _context.User.FirstOrDefault(u => u.ExternalID == userId);
             }
 
             // Store user ID in session
@@ -95,6 +100,8 @@ namespace LOM.API.Controllers
             {
                 Roles = roles,
                 Username = email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 InternalId = user.Id,
                 ExternalID = userId,
             });
@@ -229,6 +236,14 @@ namespace LOM.API.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpGet("teachers")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsersWithIdOne()
+        {
+            var teachers = await _context.User.Where(u => u.RoleId == 1).ToListAsync();
+
+            return Ok(teachers);
         }
 
     }

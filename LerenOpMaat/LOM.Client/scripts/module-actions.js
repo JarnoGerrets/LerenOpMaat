@@ -1,4 +1,5 @@
 import confirmationPopup from "../views/partials/confirmation-popup.js";
+import { mapPeriodToPresentableString } from "./utils/presentationMapper.js"; 
 import { updateModule } from "../../client/api-client.js";
 import { deactivateModule } from "../client/api-client.js";
 import { setupListeners, getSelectedEVLs, updateEvlSelectionHeader, hideDropdown } from "./utils/evl-dropdown/evl-dropdown-utils.js";
@@ -86,8 +87,8 @@ const content = `
             <div class="confirmation-popup-content">
             <p>Weet u zeker dat u ${name} wilt deactiveren?</p>
             <div class="confirmation-popup-buttons"> 
-                <button id="confirm-deactivate" class="confirmation-accept-btn">Ja</button>
-                <button id="cancel-deactivate" class="confirmation-deny-btn">Nee</button>
+                <button id="confirm-confirmation-popup" class="confirmation-accept-btn">Ja</button>
+                <button id="cancel-confirmation-popup"" class="confirmation-deny-btn">Nee</button>
                 </div>
             </div>
         `;
@@ -135,7 +136,8 @@ function ToggleFields(module) {
         module.Ec = totalEC;
 
         codeText.innerHTML = `${module.Code}`;
-        periodText.innerHTML = `${module.Period}`;
+        periodText.innerHTML = `${mapPeriodToPresentableString(module.Period)}`;
+        ecText.innerHTML = `${module.Ec}`;
         levelText.innerHTML = `${module.Level}`;
         ecText.innerHTML = `${module.Ec}`;
         addRequirementButton.style.display = "none";
@@ -148,8 +150,8 @@ function ToggleFields(module) {
         `;
 
         let optionsPeriod = '';
-        for (let i = 1; i <= 2; i++) {
-            optionsPeriod += `<option value="${i}" ${module.Period === i ? 'selected' : ''}>${i}</option>`;
+        for (let i = 1; i <= 3; i++) {
+            optionsPeriod += `<option value="${i}" ${module.Period === i ? 'selected' : ''}>${mapPeriodToPresentableString(i)}</option>`;
         }
         periodText.innerHTML = `
         <div><select class="card-input" id="period-input">

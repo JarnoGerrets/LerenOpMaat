@@ -10,6 +10,7 @@ using LOM.API.Models;
 using LOM.API.Validator.ValidationResults;
 using LOM.API.Validator;
 using Microsoft.Extensions.Configuration.UserSecrets;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LOM.API.Controllers
 {
@@ -185,7 +186,7 @@ namespace LOM.API.Controllers
             return learningRoute;
         }
 
-        
+
         [HttpPost("ValidateRoute")]
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {

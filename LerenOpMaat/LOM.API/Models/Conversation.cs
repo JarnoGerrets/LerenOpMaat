@@ -11,7 +11,7 @@ namespace LOM.API.Models
         public LearningRoute? LearningRoute { get; set; }
 
         [ForeignKey(nameof(Teacher))]
-        public int TeacherId { get; set; }
+        public int? TeacherId { get; set; } //deze mag null zijn want tijdens het aanmaken van de converstaion wordt er nog geen teacherId geselecteerd. 
         public User? Teacher { get; set; }
 
         [ForeignKey(nameof(Student))]

@@ -17,38 +17,45 @@ export default async function confirmationPopup(name, id, header, content, confi
     popup.open();
 
     setTimeout(() => {
-        document.getElementById("confirm-deactivate")?.addEventListener("click", async () => {
+        document.getElementById("confirm-confirmation-popup")?.addEventListener("click", async () => {
             await confirmationAction(id);
             popup.close();
             window.location.href = "#module-overview";
             
         });
 
-        document.getElementById("cancel-deactivate")?.addEventListener("click", () => {
+        document.getElementById("cancel-confirmation-popup")?.addEventListener("click", () => {
             popup.close();
         });
     }, 0);
 
-    setTimeout(() => {
-        document.getElementById("confirm-delete")?.addEventListener("click", async () => {
-            if (id && name === "de leerroute") { // Controleer of het om een leerroute gaat
-                try {
-                    const isDeleted = await deleteRoute(id);
-                    if (isDeleted) {
-                        window.location.reload();
-                    } else {
-                        console.error("Fout bij het verwijderen van de leerroute.");
-                    }
-                } catch (error) {
-                    console.error("Fout bij het verwijderen van de leerroute:", error.message);
-                }
-            }
-        });
-
-        document.getElementById("cancel-delete")?.addEventListener("click", () => {
-            popup.close();
-        });
-    }, 0);
+    // setTimeout(() => {
+    //     document.getElementById("confirm-delete")?.addEventListener("click", async () => {
+    //         if (id && name === "de leerroute") { // Controleer of het om een leerroute gaat
+    //             try {
+    //                 const isDeleted = await deleteRoute(id);
+    //                 if (isDeleted) {
+    //                     window.location.reload();
+    //                 } else {
+    //                     console.error("Fout bij het verwijderen van de leerroute.");
+    //                 }
+    //             } catch (error) {
+    //                 console.error("Fout bij het verwijderen van de leerroute:", error.message);
+    //             }
+    //         });
+    //         document.getElementById("cancel-delete")?.addEventListener("click", () => {
+    //             popup.close();
+    //         });
+    //     } else {
+    //         document.getElementById("confirm-deactivate")?.addEventListener("click", async () => {
+    //             await deleteModule(id);
+    //             window.location.href = "/";
+    //         });
+    //         document.getElementById("cancel-deactivate")?.addEventListener("click", () => {
+    //             popup.close();
+    //         });
+    //     }
+    // }, 0);
 
     window.addEventListener('beforeunload', handleUnload);
     window.addEventListener('popstate', handleUnload);
