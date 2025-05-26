@@ -5,6 +5,7 @@
 }
 
 .dropdown-toggle {
+    min-width: 205px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -21,6 +22,7 @@
 
 }
 .toggle-info-page{
+    min-width: 100px;
     max-width: 150px;
     width: auto;
 }
@@ -174,3 +176,4 @@
     height: 22px !important;
     width: 22px !important;
 }
+

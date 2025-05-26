@@ -16,7 +16,6 @@ export default async function initModuleInfo(id) {
     const moduleId = pathParts[1];
     let canBeDeleted;
     let module = await getModule(moduleId);
-    console.log(module);
     if (module) {
         canBeDeleted = !(await existenceModule(moduleId)); // Check if the module is not used in any route. outcome is flipped to use for toggling the delete button
     }
