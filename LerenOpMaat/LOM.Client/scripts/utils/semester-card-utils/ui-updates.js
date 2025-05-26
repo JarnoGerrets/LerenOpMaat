@@ -44,9 +44,10 @@ export function updateCardStyle(card, moduleId, validationMessages = []) {
 }
 
 export async function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null, learningRouteArray = null) {
+  let isActive = selectedModule ? selectedModule.IsActive : true;
   button.innerHTML = `
     ${selectedModule ? selectedModule.Name : 'Selecteer je module'}
-    <i class="bi ${!selectedModule.IsActive || locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
+    <i class="bi ${!isActive || locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
   `
   const card = button.closest('.semester-card');
   const evlWrapper = card.parentElement.querySelector(".evl-list-wrapper");

@@ -60,14 +60,16 @@ export default async function SemesterCard({ semester, module, locked = false, i
     try {
       const progress = await getModuleProgress(moduleId);
       await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
+
       const cardContainer = cardElement.closest(".semester-card-container");
-      updateInactiveLabel(cardContainer, selectedModule.IsActive);
+      const moduleActiveStatus = selectedModule?.IsActive ?? true;
+
+      updateInactiveLabel(cardContainer, moduleActiveStatus);
 
     } catch (error) {
       console.error("Failed to load progress for initial module:", error);
     }
   }
-
   return fragment;
 }
 
@@ -79,7 +81,9 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
     await updateModuleUI(button, coursePoints, locked, null, learningRouteArray);
     const cardContainer = cardElement.closest(".semester-card-container");
-    updateInactiveLabel(cardContainer, selectedModule.IsActive);
+    const moduleActiveStatus = selectedModule?.IsActive ?? true;
+
+    updateInactiveLabel(cardContainer, moduleActiveStatus);
 
     cardElement.setAttribute("data-module-id", '');
     cardElement.classList.remove("invalid-module");
@@ -131,7 +135,8 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
   await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
   const cardContainer = cardElement.closest(".semester-card-container");
-  updateInactiveLabel(cardContainer, selectedModule.IsActive);
+  const moduleActiveStatus = selectedModule?.IsActive ?? true;
+  updateInactiveLabel(cardContainer, moduleActiveStatus);
 
   cardElement.setAttribute("data-module-id", selectedModule.Id);
   onModuleChange({ semester, moduleId: selectedModule.Id });
