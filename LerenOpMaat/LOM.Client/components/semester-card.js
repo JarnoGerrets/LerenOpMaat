@@ -52,7 +52,8 @@ export default async function SemesterCard({ semester, module, locked = false, o
     cardElement.setAttribute("data-module-id", moduleId);
   }
 
-  if (moduleId) {
+  // Voorkom ophalen van dummy modules
+  if (moduleId && moduleId !== 200000 && moduleId !== 300000) {
     const selectedModule = await getModule(moduleId);
     try {
       const progress = await getModuleProgress(moduleId);
