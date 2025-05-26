@@ -227,10 +227,12 @@ namespace LOM.API.Controllers
 			return NoContent();
 		}
 		// GET: api/Module/5/progress
+		[Authorize]
 		[HttpGet("{id}/progress")]
 		public async Task<ActionResult<ModuleProgressDto>> GetModuleProgress(int id)
 		{
 			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+			
 			var progress = await _context.ModuleProgresses
 				.Where(m => m.ModuleId == id && m.UserId == userId)
 				.Include(m => m.CompletedEVLs)

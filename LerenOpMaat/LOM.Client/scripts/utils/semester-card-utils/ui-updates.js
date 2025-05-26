@@ -46,7 +46,7 @@ export function updateCardStyle(card, moduleId, validationMessages = []) {
 export async function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null, learningRouteArray = null) {
   button.innerHTML = `
     ${selectedModule ? selectedModule.Name : 'Selecteer je module'}
-    <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
+    <i class="bi ${!selectedModule.IsActive || locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
   `
   const card = button.closest('.semester-card');
   const evlWrapper = card.parentElement.querySelector(".evl-list-wrapper");
@@ -72,8 +72,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
             </span>
 
           <span class="checkbox-text">
-            ${ev.Name} (${ev.Ec || 10} EC's)
-
+          ${ev.Name} (${ev.Ec || 10} EC's)
             <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
               <symbol id="checkbox-30" viewBox="0 0 22 22">
                 <path

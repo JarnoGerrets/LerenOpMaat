@@ -179,13 +179,14 @@ export async function getModuleProgress(id) {
     method: "GET",
     headers: {
       "Accept": "application/json"
-    }
+    },
+    credentials: "include"
   });
 
   if (!res.ok) {
     throw new Error(`Failed to fetch progress: ${res.status}`);
   }
-  if (res.status === 204) {
+  if (res.status === 401 || res.status === 403 || res.status === 204) {
     return null;
   }
   return await res.json();

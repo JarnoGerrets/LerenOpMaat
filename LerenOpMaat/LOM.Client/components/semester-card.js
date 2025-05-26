@@ -12,11 +12,11 @@ export default async function SemesterCard({ semester, module, locked = false, i
   const template = document.createElement("template");
   template.innerHTML = `
   <div class="semester-card-container">
-    <div class="semester-card ${locked ? 'locked' : ''}">
+    <div class="semester-card">
       <h3>Semester ${semester}</h3>
-      <button id="select-module" class="semester-button btn btn-light border" style="margin-bottom: 5px; ${!isActive ? 'color: red;' : ''}">
+      <button id="select-module" class="semester-button btn btn-light border ${!isActive || locked ? 'locked' : ''}" style="margin-bottom: 5px; ${!isActive ? 'color: red;' : ''}">
         ${module}
-        <i class="ms-1 bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i> 
+        <i class="ms-1 bi ${!isActive || locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i> 
       </button>
       <span id="coursePoints" class="text-start d-block course-points-link"></span>
       <div class="exclamation-icon" data-bs-toggle="tooltip" data-bs-custom-class="tool-tip-style" title="">

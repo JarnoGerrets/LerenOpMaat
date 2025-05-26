@@ -112,7 +112,8 @@ public class Seeder
         _modelBuilder.Entity<GraduateProfile>().HasData(
             new GraduateProfile { Id = 1, Name = "BIM", ColorCode = "#F16682A0" },
             new GraduateProfile { Id = 2, Name = "SE", ColorCode = "#F5A61AA0" },
-            new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3A0" }
+            new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3A0" },
+            new GraduateProfile { Id = 4, Name = "Geen", ColorCode = "#4594D3A3" }
         );
 
         _modelBuilder.Entity<ModuleProgress>().HasData(
