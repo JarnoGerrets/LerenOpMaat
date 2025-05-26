@@ -59,7 +59,7 @@ namespace LOM.API.Controllers
             var externalId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(externalId))
             {
-                return Unauthorized();
+                return Unauthorized(new { message = "User is authenticated but not found in the database." });
             }
 
             var user = await _context.User
@@ -84,9 +84,8 @@ namespace LOM.API.Controllers
                 return Forbid();
             }
 
-            // Update only allowed fields (example: TeacherId)
+            // Update only TeacherId
             existingConversation.TeacherId = conversation.TeacherId;
-            // If you want to allow more fields, add them here
 
             // Always set the LearningRouteId from the user, not from the client
             existingConversation.LearningRouteId = user.LearningRouteId ?? 0;
