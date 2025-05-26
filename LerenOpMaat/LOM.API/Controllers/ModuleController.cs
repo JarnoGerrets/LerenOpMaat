@@ -96,15 +96,10 @@ namespace LOM.API.Controllers
 
 		// PUT: api/Module/5
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-		[Authorize(Roles = "Lecturer")]
+		[Authorize(Roles = "Lecturer,Administrator")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutModule(int id, ModuleDto moduleDto)
 		{
-			var roleClaim = HttpContext.User.FindFirst("role")?.Value;
-
-			if (roleClaim == "Student")
-				return Forbid();
-
 			if (id != moduleDto.Id)
 			{
 				return BadRequest();
@@ -113,23 +108,36 @@ namespace LOM.API.Controllers
 			// Convert the DTO back to a model using the mapping method
 			var module = moduleDto.ToModel();
 
+			var existingModule = await _context.Modules.FindAsync(id);
+			if (existingModule == null)
+			{
+				return NotFound();
+			}
+
+			if (existingModule.Code != module.Code)
+			{
+				if (ModuleCodeExists(module.Code))
+				{
+					return Conflict(new { message = "Module code bestaat al." });
+				}
+			}
+
 			_context.Entry(module).State = EntityState.Modified;
 			await _context.SaveChangesAsync();
 
 			return NoContent();
 		}
 
-
 		// POST: api/Module
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-		[Authorize(Roles = "Lecturer")]
+		[Authorize(Roles = "Lecturer,Administrator")]
 		[HttpPost]
 		public async Task<ActionResult<Module>> PostModule(ModuleCreateDto @dto)
 		{
-			var roleClaim = HttpContext.User.FindFirst("role")?.Value;
-
-			if (roleClaim == "Student")
-				return Forbid();
+			if (ModuleCodeExists(dto.Code))
+			{
+				return Conflict(new { message = "Module code bestaat al." });
+			}
 
 			var module = new Module
 			{
@@ -149,8 +157,13 @@ namespace LOM.API.Controllers
 			return CreatedAtAction("GetModule", new { id = @module.Id }, @module);
 		}
 
+		private bool ModuleCodeExists(string code)
+		{
+			return _context.Modules.Any(e => e.Code == code);
+		}
+
 		// DELETE: api/Module/5
-		[Authorize(Roles = "Lecturer")]
+		[Authorize(Roles = "Lecturer,Administrator")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> SoftDeleteModule(int id)
 		{
@@ -239,9 +252,6 @@ namespace LOM.API.Controllers
 			var result = ModuleProgressDto.FromModel(updatedProgress);
 			return Ok(result);
 		}
-
-
-
 
 		// DELETE: api/Module/5/completedevl/10
 		[Authorize]
