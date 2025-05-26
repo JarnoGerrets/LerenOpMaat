@@ -575,3 +575,21 @@ export async function getCurrentOerPdf() {
 
   return await res.blob();
 }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+export async function getConversationByAdminId(adminId) {
+  const res = await fetch(`${API_BASE}/Conversation/conversationByAdministratorId/${adminId}`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    },
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch conversation: ${res.status}`);
+  }
+
+  return await res.json();
+}

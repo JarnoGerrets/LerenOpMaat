@@ -3,6 +3,7 @@ import { RouteOrSelector } from "./views/cohort-selector.js";
 import { moduleOverview } from "./views/module-overview.js";
 import oerView from './views/oer-view.js';
 import feedback from './views/feedback.js';
+import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
@@ -20,6 +21,9 @@ const routes = {
   },
   "#feedback": async () => {
     return await feedback();
+  },
+  "#dashboard-list": async () => {
+    return await renderTeacherLearningRoutes();
   },
 };
 

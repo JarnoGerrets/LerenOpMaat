@@ -116,6 +116,27 @@ namespace LOM.API.Controllers
             return conversation;
         }
 
+        [HttpGet("conversationByAdministratorId/{administratorId}")]
+        public async Task<ActionResult<IEnumerable<Conversation>>> getConversationsByAdministratorId(int administratorId)
+        {
+            // Haal alle conversations op waar de admin als Teacher gekoppeld is
+            var conversations = await _context.Conversations
+                .Include(c => c.Student)
+                .Include(c => c.Teacher)
+                .Include(c => c.LearningRoute)
+                .ThenInclude(s => s.Semesters)
+                .ThenInclude(m => m.Module)
+                .Where(c => c.TeacherId == administratorId)
+                .ToListAsync();
+
+            if (!conversations.Any())
+            {
+                return NotFound();
+            }
+
+            return conversations;
+        }
+
         private bool ConversationExists(int id)
         {
             return _context.Conversations.Any(e => e.Id == id);
