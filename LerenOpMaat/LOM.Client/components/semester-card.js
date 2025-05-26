@@ -15,7 +15,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
     <div class="semester-card ${locked ? 'locked' : ''}">
       <h3>Semester ${semester}</h3>
       <button id="select-module" class="semester-button btn btn-light border" style="margin-bottom: 5px; ${!isActive ? 'color: red;' : ''}">
-        ${module} ${!isActive ? '(inactief)' : ''}
+        ${module}
         <i class="ms-1 bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i> 
       </button>
       <span id="coursePoints" class="text-start d-block course-points-link"></span>
@@ -53,7 +53,6 @@ export default async function SemesterCard({ semester, module, locked = false, i
   }
 
   if (moduleId && moduleId !== 200000 && moduleId !== 300000) {
-    console.log("Module ID provided:", moduleId);
     const selectedModule = await getModule(moduleId);
     try {
       const progress = await getModuleProgress(moduleId);
