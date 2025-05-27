@@ -56,6 +56,30 @@ a.rm-a-style:active {
     border-radius: 4px;
 }
 
+.legend {
+    font-size: 28px;
+    font-weight: bold;
+    margin-left: 20px;
+    -webkit-text-stroke: 2px;
+    stroke-width: 2px;
+    cursor: pointer;
+}
+
+.legend-wrapper span {
+    background: black;
+    height: 2rem;
+    width: 2rem;
+    display: inline-block;
+    border-radius: 1rem;
+}
+
+.legend-wrapper p {
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
 @keyframes fade-in {
     from {
         opacity: 0;

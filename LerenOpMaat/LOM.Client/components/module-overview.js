@@ -1,6 +1,7 @@
 // module-overview.js
-import { getModules } from '../client/api-client.js';
+import { getModules, getProfiles } from '../client/api-client.js';
 import addModulePopup from '../views/partials/add-module-popup.js';
+import Popup from "./Popup.js";
 import './module-card.js';
 
 class ModuleOverview extends HTMLElement {
@@ -21,8 +22,11 @@ class ModuleOverview extends HTMLElement {
             <div class="container my-5">
                 <div id="top-section-module-overview">
                     <h1 class="module-overview-title">Module Overview</h1>
-                    <div id="add-module-button" style="display: none;">
-                        <i class="bi bi-plus-circle"></i><span class="icon-text-module-overview">Module toevoegen</span>
+                    <div class="d-flex">
+                        <div id="add-module-button" style="display: none;">
+                            <i class="bi bi-plus-circle"></i><span class="icon-text-module-overview">Module toevoegen</span>
+                        </div>
+                        <i class="bi bi-list legend" id="legendButton"></i>
                     </div>
                 </div>
                 <input class="form-control" id="searchInput" type="text" placeholder="Type om te zoeken">
@@ -39,7 +43,6 @@ class ModuleOverview extends HTMLElement {
             const filteredModules = await getModules(query);
             this.renderModules(filteredModules);
         });
-
 
         let userData = null;
 
@@ -58,6 +61,23 @@ class ModuleOverview extends HTMLElement {
                 });
             }
         }
+
+        const profiles = await getProfiles();
+        const profileString = profiles.map(i => `<p><span style="background: ${i.ColorCode}"></span> ${i.Name}</p>`).join("")
+
+        this.querySelector("#legendButton").addEventListener("click", () => {
+            new Popup({
+                extraButtons: false,
+                header: `Legenda`,
+                sizeCloseButton: 18,
+                content: `
+                    <div class="legend-wrapper" style="width: 500px; padding: 20px">
+                        ${profileString}
+                    </div>
+                `
+            }).open();
+        })
+        
     }
 
     renderModules(modules) {
