@@ -14,55 +14,41 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
 
     try {
         apiResponse = await getModules();
-        if (
-            !apiResponse ||
-            !Array.isArray(apiResponse) ||
-            apiResponse.length === 0
-        ) {
-            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse);
-        } else {
-            modules = apiResponse;
-        }
-
     } catch (error) {
         console.error("Error fetching module data:", error.message);
-
-
-        modules = [
-            { id: '1', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'SE' },
-            { id: '2', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'BIM' },
-            { id: '3', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'IDNS' },
-            { id: '4', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'SE' },
-            { id: '5', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'BIM' },
-            { id: '6', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'IDNS' },
-            { id: '7', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'SE' },
-            { id: '8', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'BIM' },
-            { id: '9', name: 'Introduction to Programming', description: 'Introduction to Programming', Category: 'IDNS' },
-            { id: '10', name: 'Web Development Basics', description: 'Web Development Basics', Category: 'SE' },
-            { id: '11', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
-            { id: '12', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' },
-            { id: '13', name: 'Data Structures and Algorithms', description: 'Data Structures and Algorithms', Category: 'BIM' },
-            { id: '14', name: 'Database Management Systems', description: 'Database Management Systems', Category: 'IDNS' }
-        ];
     }
 
+
+let renderedSemesterModules = null;
+if (
+    !apiResponse ||
+    !Array.isArray(apiResponse) ||
+    apiResponse.length === 0
+) {
+    renderedSemesterModules = document.createElement('div')
+    renderedSemesterModules.innerHTML = "<span class='error-label-popup'>Er zijn geen modules gevonden, neem contact op met de beheerder</span>";
+
+} else {
+    modules = apiResponse;
     //Deze is omdat alles hardcoded is, maar later als wij een DB hebben
     //dan wordt alles uit de koppel tabel opgehaald
     if (selectedModuleName !== "Selecteer je module") {
         modules.unshift({ Name: 'Geen Keuze', Description: 'Geen Keuze' });
     }
-
-    // Create the SemesterModules component with the hardcoded data
-    const semesterModules = new SemesterModule(
-        modules,
-        (selectedModule) => {
-            moduleSelectionPopup.close(selectedModule);
-            return selectedModule;
-        }
-    );
-    const renderedSemesterModules = await semesterModules.render();
+        // Create the SemesterModules component with the retrieved data
+        const semesterModules = new SemesterModule(
+            modules,
+            (selectedModule) => {
+                moduleSelectionPopup.close(selectedModule);
+                return selectedModule;
+            }
+        );
+        renderedSemesterModules = await semesterModules.render();
+    }
 
     moduleSelectionPopup = new Popup({
+        minWidth: '400px',
+        minheight: '400px',
         maxWidth: 'auto',
         maxHeight: '620px',
         sizeCloseButton: '16',
@@ -85,6 +71,7 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
             }
         ]
     });
+
     moduleSelectionPopup.contentContainer.appendChild(renderedSemesterModules);
 
     const selectedModule = await moduleSelectionPopup.open();

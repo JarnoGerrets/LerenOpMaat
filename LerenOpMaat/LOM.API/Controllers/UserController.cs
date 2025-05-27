@@ -32,6 +32,7 @@ namespace LOM.API.Controllers
             {
                 RedirectUri = returnUrl
             }, OpenIdConnectDefaults.AuthenticationScheme);
+
         }
 
         [HttpGet("logout")]

@@ -21,7 +21,7 @@ class ModuleOverview extends HTMLElement {
             <div class="container my-5">
                 <div id="top-section-module-overview">
                     <h1 class="module-overview-title">Module Overview</h1>
-                    <div id="add-module-button">
+                    <div id="add-module-button" style="display: none;">
                         <i class="bi bi-plus-circle"></i><span class="icon-text-module-overview">Module toevoegen</span>
                     </div>
                 </div>
@@ -40,15 +40,24 @@ class ModuleOverview extends HTMLElement {
             this.renderModules(filteredModules);
         });
 
-        //add module handler
-        const addModuleInput = this.querySelector('#add-module-button');
-        addModuleInput.addEventListener('click', async () => {
-            const success = await addModulePopup();
-            if (success) {
-                const modules = await getModules();
-                this.renderModules(modules);
+
+        let userData = null;
+
+        userData = JSON.parse(localStorage.getItem("userData"));
+        if (userData) {
+            if (userData.Roles != 'Student') {
+                //add module handler        
+                const addModuleInput = this.querySelector('#add-module-button');
+                addModuleInput.style.display = 'flex';
+                addModuleInput.addEventListener('click', async () => {
+                    const success = await addModulePopup();
+                    if (success) {
+                        const modules = await getModules();
+                        this.renderModules(modules);
+                    }
+                });
             }
-        });
+        }
     }
 
     renderModules(modules) {

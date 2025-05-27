@@ -2,8 +2,12 @@
     padding-left: 25px;
     padding-top: 15px;
     display: flex;
-    gap: 400px;
+    gap: 435px;
     width: 100%;
+}
+
+.card-style {
+    min-width: 420px;
 }
 
 .extra-module-buttons {
@@ -65,7 +69,7 @@
     display: flex;
     justify-content: space-between;
     align-items: top center;
-    gap: 20px;
+    gap: 30px;
     padding-left: 25px;
     padding-right: 25px;
     padding-top: 15px;
@@ -75,7 +79,9 @@
     flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px
+    gap: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 #description-text {
@@ -90,7 +96,7 @@ button {
     width: 100%;
     height: 80vh;
     border-width: 0px;
-    box-shadow: inset -8px 0px 12px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: inset -3px 0px 6px 6px rgba(0, 0, 0, 0.2);
     resize: none;
     border-radius: 22px;
     padding: 12px;
@@ -212,11 +218,17 @@ button {
 
 .requirement-row {
     display: flex;
+    flex-direction: row;
+    align-items: center;
     justify-content: space-between;
+    margin-bottom: 10px;
+    ;
 }
 
 .requirement-row p {
     max-width: 250px;
+    align-self: center;
+    margin-bottom: 0 !important;
 }
 
 .requirement-card-action-button {
@@ -261,6 +273,12 @@ button {
     background-color: rgb(177, 210, 073);
 }
 
+#evlSelectionHeader {
+    font-weight: normal !important;
+    font-style: normal !important;
+    color: black;
+}
+
 
 
 /*-----------------------------mobile section----------------------------------------------------------------------------------*/
@@ -270,15 +288,22 @@ button {
         gap: 250px;
     }
 
+    .card-style {
+        min-width: 0px;
+    }
+
     .module-info-container {
         flex-direction: column;
         align-items: center;
+        padding-left: 12px;
+        padding-right: 5px;
     }
 
     #card-column {
         display: flex;
         flex-direction: row;
         align-items: stretch;
+        gap: 10;
     }
 
     #description-text {
@@ -321,11 +346,8 @@ button {
         text-align: left;
     }
 
-}
-
-@media (max-width: 768px) {
-    .card-style {
-        margin-left: 15px !important;
-        margin-right: 15px !important;
+    .text-area {
+        margin: 0;
     }
+
 }

@@ -32,6 +32,7 @@ export async function getUserData() {
     });
 
     const userData = await res.json();
+    
     localStorage.setItem("userData", JSON.stringify(userData));
 
     return userData;
@@ -141,7 +142,7 @@ export async function existenceModule(id) {
   if (!res.ok) {
     throw new Error(`Failed to check module existence: ${res.status}`);
   }
-   return await res.json();
+  return await res.json();
 }
 
 export async function activateModule(id) {
@@ -197,22 +198,33 @@ export async function deleteModule(id) {
 
 
 export async function getModuleProgress(id) {
-  const res = await fetch(`${API_BASE}/Module/${id}/progress`, {
-    method: "GET",
-    headers: {
-      "Accept": "application/json"
-    },
-    credentials: "include"
-  });
+  let userData = null;
+  userData = JSON.parse(localStorage.getItem("userData"));
+  if (!userData) return null;
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch progress: ${res.status}`);
-  }
-  if (res.status === 401 || res.status === 403 || res.status === 204) {
+  try {
+    const res = await fetch(`${API_BASE}/Module/${id}/progress`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json"
+      },
+      credentials: "include"
+    });
+
+    if (res.status === 401 || res.status === 403 || res.status === 204) {
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch progress: ${res.status}`);
+    }
+
+    return await res.json();
+
+  } catch (error) {
+    console.error("Fetch failed:", error);
     return null;
   }
-  return await res.json();
-
 }
 
 export async function addCompletedEvl(id, evlId) {
@@ -371,6 +383,7 @@ export async function validateRoute(learningRoute) {
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(learningRoute)
   });
 

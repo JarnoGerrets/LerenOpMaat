@@ -1,5 +1,5 @@
 export default class Popup {
-    constructor({ maxWidth = 'auto', maxHeight = 'auto', sizeCloseButton = '', extraButtons = false, closeButtonStyle, header = '', titleWrapperClass = '', content = '', buttons = [] }) {
+    constructor({minwidth = 'auto', minheight = 'auto', maxWidth = 'auto', maxHeight = 'auto', sizeCloseButton = '', extraButtons = false, closeButtonStyle, header = '', titleWrapperClass = '', content = '', buttons = [] }) {
 
         this._handleOutsideClick = this._handleOutsideClick.bind(this);
 
@@ -10,6 +10,8 @@ export default class Popup {
         this.popup.classList.add('popup');
         this.popup.style.maxWidth = maxWidth;
         this.popup.style.maxHeight = maxHeight;
+        this.popup.style.minWidth = minwidth;
+        this.popup.style.minHeight = minheight;
 
         this.overlay = document.createElement('div');
         this.overlay.classList.add('popup-overlay');

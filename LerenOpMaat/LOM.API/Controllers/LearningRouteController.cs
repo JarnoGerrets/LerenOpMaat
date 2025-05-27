@@ -192,6 +192,7 @@ namespace LOM.API.Controllers
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
             foreach (var semester in semesters)
             {
                 if (semester.ModuleId.HasValue)
