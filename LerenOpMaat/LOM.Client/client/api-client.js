@@ -46,7 +46,8 @@ export async function getModules(q) {
     method: "GET",
     headers: {
       "Accept": "text/plain"
-    }
+    },
+    credentials: "include"
   });
 
   if (!res.ok) {

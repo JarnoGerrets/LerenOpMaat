@@ -5,8 +5,15 @@ import '../components/requirements-card.js';
 
 export default async function initModuleInfo(id) {
 
-    // role based selection of modules, when student opens do not show inactive modules, when docent does show them
-    const correctRole = true;
+    let userData = null;
+    let tries = 0;
+    let correctRole = false;
+    // Wacht tot userData in localStorage staat (max 2 seconden)
+    userData = JSON.parse(localStorage.getItem("userData"));
+
+    if (userData && userData?.Role !== "Student") {
+        correctRole = true;
+    }
     const CardContainer = document.getElementById('card-column');
     const textArea = document.getElementById('moduleTextArea');
     textArea.readOnly = true; // by default it's not editable to prevent issues (not secure but without saving options not a real issue)
@@ -17,7 +24,7 @@ export default async function initModuleInfo(id) {
     let canBeDeleted;
     let module = await getModule(moduleId);
 
-    if (module) {
+    if (module && correctRole) {
         canBeDeleted = !(await existenceModule(moduleId)); // Check if the module is not used in any route. outcome is flipped to use for toggling the delete button
     }
 
