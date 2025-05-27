@@ -281,8 +281,8 @@ async function saveLearningRoute(learningRouteArray) {
                 {
                     Id: user.Id,
                     ExternalId: user.ExternalID,
-                    FirstName:  "Jarno",
-                    LastName: "Gerrets",
+                    FirstName:  user.FirstName,
+                    LastName: user.LastName,
                     StartYear: 2025,
                 }
             ],
