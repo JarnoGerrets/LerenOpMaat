@@ -383,6 +383,7 @@ export async function validateRoute(learningRoute) {
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(learningRoute)
   });
 

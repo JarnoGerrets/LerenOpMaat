@@ -51,7 +51,7 @@ export default class SemesterModule {
 
             const tile = document.createElement('div');
             tile.classList.add('module-tile');
-            tile.style.backgroundColor = module.GraduateProfile.ColorCode;
+            tile.style.backgroundColor = module.GraduateProfile?.ColorCode ?? '#f0f0f0';
             tile.id = `module-${module.Id}`;
             tile.innerHTML = populatedTemplate;
             //making sure the router can recognize this call
