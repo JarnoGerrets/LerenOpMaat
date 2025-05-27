@@ -155,7 +155,6 @@ async function saveChanges(module, textArea) {
     module.Level = document.getElementById("level-input").value;
     module.Description = textArea.value;
     module.GraduateProfile = module.GraduateProfile;
-    console.log(module);
     const response = await updateModule(module.Id, module);
     showToast(`${module.Name} succesvol gewijzigd`, 'success');
 }

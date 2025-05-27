@@ -87,6 +87,9 @@ namespace LOM.API.Controllers
 
                 _context.User.Add(user);
                 _context.SaveChanges();
+
+                // Haal de user opnieuw op zodat user.Id correct is
+                user = _context.User.FirstOrDefault(u => u.ExternalID == userId);
             }
 
             // Store user ID in session
@@ -96,6 +99,8 @@ namespace LOM.API.Controllers
             {
                 Roles = roles,
                 Username = email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 InternalId = user.Id,
                 ExternalID = userId,
             });
@@ -249,6 +254,14 @@ namespace LOM.API.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpGet("teachers")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsersWithIdOne()
+        {
+            var teachers = await _context.User.Where(u => u.RoleId == 1).ToListAsync();
+
+            return Ok(teachers);
         }
 
     }

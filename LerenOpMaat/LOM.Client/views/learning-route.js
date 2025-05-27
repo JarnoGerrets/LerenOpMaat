@@ -1,6 +1,5 @@
 import SemesterPair from "../components/semester-pair.js";
-import Feedback from "./feedback.js";
-import { getLearningRoutesByUserId, postLearningRoute, updateSemester, deleteRoute } from "../../client/api-client.js";
+import { getLearningRoutesByUserId, postLearningRoute, updateSemester, postConversation, getConversationByUserId } from "../../client/api-client.js";
 import { learningRouteArray } from "../../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
@@ -9,11 +8,10 @@ import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
 let apiResponse = [];
 export let currentUserId = null;
 export let learningRouteId = null;
-
+const cohortYear = parseInt(localStorage.getItem("cohortYear"));
 export default async function LearningRoute() {
     showLoading();
 
-    const cohortYear = parseInt(localStorage.getItem("cohortYear"));
     const response = await fetch("/templates/learning-route.html");
     const html = await response.text();
     const template = document.createElement("template");
@@ -23,18 +21,37 @@ export default async function LearningRoute() {
     let semesterData = [];
     let routeId = null;
 
-    try {
-        apiResponse = await getLearningRoutesByUserId(1);
+    let userData = null;
+    let tries = 0;
+    // Wacht tot userData in localStorage staat (max 2 seconden)
+    while (!userData && tries < 20) {
+        userData = JSON.parse(localStorage.getItem("userData"));
+        if (!userData) await new Promise(res => setTimeout(res, 100));
+        tries++;
+    }
 
-        if (
-            !apiResponse.Semesters ||
-            !Array.isArray(apiResponse.Semesters) ||
-            apiResponse.Semesters.length === 0
-        ) {
-            console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
+    try {
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        if (userData && userData.InternalId) {
+            apiResponse = await getLearningRoutesByUserId(userData.InternalId);
+
+            if (
+                !apiResponse.Semesters ||
+                !Array.isArray(apiResponse.Semesters) ||
+                apiResponse.Semesters.length === 0
+            ) {
+                console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
+            } else {
+                semesterData = apiResponse.Semesters;
+                routeId = apiResponse.Id;
+            }
         } else {
-            semesterData = apiResponse.Semesters;
-            routeId = apiResponse.Id;
+            semesterData = [dummySemester1, dummySemester2];
+            //document.querySelector("#app").appendChild(fragment);
+            ["saveLearningRoute", "deleteRoute", "feedBack"].forEach(id => {
+                const btn = fragment.getElementById(id);
+                if (btn) btn.disabled = true;
+            });
         }
 
         const semesterDataGroupedByYear = semesterData.reduce((acc, data) => {
@@ -187,18 +204,7 @@ export default async function LearningRoute() {
         if (deleteButton) {
             deleteButton.addEventListener("click", async () => {
                 if (routeId !== null) {
-                    await confirmationPopup("de leerroute", "leerroute", async () => {
-                        try {
-                            const isDeleted = await deleteRoute(routeId);
-                            if (isDeleted) {
-                                location.reload();
-                            } else {
-                                console.error("Fout bij het verwijderen van de leerroute.");
-                            }
-                        } catch (error) {
-                            console.error("Fout bij het verwijderen van de leerroute:", error.message);
-                        }
-                    });
+                    await confirmationPopup("de leerroute", "delete", routeId);
                 } else {
                     console.error("Geen routeId beschikbaar om te verwijderen.");
                 }
@@ -212,8 +218,36 @@ export default async function LearningRoute() {
 
     const feedbackButton = fragment.getElementById("feedBack");
     if (feedbackButton) {
-        feedbackButton.addEventListener("click", (e) => {
+        feedbackButton.addEventListener("click", async (e) => {
             e.preventDefault();
+
+            // Haal gebruiker en routeId op
+            const user = apiResponse?.Users?.[0];
+            if (!user || !routeId) {
+                console.error("Gebruiker of routeId niet gevonden.");
+                window.location.hash = "#feedback";
+                return;
+            }
+
+            // Controleer of conversatie al bestaat
+            let conversation = await getConversationByUserId(user.Id);
+
+            if (!conversation) {
+                // Conversation bestaat niet, maak een nieuwe aan
+                const conversationBody = {
+                    LearningRouteId: routeId,
+                    TeacherId: 4, // Pas eventueel aan
+                    StudentId: user.Id
+                };
+                try {
+                    await postConversation(conversationBody);
+                } catch (err) {
+                    console.error("Kon conversatie niet aanmaken:", err);
+                    return;
+                }
+            }
+
+            // Open feedbackpagina
             window.location.hash = "#feedback";
         });
     }
@@ -231,12 +265,12 @@ async function saveLearningRoute(learningRouteArray) {
             Users: [
                 {
                     Id: user.Id,
-                    ExternalID: user.ExternalID,
+                    ExternalId: user.ExternalID,
                     FirstName: user.FirstName,
                     LastName: user.LastName,
                 }
             ],
-            StartYear: 2025,
+            StartYear: cohortYear,
             Semesters: learningRouteArray.map(item => ({
                 Year: item.Year,
                 Period: item.Period,

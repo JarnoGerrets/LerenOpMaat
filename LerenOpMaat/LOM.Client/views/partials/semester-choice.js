@@ -14,7 +14,6 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
 
     try {
         apiResponse = await getActiveModules();
-        console.log(apiResponse);
         if (
             !apiResponse ||
             !Array.isArray(apiResponse) ||
@@ -52,8 +51,6 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
     if (selectedModuleName !== "Selecteer je module") {
         modules.unshift({ Name: 'Geen Keuze', Description: 'Geen Keuze' });
     }
-
-    console.log(modules);
 
     // Create the SemesterModules component with the hardcoded data
     const semesterModules = new SemesterModule(
