@@ -3,6 +3,7 @@ import { RouteOrSelector } from "./views/cohort-selector.js";
 import { moduleOverview } from "./views/module-overview.js";
 import oerView from './views/oer-view.js';
 import feedback from './views/feedback.js';
+import settingsPage from './views/settings-page.js';
 import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
@@ -22,6 +23,9 @@ const routes = {
   "#feedback": async () => {
     return await feedback();
   },
+  "#instellingen": async () => {
+    return await settingsPage();
+  }
   "#dashboard-list": async () => {
     return await renderTeacherLearningRoutes();
   },
@@ -89,6 +93,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   router();
 });
+let scrollArea;
+setTimeout(() => {
+  scrollArea = document.getElementById('app');
+  scrollArea.classList.add('hide-scrollbar');
+
+  scrollArea.addEventListener('scroll', () => {
+    scrollArea.classList.add('scrolling');
+    clearTimeout(scrollArea.scrollTimeout);
+    scrollArea.scrollTimeout = setTimeout(() => {
+      scrollArea.classList.remove('scrolling');
+    }, 700);
+  });
+}, 1000);
 
 const navigateTo = (url) => {
   history.pushState(null, null, url);

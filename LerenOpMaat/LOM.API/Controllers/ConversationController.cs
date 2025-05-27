@@ -132,12 +132,6 @@ namespace LOM.API.Controllers
             conversation.StudentId = user.Id;
             conversation.LearningRouteId = user.LearningRouteId ?? 0;
 
-            var teacher = await _context.User.FirstOrDefaultAsync(u => u.Id == conversation.TeacherId && u.Role.RoleName == "Teacher");
-            if (teacher == null)
-            {
-                return BadRequest("Invalid teacher.");
-            }
-
             _context.Conversations.Add(conversation);
             await _context.SaveChangesAsync();
 

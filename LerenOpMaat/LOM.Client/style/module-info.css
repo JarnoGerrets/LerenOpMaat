@@ -2,8 +2,12 @@
     padding-left: 25px;
     padding-top: 15px;
     display: flex;
-    gap: 400px;
+    gap: 435px;
     width: 100%;
+}
+
+.card-style {
+    min-width: 420px;
 }
 
 .extra-module-buttons {
@@ -13,9 +17,20 @@
 
 .edit-button {
     cursor: pointer;
+    align-self: center;
+}
+
+.deactivation-button {
+    cursor: pointer;
+}
+
+
+.activation-button {
+    cursor: pointer;
 }
 
 .trash-button {
+    align-self: center;
     cursor: pointer;
 }
 
@@ -27,9 +42,22 @@
     color: black;
 }
 
+.bi-eye-slash {
+    -webkit-text-stroke: 0.35px;
+    color: black;
+    font-size: 20px;
+}
+
+.bi-eye {
+    -webkit-text-stroke: 0.35px;
+    color: black;
+    font-size: 20px;
+}
+
 .bi-trash {
     -webkit-text-stroke: 0.35px;
     color: black;
+    font-size: 18px;
 }
 
 .bi-pencil-square {
@@ -41,7 +69,7 @@
     display: flex;
     justify-content: space-between;
     align-items: top center;
-    gap: 20px;
+    gap: 30px;
     padding-left: 25px;
     padding-right: 25px;
     padding-top: 15px;
@@ -51,7 +79,9 @@
     flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px
+    gap: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 #description-text {
@@ -66,7 +96,7 @@ button {
     width: 100%;
     height: 80vh;
     border-width: 0px;
-    box-shadow: inset -8px 0px 12px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: inset -3px 0px 6px 6px rgba(0, 0, 0, 0.2);
     resize: none;
     border-radius: 22px;
     padding: 12px;
@@ -146,12 +176,15 @@ button {
 
 .card-input {
     width: 80px;
-    border-radius: 10px;
-    border-style: none;
+    border-radius: 16px;
+    height: 35px;
+    border: none;
+    box-shadow: inset 0px 2px 2px 2px rgba(0, 0, 0, 0.2);
     padding-left: 5px;
+    min-width: 130px;
 }
 
-.module-card-text{
+.module-card-text {
     gap: 50px;
 }
 
@@ -165,39 +198,45 @@ button {
     /* control vertical spacing */
 }
 
-#go-back-button{
+#go-back-button {
     cursor: pointer;
 }
 
-.title-module-card{
+.title-module-card {
     margin-bottom: 25px;
 }
 
-.requirement-card-title-row{
+.requirement-card-title-row {
     display: flex;
     justify-content: space-between;
 }
 
-.requirement-card-add-button{
+.requirement-card-add-button {
     align-self: start;
     cursor: pointer;
 }
 
 .requirement-row {
     display: flex;
+    flex-direction: row;
+    align-items: center;
     justify-content: space-between;
+    margin-bottom: 10px;
+    ;
 }
 
-.requirement-row p{
+.requirement-row p {
     max-width: 250px;
+    align-self: center;
+    margin-bottom: 0 !important;
 }
 
-.requirement-card-action-button{
+.requirement-card-action-button {
     cursor: pointer;
     font-size: 25px;
 }
 
-.title-requirement-card{
+.title-requirement-card {
     margin-bottom: 25px;
 }
 
@@ -234,21 +273,37 @@ button {
     background-color: rgb(177, 210, 073);
 }
 
+#evlSelectionHeader {
+    font-weight: normal !important;
+    font-style: normal !important;
+    color: black;
+}
+
+
+
 /*-----------------------------mobile section----------------------------------------------------------------------------------*/
 
 @media (max-width: 768px) {
     .buttons-container-module-info {
         gap: 250px;
     }
+
+    .card-style {
+        min-width: 0px;
+    }
+
     .module-info-container {
         flex-direction: column;
         align-items: center;
+        padding-left: 12px;
+        padding-right: 5px;
     }
 
     #card-column {
         display: flex;
         flex-direction: row;
         align-items: stretch;
+        gap: 10;
     }
 
     #description-text {
@@ -256,23 +311,25 @@ button {
         margin-bottom: 20px;
     }
 
-    .h4 ,h4{
+    .h4,
+    h4 {
         font-size: 16px;
     }
 
-    .title-module-card .title-requirement-card{
+    .title-module-card .title-requirement-card {
         text-align: left;
         font-size: 16px;
     }
 
-    .card-style{
+    .card-style {
         padding: 20px 10px 10px 20px !important;
         max-width: 100vw;
         height: 100%;
         min-height: 151px;
     }
 
-    .text-module-card, .text-requirement-card {
+    .text-module-card,
+    .text-requirement-card {
         flex: 1;
         font-size: 10px;
         width: 100%;
@@ -281,12 +338,16 @@ button {
         margin: 0;
     }
 
-    .module-card-text{
+    .module-card-text {
         gap: 7px;
     }
 
     .bi-chevron-left {
         text-align: left;
+    }
+
+    .text-area {
+        margin: 0;
     }
 
 }

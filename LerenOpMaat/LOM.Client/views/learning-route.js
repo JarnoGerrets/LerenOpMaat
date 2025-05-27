@@ -1,5 +1,5 @@
 import SemesterPair from "../components/semester-pair.js";
-import { getLearningRoutesByUserId, postLearningRoute, updateSemester, postConversation, getConversationByUserId } from "../../client/api-client.js";
+import { getLearningRoutesByUserId, postLearningRoute, updateSemester, postConversation, getConversationByUserId, deleteRoute } from "../client/api-client.js"
 import { learningRouteArray } from "../../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
@@ -40,7 +40,8 @@ export default async function LearningRoute() {
                 !Array.isArray(apiResponse.Semesters) ||
                 apiResponse.Semesters.length === 0
             ) {
-                console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
+                // not needed as this will be intended behavior. could decide to add logging here
+                // console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
             } else {
                 semesterData = apiResponse.Semesters;
                 routeId = apiResponse.Id;
@@ -199,12 +200,25 @@ export default async function LearningRoute() {
                 };
             });
         }
+        const header = `
+                    <h3 class="popup-header-confirmation">
+                        Verwijderen leerroute
+                    </h3>
+                `;
+        const content = `
+                    <div class="confirmation-popup-content">
+                    <p>Weet u zeker dat u uw leerroute wilt verwijderen?</p>
+                    <div class="confirmation-popup-buttons"> 
+                        <button id="confirm-confirmation-popup"" class="confirmation-accept-btn">Ja</button>
+                        <button id="cancel-confirmation-popup"" class="confirmation-deny-btn">Nee</button>
+                    </div>
+                    </div>`;
 
         const deleteButton = fragment.getElementById("deleteRoute");
         if (deleteButton) {
             deleteButton.addEventListener("click", async () => {
                 if (routeId !== null) {
-                    await confirmationPopup("de leerroute", "delete", routeId);
+                    await confirmationPopup("Leerroute", routeId, header, content, deleteRoute, "/");
                 } else {
                     console.error("Geen routeId beschikbaar om te verwijderen.");
                 }
@@ -252,6 +266,8 @@ export default async function LearningRoute() {
         });
     }
 
+
+
     return { fragment };
 }
 
@@ -266,11 +282,11 @@ async function saveLearningRoute(learningRouteArray) {
                 {
                     Id: user.Id,
                     ExternalId: user.ExternalID,
-                    FirstName: user.FirstName,
+                    FirstName:  user.FirstName,
                     LastName: user.LastName,
+                    StartYear: 2025,
                 }
             ],
-            StartYear: cohortYear,
             Semesters: learningRouteArray.map(item => ({
                 Year: item.Year,
                 Period: item.Period,
@@ -302,7 +318,7 @@ async function updateLearningRoute(routeId, semesterData) {
         const response = await updateSemester(routeId, body);
 
         if (!response) {
-            console.error(`Fout bij het updaten van de learning route: ${response.status}`);
+            console.error(`Fout bij het updaten van de learning route: ${response.status} `);
             return;
         } else {
             console.log("Learning route succesvol gepdatet.");
