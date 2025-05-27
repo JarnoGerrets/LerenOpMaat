@@ -4,11 +4,12 @@ import { moduleOverview } from "./views/module-overview.js";
 import oerView from './views/oer-view.js';
 import feedback from './views/feedback.js';
 import settingsPage from './views/settings-page.js';
+import { setStartYear, getStartYear, uploadOerPdf, getCurrentOerPdf } from "./client/api-client.js";
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
   "": async () => {
-    return await RouteOrSelector();
+    return await RouteOrSelector(setStartYear, getStartYear);
   },
   "#Module/:id": async (id) => {
     return await ModuleInfo(id);
@@ -17,7 +18,7 @@ const routes = {
     return await moduleOverview();
   },
   "#oer-view": async () => {
-    return await oerView();
+    return await oerView(uploadOerPdf, getCurrentOerPdf);
   },
   "#feedback": async () => {
     return await feedback();
