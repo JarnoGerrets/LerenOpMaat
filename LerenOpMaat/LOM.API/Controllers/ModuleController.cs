@@ -25,6 +25,7 @@ namespace LOM.API.Controllers
 		{
 			IQueryable<Module> query;
 			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
 			if (userId != 0)
 			{
 				query = _context.Modules.AsQueryable();

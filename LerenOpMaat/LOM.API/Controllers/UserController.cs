@@ -37,6 +37,7 @@ namespace LOM.API.Controllers
         [HttpGet("logout")]
         public async Task Logout()
         {
+            HttpContext.Session.Clear();
             await HttpContext.SignOutAsync("Cookies");
 
             //Important, this method should never return anything.
