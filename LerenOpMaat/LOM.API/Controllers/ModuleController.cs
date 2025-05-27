@@ -23,7 +23,16 @@ namespace LOM.API.Controllers
 		[HttpGet]
 		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules([FromQuery] string? q)
 		{
-			var query = _context.Modules.AsQueryable();
+			IQueryable<Module> query;
+			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+			if (userId != 0)
+			{
+				query = _context.Modules.AsQueryable();
+			}
+			else
+			{
+				query = _context.Modules.Where(m => m.IsActive);
+			}
 
 			if (!string.IsNullOrWhiteSpace(q))
 			{
