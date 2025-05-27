@@ -37,7 +37,14 @@
         transition: transform 0.3s ease, opacity 0.3s ease;
     }
 
+    .module-title {
+        min-height: 70px !important;
+    }
 
+}
+
+.module-title {
+    min-height: 90px;
 }
 
 .popup-overlay {
