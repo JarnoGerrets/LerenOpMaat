@@ -1,4 +1,4 @@
-import { getModule } from "../../client/api-client.js";
+import { getModule, existenceModule } from "../../client/api-client.js";
 import { setupButtons } from './module-actions.js';
 import '../components/module-card.js';
 import '../components/requirements-card.js';
@@ -14,29 +14,31 @@ export default async function initModuleInfo(id) {
     const path = window.location.hash;
     const pathParts = path.split('/');
     const moduleId = pathParts[1];
-    let savedModule = JSON.parse(localStorage.getItem(`module-${moduleId}`));
+    let canBeDeleted;
+    let module = await getModule(moduleId);
 
-    if (!savedModule) {
-        savedModule = await getModule(moduleId);
+    if (module) {
+        canBeDeleted = !(await existenceModule(moduleId)); // Check if the module is not used in any route. outcome is flipped to use for toggling the delete button
     }
+
 
     // Create Module Info Card 
     const infoCard = document.createElement('module-card');
-    infoCard.data = {module: savedModule};
+    infoCard.data = { module: module };
     CardContainer.appendChild(infoCard);
 
     // Create Requirements Card
     const reqCard = document.createElement('requirements-card');
-    reqCard.moduleId = savedModule.Id;
+    reqCard.moduleId = module.Id;
     reqCard.refreshCallback = async () => {
         const module = await getModule(moduleId);
         reqCard.requirements = module.Requirements;
     };
-    reqCard.requirements = savedModule.Requirements;
+    reqCard.requirements = module.Requirements;
 
     CardContainer.appendChild(reqCard);
 
-    textArea.value = savedModule.Description;
+    textArea.value = module.Description;
     textArea.addEventListener('scroll', () => {
         textArea.classList.add('scrolling');
         clearTimeout(textArea._scrollTimer);
@@ -47,7 +49,7 @@ export default async function initModuleInfo(id) {
 
     // Add admin buttons for editing and deleting
     if (correctRole) {
-        setupButtons(savedModule, textArea);
+        setupButtons(module, textArea, canBeDeleted);
     }
 
     // Clear localStorage on unload

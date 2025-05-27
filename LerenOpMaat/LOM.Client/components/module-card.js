@@ -38,7 +38,11 @@ export default class ModuleCard extends customElements.get("base-card") {
             ${infoIcon}
         `;
         this.dataset.id = module.Id;
-        this.renderCard(content, module.GraduateProfile?.ColorCode || "");
+        let colorcode = module.GraduateProfile?.ColorCode || "";
+        if (!(module.IsActive)) {
+            colorcode = "#D3D3D3"; // light gray for inactive modules
+        }
+        this.renderCard(content, colorcode);
     }
 }
 

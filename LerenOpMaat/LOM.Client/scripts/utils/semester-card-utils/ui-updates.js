@@ -1,5 +1,5 @@
-import { calculateAchievedECs} from "./utils.js";
-import {handleValidationResult} from "./validations.js";
+import { calculateAchievedECs } from "./utils.js";
+import { handleValidationResult } from "./validations.js";
 import { validateRoute, addCompletedEvl, removeCompletedEvl } from "../../../client/api-client.js";
 
 export function updateExclamationIcon(cardElement, validationMsg, isValid) {
@@ -44,12 +44,13 @@ export function updateCardStyle(card, moduleId, validationMessages = []) {
 }
 
 export async function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null, learningRouteArray = null) {
+  let isActive = selectedModule ? selectedModule.IsActive : true;
   button.innerHTML = `
     ${selectedModule ? selectedModule.Name : 'Selecteer je module'}
-    <i class="bi ${locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
+    <i class="bi ${!isActive || locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
   `
   const card = button.closest('.semester-card');
-  const evlWrapper = card.nextElementSibling;
+  const evlWrapper = card.parentElement.querySelector(".evl-list-wrapper");
   const evlList = evlWrapper.querySelector(".evl-list");
 
   const achievedECs = calculateAchievedECs(progress, selectedModule);
@@ -59,19 +60,31 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
       const isChecked = progress?.CompletedEvls?.some(completed => completed.ModuleEvl.Id === ev.Id);
 
       return `
-      <div class="form-check d-flex align-items-center justify-content-between">
-        <label class="form-check-label me-2" for="${ev.Id}">
+        <label class="checkbox-wrapper-30">
+          <span class="checkbox" style="margin-right: 15px;">
+              <input type="checkbox" 
+                class="checkbox" 
+                id="${ev.Id}" 
+                data-evl-id="${ev.Id}" 
+                ${isChecked ? 'checked' : ''}>
+              <svg>
+                <use xlink:href="#checkbox-30" class="checkbox"></use>
+              </svg>
+            </span>
+
+          <span class="checkbox-text">
           ${ev.Name} (${ev.Ec || 10} EC's)
+            <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+              <symbol id="checkbox-30" viewBox="0 0 22 22">
+                <path
+                  fill="none"
+                  stroke="#003366"
+                  d="M5.5,11.3L9,14.8L20.2,3.3l0,0c-0.5-1-1.5-1.8-2.7-1.8h-13c-1.7,0-3,1.3-3,3v13c0,1.7,1.3,3,3,3h13 c1.7,0,3-1.3,3-3v-13c0-0.4-0.1-0.8-0.3-1.2"
+                />
+              </symbol>
+            </svg>
         </label>
-        <input style="margin-right: 5px;" 
-               class="form-check-input" 
-               type="checkbox" 
-               id="${ev.Id}" 
-               data-evl-id="${ev.Id}" 
-               ${isChecked ? 'checked' : ''}>
-      </div>
-      </div>
-    `;
+      `;
     }).join('');
 
     evlList.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
@@ -105,6 +118,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
     coursePoints.style.cursor = "pointer";
     coursePoints.onclick = () => {
       evlWrapper.classList.toggle("expand");
+      evlList.classList.toggle("expand");
     }
   } else {
     coursePoints.innerHTML = "";

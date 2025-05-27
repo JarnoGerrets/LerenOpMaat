@@ -13,9 +13,20 @@
 
 .edit-button {
     cursor: pointer;
+    align-self: center;
+}
+
+.deactivation-button {
+    cursor: pointer;
+}
+
+
+.activation-button {
+    cursor: pointer;
 }
 
 .trash-button {
+    align-self: center;
     cursor: pointer;
 }
 
@@ -27,9 +38,22 @@
     color: black;
 }
 
+.bi-eye-slash {
+    -webkit-text-stroke: 0.35px;
+    color: black;
+    font-size: 20px;
+}
+
+.bi-eye {
+    -webkit-text-stroke: 0.35px;
+    color: black;
+    font-size: 20px;
+}
+
 .bi-trash {
     -webkit-text-stroke: 0.35px;
     color: black;
+    font-size: 18px;
 }
 
 .bi-pencil-square {
@@ -146,9 +170,12 @@ button {
 
 .card-input {
     width: 80px;
-    border-radius: 10px;
-    border-style: none;
+    border-radius: 16px;
+    height: 35px;
+    border: none;
+    box-shadow: inset 0px 2px 2px 2px rgba(0, 0, 0, 0.2);
     padding-left: 5px;
+    min-width: 130px;
 }
 
 .module-card-text{
@@ -233,6 +260,8 @@ button {
 .scrolling::-webkit-scrollbar-thumb {
     background-color: rgb(177, 210, 073);
 }
+
+
 
 /*-----------------------------mobile section----------------------------------------------------------------------------------*/
 
