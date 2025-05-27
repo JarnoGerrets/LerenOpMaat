@@ -45,7 +45,6 @@ class ModuleOverview extends HTMLElement {
 
         userData = JSON.parse(localStorage.getItem("userData"));
         if (userData) {
-            console.log("User data found:", userData);
             if (userData.Roles != 'Student') {
                 //add module handler        
                 const addModuleInput = this.querySelector('#add-module-button');
