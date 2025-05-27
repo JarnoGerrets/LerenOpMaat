@@ -50,7 +50,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
       debouncedModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement })
     );
   }
-
+ 
   if (moduleId) {
     cardElement.setAttribute("data-module-id", moduleId);
   }

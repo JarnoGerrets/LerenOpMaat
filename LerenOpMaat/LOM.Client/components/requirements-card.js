@@ -38,7 +38,7 @@ export default class RequirementsCard extends customElements.get("base-card") {
               <div class="d-flex flex-column gap-2 text-requirement-card" style="font-weight: bold;">
                 ${items || `<span style="margin-bottom: 15px; font-weight: normal !important; color: black !important;" class="text-muted">Geen toegangseisen toegevoegd.</span>`}
             </div>
-            <span id="add-requirement-button" style="cursor: pointer;"><i><u>Toegangseisen toevoegen</u></i></span>
+            <span id="add-requirement-button" style="cursor: pointer; display: none;"><i><u>Toegangseisen toevoegen</u></i></span>
             `;
 
         this.renderCard(content, "#45B97C");
