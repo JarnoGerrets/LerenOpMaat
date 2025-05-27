@@ -31,17 +31,15 @@ export default class RequirementsCard extends customElements.get("base-card") {
             </div>
         `).join("");
         }
-
         const content = `
             <div class="requirement-card-title-row">
                 <h4 class="title-requirement-card">Ingangseisen</h4>
-                <i id="add-requirement-button1" class="bi bi-plus-circle requirement-card-add-button" style="display: none;"></i>
+            </div> 
+              <div class="d-flex flex-column gap-2 text-requirement-card" style="font-weight: bold;">
+                ${items || `<span style="margin-bottom: 15px; font-weight: normal !important; color: black !important;" class="text-muted">Geen toegangseisen toegevoegd.</span>`}
             </div>
-                ${items ? `<div class="d-flex flex-column gap-2 text-requirement-card" style="font-weight: bold;">
-                ${items}
-            </div>
-            <span id="add-requirement-button" style="display: none; cursor: pointer;"><i><u>Toegangseisen toevoegen</u></i></span>` : ''}
-        `;
+            <span id="add-requirement-button" style="cursor: pointer;"><i><u>Toegangseisen toevoegen</u></i></span>
+            `;
 
         this.renderCard(content, "#45B97C");
 

@@ -2,8 +2,12 @@
     padding-left: 25px;
     padding-top: 15px;
     display: flex;
-    gap: 400px;
+    gap: 435px;
     width: 100%;
+}
+
+.card-style {
+    min-width: 420px;
 }
 
 .extra-module-buttons {
@@ -217,7 +221,8 @@ button {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;;
+    margin-bottom: 10px;
+    ;
 }
 
 .requirement-row p {
@@ -268,6 +273,11 @@ button {
     background-color: rgb(177, 210, 073);
 }
 
+#evlSelectionHeader {
+    font-weight: normal !important;
+    font-style: normal !important;
+    color: black;
+}
 
 
 
@@ -276,6 +286,10 @@ button {
 @media (max-width: 768px) {
     .buttons-container-module-info {
         gap: 250px;
+    }
+
+    .card-style {
+        min-width: 0px;
     }
 
     .module-info-container {
@@ -331,6 +345,7 @@ button {
     .bi-chevron-left {
         text-align: left;
     }
+
     .text-area {
         margin: 0;
     }
