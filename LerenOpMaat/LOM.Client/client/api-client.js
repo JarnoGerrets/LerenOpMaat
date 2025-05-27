@@ -32,6 +32,7 @@ export async function getUserData() {
     });
 
     const userData = await res.json();
+    
     localStorage.setItem("userData", JSON.stringify(userData));
 
     return userData;
