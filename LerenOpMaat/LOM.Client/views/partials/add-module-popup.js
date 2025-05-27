@@ -156,7 +156,6 @@ export default async function addModulePopup() {
                 Evls: evls
             };
             try {
-                console.log("Module to send:", moduleToSend);
                 const result = await addModule(moduleToSend);
                 showToast(`${result.Name} succesvol toegevoegd`, 'success');
                 resolve(true);

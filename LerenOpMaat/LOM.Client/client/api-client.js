@@ -405,7 +405,6 @@ export async function getLearningRoutesByUserId(id) {
 }
 
 export async function postLearningRoute(learningRoute) {
-  console.log("Posting learning route:", learningRoute);
   const res = await fetch(`${API_BASE}/learningRoute`, {
     method: "POST",
     headers: {
