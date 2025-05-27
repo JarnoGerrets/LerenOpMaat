@@ -22,10 +22,6 @@ export async function logout() {
 }
 
 export async function getUserData() {
-  let userData = null;
-  userData = JSON.parse(localStorage.getItem("userData"));
-  if (!userData) return null;
-  
   try {
     const res = await fetch(`${API_BASE}/account`, {
       method: "GET",

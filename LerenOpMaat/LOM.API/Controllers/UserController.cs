@@ -16,6 +16,18 @@ namespace LOM.API.Controllers
         [HttpGet]
         public IActionResult Authenticate(string? returnUrl = null)
         {
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
+            Console.WriteLine("Authenticating user...");
             // 1. Gebruik de opgegeven returnUrl of de Referer-header als fallback
             if (string.IsNullOrEmpty(returnUrl))
             {
