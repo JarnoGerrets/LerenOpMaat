@@ -81,7 +81,7 @@ namespace LOM.API.Controllers
                     ExternalID = userId,
                     FirstName = "",
                     LastName = "",
-                    StartYear = DateTime.Now.Year,
+                    StartYear = null,
                     RoleId = 2
                 };
 
