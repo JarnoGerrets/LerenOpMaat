@@ -4,6 +4,7 @@ import { learningRouteArray } from "../../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
+import AddIconButton from "../components/add-icon-button.js";
 
 let apiResponse = [];
 export let currentUserId = null;
@@ -106,6 +107,29 @@ export default async function LearningRoute() {
                 index++;
             }
         }
+
+        // Some students might follow a route that takes longer than 4 years, so we add a button to add more semesters
+        // It should only be added here if the previous row already shows the add button.
+        const addSemesterContainer = document.createElement("div");
+        const addIconButton = new AddIconButton({
+            onclick: async () => {
+                const newSemesterPair = await SemesterPair(dummySemester1, dummySemester2, index);
+                grid.appendChild(newSemesterPair);
+                index++;
+
+                addSemesterContainer.remove();
+
+                // Its assumed here that no student will have more than 20 semesters in their learning route.
+                // This is a safety check which prevents the user from purposely trying to overload the system.
+                if (index < 20) { 
+                    grid.appendChild(addSemesterContainer);
+                }
+            }
+        });
+
+        addSemesterContainer.appendChild(addIconButton.getHtml());
+
+        grid.appendChild(addSemesterContainer);
 
         //Opslaan knop als de gebruiker al een route heeft dan wordt het aangepast
         //Als er nog geen route is gekoppeld aan de  gebruiker dan maakt hij een nieuwe route
@@ -225,6 +249,7 @@ export default async function LearningRoute() {
             });
         }
     } catch (error) {
+        showToast("Er ging iets fouten tijdens het laden van de leerroute, probeer het later nog eens.", "error");
         console.error("Error fetching semester data:", error.message);
     } finally {
         hideLoading();
