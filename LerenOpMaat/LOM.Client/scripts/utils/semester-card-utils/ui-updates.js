@@ -6,12 +6,30 @@ export function updateExclamationIcon(cardElement, validationMsg, isValid) {
   const icon = cardElement.querySelector('.exclamation-icon');
   if (!icon) return;
 
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  icon.replaceWith(icon.cloneNode(true));
+  const updatedIcon = cardElement.querySelector('.exclamation-icon');
+
   if (!isValid) {
-    icon.classList.add('show');
-    icon.setAttribute('title', validationMsg);
+    updatedIcon.classList.add('show');
+    updatedIcon.setAttribute('title', validationMsg);
+
+    if (isMobile) {
+      updatedIcon.addEventListener('click', () => {
+        const lines = validationMsg.split('\n').map(line => line.trim()).filter(Boolean);
+        lines.forEach(line => {
+          if (line.startsWith("-")) {
+            showToast(line.slice(1).trim(), "error");
+          } else {
+            showToast(line, "error");
+          }
+        });
+      });
+    }
   } else {
-    icon.classList.remove('show');
-    icon.removeAttribute('title');
+    updatedIcon.classList.remove('show');
+    updatedIcon.removeAttribute('title');
   }
 }
 
