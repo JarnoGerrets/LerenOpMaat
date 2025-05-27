@@ -85,6 +85,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   router();
 });
+let scrollArea;
+setTimeout(() => {
+  scrollArea = document.getElementById('app');
+  scrollArea.classList.add('hide-scrollbar');
+
+  scrollArea.addEventListener('scroll', () => {
+    scrollArea.classList.add('scrolling');
+    clearTimeout(scrollArea.scrollTimeout);
+    scrollArea.scrollTimeout = setTimeout(() => {
+      scrollArea.classList.remove('scrolling');
+    }, 700);
+  });
+}, 1000);
 
 const navigateTo = (url) => {
   history.pushState(null, null, url);
