@@ -1,5 +1,5 @@
 import SemesterChoice from "../views/partials/semester-choice.js";
-import { validateRoute, getModuleProgress, getModule } from "../../client/api-client.js";
+import { validateRoute, getModuleProgress, getModule } from "../client/api-client.js";
 import { learningRouteArray } from "./semester-pair.js";
 import { handleValidationResult } from "../scripts/utils/semester-card-utils/validations.js";
 import { updateModuleUI, updateAllCardsStyling, updateExclamationIcon } from "../scripts/utils/semester-card-utils/ui-updates.js";
@@ -158,20 +158,22 @@ function updateInactiveLabel(cardContainer, isActive) {
   }
 }
 
+if (typeof document !== 'undefined') {
+  document.addEventListener("click", (event) => {
+    const allEvlWrappers = document.querySelectorAll(".evl-list-wrapper");
 
-document.addEventListener("click", (event) => {
-  const allEvlWrappers = document.querySelectorAll(".evl-list-wrapper");
+    allEvlWrappers.forEach(wrapper => {
+      const card = wrapper.closest(".semester-card-container")?.querySelector(".semester-card");
+      const toggle = card?.querySelector("#coursePoints");
 
-  allEvlWrappers.forEach(wrapper => {
-    const card = wrapper.closest(".semester-card-container")?.querySelector(".semester-card");
-    const toggle = card?.querySelector("#coursePoints");
-
-    if (!wrapper.contains(event.target) && !toggle.contains(event.target)) {
-      wrapper.classList.remove("expand");
-    }
+      if (!wrapper.contains(event.target) && !toggle.contains(event.target)) {
+        wrapper.classList.remove("expand");
+      }
+    });
   });
-});
+}
 
-
-window.validationState = validationState;
-window.moduleMessagesMap = moduleMessagesMap;
+if (typeof window !== 'undefined') {
+  window.validationState = validationState;
+  window.moduleMessagesMap = moduleMessagesMap;
+}
