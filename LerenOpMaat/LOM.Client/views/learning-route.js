@@ -40,7 +40,8 @@ export default async function LearningRoute() {
                 !Array.isArray(apiResponse.Semesters) ||
                 apiResponse.Semesters.length === 0
             ) {
-                console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
+                // not needed as this will be intended behavior. could decide to add logging here
+                // console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
             } else {
                 semesterData = apiResponse.Semesters;
                 routeId = apiResponse.Id;
