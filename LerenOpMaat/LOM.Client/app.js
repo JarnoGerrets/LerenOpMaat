@@ -3,6 +3,7 @@ import { RouteOrSelector } from "./views/cohort-selector.js";
 import { moduleOverview } from "./views/module-overview.js";
 import oerView from './views/oer-view.js';
 import feedback from './views/feedback.js';
+import settingsPage from './views/settings-page.js';
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
@@ -21,6 +22,9 @@ const routes = {
   "#feedback": async () => {
     return await feedback();
   },
+  "#instellingen": async () => {
+    return await settingsPage();
+  }
 };
 
 //function which takes for example and Id and gives it to the router as parameter to be used. 
