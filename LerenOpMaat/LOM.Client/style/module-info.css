@@ -75,7 +75,9 @@
     flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px
+    gap: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 #description-text {
@@ -212,11 +214,16 @@ button {
 
 .requirement-row {
     display: flex;
+    flex-direction: row;
+    align-items: center;
     justify-content: space-between;
+    margin-bottom: 10px;;
 }
 
 .requirement-row p {
     max-width: 250px;
+    align-self: center;
+    margin-bottom: 0 !important;
 }
 
 .requirement-card-action-button {
@@ -263,6 +270,7 @@ button {
 
 
 
+
 /*-----------------------------mobile section----------------------------------------------------------------------------------*/
 
 @media (max-width: 768px) {
@@ -281,6 +289,7 @@ button {
         display: flex;
         flex-direction: row;
         align-items: stretch;
+        gap: 10;
     }
 
     #description-text {
@@ -322,11 +331,8 @@ button {
     .bi-chevron-left {
         text-align: left;
     }
-    .card-style {
-        margin-left: 15px !important;
-        margin-right: 15px !important;
-    }
     .text-area {
         margin: 0;
     }
+
 }

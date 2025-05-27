@@ -12,7 +12,7 @@ export default class RequirementsCard extends customElements.get("base-card") {
         this._refreshCallback = callBack;
     }
 
-    set moduleId(id){
+    set moduleId(id) {
         this._moduleId = id;
     }
 
@@ -21,10 +21,12 @@ export default class RequirementsCard extends customElements.get("base-card") {
         if (requirements && requirements.length > 0) {
             items = requirements.map((req) => `
             <div class="requirement-row">
+            <div class="requirement-actions" style="display: none;">
+            <i class="bi bi-x-circle requirement-card-action-button delete-button" data-id="${req.Id}"></i>
+            </div>
                 <p>${req.Description}</p>
                 <div class="requirement-actions" style="display: none;">
-                    <i class="bi bi-pencil requirement-card-action-button edit-button" data-id="${req.Id}"></i>
-                    <i class="bi bi-trash requirement-card-action-button delete-button" data-id="${req.Id}"></i>
+                <i class="bi bi-pencil-square requirement-card-action-button edit-button" data-id="${req.Id}"></i>
                 </div>
             </div>
         `).join("");
@@ -33,11 +35,12 @@ export default class RequirementsCard extends customElements.get("base-card") {
         const content = `
             <div class="requirement-card-title-row">
                 <h4 class="title-requirement-card">Ingangseisen</h4>
-                <i id="add-requirement-button" class="bi bi-plus-circle requirement-card-add-button" style="display: none;"></i>
+                <i id="add-requirement-button1" class="bi bi-plus-circle requirement-card-add-button" style="display: none;"></i>
             </div>
                 ${items ? `<div class="d-flex flex-column gap-2 text-requirement-card" style="font-weight: bold;">
                 ${items}
-            </div>` : ''}
+            </div>
+            <span id="add-requirement-button" style="display: none; cursor: pointer;"><i><u>Toegangseisen toevoegen</u></i></span>` : ''}
         `;
 
         this.renderCard(content, "#45B97C");
@@ -48,19 +51,31 @@ export default class RequirementsCard extends customElements.get("base-card") {
             });
         });
 
+        const header = `<h3 class="popup-header-confirmation">
+                Verwijderen ingangseis van module
+            </h3>`;
+
+
+        const contentForPopup = `<div class="confirmation-popup-content">
+            <p>Weet u zeker dat u de toegangseis wilt verwijderen van deze module?</p>
+            <div class="confirmation-popup-buttons"> 
+                <button id="confirm-confirmation-popup" class="confirmation-accept-btn">Ja</button>
+                <button id="cancel-confirmation-popup"" class="confirmation-deny-btn">Nee</button>
+                </div>
+            </div>`;
+
         this.querySelectorAll('.delete-button').forEach(button => {
             button.addEventListener('click', async (event) => {
-                await confirmationPopup("deze ingangseis", "ingangseis",  async () => { 
-                    await deleteRequirement(event.target.dataset.id);
+                await confirmationPopup("verwijderen ingangseis", event.target.dataset.id, header, contentForPopup, deleteRequirement, window.location.href, async () => {
                     this._refreshCallback();
                 });
-                
+
             });
         });
 
         this.querySelector('#add-requirement-button').addEventListener('click', async () => {
             await editRequirementPopup(null, this._moduleId, this._refreshCallback);
-        }); 
+        });
     }
 }
 

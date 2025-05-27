@@ -25,4 +25,5 @@ function animateDots(element, baseText) {
   setInterval(() => {
     dotCount = (dotCount + 1) % 4; // cycles from 0 → 3
     element.textContent = baseText + ".".repeat(dotCount);
-  }, 250);
+  }, 250); 
+}

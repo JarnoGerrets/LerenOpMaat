@@ -58,6 +58,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
   if (moduleId && moduleId !== 200000 && moduleId !== 300000) {
     const selectedModule = await getModule(moduleId);
     try {
+      
       const progress = await getModuleProgress(moduleId);
       await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
 
