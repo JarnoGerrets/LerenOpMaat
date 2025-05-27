@@ -1,5 +1,5 @@
 import SemesterChoice from "../views/partials/semester-choice.js";
-import { validateRoute, getModuleProgress, getModule } from "../../client/api-client.js";
+import { validateRoute, getModuleProgress, getModule } from "../client/api-client.js";
 import { learningRouteArray } from "./semester-pair.js";
 import { handleValidationResult } from "../scripts/utils/semester-card-utils/validations.js";
 import { updateModuleUI, updateAllCardsStyling, updateExclamationIcon } from "../scripts/utils/semester-card-utils/ui-updates.js";
@@ -8,7 +8,12 @@ import { debounce } from "../scripts/utils/semester-card-utils/utils.js";
 let validationState = {};
 const moduleMessagesMap = {};
 
-export default async function SemesterCard({ semester, module, locked = false, isActive = true, onModuleChange, moduleId }) {
+export default async function SemesterCard({ semester, module, locked = false, isActive = true, onModuleChange, moduleId, dependencies = {} }) {
+  const {
+    getModule = window.getModule, 
+    getModuleProgress = window.getModuleProgress
+  } = dependencies;
+
   const template = document.createElement("template");
   template.innerHTML = `
   <div class="semester-card-container">
@@ -50,7 +55,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
       debouncedModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement })
     );
   }
- 
+
   if (moduleId) {
     cardElement.setAttribute("data-module-id", moduleId);
   }
@@ -58,7 +63,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
   if (moduleId && moduleId !== 200000 && moduleId !== 300000) {
     const selectedModule = await getModule(moduleId);
     try {
-      
+
       const progress = await getModuleProgress(moduleId);
       await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
 
