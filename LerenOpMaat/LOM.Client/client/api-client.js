@@ -531,6 +531,7 @@ export async function getStartYear(id) {
   try {
     const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
       method: 'GET',
+      credentials: "include",
       headers: {
         'Content-Type': 'application/json'
       }
@@ -551,6 +552,7 @@ export async function setStartYear(id, startYear) {
   try {
     const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
       method: 'POST',
+      credentials: "include",
       headers: {
         'Content-Type': 'application/json'
       },
