@@ -5,6 +5,7 @@ using LOM.API.DTO;
 using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 IEnumerable<string>? initialScopes = builder.Configuration.GetSection("DownstreamApis:MicrosoftGraph:Scopes").Get<IEnumerable<string>>();
@@ -17,13 +18,27 @@ builder.Services.AddDownstreamApis(builder.Configuration.GetSection("DownstreamA
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy("AppCorsPolicy", policy =>
-	{
-		policy.WithOrigins(allowedOrigins ?? [])
-			  .AllowAnyHeader()
-			  .AllowAnyMethod()
+    options.AddPolicy("AppCorsPolicy", policy =>
+    {
+        policy.WithOrigins(allowedOrigins ?? [])
+              .AllowAnyHeader()
+              .AllowAnyMethod()
               .AllowCredentials();
-	});
+    });
+});
+// Configure OpenID Connect to handle API requests without redirecting to the login page
+builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
+{
+    options.Events.OnRedirectToIdentityProvider = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/api"))
+        {
+            context.Response.StatusCode = 401;
+            context.HandleResponse();
+        }
+
+        return Task.CompletedTask;
+    };
 });
 
 
@@ -33,7 +48,30 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = null; // Preserve PascalCase
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-		options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.TypeInfoResolver = new DefaultJsonTypeInfoResolver
+        {
+            Modifiers =
+           {
+               ti =>
+               {
+                   if (ti.Type == typeof(RequirementDto))
+                   {
+                       ti.PolymorphismOptions = new JsonPolymorphismOptions
+                       {
+                           TypeDiscriminatorPropertyName = "$type",
+                           IgnoreUnrecognizedTypeDiscriminators = true,
+                           DerivedTypes =
+                           {
+                                new JsonDerivedType(typeof(ModuleRequirementDto), "module"),
+                                new JsonDerivedType(typeof(EcRequirementDto), "ec"),
+                                new JsonDerivedType(typeof(NumericRequirementDto), "numeric")
+                           }
+                       };
+                   }
+               }
+           }
+        };
     });
 
 //builder.Services.AddDbContext<LOMContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Local-LOM-DB")));
@@ -62,8 +100,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {/
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 // }
 
 app.UseHttpsRedirection();

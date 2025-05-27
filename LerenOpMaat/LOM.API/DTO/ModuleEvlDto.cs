@@ -20,12 +20,11 @@ namespace LOM.API.DTO
 		}
 
 
-		public ModuleEVL ToModel(int moduleId)
+		public ModuleEVL ToModel()
 		{
 			return new ModuleEVL
 			{
 				Id = this.Id,
-				ModuleId = moduleId,
 				Name = this.Name,
 				Ec = this.Ec
 			};

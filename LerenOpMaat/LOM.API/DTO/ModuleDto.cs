@@ -55,7 +55,7 @@ namespace LOM.API.DTO
 				IsActive = this.IsActive,
 				GraduateProfileId = this.GraduateProfile.Id,
 				Requirements = requirements,
-				Evls = this.Evls.Select(evlDto => evlDto.ToModel(this.Id)).ToList()
+				Evls = this.Evls.Select(evlDto => evlDto.ToModel()).ToList()
 			};
 		}
 	}

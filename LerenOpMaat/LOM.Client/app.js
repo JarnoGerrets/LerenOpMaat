@@ -3,12 +3,12 @@ import { RouteOrSelector } from "./views/cohort-selector.js";
 import { moduleOverview } from "./views/module-overview.js";
 import oerView from './views/oer-view.js';
 import feedback from './views/feedback.js';
-import { setStartYear, getStartYear, uploadOerPdf, getCurrentOerPdf } from "./client/api-client.js";
+import settingsPage from './views/settings-page.js';
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
   "": async () => {
-    return await RouteOrSelector(setStartYear, getStartYear);
+    return await RouteOrSelector();
   },
   "#Module/:id": async (id) => {
     return await ModuleInfo(id);
@@ -17,11 +17,14 @@ const routes = {
     return await moduleOverview();
   },
   "#oer-view": async () => {
-    return await oerView(uploadOerPdf, getCurrentOerPdf);
+    return await oerView();
   },
   "#feedback": async () => {
     return await feedback();
   },
+  "#instellingen": async () => {
+    return await settingsPage();
+  }
 };
 
 //function which takes for example and Id and gives it to the router as parameter to be used. 
@@ -86,6 +89,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   router();
 });
+let scrollArea;
+setTimeout(() => {
+  scrollArea = document.getElementById('app');
+  scrollArea.classList.add('hide-scrollbar');
+
+  scrollArea.addEventListener('scroll', () => {
+    scrollArea.classList.add('scrolling');
+    clearTimeout(scrollArea.scrollTimeout);
+    scrollArea.scrollTimeout = setTimeout(() => {
+      scrollArea.classList.remove('scrolling');
+    }, 700);
+  });
+}, 1000);
 
 const navigateTo = (url) => {
   history.pushState(null, null, url);

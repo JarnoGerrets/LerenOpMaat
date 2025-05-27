@@ -97,11 +97,23 @@ public class Seeder
             new Requirement { Id = 8, ModuleId = 16, Type = ModulePreconditionType.RequiredEcFromPropedeuse, Value = "60" },
             new Requirement { Id = 9, ModuleId = 16, Type = ModulePreconditionType.RequiredLevel2ModulesCount, Value = "2" }
         );
+        
+        _modelBuilder.Entity<Conversation>().HasData(
+            new Conversation { Id = 1, LearningRouteId = 1, StudentId = 1, TeacherId = 3 }
+            );
+
+        _modelBuilder.Entity<Message>().HasData(
+            new Message { Id = 1, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Hoi, mag ik een feedback krijgen op mijn leerroute?", UserId = 1 },
+            new Message { Id = 2, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Ik zou semester 2 van het jaar 2 aanpassen naar iets anders.", UserId = 3 },
+            new Message { Id = 3, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Hoi, Ik heb het aangepast", UserId = 1 },
+            new Message { Id = 4, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Leerroute ziet er goed uit!", UserId = 3 }
+            );
 
         _modelBuilder.Entity<GraduateProfile>().HasData(
             new GraduateProfile { Id = 1, Name = "BIM", ColorCode = "#F16682A0" },
             new GraduateProfile { Id = 2, Name = "SE", ColorCode = "#F5A61AA0" },
-            new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3A0" }
+            new GraduateProfile { Id = 3, Name = "IDNS", ColorCode = "#4594D3A0" },
+            new GraduateProfile { Id = 4, Name = "Geen", ColorCode = "#4594D3A3" }
         );
 
         _modelBuilder.Entity<ModuleProgress>().HasData(
@@ -134,16 +146,7 @@ public class Seeder
             new CompletedEvl { Id = 3, ModuleProgressId = 2, ModuleEvlId = 3 }
         );
 
-        _modelBuilder.Entity<Conversation>().HasData(
-            new Conversation { Id = 1, LearningRouteId = 1, StudentId = 1, TeacherId = 3 }
-            );
-
-        _modelBuilder.Entity<Message>().HasData(
-            new Message { Id = 1, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Hoi, mag ik een feedback krijgen op mijn leerroute?", UserId = 1 },
-            new Message { Id = 2, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Ik zou semester 2 van het jaar 2 aanpassen naar iets anders.", UserId = 3 },
-            new Message { Id = 3, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Hoi, Ik heb het aangepast", UserId = 1 },
-            new Message { Id = 4, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Leerroute ziet er goed uit!", UserId = 3 }
-            );
-
     }
+
+    
 }
