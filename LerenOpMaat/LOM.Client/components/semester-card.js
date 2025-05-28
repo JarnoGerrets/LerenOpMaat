@@ -50,7 +50,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
       debouncedModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement })
     );
   }
- 
+
   if (moduleId) {
     cardElement.setAttribute("data-module-id", moduleId);
   }
@@ -58,7 +58,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
   if (moduleId && moduleId !== 200000 && moduleId !== 300000) {
     const selectedModule = await getModule(moduleId);
     try {
-      
+
       const progress = await getModuleProgress(moduleId);
       await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
 
@@ -115,7 +115,11 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
     return;
   }
 
-  onModuleChange({ semester, moduleId: selectedModule.Id });
+  onModuleChange({
+    semester,
+    moduleId: selectedModule.Id,
+    moduleName: selectedModule.Name
+  });
   const result = await validateRoute(learningRouteArray);
   let progress;
   try {
@@ -140,7 +144,11 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
   updateInactiveLabel(cardContainer, moduleActiveStatus);
 
   cardElement.setAttribute("data-module-id", selectedModule.Id);
-  onModuleChange({ semester, moduleId: selectedModule.Id });
+  onModuleChange({
+    semester,
+    moduleId: selectedModule.Id,
+    moduleName: selectedModule.Name // <-- voeg moduleName toe
+  });
 
   const finalValidation = await validateRoute(learningRouteArray);
   handleValidationResult(finalValidation);
