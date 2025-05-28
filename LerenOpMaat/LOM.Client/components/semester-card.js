@@ -49,17 +49,17 @@ export default async function SemesterCard({ semester, module, locked = false, i
   const button = fragment.querySelector("#select-module");
   const coursePoints = fragment.querySelector("#coursePoints");
 
-const debouncedModuleSelection = debounce(
-  (params) => handleModuleSelection({ ...params, services }), 500
-);
-
-if (!locked && button) {
-  button.addEventListener("click", () =>
-    debouncedModuleSelection({
-      button, coursePoints, semester, locked, onModuleChange, cardElement
-    })
+  const debouncedModuleSelection = debounce(
+    (params) => handleModuleSelection({ ...params, services }), 500
   );
-}
+
+  if (!locked && button) {
+    button.addEventListener("click", () =>
+      debouncedModuleSelection({
+        button, coursePoints, semester, locked, onModuleChange, cardElement
+      })
+    );
+  }
 
   if (moduleId) {
     cardElement.setAttribute("data-module-id", moduleId);
@@ -134,7 +134,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
     return;
   }
 
-  onModuleChange({ semester, moduleId: selectedModule.Id });
+
   const result = await validateRoute(learningRouteArray);
   let progress;
   try {
@@ -152,10 +152,13 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
     clearSelection();
     return;
   }
+  onModuleChange({ semester, moduleId: selectedModule.Id });
 
   await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
+
   const cardContainer = cardElement.closest(".semester-card-container");
   const moduleActiveStatus = selectedModule?.IsActive ?? true;
+  
   updateInactiveLabel(cardContainer, moduleActiveStatus);
 
   cardElement.setAttribute("data-module-id", selectedModule.Id);
