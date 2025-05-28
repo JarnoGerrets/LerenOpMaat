@@ -1,11 +1,9 @@
 import {
     getConversationByUserId,
     getAllTeachers,
-    postConversation,
     postMessage,
     updateConversation,
     getMessagesByConversationId,
-    getUserData
 } from "../client/api-client.js";
 
 export default async function Feedback() {
@@ -35,7 +33,6 @@ export default async function Feedback() {
     errorMsg.style.display = "none";
     dropdown.parentNode.insertBefore(errorMsg, dropdown);
 
-    // Helper om placeholder te zetten
     function updateTextareaPlaceholder() {
         const selectedOption = dropdown.options[dropdown.selectedIndex];
         if (selectedOption && selectedOption.value) {

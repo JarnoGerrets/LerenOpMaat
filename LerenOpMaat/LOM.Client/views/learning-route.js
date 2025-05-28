@@ -1,15 +1,22 @@
-import SemesterPair from "../components/semester-pair.js";
-import { getLearningRoutesByUserId, postLearningRoute, updateSemester, postConversation, getConversationByUserId, deleteRoute } from "../client/api-client.js"
+import {
+    getLearningRoutesByUserId,
+    postLearningRoute,
+    updateSemester,
+    postConversation,
+    getConversationByUserId,
+    deleteRoute
+} from "../client/api-client.js"
+
 import { learningRouteArray } from "../../components/semester-pair.js";
-import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
+
+import SemesterPair from "../components/semester-pair.js";
+import confirmationPopup from "./partials/confirmation-popup.js";
 import AddIconButton from "../components/add-icon-button.js";
 
 
 let apiResponse = [];
-export let currentUserId = null;
-export let learningRouteId = null;
 export default async function LearningRoute() {
     showLoading();
 
@@ -23,7 +30,6 @@ export default async function LearningRoute() {
     let routeId = null;
 
     let userData = await window.userData;
-    let tries = 0;
 
     try {
         if (userData && userData.InternalId) {
@@ -113,7 +119,7 @@ export default async function LearningRoute() {
 
                 // Its assumed here that no student will have more than 20 semesters in their learning route.
                 // This is a safety check which prevents the user from purposely trying to overload the system.
-                if (index < 20) { 
+                if (index < 20) {
                     grid.appendChild(addSemesterContainer);
                 }
             }
@@ -150,7 +156,7 @@ export default async function LearningRoute() {
         const exportButton = fragment.getElementById("exportLearningRoute");
         if (exportButton) {
             exportButton.addEventListener("click", async () => {
-                if (!apiResponse || !apiResponse.Users || !apiResponse.Semesters) {
+                if (!apiResponse || !apiResponse.User || !apiResponse.Semesters) {
                     console.error("Geen geldige API Response beschikbaar om te exporteren.");
                     return;
                 }
@@ -172,7 +178,7 @@ export default async function LearningRoute() {
                 img.onload = () => {
                     doc.addImage(img, "PNG", xPosition, yPosition, imgWidth, imgHeight);
 
-                    const user = apiResponse.Users[0];
+                    const user = apiResponse.User;
                     doc.setFontSize(12);
                     doc.text(`Voornaam: ${user.FirstName}`, 10, 40);
                     doc.text(`Achternaam: ${user.LastName}`, 10, 50);
