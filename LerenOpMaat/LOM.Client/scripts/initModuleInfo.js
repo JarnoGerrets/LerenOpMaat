@@ -5,11 +5,9 @@ import '../components/requirements-card.js';
 
 export default async function initModuleInfo(id) {
 
-    let userData = null;
+    let userData = await window.userData;
     let tries = 0;
     let correctRole = false;
-    // Wacht tot userData in localStorage staat (max 2 seconden)
-    userData = JSON.parse(localStorage.getItem("userData"));
 
     if (userData && userData?.Role !== "Student") {
         correctRole = true;

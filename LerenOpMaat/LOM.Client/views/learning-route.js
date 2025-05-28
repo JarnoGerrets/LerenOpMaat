@@ -22,17 +22,10 @@ export default async function LearningRoute() {
     let semesterData = [];
     let routeId = null;
 
-    let userData = null;
+    let userData = await window.userData;
     let tries = 0;
-    // Wacht tot userData in localStorage staat (max 2 seconden)
-    while (!userData && tries < 20) {
-        userData = JSON.parse(localStorage.getItem("userData"));
-        if (!userData) await new Promise(res => setTimeout(res, 100));
-        tries++;
-    }
 
     try {
-        const userData = JSON.parse(localStorage.getItem("userData"));
         if (userData && userData.InternalId) {
             apiResponse = await getLearningRoutesByUserId(userData.InternalId);
 
