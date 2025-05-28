@@ -57,7 +57,7 @@ export default async function Feedback() {
                 let messages = await getMessagesByConversationId(conversation.Id);
                 messages = Array.isArray(messages) ? messages : (messages ? [messages] : []);
                 if (messages.length > 0) {
-                    const sortedMessages = messages.slice().sort((a, b) => b.Id - a.Id);
+                    const sortedMessages = messages.slice().sort((a, b) => a.Id - b.Id);
                     sortedMessages.forEach(msg => {
                         let senderName = "Onbekend";
                         if (msg.User && msg.User.FirstName && msg.User.LastName) {
@@ -67,7 +67,8 @@ export default async function Feedback() {
                         const msgBox = document.createElement("div");
                         msgBox.className = "message-feedback-box";
 
-                        if (msg.User && msg.User.RoleId === 2) {
+                        // Controleer of het bericht van de ingelogde gebruiker is
+                        if (msg.User && msg.User.Id === currentUserId) {
                             msgBox.classList.add("role-2");
                             msgBox.innerHTML = `
                             <div style="display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin-bottom: 6px;">
