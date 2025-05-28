@@ -22,7 +22,7 @@ export default async function renderTeacherLearningRoutes() {
             const conversations = await getConversationByAdminId(userData.InternalId);
             console.log('Conversation:', conversations);
             routes = conversations.map(conv => {
-                const user = conv.LearningRoute?.Users?.[0];
+                const user = conv.LearningRoute?.User;
                 const fullName = user
                     ? `${user.FirstName ?? ''} ${user.LastName ?? ''}`.trim()
                     : 'Onbekende gebruiker';
@@ -47,9 +47,9 @@ export default async function renderTeacherLearningRoutes() {
         const routeDiv = document.createElement('div');
         routeDiv.className = 'learning-route-row';
         routeDiv.innerHTML = `
-            <span class="learning-route-title">${route.title}</span>
-            <button class="open-route-btn">Openen</button>
-        `;
+        <span class="learning-route-title">${route.title}</span>
+        <button class="open-route-btn">Openen</button>
+    `;
         listContainer.appendChild(routeDiv);
     });
 

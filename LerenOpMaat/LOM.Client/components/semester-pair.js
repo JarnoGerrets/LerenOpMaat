@@ -51,7 +51,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         moduleName,
                     });
                 }
-                console.log("Learning Route Array Updated:", learningRouteArray);
             },
 
         });
@@ -102,7 +101,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         moduleName,
                     });
                 }
-                console.log("Learning Route Array Updated:", learningRouteArray);
             },
 
         });
