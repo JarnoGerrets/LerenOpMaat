@@ -1,6 +1,4 @@
-import { calculateAchievedECs } from "./utils.js";
-import { handleValidationResult } from "./validations.js";
-import { validateRoute, addCompletedEvl, removeCompletedEvl } from "../../../client/api-client.js";
+import {uiUpdatesServices} from '../importServiceProvider.js'
 
 export function updateExclamationIcon(cardElement, validationMsg, isValid) {
   const icon = cardElement.querySelector('.exclamation-icon');
@@ -61,7 +59,15 @@ export function updateCardStyle(card, moduleId, validationMessages = []) {
   }
 }
 
-export async function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null, learningRouteArray = null) {
+export async function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null, learningRouteArray = null, services = uiUpdatesServices) {
+  const{
+    validateRoute,
+    addCompletedEvl,
+    removeCompletedEvl,
+    handleValidationResult,
+    calculateAchievedECs
+  } = services;
+  
   let isActive = selectedModule ? selectedModule.IsActive : true;
   button.innerHTML = `
     ${selectedModule ? selectedModule.Name : 'Selecteer je module'}
