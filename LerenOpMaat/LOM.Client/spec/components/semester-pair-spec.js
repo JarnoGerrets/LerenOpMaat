@@ -8,6 +8,12 @@ global.window = dom.window;
 global.document = dom.window.document;
 global.customElements = dom.window.customElements;
 global.HTMLElement = dom.window.HTMLElement;
+global.localStorage = {
+    getItem: jasmine.createSpy('getItem'),
+    setItem: jasmine.createSpy('setItem'),
+    removeItem: jasmine.createSpy('removeItem'),
+    clear: jasmine.createSpy('clear')
+};
 
 describe('SemesterPair', () => {
     let originalSemesterCard;

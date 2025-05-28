@@ -1,7 +1,6 @@
 const BASE = "http://localhost:5073";
 const API_BASE = `${BASE}/api`;
 
-
 export function getLoginUrl() {
   return `${BASE}/authenticate`;
 }
@@ -33,6 +32,7 @@ export async function getUserData() {
     });
 
     const userData = await res.json();
+    
     localStorage.setItem("userData", JSON.stringify(userData));
 
     return userData;
@@ -47,7 +47,8 @@ export async function getModules(q) {
     method: "GET",
     headers: {
       "Accept": "text/plain"
-    }
+    },
+    credentials: "include"
   });
 
   if (!res.ok) {
@@ -82,7 +83,7 @@ export async function getModule(id) {
   });
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch modules: ${res.status}`);
+    throw new Error(`Failed to fetch module: ${res.status}`);
   }
 
   return await res.json();
@@ -96,6 +97,7 @@ export async function updateModule(id, moduleData) {
       "Accept": "application/json",
       "Content-Type": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(moduleData)
   });
 
@@ -117,6 +119,11 @@ export async function addModule(moduleData) {
     body: JSON.stringify(moduleData)
   });
 
+  if (res.status === 409) {
+    const errorBody = await res.json().catch(() => null);
+    throw new Error(errorBody?.message);
+  }
+
   if (!res.ok) {
     throw new Error(`Failed to save module: ${res.status}`);
   }
@@ -124,13 +131,61 @@ export async function addModule(moduleData) {
   return res.json();
 }
 
+export async function existenceModule(id) {
+  const res = await fetch(`${API_BASE}/Module/existence/${id}`, {
+    method: "GET",
+    headers: {
+      "Accept": "text/plain"
+    },
+    credentials: "include"
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to check module existence: ${res.status}`);
+  }
+  return await res.json();
+}
+
+export async function activateModule(id) {
+  const res = await fetch(`${API_BASE}/Module/activate/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Accept": "text/plain"
+    },
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to activate module: ${res.status}`);
+  }
+
+  return res.text();
+
+}
+
+export async function deactivateModule(id) {
+  const res = await fetch(`${API_BASE}/Module/deactivate/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Accept": "text/plain"
+    },
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to deactivate module: ${res.status}`);
+  }
+
+  return res.text();
+
+}
 
 export async function deleteModule(id) {
   const res = await fetch(`${API_BASE}/Module/${id}`, {
     method: "DELETE",
     headers: {
       "Accept": "text/plain"
-    }
+    },
+    credentials: "include"
   });
 
   if (!res.ok) {
@@ -143,22 +198,32 @@ export async function deleteModule(id) {
 
 
 export async function getModuleProgress(id) {
-  const res = await fetch(`${API_BASE}/Module/${id}/progress`, {
-    method: "GET",
-    headers: {
-      "Accept": "application/json"
-    },
-    credentials: "include"
-  });
+  const  userData = await window.userData;
+  if (!userData) return null;
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch progress: ${res.status}`);
-  }
-  if (res.status === 204) {
+  try {
+    const res = await fetch(`${API_BASE}/Module/${id}/progress`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json"
+      },
+      credentials: "include"
+    });
+
+    if (res.status === 401 || res.status === 403 || res.status === 204) {
+      return null;
+    }
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch progress: ${res.status}`);
+    }
+
+    return await res.json();
+
+  } catch (error) {
+    console.error("Fetch failed:", error);
     return null;
   }
-  return await res.json();
-
 }
 
 export async function addCompletedEvl(id, evlId) {
@@ -317,6 +382,7 @@ export async function validateRoute(learningRoute) {
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
+    credentials: "include",
     body: JSON.stringify(learningRoute)
   });
 
@@ -352,7 +418,7 @@ export async function getLearningRoutesByUserId(id) {
 }
 
 export async function postLearningRoute(learningRoute) {
-  const res = await fetch(`${API_BASE}/LearningRoute`, {
+  const res = await fetch(`${API_BASE}/learningRoute`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -366,7 +432,7 @@ export async function postLearningRoute(learningRoute) {
     throw new Error(`Failed to post learning route: ${res.status}`);
   }
 
-  return;
+  return true;
 }
 
 export async function deleteRoute(learningRouteId) {

@@ -1,6 +1,5 @@
 import SemesterCard from "../components/semester-card.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
-import { validateRoute } from "../../client/api-client.js";
 export let learningRouteArray = [];
 
 export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
@@ -17,7 +16,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
     // Fallback for semester1
     if (!semester1 || !semester1.Module || !semester1.Module.Name) {
-        console.warn("Semester1.Module.Name is null or undefined. Using dummySemester1.");
         semester1 = dummySemester1;
     }
 
@@ -36,6 +34,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             semester: semester1.Period,
             module: semester1.Module.Name,
             moduleId: semester1.ModuleId,
+            isActive: semester1.Module.IsActive,
             locked: semester1.locked,
             onModuleChange: async ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(
@@ -63,7 +62,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
     // Fallback for semester2
     if (!semester2 || !semester2.Module || !semester2.Module.Name) {
-        console.warn("Semester2.Module.Name is null or undefined. Using dummySemester2.");
         semester2 = dummySemester2;
     }
 
@@ -80,6 +78,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             semester: semester2.Period,
             module: semester2.Module.Name,
             moduleId: semester2.Module.Id,
+            isActive: semester2.Module.IsActive,
             locked: semester2.locked,
             onModuleChange: ({ semester, moduleId }) => {
                 const existingItem = learningRouteArray.find(
@@ -139,5 +138,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         placeholder.style.width = "150px";
         wrapper.appendChild(placeholder);
     }
+
     return wrapper;
 }

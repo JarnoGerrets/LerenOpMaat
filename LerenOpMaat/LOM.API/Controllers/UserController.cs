@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace LOM.API.Controllers
 {
@@ -31,19 +32,19 @@ namespace LOM.API.Controllers
             {
                 RedirectUri = returnUrl
             }, OpenIdConnectDefaults.AuthenticationScheme);
+
         }
 
         [HttpGet("logout")]
         public async Task Logout()
         {
+            HttpContext.Session.Clear();
             await HttpContext.SignOutAsync("Cookies");
 
             //Important, this method should never return anything.
         }
 
     }
-
-
 
     [Authorize]
     [ApiController]

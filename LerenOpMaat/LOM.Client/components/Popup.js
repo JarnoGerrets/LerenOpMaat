@@ -1,5 +1,5 @@
 export default class Popup {
-    constructor({ maxWidth = 'auto', maxHeight = 'auto', sizeCloseButton = '', extraButtons = false, closeButtonStyle, header = '', titleWrapperClass = '',content = '', buttons = [] }) {
+    constructor({minwidth = 'auto', minheight = 'auto', maxWidth = 'auto', maxHeight = 'auto', sizeCloseButton = '', extraButtons = false, closeButtonStyle, header = '', titleWrapperClass = '', content = '', buttons = [] }) {
 
         this._handleOutsideClick = this._handleOutsideClick.bind(this);
 
@@ -10,6 +10,8 @@ export default class Popup {
         this.popup.classList.add('popup');
         this.popup.style.maxWidth = maxWidth;
         this.popup.style.maxHeight = maxHeight;
+        this.popup.style.minWidth = minwidth;
+        this.popup.style.minHeight = minheight;
 
         this.overlay = document.createElement('div');
         this.overlay.classList.add('popup-overlay');
@@ -112,12 +114,12 @@ export default class Popup {
             this.overlay.style.pointerEvents = 'auto';
             this.popup.style.transform = 'scale(1)';
             this.popup.style.opacity = 1;
-    
+
             setTimeout(() => {
                 document.addEventListener('click', this._handleOutsideClick);
             }, 10);
         }, 10);
-    
+
         return new Promise((resolve) => {
             this._resolve = resolve;
         });
@@ -129,10 +131,14 @@ export default class Popup {
         this.popup.style.transform = 'scale(0)';
         this.popup.style.opacity = 0;
         setTimeout(() => {
-            document.body.removeChild(this.overlay);
+            if (this.overlay && this.overlay.parentNode === document.body) {
+                document.body.removeChild(this.overlay);
+            }
+
             if (this._resolve) this._resolve(result);
         }, 300);
     }
+
 
     _handleOutsideClick(event) {
         if (this.overlay.parentElement && !this.popup.contains(event.target)) {

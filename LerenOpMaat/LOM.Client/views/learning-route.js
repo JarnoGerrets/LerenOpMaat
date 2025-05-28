@@ -1,9 +1,10 @@
 import SemesterPair from "../components/semester-pair.js";
-import { getLearningRoutesByUserId, postLearningRoute, updateSemester, postConversation, getConversationByUserId } from "../../client/api-client.js";
+import { getLearningRoutesByUserId, postLearningRoute, updateSemester, postConversation, getConversationByUserId, deleteRoute } from "../client/api-client.js"
 import { learningRouteArray } from "../../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
+import AddIconButton from "../components/add-icon-button.js";
 
 
 let apiResponse = [];
@@ -21,17 +22,10 @@ export default async function LearningRoute() {
     let semesterData = [];
     let routeId = null;
 
-    let userData = null;
+    let userData = await window.userData;
     let tries = 0;
-    // Wacht tot userData in localStorage staat (max 2 seconden)
-    while (!userData && tries < 20) {
-        userData = JSON.parse(localStorage.getItem("userData"));
-        if (!userData) await new Promise(res => setTimeout(res, 100));
-        tries++;
-    }
 
     try {
-        const userData = JSON.parse(localStorage.getItem("userData"));
         if (userData && userData.InternalId) {
             apiResponse = await getLearningRoutesByUserId(userData.InternalId);
             if (
@@ -39,7 +33,8 @@ export default async function LearningRoute() {
                 !Array.isArray(apiResponse.Semesters) ||
                 apiResponse.Semesters.length === 0
             ) {
-                console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
+                // not needed as this will be intended behavior. could decide to add logging here
+                // console.error("Geen geldige semesters gevonden in de API-respons:", apiResponse.learninRoute?.semesters);
             } else {
                 semesterData = apiResponse.Semesters;
                 routeId = apiResponse.Id;
@@ -118,7 +113,7 @@ export default async function LearningRoute() {
 
                 // Its assumed here that no student will have more than 20 semesters in their learning route.
                 // This is a safety check which prevents the user from purposely trying to overload the system.
-                if (index < 20) {
+                if (index < 20) { 
                     grid.appendChild(addSemesterContainer);
                 }
             }
@@ -221,18 +216,32 @@ export default async function LearningRoute() {
                 };
             });
         }
+        const header = `
+                    <h3 class="popup-header-confirmation">
+                        Verwijderen leerroute
+                    </h3>
+                `;
+        const content = `
+                    <div class="confirmation-popup-content">
+                    <p>Weet u zeker dat u uw leerroute wilt verwijderen?</p>
+                    <div class="confirmation-popup-buttons"> 
+                        <button id="confirm-confirmation-popup"" class="confirmation-accept-btn">Ja</button>
+                        <button id="cancel-confirmation-popup"" class="confirmation-deny-btn">Nee</button>
+                    </div>
+                    </div>`;
 
         const deleteButton = fragment.getElementById("deleteRoute");
         if (deleteButton) {
             deleteButton.addEventListener("click", async () => {
                 if (routeId !== null) {
-                    await confirmationPopup("de leerroute", "delete", routeId);
+                    await confirmationPopup("Leerroute", routeId, header, content, deleteRoute, "/");
                 } else {
                     console.error("Geen routeId beschikbaar om te verwijderen.");
                 }
             });
         }
     } catch (error) {
+        showToast("Er ging iets fouten tijdens het laden van de leerroute, probeer het later nog eens.", "error");
         console.error("Error fetching semester data:", error.message);
     } finally {
         hideLoading();
@@ -272,6 +281,8 @@ export default async function LearningRoute() {
             window.location.hash = "#feedback";
         });
     }
+
+
 
     return { fragment };
 }
@@ -316,7 +327,7 @@ async function updateLearningRoute(routeId, semesterData) {
         const response = await updateSemester(routeId, body);
 
         if (!response) {
-            console.error(`Fout bij het updaten van de learning route: ${response.status}`);
+            console.error(`Fout bij het updaten van de learning route: ${response.status} `);
             return;
         } else {
             console.log("Learning route succesvol gepdatet.");

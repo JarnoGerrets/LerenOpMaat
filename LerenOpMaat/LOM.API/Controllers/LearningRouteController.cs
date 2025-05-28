@@ -80,11 +80,13 @@ namespace LOM.API.Controllers
         // POST: api/learningRoutes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<LearningRoute>> PostlearningRoute(LearningRoute learningRoute)
+        public async Task<ActionResult<LearningRoute>> PostlearningRoute([FromBody] LearningRoute learningRoute)
         {
+
             if (learningRoute == null)
             {
                 return BadRequest("Learning route cannot be null.");
+
             }
 
             // Validate the user exists
@@ -181,6 +183,7 @@ namespace LOM.API.Controllers
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
             foreach (var semester in semesters)
             {
                 if (semester.ModuleId.HasValue)

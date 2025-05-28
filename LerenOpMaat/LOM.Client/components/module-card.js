@@ -1,4 +1,5 @@
 import './card.js';
+import { mapPeriodToPresentableString } from '../scripts/utils/presentationMapper.js';
 
 export default class ModuleCard extends customElements.get("base-card") {
     constructor() {
@@ -22,7 +23,7 @@ export default class ModuleCard extends customElements.get("base-card") {
                     Code: <span id="code-text">${module.Code}</span>
                     </div>
                     <div class="module-info-row" style="font-weight: bold;">
-                    Periode: <span id="period-text">${module.Period}</span>
+                    Periode: <span id="period-text">${mapPeriodToPresentableString(module.Period)}</span>
                     </div>
                 </div>
                 <div class="w-50">
@@ -37,7 +38,11 @@ export default class ModuleCard extends customElements.get("base-card") {
             ${infoIcon}
         `;
         this.dataset.id = module.Id;
-        this.renderCard(content, module.GraduateProfile?.ColorCode || "");
+        let colorcode = module.GraduateProfile?.ColorCode || "";
+        if (!(module.IsActive)) {
+            colorcode = "#D3D3D3"; // light gray for inactive modules
+        }
+        this.renderCard(content, colorcode);
     }
 }
 

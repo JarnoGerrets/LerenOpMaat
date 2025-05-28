@@ -1,4 +1,5 @@
 import loadTemplate from "../scripts/loadTemplate.js";
+import { mapPeriodToPresentableString } from "../scripts/utils/presentationMapper.js"
 
 export default class SemesterModule {
     constructor(modules, onModuleSelect) {
@@ -30,7 +31,7 @@ export default class SemesterModule {
                         Code: <span id="code-text">${module.Code}</span>
                         </div>
                         <div class="module-info-row">
-                        Periode: <span id="period-text">${module.Period}</span>
+                        Periode: <span id="period-text">${mapPeriodToPresentableString(module.Period)}</span>
                         </div>
                     </div>
                     <div>
@@ -44,14 +45,14 @@ export default class SemesterModule {
                 </div>`;
             }
             const populatedTemplate = template
-                .replace('{{id}}', module.Id)
                 .replace('{{card_text}}', cardText)
                 .replace('{{title}}', module.Name)
                 .replace('{{link}}', link);
 
             const tile = document.createElement('div');
             tile.classList.add('module-tile');
-            tile.id = 'module-{{id}}';
+            tile.style.backgroundColor = module.GraduateProfile?.ColorCode ?? '#f0f0f0';
+            tile.id = `module-${module.Id}`;
             tile.innerHTML = populatedTemplate;
             //making sure the router can recognize this call
             const infoLink = tile.querySelector('a');
