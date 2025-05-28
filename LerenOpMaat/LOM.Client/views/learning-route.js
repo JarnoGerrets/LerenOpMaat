@@ -290,7 +290,6 @@ export default async function LearningRoute() {
 async function saveLearningRoute(learningRouteArray) {
     if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
         const user = apiResponse?.User;
-        console.log("Gebruiker:", user);
         if (!user) {
             throw new Error("Geen gebruikersgegevens gevonden in de API-response.");
         }
