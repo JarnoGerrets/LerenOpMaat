@@ -6,23 +6,16 @@ export default async function renderTeacherLearningRoutes() {
     document.getElementById('app').innerHTML = html;
     const fragment = document.createDocumentFragment();
 
-    let userData = null;
-    let tries = 0;
-    // Wacht tot userData in localStorage staat (max 2 seconden)
-    while (!userData && tries < 20) {
-        userData = JSON.parse(localStorage.getItem("userData"));
-        if (!userData) await new Promise(res => setTimeout(res, 100));
-        tries++;
-    }
-
+    let userData = await window.userData;
+    const conversations = await getConversationByAdminId(userData.InternalId);
+    
     // Haal conversations op voor deze admin (teacher)
     let routes = [];
     if (userData && userData.InternalId) {
         try {
-            const conversations = await getConversationByAdminId(userData.InternalId);
             console.log('Conversation:', conversations);
             routes = conversations.map(conv => {
-                const user = conv.LearningRoute?.User;
+                const user = conv.Student;
                 const fullName = user
                     ? `${user.FirstName ?? ''} ${user.LastName ?? ''}`.trim()
                     : 'Onbekende gebruiker';
@@ -43,7 +36,7 @@ export default async function renderTeacherLearningRoutes() {
     }
     listContainer.innerHTML = '';
 
-    routes.forEach(route => {
+    routes.forEach((route, idx) => {
         const routeDiv = document.createElement('div');
         routeDiv.className = 'learning-route-row';
         routeDiv.innerHTML = `
@@ -51,6 +44,19 @@ export default async function renderTeacherLearningRoutes() {
         <button class="open-route-btn">Openen</button>
     `;
         listContainer.appendChild(routeDiv);
+        const openBtn = routeDiv.querySelector('.open-route-btn');
+        openBtn.addEventListener('click', async () => {
+            // Gebruik de conversation body!
+            const conversationId = conversations[idx].Id;
+            console.log('Openen conversatie:', conversationId);
+            const userId = conversations[idx].StudentId;
+            console.log('Gebruiker ID:', userId);
+            if (!conversationId || !userId) {
+                alert("Kan deze conversatie niet openen: ontbrekende gegevens.");
+                return;
+            }
+            window.location.hash = `#beheerder-feedback?conversationId=${conversationId}&userId=${userId}`;
+        });
     });
 
     return { fragment };

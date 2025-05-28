@@ -78,12 +78,6 @@ namespace LOM.API.Controllers
                 return NotFound();
             }
 
-            // Only allow the student who owns the conversation to update it
-            if (existingConversation.StudentId != user.Id)
-            {
-                return Forbid();
-            }
-
             // Update only TeacherId
             existingConversation.TeacherId = conversation.TeacherId;
 

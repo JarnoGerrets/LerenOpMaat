@@ -6,7 +6,13 @@ import oerView from './views/oer-view.js';
 import feedback from './views/feedback.js';
 import settingsPage from './views/settings-page.js';
 import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
+import beheerderFeedback from './views/beheerder-feedback.js';
 
+function getHashParams() {
+  const hash = window.location.hash.split('?')[1];
+  if (!hash) return {};
+  return Object.fromEntries(new URLSearchParams(hash));
+}
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
   "": async () => {
@@ -27,6 +33,13 @@ const routes = {
   "#instellingen": async () => {
     return await renderTeacherLearningRoutes(); //de settings page niet vergeten terug te zetten.
   },
+  "#beheerder-feedback": async () => {
+    const params = getHashParams();
+    const { fragment } = await beheerderFeedback(params);
+    document.getElementById('app').innerHTML = '';
+    document.getElementById('app').appendChild(fragment);
+  },
+
 };
 
 //function which takes for example and Id and gives it to the router as parameter to be used. 
@@ -65,13 +78,20 @@ const router = async () => {
   const app = document.getElementById("app");
   app.innerHTML = "";
 
+  // Speciaal afhandelen voor beheerder-feedback met parameters
+  if (path.startsWith("#beheerder-feedback")) {
+    const params = getHashParams();
+    const { fragment } = await beheerderFeedback(params);
+    app.appendChild(fragment);
+    return;
+  }
+
   const match = matchRoute(path);
   if (match) {
     const { handler, params } = match;
     const { fragment, init } = await handler(params.id);
     app.appendChild(fragment);
-    if (init) await init(); // <-- when a script needs the view to be loaded before continuing this ensures that the contents are in the DOM to be used.
-
+    if (init) await init();
   } else {
     const div = document.createElement("div");
     div.innerHTML = "<h1>404 Not Found</h1>";
