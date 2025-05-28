@@ -147,7 +147,8 @@ export async function getModuleProgress(id) {
     method: "GET",
     headers: {
       "Accept": "application/json"
-    }
+    },
+    credentials: "include"
   });
 
   if (!res.ok) {

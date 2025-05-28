@@ -87,30 +87,21 @@ namespace LOM.API.Controllers
                 return BadRequest("Learning route cannot be null.");
             }
 
-            if (learningRoute.Users != null && learningRoute.Users.Any())
+            // Validate the user exists
+            var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Id == learningRoute.UserId);
+
+            if (existingUser == null)
             {
-                var userIds = learningRoute.Users.Select(u => u.Id).ToList();
-                var existingUsers = await _context.User.Where(u => userIds.Contains(u.Id)).ToListAsync();
-
-                if (existingUsers.Count != userIds.Count)
-                {
-                    return BadRequest("One or more users do not exist.");
-                }
-
-                foreach (var user in learningRoute.Users)
-                {
-                    var existingUser = existingUsers.FirstOrDefault(u => u.Id == user.Id);
-                    if (existingUser != null)
-                    {
-                        existingUser.StartYear = user.StartYear; // Update startYear
-                    }
-                }
-
-                learningRoute.Users = existingUsers;
+                return BadRequest("User does not exist.");
             }
 
-            _context.LearningRoutes.Add(learningRoute);
+            learningRoute.User = existingUser;
 
+            _context.LearningRoutes.Add(learningRoute);
+            await _context.SaveChangesAsync();
+
+            // Update the user's LearningRouteId after the LearningRoute is saved (so the Id is generated)
+            existingUser.LearningRouteId = learningRoute.Id;
             await _context.SaveChangesAsync();
 
             return Ok();

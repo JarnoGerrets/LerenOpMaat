@@ -5,10 +5,10 @@ import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
 
+
 let apiResponse = [];
 export let currentUserId = null;
 export let learningRouteId = null;
-const cohortYear = parseInt(localStorage.getItem("cohortYear"));
 export default async function LearningRoute() {
     showLoading();
 
@@ -34,7 +34,6 @@ export default async function LearningRoute() {
         const userData = JSON.parse(localStorage.getItem("userData"));
         if (userData && userData.InternalId) {
             apiResponse = await getLearningRoutesByUserId(userData.InternalId);
-
             if (
                 !apiResponse.Semesters ||
                 !Array.isArray(apiResponse.Semesters) ||
@@ -105,6 +104,29 @@ export default async function LearningRoute() {
                 index++;
             }
         }
+
+        // Some students might follow a route that takes longer than 4 years, so we add a button to add more semesters
+        // It should only be added here if the previous row already shows the add button.
+        const addSemesterContainer = document.createElement("div");
+        const addIconButton = new AddIconButton({
+            onclick: async () => {
+                const newSemesterPair = await SemesterPair(dummySemester1, dummySemester2, index);
+                grid.appendChild(newSemesterPair);
+                index++;
+
+                addSemesterContainer.remove();
+
+                // Its assumed here that no student will have more than 20 semesters in their learning route.
+                // This is a safety check which prevents the user from purposely trying to overload the system.
+                if (index < 20) {
+                    grid.appendChild(addSemesterContainer);
+                }
+            }
+        });
+
+        addSemesterContainer.appendChild(addIconButton.getHtml());
+
+        grid.appendChild(addSemesterContainer);
 
         //Opslaan knop als de gebruiker al een route heeft dan wordt het aangepast
         //Als er nog geen route is gekoppeld aan de  gebruiker dan maakt hij een nieuwe route
@@ -222,7 +244,7 @@ export default async function LearningRoute() {
             e.preventDefault();
 
             // Haal gebruiker en routeId op
-            const user = apiResponse?.Users?.[0];
+            const user = apiResponse?.User;
             if (!user || !routeId) {
                 console.error("Gebruiker of routeId niet gevonden.");
                 window.location.hash = "#feedback";
@@ -236,7 +258,6 @@ export default async function LearningRoute() {
                 // Conversation bestaat niet, maak een nieuwe aan
                 const conversationBody = {
                     LearningRouteId: routeId,
-                    TeacherId: 4, // Pas eventueel aan
                     StudentId: user.Id
                 };
                 try {
@@ -257,20 +278,13 @@ export default async function LearningRoute() {
 
 async function saveLearningRoute(learningRouteArray) {
     if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
-        const user = apiResponse?.Users?.[0];
+        const user = apiResponse?.User;
+        console.log("Gebruiker:", user);
         if (!user) {
             throw new Error("Geen gebruikersgegevens gevonden in de API-response.");
         }
         const jsonData = {
-            Users: [
-                {
-                    Id: user.Id,
-                    ExternalId: user.ExternalID,
-                    FirstName: user.FirstName,
-                    LastName: user.LastName,
-                }
-            ],
-            StartYear: cohortYear,
+            UserId: user.Id,
             Semesters: learningRouteArray.map(item => ({
                 Year: item.Year,
                 Period: item.Period,
