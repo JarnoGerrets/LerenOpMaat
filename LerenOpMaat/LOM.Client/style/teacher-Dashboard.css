@@ -1,0 +1,47 @@
+.teacher-learning-route-container {
+    padding: 40px;
+}
+
+.teacher-learning-route-container h2 {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.learning-route-list {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.learning-route-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ddd;
+    border-radius: 18px;
+    margin-bottom: 18px;
+    padding: 28px 32px;
+    box-shadow: 0 2px 6px #0001;
+}
+
+.learning-route-title {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.open-route-btn {
+    background: #FFD600;
+    color: #222;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 38px;
+    font-size: 1.1em;
+    font-weight: 500;
+    box-shadow: 0 2px 4px #0001;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: background 0.2s;
+}
+
+.open-route-btn:hover {
+    background: #ffe066;
+}

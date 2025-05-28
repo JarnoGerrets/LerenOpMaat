@@ -5,6 +5,7 @@ import { moduleOverview } from "./views/module-overview.js";
 import oerView from './views/oer-view.js';
 import feedback from './views/feedback.js';
 import settingsPage from './views/settings-page.js';
+import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
@@ -24,8 +25,8 @@ const routes = {
     return await feedback();
   },
   "#instellingen": async () => {
-    return await settingsPage();
-  }
+    return await renderTeacherLearningRoutes(); //de settings page niet vergeten terug te zetten.
+  },
 };
 
 //function which takes for example and Id and gives it to the router as parameter to be used. 
