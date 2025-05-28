@@ -198,8 +198,7 @@ export async function deleteModule(id) {
 
 
 export async function getModuleProgress(id) {
-  let userData = null;
-  userData = JSON.parse(localStorage.getItem("userData"));
+  const  userData = await window.userData;
   if (!userData) return null;
 
   try {

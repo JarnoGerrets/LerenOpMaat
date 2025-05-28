@@ -44,9 +44,8 @@ class ModuleOverview extends HTMLElement {
             this.renderModules(filteredModules);
         });
 
-        let userData = null;
+        let userData = await window.userData;
 
-        userData = JSON.parse(localStorage.getItem("userData"));
         if (userData) {
             if (userData.Roles != 'Student') {
                 //add module handler        
