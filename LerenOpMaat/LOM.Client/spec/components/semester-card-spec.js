@@ -1,216 +1,208 @@
-import { semesterCardServices } from "../../scripts/utils/importServiceProvider.js";
+import { semesterCardServices, uiUpdatesServices } from "../../scripts/utils/importServiceProvider.js";
+import { updateModuleUI } from '../../scripts/utils/semester-card-utils/ui-updates.js';
 
 describe("SemesterCard", () => {
-    // it("should render a semester card", async () => {
-    //     const SemesterCard = (await import('../../components/semester-card.js')).default;
-    //     const { dummySemester1 } = await import('../../components/dummyData2.js');
+    it("should render a semester card", async () => {
+        const mockServices = {
+            ...semesterCardServices,
+            getModule: async () => ({ Id: 123, Name: "MockModule", IsActive: false }),
+        };
+        const SemesterCard = (await import('../../components/semester-card.js')).default;
 
-    //     const fragment = await SemesterCard({
-    //         semester: dummySemester1.Period,
-    //         module: dummySemester1.Module.Name,
-    //         moduleId: dummySemester1.ModuleId,
-    //         isActive: dummySemester1.Module.IsActive,
-    //         locked: false,
-    //         onModuleChange: () => { },
-    //     });
-
-
-    //     expect(fragment instanceof DocumentFragment).toBeTrue();
-
-    //     const card = fragment.querySelector(".semester-card");
-    //     expect(card).not.toBeNull();
-    // });
+        const fragment = await SemesterCard({
+            semester: 1,
+            module: "MockModule",
+            moduleId: 1,
+            isActive: true,
+            locked: false,
+            onModuleChange: () => { },
+            services: mockServices
+        });
 
 
-    // it("should display the module name in the button", async () => {
-    //     const SemesterCard = (await import('../../components/semester-card.js')).default;
-    //     const { dummySemester1 } = await import('../../components/dummyData2.js');
+        expect(fragment instanceof DocumentFragment).toBeTrue();
 
-    //     const fragment = await SemesterCard({
-    //         semester: dummySemester1.Period,
-    //         module: dummySemester1.Module.Name,
-    //         moduleId: dummySemester1.ModuleId,
-    //         isActive: dummySemester1.Module.IsActive,
-    //         locked: false,
-    //         onModuleChange: () => { },
-    //     });
+        const card = fragment.querySelector(".semester-card");
+        expect(card).not.toBeNull();
+    });
 
-    //     const button = fragment.querySelector("#select-module");
-    //     expect(button.textContent).toContain(dummySemester1.Module.Name);
-    // });
 
-    // it("should add 'locked' class and lock icon when locked", async () => {
-    //     const SemesterCard = (await import('../../components/semester-card.js')).default;
-    //     const { dummySemester1 } = await import('../../components/dummyData2.js');
+    it("should display the module name in the button", async () => {
+        const mockServices = {
+            ...semesterCardServices,
+            getModule: async () => ({ Id: 123, Name: "MockModule", IsActive: false }),
+        };
+        const SemesterCard = (await import('../../components/semester-card.js')).default;
 
-    //     const fragment = await SemesterCard({
-    //         semester: dummySemester1.Period,
-    //         module: dummySemester1.Module.Name,
-    //         moduleId: dummySemester1.ModuleId,
-    //         isActive: dummySemester1.Module.IsActive,
-    //         locked: true,
-    //         onModuleChange: () => { },
-    //     });
+        const fragment = await SemesterCard({
+            semester: 1,
+            module: "MockModule",
+            moduleId: 1,
+            isActive: true,
+            locked: false,
+            onModuleChange: () => { },
+            services: mockServices
+        });
 
-    //     const button = fragment.querySelector("#select-module");
-    //     expect(button.classList.contains("locked")).toBeTrue();
-    //     const icon = button.querySelector("i");
-    //     expect(icon.classList.contains("bi-lock-fill")).toBeTrue();
-    // });
+        const button = fragment.querySelector("#select-module");
+        expect(button.textContent).toContain("MockModule");
+    });
 
-    // it("should show the inactive label if the module is inactive", async () => {
-    //     const SemesterCard = (await import('../../components/semester-card.js')).default;
+    it("should add 'locked' class and lock icon when locked", async () => {
+        const mockServices = {
+            ...semesterCardServices,
+            getModule: async () => ({ Id: 123, Name: "MockModule", IsActive: false }),
+        };
+        const SemesterCard = (await import('../../components/semester-card.js')).default;
 
-    //     const fragment = await SemesterCard({
-    //         semester: 1,
-    //         module: "MockModule",
-    //         moduleId: 123,
-    //         isActive: true,
-    //         locked: false,
-    //         onModuleChange: () => { },
-    //         dependencies: {
-    //             getModule: async () => ({ Id: 123, Name: "MockModule", IsActive: false }),
-    //             getModuleProgress: async () => ({ Completed: 0, Total: 1 }),
-    //         }
-    //     });
+        const fragment = await SemesterCard({
+            semester: 1,
+            module: "test",
+            moduleId: 1,
+            isActive: true,
+            locked: true,
+            onModuleChange: () => { },
+            services: mockServices
+        });
 
-    //     const label = fragment.querySelector(".inactive-label-tag");
+        const button = fragment.querySelector("#select-module");
+        expect(button.classList.contains("locked")).toBeTrue();
+        const icon = button.querySelector("i");
+        expect(icon.classList.contains("bi-lock-fill")).toBeTrue();
+    });
 
-    //     await new Promise(res => setTimeout(res, 0));
+    it("should show the inactive label if the module is inactive", async () => {
+        const mockServices = {
+            ...semesterCardServices,
+            getModule: async () => ({ Id: 123, Name: "MockModule", IsActive: false }),
+            getModuleProgress: async () => ({ Completed: 0, Total: 1 }),
+        };
 
-    //     expect(label.classList.contains("hidden")).toBeFalse();
-    // });
+        const SemesterCard = (await import('../../components/semester-card.js')).default;
 
-    // it("should call onModuleChange when a new module is selected", async () => {
-    //     const SemesterCard = (await import('../../components/semester-card.js')).default;
+        const fragment = await SemesterCard({
+            semester: 1,
+            module: "MockModule",
+            moduleId: 123,
+            isActive: true,
+            locked: false,
+            onModuleChange: () => { },
+            services: mockServices
+        });
 
-    //     let calledWith = null;
+        const label = fragment.querySelector(".inactive-label-tag");
 
-    //     const mockSelectModule = async () => ({
-    //         Id: 999,
-    //         Name: "Mocked",
-    //         IsActive: true,
-    //     });
+        await new Promise(res => setTimeout(res, 0));
 
-    //     const mockProgress = async () => ({ Completed: 0, Total: 1 });
+        expect(label.classList.contains("hidden")).toBeFalse();
+    });
 
-    //     const fragment = await SemesterCard({
-    //         semester: 1,
-    //         module: "Mocked",
-    //         moduleId: 123,
-    //         isActive: true,
-    //         locked: false,
-    //         onModuleChange: (data) => { calledWith = data; },
-    //         dependencies: {
-    //             SemesterChoice: mockSelectModule,
-    //             getModule: mockSelectModule,
-    //             getModuleProgress: mockProgress,
-    //         }
-    //     });
+    it("should call onModuleChange when a new module is selected", async () => {
 
-    //     const button = fragment.querySelector("#select-module");
-    //     button.click();
+        const mockSelectModule = async () => ({
+            Id: 999,
+            Name: "Mocked",
+            IsActive: true,
+        });
 
-    //     await new Promise(res => setTimeout(res, 1000));
+        const mockServices = {
+            ...semesterCardServices,
+            getModule: async () => (mockSelectModule),
+            getModuleProgress: async () => ({ Completed: 0, Total: 1 }),
+            SemesterChoice: mockSelectModule,
+            validateRoute: async () => [],
+            updateAllCardsStyling: jasmine.createSpy('updateAllCardsStyling')
+        };
 
-    //     expect(calledWith).not.toBeNull();
-    //     expect(calledWith.semester).toBe(1);
-    //     expect(calledWith.moduleId).toBe(999);
-    // });
+        const SemesterCard = (await import('../../components/semester-card.js')).default;
 
-    // it("should set data-module-id correctly", async () => {
-    //     const SemesterCard = (await import('../../components/semester-card.js')).default;
+        let calledWith = null;
 
-    //     const fragment = await SemesterCard({
-    //         semester: 2,
-    //         module: "TestModule",
-    //         moduleId: 555,
-    //         isActive: true,
-    //         locked: false,
-    //         onModuleChange: () => { },
-    //         dependencies: {
-    //             getModule: async () => ({ Id: 555, Name: "TestModule", IsActive: true }),
-    //             getModuleProgress: async () => ({ Completed: 0, Total: 1 }),
-    //         }
-    //     });
 
-    //     const card = fragment.querySelector(".semester-card");
-    //     expect(card.getAttribute("data-module-id")).toBe("555");
-    // });
 
-    // it("should turn button text red if module is inactive", async () => {
-    //     const SemesterCard = (await import('../../components/semester-card.js')).default;
+        const fragment = await SemesterCard({
+            semester: 1,
+            module: "Mocked",
+            moduleId: 123,
+            isActive: true,
+            locked: false,
+            onModuleChange: (data) => { calledWith = data; },
+            services: mockServices
+        });
 
-    //     const fragment = await SemesterCard({
-    //         semester: 1,
-    //         module: "TestInactive",
-    //         moduleId: 444,
-    //         isActive: true,
-    //         locked: false,
-    //         onModuleChange: () => { },
-    //         dependencies: {
-    //             getModule: async () => ({ Id: 444, Name: "TestInactive", IsActive: false }),
-    //             getModuleProgress: async () => ({ Completed: 0, Total: 1 }),
-    //         }
-    //     });
+        const button = fragment.querySelector("#select-module");
+        button.click();
 
-    //     const button = fragment.querySelector("#select-module");
-    //     await new Promise(res => setTimeout(res, 0));
+        await new Promise(res => setTimeout(res, 1000));
 
-    //     expect(button.style.color).toBe("red");
-    // });
+        expect(calledWith).not.toBeNull();
+        expect(calledWith.semester).toBe(1);
+        expect(calledWith.moduleId).toBe(999);
+    });
 
-    // it("should clear selection when 'Geen Keuze' is selected", async () => {
-    //     const mockServices = {
-    //         ...semesterCardServices,
-    //         getModule: async () => ({ Id: 123, Name: "ModuleX", IsActive: true }),
-    //         getModuleProgress: async () => ({ Completed: 0, Total: 1 }),
-    //         SemesterChoice: async () => ({ Id: null, Name: "Geen Keuze", IsActive: true }),
-    //         validateRoute: async () => [],
-    //         updateAllCardsStyling: jasmine.createSpy('updateAllCardsStyling')
-    //     };
+    it("should set data-module-id correctly", async () => {
 
-    //     const SemesterCard = (await import('../../components/semester-card.js')).default;
-    //     const evlService = (await import('../../scripts/utils/semester-card-utils/evl-service.js')).default;
+        const mockServices = {
+            ...semesterCardServices,
+            getModule: async () => ({ Id: 555, Name: "TestModule", IsActive: true }),
+            getModuleProgress: async () => ({ Completed: 0, Total: 1 })
+        };
 
-    //     let calledWith = null;
+        const SemesterCard = (await import('../../components/semester-card.js')).default;
 
-    //     const mockSelectModule = async () => ({
-    //         Id: null,
-    //         Name: "Geen Keuze",
-    //         IsActive: true,
-    //     });
+        const fragment = await SemesterCard({
+            semester: 2,
+            module: "TestModule",
+            moduleId: 555,
+            isActive: true,
+            locked: false,
+            onModuleChange: () => { },
+            services: mockServices
+        });
 
-    //     spyOn(evlService, 'validateRoute').and.resolveTo([]);
+        const card = fragment.querySelector(".semester-card");
+        expect(card.getAttribute("data-module-id")).toBe("555");
+    });
 
-    //     const fragment = await SemesterCard({
-    //         semester: 2,
-    //         module: "ModuleX",
-    //         moduleId: 123,
-    //         isActive: true,
-    //         locked: false,
-    //         onModuleChange: (data) => { calledWith = data; },
-    //         dependencies: {
-    //             SemesterChoice: mockSelectModule,
-    //             getModule: async () => ({ Id: 123, Name: "ModuleX", IsActive: true }),
-    //             getModuleProgress: async () => ({ Completed: 0, Total: 1 }),
-    //         }
-    //     });
+    it("should turn button text red if module is inactive", async () => {
 
-    //     const button = fragment.querySelector("#select-module");
-    //     button.click();
+        const mockServices = {
+            ...semesterCardServices,
+            getModule: async () => ({ Id: 444, Name: "TestInactive", IsActive: false }),
+            getModuleProgress: async () => ({ Completed: 0, Total: 1 })
+        };
 
-    //     await new Promise(res => setTimeout(res, 1000));
+        const SemesterCard = (await import('../../components/semester-card.js')).default;
 
-    //     expect(calledWith).toEqual({ semester: 2, moduleId: null });
-    // });
+        const fragment = await SemesterCard({
+            semester: 1,
+            module: "TestInactive",
+            moduleId: 444,
+            isActive: true,
+            locked: false,
+            onModuleChange: () => { },
+            services: mockServices
+        });
+
+        const button = fragment.querySelector("#select-module");
+        await new Promise(res => setTimeout(res, 0));
+
+        expect(button.style.color).toBe("red");
+    });
 
     it("should clear selection when 'Geen Keuze' is selected", async () => {
+
+        const mockSelectModule = async () => ({
+            Id: null,
+            Name: "Geen Keuze",
+            IsActive: true,
+        });
+
         const mockServices = {
             ...semesterCardServices,
             getModule: async () => ({ Id: 123, Name: "ModuleX", IsActive: true }),
             getModuleProgress: async () => ({ Completed: 0, Total: 1 }),
-            SemesterChoice: async () => ({ Id: null, Name: "Geen Keuze", IsActive: true }),
+            SemesterChoice: mockSelectModule,
             validateRoute: async () => [],
             updateAllCardsStyling: jasmine.createSpy('updateAllCardsStyling')
         };
@@ -236,6 +228,7 @@ describe("SemesterCard", () => {
 
         expect(calledWith).toEqual({ semester: 2, moduleId: null });
     });
+
 
     it("should keep inactive label hidden for active modules", async () => {
         const mockServices = {
@@ -328,8 +321,6 @@ describe("SemesterCard", () => {
     });
 
     it("should update course points text when EVL checkbox is clicked", async () => {
-        const evlService = (await import('../../scripts/utils/semester-card-utils/evl-service.js')).default;
-
         const mockModule = {
             Id: 888,
             Name: "CourseModule",
@@ -346,21 +337,28 @@ describe("SemesterCard", () => {
         };
 
         const mockUpdatedProgress = {
-            CompletedEvls: [
-                { ModuleEvl: { Id: 1 } }
-            ]
+            CompletedEvls: [{ ModuleEvl: { Id: 1 } }]
         };
+
+        const wrappedUpdateModuleUI = (...args) =>
+            updateModuleUI(...args, {
+                ...uiUpdatesServices,
+                addCompletedEvl: jasmine.createSpy("addCompletedEvl").and.resolveTo(mockUpdatedProgress),
+                validateRoute: jasmine.createSpy("validateRoute").and.resolveTo([]),
+                handleValidationResult: jasmine.createSpy("handleValidationResult"),
+                calculateAchievedECs: () => 5
+            });
+
 
         spyOn(localStorage, 'getItem').and.returnValue("mockUser");
 
         const mockCardServices = {
             ...semesterCardServices,
             getModule: async () => (mockModule),
-            getModuleProgress: async () => ({ Completed: 0, Total: 1 }),
+            getModuleProgress: async () => (mockProgress),
             SemesterChoice: async () => ({ Name: "Geen Keuze" }),
             validateRoute: async () => [],
-            addCompletedEvl: async() => (mockUpdatedProgress),
-            validateRoute: async() => []
+            updateModuleUI: wrappedUpdateModuleUI
         };
 
         const SemesterCard = (await import('../../components/semester-card.js')).default;
