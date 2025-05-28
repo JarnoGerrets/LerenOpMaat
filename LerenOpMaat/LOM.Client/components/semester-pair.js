@@ -138,5 +138,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         placeholder.style.width = "150px";
         wrapper.appendChild(placeholder);
     }
+
     return wrapper;
 }

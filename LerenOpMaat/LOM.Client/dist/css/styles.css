@@ -1372,6 +1372,8 @@ body {
     display: flex;
     width: -moz-available;
     justify-content: space-between;
+    margin-bottom: 5px;
+    width: 100%;
 }
 
 .year-container {
