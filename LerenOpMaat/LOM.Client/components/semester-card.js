@@ -10,8 +10,9 @@ const moduleMessagesMap = {};
 
 export default async function SemesterCard({ semester, module, locked = false, isActive = true, onModuleChange, moduleId, dependencies = {} }) {
   const {
-    getModule = window.getModule, 
-    getModuleProgress = window.getModuleProgress
+    getModule = window.getModule,
+    getModuleProgress = window.getModuleProgress,
+    SemesterChoice = window.SemesterChoice
   } = dependencies;
 
   const template = document.createElement("template");
@@ -46,7 +47,12 @@ export default async function SemesterCard({ semester, module, locked = false, i
   const button = fragment.querySelector("#select-module");
   const coursePoints = fragment.querySelector("#coursePoints");
   const debouncedModuleSelection = debounce(
-    (params) => handleModuleSelection(params),
+    (params) => handleModuleSelection({
+      ...params,
+      SemesterChoice,
+      getModule,
+      getModuleProgress
+    }),
     500
   );
 
@@ -79,7 +85,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
   return fragment;
 }
 
-async function handleModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement }) {
+async function handleModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement, SemesterChoice }) {
   const selectedModule = await SemesterChoice(button.textContent.trim());
 
   const clearSelection = async () => {
