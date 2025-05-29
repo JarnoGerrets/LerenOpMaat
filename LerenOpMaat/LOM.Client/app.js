@@ -1,3 +1,4 @@
+import "./scripts/utils/getUserData.js";
 import ModuleInfo from "./views/module-info.js";
 import { RouteOrSelector } from "./views/cohort-selector.js";
 import { moduleOverview } from "./views/module-overview.js";

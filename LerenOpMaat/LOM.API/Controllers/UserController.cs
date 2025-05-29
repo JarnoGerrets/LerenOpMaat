@@ -46,8 +46,6 @@ namespace LOM.API.Controllers
 
     }
 
-
-
     [Authorize]
     [ApiController]
     [Route("api/account")]

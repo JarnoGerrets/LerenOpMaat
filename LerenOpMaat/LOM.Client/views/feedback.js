@@ -11,7 +11,7 @@ import {
 export default async function Feedback() {
     const response = await fetch("/templates/feedback.html");
     const html = await response.text();
-    const userData = await getUserData();
+    const userData = await window.userData;
 
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
