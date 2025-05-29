@@ -1,11 +1,15 @@
-import {updateAllCardsStyling} from './ui-updates.js';
+import {validationsServices} from '../importServiceProvider.js'
 
 function updateValidationState(moduleId, isValid) {
   validationState[moduleId] = isValid;
 }
 
 
-export function handleValidationResult(result) {
+export function handleValidationResult(result, services = validationsServices) {
+  const{
+    updateAllCardsStyling
+  } = services;
+  
   let validationResults = {};
 
   for (const validation of result) {
