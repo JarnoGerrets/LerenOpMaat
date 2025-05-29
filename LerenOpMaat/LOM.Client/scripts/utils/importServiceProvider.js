@@ -2,9 +2,14 @@ import * as apiClient from "../../client/api-client.js";
 import * as validations from "./semester-card-utils/validations.js";
 import * as ui from "./semester-card-utils/ui-updates.js";
 import * as utils from "./semester-card-utils/utils.js";
-import Popup from "../../components/Popup.js"
-import SemesterModule from "../../components/SemesterModule.js"
+import * as moduleActions from "../module-actions.js";
+import * as evlDropdownUtils from "../utils/evl-dropdown/evl-dropdown-utils.js"
+import Popup from "../../components/Popup.js";
+import SemesterModule from "../../components/SemesterModule.js";
 import SemesterChoice from "../../views/partials/semester-choice.js";
+import confirmationPopup from "../../views/partials/confirmation-popup.js"
+import { mapPeriodToPresentableString } from "./presentationMapper.js";
+
 
 const baseServices = {
     SemesterChoice,
@@ -12,8 +17,12 @@ const baseServices = {
     ...validations,
     ...ui,
     ...utils,
+    ...moduleActions,
+    ...evlDropdownUtils,
     Popup,
-    SemesterModule
+    SemesterModule,
+    confirmationPopup,
+    mapPeriodToPresentableString
 
 };
 
@@ -41,4 +50,26 @@ export const semesterChoiceServices = Object.freeze({
     Popup: baseServices.Popup,
     SemesterModule: baseServices.SemesterModule,
     getModules: baseServices.getModules
+});
+
+export const validationsServices = Object.freeze({
+    updateAllCardsStyling: baseServices.updateAllCardsStyling
+});
+
+export const initModuleInfoServices = Object.freeze({
+    getModule: baseServices.getModule,
+    existenceModule: baseServices.existenceModule,
+    setupButtons: baseServices.setupButtons
+});
+
+export const moduleActionsServices = Object.freeze({
+    updateModule: baseServices.updateModule,
+    activateModule: baseServices.activateModule,
+    deactivateModule: baseServices.deactivateModule,
+    deleteModule: baseServices.deleteModule,
+    setupListeners: baseServices.setupListeners,
+    getSelectedEVLs: baseServices.getSelectedEVLs,
+    updateEvlSelectionHeader: baseServices.updateEvlSelectionHeader,
+    confirmationPopup: baseServices.confirmationPopup,
+    mapPeriodToPresentableString: baseServices.mapPeriodToPresentableString
 });

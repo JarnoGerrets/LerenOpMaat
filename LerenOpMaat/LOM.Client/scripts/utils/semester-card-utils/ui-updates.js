@@ -78,7 +78,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
   const evlList = evlWrapper.querySelector(".evl-list");
 
   const achievedECs = calculateAchievedECs(progress, selectedModule);
-  const loggedIn = localStorage.getItem("userData");
+  const loggedIn = await window.userData
   if (selectedModule?.Evls && loggedIn) {
     evlList.innerHTML = selectedModule.Evls.map(ev => {
       const isChecked = progress?.CompletedEvls?.some(completed => completed.ModuleEvl.Id === ev.Id);

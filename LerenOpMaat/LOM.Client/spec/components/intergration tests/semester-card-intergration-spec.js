@@ -1,9 +1,16 @@
-import { uiUpdatesServices } from "../../scripts/utils/importServiceProvider.js";
-import { updateModuleUI } from '../../scripts/utils/semester-card-utils/ui-updates.js';
-import { setupSemesterCardTest, createMockSemesterCardServices } from "../helpers/semester-card-intergration-helper.js";
-import {  wait } from "../helpers/test-utils.js";
+import { uiUpdatesServices } from "../../../scripts/utils/importServiceProvider.js";
+import { updateModuleUI } from '../../../scripts/utils/semester-card-utils/ui-updates.js';
+import { setupSemesterCardTest, createMockSemesterCardServices } from "../../helpers/semester-card-intergration-helper.js";
+import { wait } from "../../helpers/test-utils.js";
 
-describe("SemesterCard", () => {
+describe("SemesterCard integration", () => {
+    beforeEach(() => {
+        localStorage.setItem('userData', JSON.stringify({ Role: "Admin" }));
+        window.userData = Promise.resolve({ Role: "Admin" });
+    });
+    afterEach(() => {
+        localStorage.clear();
+    });
     it("should render a semester card", async () => {
         const services = createMockSemesterCardServices({
             getModule: async () => ({ Id: 123, Name: "MockModule", IsActive: false })
@@ -261,8 +268,6 @@ describe("SemesterCard", () => {
                 calculateAchievedECs: () => 5
             });
 
-        spyOn(localStorage, 'getItem').and.returnValue("mockUser");
-
         const services = createMockSemesterCardServices({
             getModule: async () => mockModule,
             getModuleProgress: async () => mockProgress,
@@ -426,8 +431,6 @@ describe("SemesterCard", () => {
                 calculateAchievedECs: () => 0
             });
 
-        spyOn(localStorage, 'getItem').and.returnValue("mockUser");
-
         const mockServices = createMockSemesterCardServices({
             getModule: async () => mockModule,
             getModuleProgress: async () => mockProgress,
@@ -457,7 +460,7 @@ describe("SemesterCard", () => {
         const mockServices = createMockSemesterCardServices({
             getModule: async () => ({ Id: 10, Name: "SafeTest", IsActive: true }),
             getModuleProgress: async () => ({ Completed: 0, Total: 1 }),
-            updateExclamationIcon: () => {}
+            updateExclamationIcon: () => { }
         });
 
         const { fragment } = await setupSemesterCardTest({

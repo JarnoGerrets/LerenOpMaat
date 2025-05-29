@@ -1,6 +1,6 @@
-import { semesterChoiceServices } from "../../scripts/utils/importServiceProvider.js";
-import { createMockPopup, createMockSemesterModule, setupSemesterChoiceTest, setupSemesterChoiceWithCustomFilter  } from "../helpers/semesterChoice-intergration-helpers.js"
-import {  wait } from "../helpers/test-utils.js";
+import { semesterChoiceServices } from "../../../scripts/utils/importServiceProvider.js";
+import { createMockPopup, createMockSemesterModule, setupSemesterChoiceTest, setupSemesterChoiceWithCustomFilter  } from "../../helpers/semesterChoice-intergration-helpers.js"
+import {  wait } from "../../helpers/test-utils.js";
 
 describe("SemesterChoice integration", () => {
 
@@ -17,7 +17,7 @@ describe("SemesterChoice integration", () => {
             SemesterModule: MockSemesterModule
         };
 
-        const result = await (await import("../../views/partials/semester-choice.js")).default("Selecteer je module", mockServices);
+        const result = await (await import("../../../views/partials/semester-choice.js")).default("Selecteer je module", mockServices);
 
         const errorLabel = popupRef.popupInstance.contentContainer.querySelector(".error-label-popup");
 
@@ -68,7 +68,7 @@ describe("SemesterChoice integration", () => {
             SemesterModule: MockSemesterModule
         };
 
-        const result = await (await import("../../views/partials/semester-choice.js")).default("Selecteer je module", mockServices);
+        const result = await (await import("../../../views/partials/semester-choice.js")).default("Selecteer je module", mockServices);
 
         expect(result).toEqual(selectedModule);
     });
@@ -92,7 +92,7 @@ describe("SemesterChoice integration", () => {
             SemesterModule: MockSemesterModule
         };
 
-        await (await import("../../views/partials/semester-choice.js")).default("Selecteer je module", mockServices);
+        await (await import("../../../views/partials/semester-choice.js")).default("Selecteer je module", mockServices);
 
         expect(consoleSpy).toHaveBeenCalledWith("Error fetching module data:", "Test error");
     });
@@ -169,7 +169,7 @@ describe("SemesterChoice integration", () => {
             SemesterModule: MockSemesterModule
         };
 
-        await (await import("../../views/partials/semester-choice.js")).default("Selecteer je module", mockServices);
+        await (await import("../../../views/partials/semester-choice.js")).default("Selecteer je module", mockServices);
 
         const filterButton = popupRef.popupInstance.popup.querySelector(".filter-button");
         filterButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));

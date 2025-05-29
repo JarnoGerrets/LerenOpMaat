@@ -1,11 +1,19 @@
 import confirmationPopup from "../views/partials/confirmation-popup.js";
-import { mapPeriodToPresentableString } from "./utils/presentationMapper.js";
-import { updateModule } from "../../client/api-client.js";
-import { activateModule, deactivateModule, deleteModule } from "../client/api-client.js";
-import { setupListeners, getSelectedEVLs, updateEvlSelectionHeader, hideDropdown } from "./utils/evl-dropdown/evl-dropdown-utils.js";
+import { moduleActionsServices} from "./utils/importServiceProvider.js";
 
 
-export function setupButtons(module, textArea, canBeDeleted = false) {
+export function setupButtons(module, textArea, canBeDeleted = false, services = moduleActionsServices) {
+    const{
+        updateModule,
+        activateModule,
+        deactivateModule,
+        deleteModule,
+        setupListeners,
+        getSelectedEVLs,
+        updateEvlSelectionHeader,
+        mapPeriodToPresentableString
+    } = services;
+
     let editButton = setupEditButton(module, textArea)
     let deactivateButton = setupDeactivationButton(module)
     let activateButton = setupActivationButton(module);

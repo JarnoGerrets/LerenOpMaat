@@ -1,9 +1,13 @@
-import { getModule, existenceModule } from "../../client/api-client.js";
-import { setupButtons } from './module-actions.js';
+import { initModuleInfoServices } from './utils/importServiceProvider.js';
 import '../components/module-card.js';
-import '../components/requirements-card.js';
+import '../components/requirements-card.js'; 
 
-export default async function initModuleInfo(id) {
+export default async function initModuleInfo(id, services = initModuleInfoServices) {
+    const{
+        getModule,
+        existenceModule,
+        setupButtons
+    } = services;
 
     let userData = await window.userData;
     let tries = 0;

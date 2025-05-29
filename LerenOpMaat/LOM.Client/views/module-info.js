@@ -1,5 +1,5 @@
 import initModuleInfo from "../scripts/initModuleInfo.js";
-import loadTemplate from "../scripts/loadTemplate.js";
+import loadTemplate from "../scripts/utils/loadTemplate.js";
 
 export default async function ModuleInfo(id) {
     const template = await loadTemplate("/templates/module-info.html");
