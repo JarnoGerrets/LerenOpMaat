@@ -7,19 +7,44 @@ global.document = dom.window.document;
 global.customElements = dom.window.customElements;
 global.HTMLElement = dom.window.HTMLElement;
 
+global.fetch = jasmine.createSpy("fetch").and.callFake(() =>
+  Promise.resolve({
+    text: () => Promise.resolve(`
+      <div>
+        <button id="submitBtn" class="submitBtn" disabled>Submit</button>
+        <div id="cohortButtons"></div>
+      </div>
+    `)
+  })
+);
+
+let store = {};
+
 global.localStorage = {
-    getItem: jasmine.createSpy('getItem'),
-    setItem: jasmine.createSpy('setItem'),
-    removeItem: jasmine.createSpy('removeItem'),
-    clear: jasmine.createSpy('clear')
+  getItem: jasmine.createSpy('getItem').and.callFake((key) => store[key]),
+  setItem: jasmine.createSpy('setItem').and.callFake((key, value) => {
+    store[key] = value;
+  }),
+  removeItem: jasmine.createSpy('removeItem').and.callFake((key) => {
+    delete store[key];
+  }),
+  clear: jasmine.createSpy('clear').and.callFake(() => {
+    store = {};
+  })
 };
+
+beforeEach(() => {
+  document.body.innerHTML = "";
+  localStorage.clear();
+  localStorage.setItem("userData", JSON.stringify({ InternalId: null }));
+});
 
 describe("RouteOrSelector", () => {
   const mockgetStartYear = 2024;
   const mocksetStartYear = null;
 
   it("Test of submit button zonder selectie niet werkt", async () => {
-    const fragment = await CohortSelector(mocksetStartYear, mockgetStartYear);
+    const { fragment } = await CohortSelector(mocksetStartYear, mockgetStartYear);
     document.body.appendChild(fragment);
 
     const submitBtn = document.querySelector(".submitBtn");
@@ -27,7 +52,7 @@ describe("RouteOrSelector", () => {
   });
 
   it("Test of er maar 1 knop blijft geselecteerd", async () => {
-    const fragment = await CohortSelector(mocksetStartYear, mockgetStartYear);
+    const { fragment } = await CohortSelector(mocksetStartYear, mockgetStartYear);
     document.body.appendChild(fragment);
 
     const buttons = document.querySelectorAll(".cohort-button");
@@ -44,7 +69,7 @@ describe("RouteOrSelector", () => {
   });
 
   it("Test of submit button met selectie werkt", async () => {
-    const fragment = await CohortSelector(mocksetStartYear, mockgetStartYear);
+    const { fragment } = await CohortSelector(mocksetStartYear, mockgetStartYear);
     document.body.appendChild(fragment);
 
     const buttons = document.querySelectorAll(".cohort-button");
@@ -55,15 +80,18 @@ describe("RouteOrSelector", () => {
   });
 
   it("Test of de cohort optie opgeslagen wordt in de localstorage", async () => {
-    const fragment = await CohortSelector(mocksetStartYear, mockgetStartYear);
+    const { fragment } = await CohortSelector(mocksetStartYear, mockgetStartYear);
     document.body.appendChild(fragment);
 
     const buttons = document.querySelectorAll(".cohort-button");
     const submitBtn = document.querySelector(".submitBtn");
+    console.log(typeof buttons[0].dataset.year);
     buttons[0].click();
     expect(buttons[0].classList.contains("selected")).toBeTrue();
-
+    
     await submitBtn.click();
-    expect(localStorage.getItem("cohortYear")).toBe(buttons[0].dataset.year);
+
+    expect(localStorage.setItem).toHaveBeenCalledWith("cohortYear", Number(buttons[0].dataset.year));
+    expect(localStorage.getItem("cohortYear")).toBe(Number(buttons[0].dataset.year));
   });
 });
