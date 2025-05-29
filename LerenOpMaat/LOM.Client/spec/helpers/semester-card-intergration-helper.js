@@ -7,7 +7,7 @@ export async function setupSemesterCardTest({
     isActive = true,
     locked = false,
     services = {},
-    onModuleChange = () => {}
+    onModuleChange = () => { }
 }) {
     const SemesterCard = (await import('../../components/semester-card.js')).default;
 

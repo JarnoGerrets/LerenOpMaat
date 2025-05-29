@@ -2,7 +2,6 @@ import { initModuleInfoServices } from "../../../scripts/utils/importServiceProv
 import { setupModuleInfoTestDOM, getMockModuleData, getMockServices } from "../../helpers/module-info-intergration-helper.js";
 
 describe("initModuleInfo integration", () => {
-    let mockServices, moduleData;
 
     beforeEach(() => {
         setupModuleInfoTestDOM();
@@ -15,8 +14,12 @@ describe("initModuleInfo integration", () => {
 
     it("renders module-card and requirements-card with correct data", async () => {
         const { default: initModuleInfo } = await import("../../../scripts/initModuleInfo.js");
+        const mockedModule = getMockModuleData();
+        const mockedServices = getMockServices(mockedModule);
 
-        await initModuleInfo("42", mockServices);
+        window.userData = Promise.resolve({ Role: "SLBer" });
+
+        await initModuleInfo("42", mockedServices);
 
         const moduleCard = document.querySelector("module-card");
         const reqCard = document.querySelector("requirements-card");
@@ -25,6 +28,6 @@ describe("initModuleInfo integration", () => {
         expect(moduleCard).not.toBeNull();
         expect(reqCard).not.toBeNull();
         expect(textArea.value).toBe("Beschrijving test");
-        expect(mockServices.setupButtons).toHaveBeenCalledWith(jasmine.any(Object), textArea, true);
+        expect(mockedServices.setupButtons).toHaveBeenCalledWith(jasmine.any(Object), textArea, true);
     });
 });
