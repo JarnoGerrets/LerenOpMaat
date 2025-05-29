@@ -109,9 +109,6 @@ const navigateTo = (url) => {
   router();
 };
 
-import { getUserData } from './path/to/userData.js';
-
-window.userData = getUserData();
 
 //----------------------Old Router---------------------------------------------------------------------------------------------------------------//
 
