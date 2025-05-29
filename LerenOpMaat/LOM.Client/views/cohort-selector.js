@@ -2,17 +2,11 @@ import LearningRoute from "../views/learning-route.js";
 
 export async function RouteOrSelector(setStartYear, getStartYear) {
   let cohortYear = localStorage.getItem("cohortYear");
-  let userId = null;
-  let userData = localStorage.getItem("userData");
-  let parsedUserData = JSON.parse(userData);
+  let userData = await window.userData;
 
-  if(parsedUserData) {
-    userId = parsedUserData.InternalId;
-  }
-
-  if (userId) {
+  if (userData && userData.InternalId) {
     localStorage.removeItem('cohortYear');
-    const startYearFromUser = await getStartYear(userId);
+    const startYearFromUser = await getStartYear(userData.InternalId);
     
     if (startYearFromUser) {
       cohortYear = startYearFromUser;
@@ -57,11 +51,10 @@ export default async function CohortSelector(setStartYear) {
 
   submitBtn.addEventListener("click", async () => {
     if (selected) {
-      let userData = localStorage.getItem("userData");
-      let parsedUserData = JSON.parse(userData);
-      let userId = parsedUserData.InternalId;
-      if (userId) {
-        await setStartYear(userId, selected);
+      let userData = await window.userData;
+
+      if (userData && userData.InternalId) {
+        await setStartYear(userData.InternalId, selected);
       }
 
       localStorage.setItem("cohortYear", selected);

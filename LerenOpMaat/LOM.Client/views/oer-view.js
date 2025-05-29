@@ -1,4 +1,4 @@
-import Popup from "../../components/Popup.js";
+import Popup from "../components/Popup.js";
 
 export default async function oerView(uploadOerPdf, getCurrentOerPdf) {
   let userData = localStorage.getItem("userData");

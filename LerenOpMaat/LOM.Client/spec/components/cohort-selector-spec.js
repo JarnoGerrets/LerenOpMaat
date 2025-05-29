@@ -1,4 +1,3 @@
-import CohortSelector from "../../views/cohort-selector.js";
 import { JSDOM } from "jsdom";
 
 const dom = new JSDOM(`<!DOCTYPE html><body></body>`);
@@ -18,30 +17,32 @@ global.fetch = jasmine.createSpy("fetch").and.callFake(() =>
   })
 );
 
-let store = {};
-
-global.localStorage = {
-  getItem: jasmine.createSpy('getItem').and.callFake((key) => store[key]),
-  setItem: jasmine.createSpy('setItem').and.callFake((key, value) => {
-    store[key] = value;
-  }),
-  removeItem: jasmine.createSpy('removeItem').and.callFake((key) => {
-    delete store[key];
-  }),
-  clear: jasmine.createSpy('clear').and.callFake(() => {
-    store = {};
-  })
-};
-
-beforeEach(() => {
-  document.body.innerHTML = "";
-  localStorage.clear();
-  localStorage.setItem("userData", JSON.stringify({ InternalId: null }));
-});
+import CohortSelector from "../../views/cohort-selector.js";
 
 describe("RouteOrSelector", () => {
   const mockgetStartYear = 2024;
-  const mocksetStartYear = null;
+  const mocksetStartYear = 2024;
+
+  let store = {};
+
+  global.localStorage = {
+    getItem: jasmine.createSpy('getItem').and.callFake((key) => store[key]),
+    setItem: jasmine.createSpy('setItem').and.callFake((key, value) => {
+      store[key] = value;
+    }),
+    removeItem: jasmine.createSpy('removeItem').and.callFake((key) => {
+      delete store[key];
+    }),
+    clear: jasmine.createSpy('clear').and.callFake(() => {
+      store = {};
+    })
+  };
+
+  beforeEach(() => {
+    document.body.innerHTML = "";
+    localStorage.setItem('userData', JSON.stringify({ Role: "Admin" }));
+    window.userData = Promise.resolve({ Role: "Admin" });
+  });
 
   it("Test of submit button zonder selectie niet werkt", async () => {
     const { fragment } = await CohortSelector(mocksetStartYear, mockgetStartYear);
@@ -85,7 +86,6 @@ describe("RouteOrSelector", () => {
 
     const buttons = document.querySelectorAll(".cohort-button");
     const submitBtn = document.querySelector(".submitBtn");
-    console.log(typeof buttons[0].dataset.year);
     buttons[0].click();
     expect(buttons[0].classList.contains("selected")).toBeTrue();
     

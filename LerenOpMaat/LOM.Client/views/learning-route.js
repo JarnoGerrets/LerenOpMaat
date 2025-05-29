@@ -9,7 +9,7 @@ import AddIconButton from "../components/add-icon-button.js";
 let apiResponse = [];
 export let currentUserId = null;
 export let learningRouteId = null;
-const cohortYear = parseInt(localStorage.getItem("cohortYear"));
+
 export default async function LearningRoute() {
     showLoading();
 
