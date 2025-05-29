@@ -268,7 +268,7 @@ export default async function LearningRoute() {
                 // Conversation bestaat niet, maak een nieuwe aan
                 const conversationBody = {
                     LearningRouteId: routeId,
-                    TeacherId: 4, // Pas eventueel aan
+                    TeacherId: 47, // Pas eventueel aan
                     StudentId: user.Id
                 };
                 try {
