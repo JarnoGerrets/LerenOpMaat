@@ -209,6 +209,7 @@ namespace LOM.API.Controllers
         {
             var user = await _context.User.FindAsync(id);
             var sessionUserId = HttpContext.Session.GetInt32("UserId");
+
             if (sessionUserId == null)
             {
                 return Unauthorized();
@@ -223,6 +224,7 @@ namespace LOM.API.Controllers
             {
                 return Forbid();
             }
+
             return Ok(user.StartYear);
         }
 
@@ -234,23 +236,27 @@ namespace LOM.API.Controllers
             var validYears = Enumerable.Range(currentYear - 3, 4);
             var sessionUserId = HttpContext.Session.GetInt32("UserId");
             var user = await _context.User.FindAsync(id);
-            if (sessionUserId != user.Id)
-            {
-                return Unauthorized();
-            }
-            if (!validYears.Contains(startYear))
-            {
-                return BadRequest();
-            }
 
             if (user == null)
             {
                 return NotFound();
             }
+
+            if (sessionUserId == null)
+            {
+                return Unauthorized();
+            }
+
+            if (!validYears.Contains(startYear))
+            {
+                return BadRequest();
+            }
+
             if (sessionUserId != user.Id)
             {
                 return Forbid();
             }
+
             user.StartYear = startYear;
             await _context.SaveChangesAsync();
 
