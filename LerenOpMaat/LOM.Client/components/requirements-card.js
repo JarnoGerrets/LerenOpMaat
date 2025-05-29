@@ -1,11 +1,12 @@
 import './card.js';
-import editRequirementPopup from '../views/partials/edit-requirement-popup.js';
-import confirmationPopup from "../views/partials/confirmation-popup.js";
-import { deleteRequirement } from '../client/api-client.js';
 
 export default class RequirementsCard extends customElements.get("base-card") {
     constructor() {
         super();
+    }
+
+    set services(serviceObject) {
+        this._services = serviceObject;
     }
 
     set refreshCallback(callBack) {
@@ -17,6 +18,7 @@ export default class RequirementsCard extends customElements.get("base-card") {
     }
 
     set requirements(requirements) {
+        const { confirmationPopup, deleteRequirement, editRequirementPopup } = this._services;
         let items = null;
         if (requirements && requirements.length > 0) {
             items = requirements.map((req) => `

@@ -1,14 +1,22 @@
-import SemesterChoice from "../views/partials/semester-choice.js";
-import { validateRoute, getModuleProgress, getModule } from "../../client/api-client.js";
 import { learningRouteArray } from "./semester-pair.js";
-import { handleValidationResult } from "../scripts/utils/semester-card-utils/validations.js";
-import { updateModuleUI, updateAllCardsStyling, updateExclamationIcon } from "../scripts/utils/semester-card-utils/ui-updates.js";
-import { debounce } from "../scripts/utils/semester-card-utils/utils.js";
+import { semesterCardServices } from "../scripts/utils/importServiceProvider.js";
 
 let validationState = {};
 const moduleMessagesMap = {};
 
-export default async function SemesterCard({ semester, module, locked = false, isActive = true, onModuleChange, moduleId }) {
+export default async function SemesterCard({ semester, module, locked = false, isActive = true, onModuleChange, moduleId, services = semesterCardServices }) {
+  const {
+    SemesterChoice,
+    getModule,
+    getModuleProgress,
+    validateRoute,
+    handleValidationResult,
+    updateModuleUI,
+    updateAllCardsStyling,
+    updateExclamationIcon,
+    debounce
+  } = services;
+
   const template = document.createElement("template");
   template.innerHTML = `
   <div class="semester-card-container">
@@ -40,14 +48,16 @@ export default async function SemesterCard({ semester, module, locked = false, i
   const cardElement = fragment.querySelector(".semester-card");
   const button = fragment.querySelector("#select-module");
   const coursePoints = fragment.querySelector("#coursePoints");
+
   const debouncedModuleSelection = debounce(
-    (params) => handleModuleSelection(params),
-    500
+    (params) => handleModuleSelection({ ...params, services }), 500
   );
 
   if (!locked && button) {
     button.addEventListener("click", () =>
-      debouncedModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement })
+      debouncedModuleSelection({
+        button, coursePoints, semester, locked, onModuleChange, cardElement
+      })
     );
   }
 
@@ -74,7 +84,16 @@ export default async function SemesterCard({ semester, module, locked = false, i
   return fragment;
 }
 
-async function handleModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement }) {
+async function handleModuleSelection({ button, coursePoints, semester, locked, onModuleChange, cardElement, services }) {
+  const {
+    SemesterChoice,
+    getModuleProgress,
+    validateRoute,
+    updateModuleUI,
+    updateAllCardsStyling,
+    updateExclamationIcon,
+    handleValidationResult
+  } = services;
   const selectedModule = await SemesterChoice(button.textContent.trim());
 
   const clearSelection = async () => {
@@ -120,6 +139,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
     moduleId: selectedModule.Id,
     moduleName: selectedModule.Name
   });
+
   const result = await validateRoute(learningRouteArray);
   let progress;
   try {
@@ -137,10 +157,13 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
     clearSelection();
     return;
   }
+  onModuleChange({ semester, moduleId: selectedModule.Id });
 
   await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
+
   const cardContainer = cardElement.closest(".semester-card-container");
   const moduleActiveStatus = selectedModule?.IsActive ?? true;
+  
   updateInactiveLabel(cardContainer, moduleActiveStatus);
 
   cardElement.setAttribute("data-module-id", selectedModule.Id);

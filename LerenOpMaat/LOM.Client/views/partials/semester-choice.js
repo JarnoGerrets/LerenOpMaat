@@ -1,6 +1,4 @@
-import Popup from "../../components/Popup.js";
-import SemesterModule from "../../components/SemesterModule.js";
-import { getModules } from "../../client/api-client.js";
+import { semesterChoiceServices } from "../../scripts/utils/importServiceProvider.js";
 
 let filterDropdown;
 let moduleSelectionPopup;
@@ -9,8 +7,14 @@ let modules = [];
 let apiResponse = [];
 let selectedCategories = [];
 let selectedCategory;
+let cachedPopupWidth;
 
-export default async function SemesterChoice(selectedModuleName = "Selecteer je module") {
+export default async function SemesterChoice(selectedModuleName = "Selecteer je module", services = semesterChoiceServices) {
+    const {
+        Popup,
+        SemesterModule,
+        getModules
+    } = services;
 
     try {
         apiResponse = await getModules();
@@ -19,22 +23,22 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
     }
 
 
-let renderedSemesterModules = null;
-if (
-    !apiResponse ||
-    !Array.isArray(apiResponse) ||
-    apiResponse.length === 0
-) {
-    renderedSemesterModules = document.createElement('div')
-    renderedSemesterModules.innerHTML = "<span class='error-label-popup'>Er zijn geen modules gevonden, neem contact op met de beheerder</span>";
+    let renderedSemesterModules = null;
+    if (
+        !apiResponse ||
+        !Array.isArray(apiResponse) ||
+        apiResponse.length === 0
+    ) {
+        renderedSemesterModules = document.createElement('div')
+        renderedSemesterModules.innerHTML = "<span class='error-label-popup'>Er zijn geen modules gevonden, neem contact op met de beheerder</span>";
 
-} else {
-    modules = apiResponse;
-    //Deze is omdat alles hardcoded is, maar later als wij een DB hebben
-    //dan wordt alles uit de koppel tabel opgehaald
-    if (selectedModuleName !== "Selecteer je module") {
-        modules.unshift({ Name: 'Geen Keuze', Description: 'Geen Keuze' });
-    }
+    } else {
+        modules = apiResponse;
+        //Deze is omdat alles hardcoded is, maar later als wij een DB hebben
+        //dan wordt alles uit de koppel tabel opgehaald
+        if (selectedModuleName !== "Selecteer je module") {
+            modules.unshift({ Name: 'Geen Keuze', Description: 'Geen Keuze' });
+        }
         // Create the SemesterModules component with the retrieved data
         const semesterModules = new SemesterModule(
             modules,
@@ -66,7 +70,7 @@ if (
               </svg>
             `,
                 onClick: () => {
-                    showFilter(modules);
+                    showFilter(modules, SemesterModule);
                 }
             }
         ]
@@ -81,7 +85,7 @@ if (
 
 }
 
-function showFilter(Data) {
+function showFilter(Data, SemesterModule) {
     const isOpen = filterDropdown && filterDropdown.classList.contains('open');
 
     if (!filterDropdown) {
@@ -94,7 +98,7 @@ function showFilter(Data) {
         searchInput.placeholder = 'Zoek modules...';
         searchInput.classList.add('search-input');
         searchInput.addEventListener('input', () => {
-            filterData(searchInput.value.trim().toLowerCase());
+            filterData(searchInput.value.trim().toLowerCase(), SemesterModule);
         });
 
         filterDropdown.appendChild(searchInput);
@@ -132,7 +136,7 @@ function showFilter(Data) {
                     }
                 }
                 updateHighlight();
-                filterData(searchInput.value.trim().toLowerCase());
+                filterData(searchInput.value.trim().toLowerCase(), SemesterModule);
                 if (category === 'Alles') {
                     filterDropdown.classList.remove('open');
                     document.removeEventListener('click', closeFilterDropdownHandler);
@@ -185,7 +189,10 @@ function closeFilterDropdown(event) {
     }
 }
 
-function filterData(searchTerm = '') {
+function filterData(searchTerm = '', SemesterModule) {
+    if (!cachedPopupWidth) {
+        cachedPopupWidth = moduleSelectionPopup.popup.getBoundingClientRect().width - 58;
+    }
     //Geen Keuze niet filteren
     let filtered = modules.filter(m => m.Name !== 'Geen Keuze');
 
@@ -203,17 +210,16 @@ function filterData(searchTerm = '') {
 
     //doe 'Geen Keuze' altijd als eerste optie
     filtered.unshift({ Name: 'Geen Keuze', Description: 'Geen Keuze' });
-    let popupWidth = 0;
-    popupWidth = moduleSelectionPopup.popup.getBoundingClientRect().width - 58;
 
     const data = new SemesterModule(filtered, (selectedModule) => {
         moduleSelectionPopup.close(selectedModule);
         return selectedModule;
     });
 
-    moduleSelectionPopup.contentContainer.innerHTML = '';
-    moduleSelectionPopup.contentContainer.style.minWidth = `${popupWidth}px`;
+    const container = moduleSelectionPopup.contentContainer;
+    container.style.minWidth = `${cachedPopupWidth}px`;
     data.render().then(rendered => {
-        moduleSelectionPopup.contentContainer.appendChild(rendered);
+        container.replaceChildren(rendered);
     });
+
 }
