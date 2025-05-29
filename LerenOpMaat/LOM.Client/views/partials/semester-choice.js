@@ -1,6 +1,4 @@
-import Popup from "../../components/Popup.js";
-import SemesterModule from "../../components/SemesterModule.js";
-import { getModules } from "../../client/api-client.js";
+import { semesterChoiceServices } from "../../scripts/utils/importServiceProvider.js";
 
 let filterDropdown;
 let moduleSelectionPopup;
@@ -10,7 +8,12 @@ let apiResponse = [];
 let selectedCategories = [];
 let selectedCategory;
 
-export default async function SemesterChoice(selectedModuleName = "Selecteer je module") {
+export default async function SemesterChoice(selectedModuleName = "Selecteer je module", services = semesterChoiceServices) {
+    const{
+        Popup,
+        SemesterModule,
+        getModules
+    } = services;
 
     try {
         apiResponse = await getModules();
@@ -66,7 +69,7 @@ if (
               </svg>
             `,
                 onClick: () => {
-                    showFilter(modules);
+                    showFilter(modules, SemesterModule);
                 }
             }
         ]
@@ -81,7 +84,7 @@ if (
 
 }
 
-function showFilter(Data) {
+function showFilter(Data, SemesterModule) {
     const isOpen = filterDropdown && filterDropdown.classList.contains('open');
 
     if (!filterDropdown) {
@@ -94,7 +97,7 @@ function showFilter(Data) {
         searchInput.placeholder = 'Zoek modules...';
         searchInput.classList.add('search-input');
         searchInput.addEventListener('input', () => {
-            filterData(searchInput.value.trim().toLowerCase());
+            filterData(searchInput.value.trim().toLowerCase(), SemesterModule);
         });
 
         filterDropdown.appendChild(searchInput);
@@ -185,7 +188,7 @@ function closeFilterDropdown(event) {
     }
 }
 
-function filterData(searchTerm = '') {
+function filterData(searchTerm = '', SemesterModule) {
     //Geen Keuze niet filteren
     let filtered = modules.filter(m => m.Name !== 'Geen Keuze');
 

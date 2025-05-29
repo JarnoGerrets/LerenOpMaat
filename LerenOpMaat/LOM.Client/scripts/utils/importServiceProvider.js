@@ -2,6 +2,8 @@ import * as apiClient from "../../client/api-client.js";
 import * as validations from "./semester-card-utils/validations.js";
 import * as ui from "./semester-card-utils/ui-updates.js";
 import * as utils from "./semester-card-utils/utils.js";
+import Popup from "../../components/Popup.js"
+import SemesterModule from "../../components/SemesterModule.js"
 import SemesterChoice from "../../views/partials/semester-choice.js";
 
 const baseServices = {
@@ -9,7 +11,10 @@ const baseServices = {
     ...apiClient,
     ...validations,
     ...ui,
-    ...utils
+    ...utils,
+    Popup,
+    SemesterModule
+
 };
 
 export const semesterCardServices = Object.freeze({
@@ -32,9 +37,8 @@ export const uiUpdatesServices = Object.freeze({
     removeCompletedEvl: baseServices.removeCompletedEvl
 });
 
-// You could define more:
-export const semesterPairServices = Object.freeze({
-    getModule: baseServices.getModule,
-    getModuleProgress: baseServices.getModuleProgress,
-    // ...
+export const semesterChoiceServices = Object.freeze({
+    Popup: baseServices.Popup,
+    SemesterModule: baseServices.SemesterModule,
+    getModules: baseServices.getModules
 });
