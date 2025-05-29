@@ -6,7 +6,8 @@ export default async function initModuleInfo(id, services = initModuleInfoServic
     const{
         getModule,
         existenceModule,
-        setupButtons
+        setupButtons,
+        reqCardServices
     } = services;
 
     let userData = await window.userData;
@@ -38,6 +39,7 @@ export default async function initModuleInfo(id, services = initModuleInfoServic
 
     // Create Requirements Card
     const reqCard = document.createElement('requirements-card');
+    reqCard.services = reqCardServices;
     reqCard.moduleId = module.Id;
     reqCard.refreshCallback = async () => {
         const module = await getModule(moduleId);

@@ -72,8 +72,8 @@ describe("Popup unit", () => {
     it("should handle outside clicks by closing the popup", () => {
         const popup = new Popup({});
         spyOn(popup, "close");
-
-        document.body.appendChild(popup.overlay);
+        const tempDocument = document.getElementById("test-root");
+        tempDocument.appendChild(popup.overlay);
 
         const event = new MouseEvent("click", { bubbles: true });
         Object.defineProperty(event, "target", { value: document.body });

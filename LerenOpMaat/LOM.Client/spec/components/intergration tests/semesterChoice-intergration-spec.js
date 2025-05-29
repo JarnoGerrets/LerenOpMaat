@@ -1,14 +1,15 @@
 import { semesterChoiceServices } from "../../../scripts/utils/importServiceProvider.js";
-import { createMockPopup, createMockSemesterModule, setupSemesterChoiceTest, setupSemesterChoiceWithCustomFilter  } from "../../helpers/semesterChoice-intergration-helpers.js"
-import {  wait } from "../../helpers/test-utils.js";
+import { createMockPopup, createMockSemesterModule, setupSemesterChoiceTest, setupSemesterChoiceWithCustomFilter } from "../../helpers/semesterChoice-intergration-helpers.js"
+import { wait } from "../../helpers/test-utils.js";
 
 describe("SemesterChoice integration", () => {
 
     it("should render an error message when getModules returns an empty array", async () => {
         const popupRef = { popupInstance: null };
-
+        const tempDocument = document.getElementById("test-root");
+        
         const MockPopup = createMockPopup(popupRef);
-        const MockSemesterModule = () => ({ render: async () => document.createElement("div") });
+        const MockSemesterModule = () => ({ render: async () => tempDocument.createElement("div") });
 
         const mockServices = {
             ...semesterChoiceServices,
@@ -50,10 +51,12 @@ describe("SemesterChoice integration", () => {
 
         const selectedModule = modules[0];
 
-        const popupRef = { popupInstance: null };
+        const popupRef = { popupInstance: null }
+        const tempDocument = document.getElementById("test-root");
 
         const MockPopup = function () {
             this.contentContainer = document.createElement("div");
+            tempDocument.appendChild(this.contentContainer);
             this.open = async () => selectedModule;
             this.close = () => { };
             popupRef.popupInstance = this;
@@ -142,11 +145,12 @@ describe("SemesterChoice integration", () => {
 
         const tracker = [];
         const popupRef = { popupInstance: null };
-
+        const tempDocument = document.getElementById("test-root");
         const MockSemesterModule = createMockSemesterModule(tracker);
 
         const onClickOverride = () => {
             const input = document.createElement("input");
+            tempDocument.appendChild(input);
             input.classList.add("search-input");
 
             input.addEventListener("input", () => {

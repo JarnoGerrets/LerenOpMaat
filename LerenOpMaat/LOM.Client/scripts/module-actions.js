@@ -1,4 +1,3 @@
-import confirmationPopup from "../views/partials/confirmation-popup.js";
 import { moduleActionsServices} from "./utils/importServiceProvider.js";
 
 
@@ -14,10 +13,10 @@ export function setupButtons(module, textArea, canBeDeleted = false, services = 
         mapPeriodToPresentableString
     } = services;
 
-    let editButton = setupEditButton(module, textArea)
-    let deactivateButton = setupDeactivationButton(module)
-    let activateButton = setupActivationButton(module);
-    let trashButton = setupDeleteButton(module);
+    let editButton = setupEditButton(module, textArea, services)
+    let deactivateButton = setupDeactivationButton(module, services)
+    let activateButton = setupActivationButton(module, services);
+    let trashButton = setupDeleteButton(module, services);
 
     const extraButtonsDiv = document.createElement("div");
     extraButtonsDiv.id = "extra-buttons";
@@ -37,7 +36,8 @@ export function setupButtons(module, textArea, canBeDeleted = false, services = 
 
 
 // Setup the edit button
-function setupEditButton(module, textArea) {
+function setupEditButton(module, textArea, services) {
+
     const editButton = document.createElement("a");
     editButton.className = "bi bi-pencil-square edit-button";
     editButton.title = "Bewerken";
@@ -46,7 +46,7 @@ function setupEditButton(module, textArea) {
         if (isEditing) return;
         isEditing = true;
         textArea.readOnly = false;
-        ToggleFields(module);
+        ToggleFields(module, services);
 
         const buttonContainerEdit = document.createElement('div');
         buttonContainerEdit.classList.add("button-container-edit");
@@ -56,8 +56,8 @@ function setupEditButton(module, textArea) {
         saveButton.title = "Opslaan";
         saveButton.innerHTML = '<i class="bi bi-save"></i>';
         saveButton.addEventListener('click', async () => {
-            saveChanges(module, textArea);
-            ToggleFields(module)
+            saveChanges(module, textArea, services);
+            ToggleFields(module, services)
             textArea.readOnly = true;
             isEditing = false;
             buttonContainerEdit.remove();
@@ -68,7 +68,7 @@ function setupEditButton(module, textArea) {
         cancelButton.title = "Annuleren";
         cancelButton.innerHTML = '<i class="bi bi-x-lg"></i>';
         cancelButton.addEventListener('click', () => {
-            ToggleFields(module);
+            ToggleFields(module, services);
             textArea.readOnly = true;
             isEditing = false;
             buttonContainerEdit.remove();
@@ -107,7 +107,11 @@ return `<div class="confirmation-popup-content">
 }
 
 // Setup the activation button
-function setupActivationButton(module) {
+function setupActivationButton(module, services) {
+    const{
+        confirmationPopup,
+        activateModule
+    } = services;
     const deactivateButton = document.createElement("a");
     deactivateButton.className = "bi bi-eye activation-button";
     deactivateButton.title = "Activeren";
@@ -120,7 +124,11 @@ function setupActivationButton(module) {
 }
 
 // Setup the deactivation button
-function setupDeactivationButton(module) {
+function setupDeactivationButton(module, services) {
+    const{
+        confirmationPopup,
+        deactivateModule
+    }= services;
     const deactivateButton = document.createElement("a");
     deactivateButton.className = "bi bi-eye-slash deactivation-button";
     deactivateButton.title = "Deactiveren";
@@ -133,7 +141,11 @@ function setupDeactivationButton(module) {
 }
 
 // Setup the delete button
-function setupDeleteButton(module) {
+function setupDeleteButton(module, services) {
+    const{
+        confirmationPopup,
+        deleteModule
+    } = services;
     const trashButton = document.createElement("a");
     trashButton.className = "bi bi-trash trash-button";
     trashButton.title = "Verwijderen";
@@ -145,7 +157,13 @@ function setupDeleteButton(module) {
     return trashButton;
 }
 
-function ToggleFields(module) {
+function ToggleFields(module, services) {
+    const{
+        mapPeriodToPresentableString,
+        updateEvlSelectionHeader,
+        setupListeners,
+        getSelectedEVLs
+    } = services;
     const codeText = document.getElementById("code-text");
     const periodText = document.getElementById("period-text");
     const ecText = document.getElementById("ec-text");
@@ -280,7 +298,11 @@ function ToggleFields(module) {
     }
 }
 
-async function saveChanges(module, textArea) {
+async function saveChanges(module, textArea, services) {
+    const {
+        getSelectedEVLs,
+        updateModule
+    } = services;
     const { totalEC, evls } = getSelectedEVLs(module.Evls || []);
 
     for (const evl of evls) {

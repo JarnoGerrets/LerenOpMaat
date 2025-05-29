@@ -8,7 +8,9 @@ import Popup from "../../components/Popup.js";
 import SemesterModule from "../../components/SemesterModule.js";
 import SemesterChoice from "../../views/partials/semester-choice.js";
 import confirmationPopup from "../../views/partials/confirmation-popup.js"
+import editRequirementPopup from "../../views/partials/edit-requirement-popup.js"
 import { mapPeriodToPresentableString } from "./presentationMapper.js";
+
 
 
 const baseServices = {
@@ -22,6 +24,7 @@ const baseServices = {
     Popup,
     SemesterModule,
     confirmationPopup,
+    editRequirementPopup,
     mapPeriodToPresentableString
 
 };
@@ -56,10 +59,17 @@ export const validationsServices = Object.freeze({
     updateAllCardsStyling: baseServices.updateAllCardsStyling
 });
 
+export const reqCardServices = Object.freeze({
+    confirmationPopup: baseServices.confirmationPopup,
+    deleteRequirement: baseServices.deleteRequirement,
+    editRequirementPopup: baseServices.editRequirementPopup
+});
+
 export const initModuleInfoServices = Object.freeze({
     getModule: baseServices.getModule,
     existenceModule: baseServices.existenceModule,
-    setupButtons: baseServices.setupButtons
+    setupButtons: baseServices.setupButtons,
+    reqCardServices
 });
 
 export const moduleActionsServices = Object.freeze({
@@ -73,3 +83,4 @@ export const moduleActionsServices = Object.freeze({
     confirmationPopup: baseServices.confirmationPopup,
     mapPeriodToPresentableString: baseServices.mapPeriodToPresentableString
 });
+

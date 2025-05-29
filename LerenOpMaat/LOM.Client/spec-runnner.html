@@ -8,7 +8,10 @@
 </head>
 
 <body>
-    <!-- Jasmine Core -->
+
+    <div id="jasmine-content"></div>
+    <div id="test-root"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/jasmine-core@latest/lib/jasmine-core/jasmine.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jasmine-core@latest/lib/jasmine-core/jasmine-html.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jasmine-core@latest/lib/jasmine-core/boot0.js"></script>
@@ -19,6 +22,7 @@
         await import('./spec/components/intergration tests/semester-card-intergration-spec.js');
         await import('./spec/components/intergration tests/semesterChoice-intergration-spec.js');
         await import('./spec/components/intergration tests/popup-integration-spec.js');
+        await import('./spec/components/intergration tests/module-info-intergration-spec.js');
 
         //unit tests
         await import('./spec/components/unit tests/popup-unit-spec.js');
