@@ -34,28 +34,37 @@ export default async function renderTeacherLearningRoutes() {
         return;
     }
     listContainer.innerHTML = '';
-
-    routes.forEach((route, idx) => {
-        const routeDiv = document.createElement('div');
-        routeDiv.className = 'learning-route-row';
-        routeDiv.innerHTML = `
+    console.log('Lijst van leerroutes:', routes);
+    if (routes.length === 0) {
+        // Voeg deze melding toe als er geen leerroutes zijn
+        const msg = document.createElement('div');
+        msg.textContent = "Geen Leerroutes beschikbaar";
+        msg.style.textAlign = "center";
+        msg.style.padding = "1rem";
+        msg.style.color = "#888";
+        listContainer.appendChild(msg);
+    } else {
+        routes.forEach((route, idx) => {
+            const routeDiv = document.createElement('div');
+            routeDiv.className = 'learning-route-row';
+            routeDiv.innerHTML = `
         <span class="learning-route-title">${route.title}</span>
         <button class="open-route-btn">Openen</button>
     `;
-        listContainer.appendChild(routeDiv);
-        const openBtn = routeDiv.querySelector('.open-route-btn');
-        openBtn.addEventListener('click', async () => {
-            const conversationId = conversations[idx].Id;
-            const userId = conversations[idx].StudentId;
-            if (!conversationId || !userId) {
-                alert("Kan deze conversatie niet openen: ontbrekende gegevens.");
-                return;
-            }
-            sessionStorage.setItem('lom_conversationId', conversationId);
-            sessionStorage.setItem('lom_userId', userId);
-            window.location.hash = "#beheerder-feedback";
+            listContainer.appendChild(routeDiv);
+            const openBtn = routeDiv.querySelector('.open-route-btn');
+            openBtn.addEventListener('click', async () => {
+                const conversationId = conversations[idx].Id;
+                const userId = conversations[idx].StudentId;
+                if (!conversationId || !userId) {
+                    alert("Kan deze conversatie niet openen: ontbrekende gegevens.");
+                    return;
+                }
+                sessionStorage.setItem('lom_conversationId', conversationId);
+                sessionStorage.setItem('lom_userId', userId);
+                window.location.hash = "#beheerder-feedback";
+            });
         });
-    });
-
+    }
     return { fragment };
 }
