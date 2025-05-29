@@ -8,12 +8,11 @@ export default async function renderTeacherLearningRoutes() {
 
     let userData = await window.userData;
     const conversations = await getConversationByAdminId(userData.InternalId);
-    
+
     // Haal conversations op voor deze admin (teacher)
     let routes = [];
     if (userData && userData.InternalId) {
         try {
-            console.log('Conversation:', conversations);
             routes = conversations.map(conv => {
                 const user = conv.Student;
                 const fullName = user
@@ -46,16 +45,15 @@ export default async function renderTeacherLearningRoutes() {
         listContainer.appendChild(routeDiv);
         const openBtn = routeDiv.querySelector('.open-route-btn');
         openBtn.addEventListener('click', async () => {
-            // Gebruik de conversation body!
             const conversationId = conversations[idx].Id;
-            console.log('Openen conversatie:', conversationId);
             const userId = conversations[idx].StudentId;
-            console.log('Gebruiker ID:', userId);
             if (!conversationId || !userId) {
                 alert("Kan deze conversatie niet openen: ontbrekende gegevens.");
                 return;
             }
-            window.location.hash = `#beheerder-feedback?conversationId=${conversationId}&userId=${userId}`;
+            sessionStorage.setItem('lom_conversationId', conversationId);
+            sessionStorage.setItem('lom_userId', userId);
+            window.location.hash = "#beheerder-feedback";
         });
     });
 

@@ -92,7 +92,7 @@
 }
 
 
-.back-link {
+.learning-route-link {
     display: block;
     align-self: flex-start;
     margin: 24px 0px 10px 0px;
@@ -105,7 +105,7 @@
     width: fit-content;
 }
 
-.back-link:hover {
+.learning-route-link:hover {
     background: #e0e0e0;
 }
 

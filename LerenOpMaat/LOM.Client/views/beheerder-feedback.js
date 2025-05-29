@@ -7,8 +7,9 @@ import {
     getMessagesByConversationId,
 } from "../client/api-client.js";
 
-export default async function beheerderFeedback({ conversationId, userId } = {}) {
-    console.log("Beheerder feedback view loaded with conversationId:", conversationId, "and userId:", userId);
+export default async function beheerderFeedback() {
+    const conversationId = sessionStorage.getItem('lom_conversationId');
+    const userId = sessionStorage.getItem('lom_userId');
     const response = await fetch("/templates/beheerder-feedback.html");
     const html = await response.text();
     const userData = await window.userData;
@@ -209,6 +210,16 @@ export default async function beheerderFeedback({ conversationId, userId } = {})
                 errorMsg.textContent = "Kon bericht niet plaatsen.";
                 errorMsg.style.display = "block";
             }
+        });
+    }
+
+    const learningRouteLink = fragment.querySelector('.learning-route-link');
+    if (learningRouteLink) {
+        learningRouteLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            sessionStorage.setItem('lom_conversationId', conversationId);
+            sessionStorage.setItem('lom_userId', userId);
+            window.location.hash = "#beheerder-learning-route";
         });
     }
 
