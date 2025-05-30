@@ -78,12 +78,6 @@ namespace LOM.API.Controllers
                 return NotFound();
             }
 
-            // Only allow the student who owns the conversation to update it
-            if (existingConversation.StudentId != user.Id)
-            {
-                return Forbid();
-            }
-
             // Update only TeacherId
             existingConversation.TeacherId = conversation.TeacherId;
 
@@ -132,12 +126,6 @@ namespace LOM.API.Controllers
             conversation.StudentId = user.Id;
             conversation.LearningRouteId = user.LearningRouteId ?? 0;
 
-            var teacher = await _context.User.FirstOrDefaultAsync(u => u.Id == conversation.TeacherId && u.Role.RoleName == "Teacher");
-            if (teacher == null)
-            {
-                return BadRequest("Invalid teacher.");
-            }
-
             _context.Conversations.Add(conversation);
             await _context.SaveChangesAsync();
 
@@ -176,6 +164,21 @@ namespace LOM.API.Controllers
             return conversation;
         }
 
+        [HttpGet("conversationByAdministratorId/{administratorId}")]
+        public async Task<ActionResult<IEnumerable<Conversation>>> getConversationsByAdministratorId(int administratorId)
+        {
+            // Haal alle conversations op waar de admin als Teacher gekoppeld is
+            var conversations = await _context.Conversations
+                .Include(c => c.Student)
+                .Include(c => c.Teacher)
+                .Include(c => c.LearningRoute)
+                .ThenInclude(s => s.Semesters)
+                .ThenInclude(m => m.Module)
+                .Where(c => c.TeacherId == administratorId)
+                .ToListAsync();
+
+            return conversations;
+        }
         private bool ConversationExists(int id)
         {
             return _context.Conversations.Any(e => e.Id == id);

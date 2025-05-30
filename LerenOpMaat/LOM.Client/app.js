@@ -5,10 +5,21 @@ import { moduleOverview } from "./views/module-overview.js";
 import oerView from './views/oer-view.js';
 import feedback from './views/feedback.js';
 import settingsPage from './views/settings-page.js';
+import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
+import beheerderFeedback from './views/beheerder-feedback.js';
+import administratorLearningRoute from './views/beheerder-learning-route.js';
+let userData = await window.userData;
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
   "": async () => {
+    // Controleer of de gebruiker een administrator
+    if (userData && userData.Roles && userData.Roles.some(
+      r => r.toLowerCase() === "administrator"
+    )
+    ) {
+      return await renderTeacherLearningRoutes();
+    }
     return await RouteOrSelector();
   },
   "#Module/:id": async (id) => {
@@ -25,7 +36,19 @@ const routes = {
   },
   "#instellingen": async () => {
     return await settingsPage();
-  }
+  },
+  "#beheerder-feedback": async () => {
+    const params = getHashParams();
+    const { fragment } = await beheerderFeedback(params);
+    document.getElementById('app').innerHTML = '';
+    document.getElementById('app').appendChild(fragment);
+  },
+  "#beheerder-learning-route": async () => {
+    const params = getHashParams();
+    const { fragment } = await administratorLearningRoute(params);
+    document.getElementById('app').innerHTML = '';
+    document.getElementById('app').appendChild(fragment);
+  },
 };
 
 //function which takes for example and Id and gives it to the router as parameter to be used. 
@@ -64,13 +87,28 @@ const router = async () => {
   const app = document.getElementById("app");
   app.innerHTML = "";
 
+  // Speciaal afhandelen voor beheerder-feedback met parameters
+  if (path.startsWith("#beheerder-feedback")) {
+    const params = getHashParams();
+    const { fragment } = await beheerderFeedback(params);
+    app.appendChild(fragment);
+    return;
+  }
+
+  // Speciaal afhandelen voor beheerder-learning-route met parameters
+  if (path.startsWith("#beheerder-learning-route")) {
+    const params = getHashParams();
+    const { fragment } = await administratorLearningRoute(params);
+    app.appendChild(fragment);
+    return;
+  }
+
   const match = matchRoute(path);
   if (match) {
     const { handler, params } = match;
     const { fragment, init } = await handler(params.id);
     app.appendChild(fragment);
-    if (init) await init(); // <-- when a script needs the view to be loaded before continuing this ensures that the contents are in the DOM to be used.
-
+    if (init) await init();
   } else {
     const div = document.createElement("div");
     div.innerHTML = "<h1>404 Not Found</h1>";
@@ -108,7 +146,11 @@ const navigateTo = (url) => {
   history.pushState(null, null, url);
   router();
 };
-
+function getHashParams() {
+  const hash = window.location.hash.split('?')[1];
+  if (!hash) return {};
+  return Object.fromEntries(new URLSearchParams(hash));
+}
 
 //----------------------Old Router---------------------------------------------------------------------------------------------------------------//
 

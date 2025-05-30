@@ -45,6 +45,15 @@ export default class Header extends HTMLElement {
     } else {
       loginObj.href = getLoginUrl()
     }
+
+    const overviewLink = this.querySelector('a[data-link][href="/"]');
+    if (
+      _userData &&
+      _userData.Roles &&
+      _userData.Roles.some(r => r.toLowerCase() === "administrator")
+    ) {
+      if (overviewLink) overviewLink.textContent = "Dashboard";
+    }
   }
 }
 
