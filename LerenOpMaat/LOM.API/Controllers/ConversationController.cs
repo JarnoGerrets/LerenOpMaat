@@ -177,11 +177,6 @@ namespace LOM.API.Controllers
                 .Where(c => c.TeacherId == administratorId)
                 .ToListAsync();
 
-            if (!conversations.Any())
-            {
-                return NotFound();
-            }
-
             return conversations;
         }
         private bool ConversationExists(int id)

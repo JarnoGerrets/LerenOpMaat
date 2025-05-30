@@ -7,7 +7,7 @@ export default async function renderTeacherLearningRoutes() {
     const fragment = document.createDocumentFragment();
 
     let userData = await window.userData;
-    const conversations = await getConversationByAdminId(userData.InternalId);
+    let conversations = await getConversationByAdminId(userData.InternalId);
 
     // Haal conversations op voor deze admin (teacher)
     let routes = [];
@@ -37,7 +37,7 @@ export default async function renderTeacherLearningRoutes() {
     if (routes.length === 0) {
         // Voeg deze melding toe als er geen leerroutes zijn
         const msg = document.createElement('div');
-        msg.textContent = "Geen Leerroutes beschikbaar";
+        msg.textContent = "Geen Conversaties beschikbaar";
         msg.style.textAlign = "center";
         msg.style.padding = "1rem";
         msg.style.color = "#888";
