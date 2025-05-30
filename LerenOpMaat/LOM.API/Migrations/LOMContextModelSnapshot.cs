@@ -45,43 +45,43 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(4435)
+                            StartDate = new DateTime(2025, 5, 30, 11, 16, 56, 756, DateTimeKind.Local).AddTicks(2644)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(4487)
+                            StartDate = new DateTime(2026, 5, 30, 11, 16, 56, 756, DateTimeKind.Local).AddTicks(2737)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(4495)
+                            StartDate = new DateTime(2027, 5, 30, 11, 16, 56, 756, DateTimeKind.Local).AddTicks(2746)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(4498)
+                            StartDate = new DateTime(2024, 5, 30, 11, 16, 56, 756, DateTimeKind.Local).AddTicks(2750)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(4500)
+                            StartDate = new DateTime(2023, 5, 30, 11, 16, 56, 756, DateTimeKind.Local).AddTicks(2755)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(4502)
+                            StartDate = new DateTime(2022, 5, 30, 11, 16, 56, 756, DateTimeKind.Local).AddTicks(2758)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(4504)
+                            StartDate = new DateTime(2021, 5, 30, 11, 16, 56, 756, DateTimeKind.Local).AddTicks(2761)
                         });
                 });
 
@@ -142,7 +142,7 @@ namespace LOM.API.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TeacherId")
+                    b.Property<int?>("TeacherId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -203,6 +203,12 @@ namespace LOM.API.Migrations
                             Id = 3,
                             ColorCode = "#4594D3A0",
                             Name = "IDNS"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ColorCode = "#4594D3A3",
+                            Name = "Geen"
                         });
                 });
 
@@ -214,14 +220,21 @@ namespace LOM.API.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("LearningRoutes");
 
                     b.HasData(
                         new
                         {
-                            Id = 1
+                            Id = 1,
+                            UserId = 1
                         });
                 });
 
@@ -260,7 +273,7 @@ namespace LOM.API.Migrations
                             Id = 1,
                             Commentary = "Hoi, mag ik een feedback krijgen op mijn leerroute?",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(6474),
+                            DateTime = new DateTime(2025, 5, 30, 11, 16, 57, 203, DateTimeKind.Local).AddTicks(8426),
                             UserId = 1
                         },
                         new
@@ -268,7 +281,7 @@ namespace LOM.API.Migrations
                             Id = 2,
                             Commentary = "Ik zou semester 2 van het jaar 2 aanpassen naar iets anders.",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(6479),
+                            DateTime = new DateTime(2025, 5, 30, 11, 16, 57, 203, DateTimeKind.Local).AddTicks(8465),
                             UserId = 3
                         },
                         new
@@ -276,7 +289,7 @@ namespace LOM.API.Migrations
                             Id = 3,
                             Commentary = "Hoi, Ik heb het aangepast",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(6482),
+                            DateTime = new DateTime(2025, 5, 30, 11, 16, 57, 203, DateTimeKind.Local).AddTicks(8469),
                             UserId = 1
                         },
                         new
@@ -284,7 +297,7 @@ namespace LOM.API.Migrations
                             Id = 4,
                             Commentary = "Leerroute ziet er goed uit!",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 25, 17, 23, 24, 373, DateTimeKind.Local).AddTicks(6484),
+                            DateTime = new DateTime(2025, 5, 30, 11, 16, 57, 203, DateTimeKind.Local).AddTicks(8472),
                             UserId = 3
                         });
                 });
@@ -299,7 +312,7 @@ namespace LOM.API.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
@@ -324,6 +337,9 @@ namespace LOM.API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
 
                     b.HasIndex("GraduateProfileId");
 
@@ -1045,7 +1061,7 @@ namespace LOM.API.Migrations
                         new
                         {
                             Id = 1,
-                            RoleName = "Teacher"
+                            RoleName = "Administrator"
                         },
                         new
                         {
@@ -1180,8 +1196,6 @@ namespace LOM.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LearningRouteId");
-
                     b.HasIndex("RoleId");
 
                     b.ToTable("User");
@@ -1252,15 +1266,24 @@ namespace LOM.API.Migrations
 
                     b.HasOne("LOM.API.Models.User", "Teacher")
                         .WithMany()
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TeacherId");
 
                     b.Navigation("LearningRoute");
 
                     b.Navigation("Student");
 
                     b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("LOM.API.Models.LearningRoute", b =>
+                {
+                    b.HasOne("LOM.API.Models.User", "User")
+                        .WithOne("LearningRoute")
+                        .HasForeignKey("LOM.API.Models.LearningRoute", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("LOM.API.Models.Message", b =>
@@ -1354,17 +1377,11 @@ namespace LOM.API.Migrations
 
             modelBuilder.Entity("LOM.API.Models.User", b =>
                 {
-                    b.HasOne("LOM.API.Models.LearningRoute", "LearningRoute")
-                        .WithMany("Users")
-                        .HasForeignKey("LearningRouteId");
-
                     b.HasOne("LOM.API.Models.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("LearningRoute");
 
                     b.Navigation("Role");
                 });
@@ -1372,8 +1389,6 @@ namespace LOM.API.Migrations
             modelBuilder.Entity("LOM.API.Models.LearningRoute", b =>
                 {
                     b.Navigation("Semesters");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("LOM.API.Models.Module", b =>
@@ -1386,6 +1401,11 @@ namespace LOM.API.Migrations
             modelBuilder.Entity("LOM.API.Models.ModuleProgress", b =>
                 {
                     b.Navigation("CompletedEVLs");
+                });
+
+            modelBuilder.Entity("LOM.API.Models.User", b =>
+                {
+                    b.Navigation("LearningRoute");
                 });
 #pragma warning restore 612, 618
         }
