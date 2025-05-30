@@ -34,7 +34,6 @@ export default async function renderTeacherLearningRoutes() {
         return;
     }
     listContainer.innerHTML = '';
-    console.log('Lijst van leerroutes:', routes);
     if (routes.length === 0) {
         // Voeg deze melding toe als er geen leerroutes zijn
         const msg = document.createElement('div');
