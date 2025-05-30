@@ -1,3 +1,4 @@
+
 import {
     getConversationByUserId,
     getAllTeachers,
@@ -6,8 +7,10 @@ import {
     getMessagesByConversationId,
 } from "../client/api-client.js";
 
-export default async function Feedback() {
-    const response = await fetch("/templates/feedback.html");
+export default async function beheerderFeedback() {
+    const conversationId = sessionStorage.getItem('lom_conversationId');
+    const userId = sessionStorage.getItem('lom_userId');
+    const response = await fetch("/templates/beheerder-feedback.html");
     const html = await response.text();
     const userData = await window.userData;
 
@@ -46,12 +49,12 @@ export default async function Feedback() {
     async function renderMessages() {
         messageContainer.innerHTML = "";
         try {
-            conversation = await getConversationByUserId(currentUserId);
+            conversation = await getConversationByUserId(userId);
             if (conversation && conversation.TeacherId) {
                 selectedTeacherIdFromConversation = conversation.TeacherId;
             }
-            if (conversation && conversation.Id) {
-                let messages = await getMessagesByConversationId(conversation.Id);
+            if (conversation && conversationId) {
+                let messages = await getMessagesByConversationId(conversationId);
                 messages = Array.isArray(messages) ? messages : (messages ? [messages] : []);
                 if (messages.length > 0) {
                     const sortedMessages = messages.slice().sort((a, b) => a.Id - b.Id);
@@ -127,7 +130,7 @@ export default async function Feedback() {
             updateTextareaPlaceholder();
 
             const selectedTeacherId = dropdown.value;
-            conversation = await getConversationByUserId(currentUserId);
+            conversation = await getConversationByUserId(userId);
 
             // Alleen updaten als conversation bestaat en TeacherId echt anders is
             if (conversation && String(conversation.TeacherId) !== String(selectedTeacherId)) {
@@ -138,8 +141,8 @@ export default async function Feedback() {
                     StudentId: conversation.StudentId
                 };
                 try {
-                    await updateConversation(conversation.Id, updateBody);
-                    conversation = await getConversationByUserId(currentUserId);
+                    await updateConversation(conversationId, updateBody);
+                    conversation = await getConversationByUserId(userId);
                     await renderMessages();
                 } catch (err) {
                     errorMsg.textContent = "Kon begeleider niet aanpassen.";
@@ -166,7 +169,7 @@ export default async function Feedback() {
 
             // Haal altijd de conversatie op
             let conversation = await getOrCreateConversation(currentUserId);
-            let conversationId = conversation && conversation.Id ? conversation.Id : null;
+            //let conversationId = conversation && conversation.Id ? conversation.Id : null;
 
             let valid = true;
             if (!conversationId) {
@@ -187,14 +190,14 @@ export default async function Feedback() {
             try {
                 // Alleen updateConversation aanroepen als TeacherId gewijzigd is
                 if (conversation.TeacherId != Number(selectedTeacherId)) {
-                    await updateConversation(conversation.Id, {
+                    await updateConversation(conversationId, {
                         ...conversation,
                         TeacherId: Number(selectedTeacherId)
                     });
-                    conversation = await getConversationByUserId(currentUserId);
+                    conversation = await getConversationByUserId(userId);
                 }
 
-                await postFeedbackMessage(conversation.Id, feedback, currentUserId);
+                await postFeedbackMessage(conversationId, feedback, currentUserId);
 
                 textarea.value = "";
                 updateTextareaPlaceholder();
@@ -210,11 +213,21 @@ export default async function Feedback() {
         });
     }
 
+    const learningRouteLink = fragment.querySelector('.learning-route-link');
+    if (learningRouteLink) {
+        learningRouteLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            sessionStorage.setItem('lom_conversationId', conversationId);
+            sessionStorage.setItem('lom_userId', userId);
+            window.location.hash = "#beheerder-learning-route";
+        });
+    }
+
     return { fragment };
 }
 
-async function getOrCreateConversation(currentUserId) {
-    return await getConversationByUserId(currentUserId);
+async function getOrCreateConversation(usedrId) {
+    return await getConversationByUserId(usedrId);
 }
 
 async function postFeedbackMessage(conversationId, feedback, currentUserId) {

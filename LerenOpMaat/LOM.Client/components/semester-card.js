@@ -134,6 +134,11 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
     return;
   }
 
+  onModuleChange({
+    semester,
+    moduleId: selectedModule.Id,
+    moduleName: selectedModule.Name
+  });
 
   const result = await validateRoute(learningRouteArray);
   let progress;
@@ -162,7 +167,11 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
   updateInactiveLabel(cardContainer, moduleActiveStatus);
 
   cardElement.setAttribute("data-module-id", selectedModule.Id);
-  onModuleChange({ semester, moduleId: selectedModule.Id });
+  onModuleChange({
+    semester,
+    moduleId: selectedModule.Id,
+    moduleName: selectedModule.Name // <-- voeg moduleName toe
+  });
 
   const finalValidation = await validateRoute(learningRouteArray);
   handleValidationResult(finalValidation);

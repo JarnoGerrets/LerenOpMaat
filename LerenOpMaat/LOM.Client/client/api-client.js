@@ -33,7 +33,7 @@ export async function getUserData() {
     });
 
     const userData = await res.json();
-    
+
     localStorage.setItem("userData", JSON.stringify(userData));
 
     return userData;
@@ -199,7 +199,7 @@ export async function deleteModule(id) {
 
 
 export async function getModuleProgress(id) {
-  const  userData = await window.userData;
+  const userData = await window.userData;
   if (!userData) return null;
 
   try {
@@ -658,4 +658,20 @@ export async function getCurrentOerPdf() {
   }
 
   return await res.blob();
+}
+
+export async function getConversationByAdminId(adminId) {
+  const res = await fetch(`${API_BASE}/Conversation/conversationByAdministratorId/${adminId}`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    },
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch conversation: ${res.status}`);
+  }
+
+  return await res.json();
 }

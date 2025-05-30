@@ -2,7 +2,8 @@ import SemesterCard from "../components/semester-card.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 export let learningRouteArray = [];
 
-export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
+export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears, options = {}) {
+    const readonly = options.readonly; //readonly mode
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
     const wrapper = document.createElement("div");
     wrapper.classList.add("semester-pair");
@@ -12,6 +13,10 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         wrapper.classList.remove("reverse");
     } else {
         wrapper.classList.add("reverse");
+    }
+
+    if (readonly) {
+        wrapper.style.pointerEvents = "none";
     }
 
     // Fallback for semester1
@@ -36,28 +41,34 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             moduleId: semester1.ModuleId,
             isActive: semester1.Module.IsActive,
             locked: semester1.locked,
-            onModuleChange: async ({ semester, moduleId }) => {
+            onModuleChange: async ({ semester, moduleId, moduleName }) => {
                 const existingItem = learningRouteArray.find(
                     (item) => item.Year === index + 1 && item.Period === semester
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
+                    existingItem.moduleName = moduleName;
                 } else {
                     learningRouteArray.push({
                         Year: index + 1,
-                        semester,
+                        Period: semester,
                         moduleId,
+                        moduleName,
                     });
                 }
             },
+
         });
         wrapper.appendChild(card1);
 
-        learningRouteArray.push({
-            Year: index + 1,
-            Period: semester1.Period,
-            moduleId: semester1.Module.Id,
-        });
+        if (!learningRouteArray.find(item => item.Year === index + 1 && item.Period === semester1.Period)) {
+            learningRouteArray.push({
+                Year: index + 1,
+                Period: semester1.Period,
+                moduleId: semester1.Module.Id,
+                moduleName: semester1.Module.Name,
+            });
+        }
     }
 
     // Fallback for semester2
@@ -80,28 +91,34 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             moduleId: semester2.Module.Id,
             isActive: semester2.Module.IsActive,
             locked: semester2.locked,
-            onModuleChange: ({ semester, moduleId }) => {
+            onModuleChange: async ({ semester, moduleId, moduleName }) => {
                 const existingItem = learningRouteArray.find(
                     (item) => item.Year === index + 1 && item.Period === semester
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
+                    existingItem.moduleName = moduleName;
                 } else {
                     learningRouteArray.push({
                         Year: index + 1,
-                        semester,
+                        Period: semester,
                         moduleId,
+                        moduleName,
                     });
                 }
             },
+
         });
         wrapper.appendChild(card2);
 
-        learningRouteArray.push({
-            Year: index + 1,
-            Period: semester2.Period,
-            moduleId: semester2.Module.Id,
-        });
+        if (!learningRouteArray.find(item => item.Year === index + 1 && item.Period === semester2.Period)) {
+            learningRouteArray.push({
+                Year: index + 1,
+                Period: semester2.Period,
+                moduleId: semester2.Module.Id,
+                moduleName: semester2.Module.Name,
+            });
+        }
 
         if (index !== totalAmountOfYears - 1) {
             const cornerConnector = document.createElement("div");

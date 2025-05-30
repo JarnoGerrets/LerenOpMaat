@@ -25,9 +25,6 @@ public class Seeder
             new Cohort { Id = 7, StartDate = DateTime.Now.AddYears(-4), IsActive = true }
         );
 
-        _modelBuilder.Entity<LearningRoute>().HasData(
-           new LearningRoute { Id = 1 });
-
         _modelBuilder.Entity<Module>().HasData(
             new Module { Id = 1, Name = "Introduction to Programming", Code = "IP.01", Description = "Introduction to Programming", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
             new Module { Id = 2, Name = "Web Development Basics", Code = "WDB.02", Description = "Web Development Basics", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },
@@ -58,6 +55,15 @@ public class Seeder
             new User { Id = 2, FirstName = "Robin", LastName = "Hood", ExternalID = "TEST345", RoleId = 2 },
             new User { Id = 3, FirstName = "Begeleider", LastName = "Begeleider", ExternalID = "Test54321", RoleId = 1 }
             );
+
+        _modelBuilder.Entity<LearningRoute>().HasData(
+           new LearningRoute { Id = 1, UserId = 1 });
+
+        _modelBuilder.Entity<User>()
+            .HasOne(u => u.LearningRoute)
+            .WithOne(lr => lr.User)
+            .HasForeignKey<LearningRoute>(lr => lr.UserId);
+
         _modelBuilder.Entity<Semester>()
             .HasOne(s => s.Module)
             .WithMany()
@@ -108,6 +114,18 @@ public class Seeder
             new Message { Id = 3, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Hoi, Ik heb het aangepast", UserId = 1 },
             new Message { Id = 4, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Leerroute ziet er goed uit!", UserId = 3 }
             );
+
+        _modelBuilder.Entity<Conversation>().HasData(
+            new Conversation { Id = 1, LearningRouteId = 1, StudentId = 1, TeacherId = 3 }
+            );
+
+        _modelBuilder.Entity<Message>().HasData(
+            new Message { Id = 1, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Hoi, mag ik een feedback krijgen op mijn leerroute?", UserId = 1 },
+            new Message { Id = 2, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Ik zou semester 2 van het jaar 2 aanpassen naar iets anders.", UserId = 3 },
+            new Message { Id = 3, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Hoi, Ik heb het aangepast", UserId = 1 },
+            new Message { Id = 4, ConversationId = 1, DateTime = DateTime.Now, Commentary = "Leerroute ziet er goed uit!", UserId = 3 }
+            );
+
 
         _modelBuilder.Entity<GraduateProfile>().HasData(
             new GraduateProfile { Id = 1, Name = "BIM", ColorCode = "#F16682A0" },

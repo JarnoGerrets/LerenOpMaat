@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LOM.API.Models
 {
@@ -7,7 +8,9 @@ namespace LOM.API.Models
         [Key]
         public int Id { get; set; }
 
-        public ICollection<User>? Users { get; set; }
+        [ForeignKey(nameof(User))]
+        public int UserId { get; set; }
+        public User? User { get; set; }
         public ICollection<Semester>? Semesters { get; set; }
     }
 }

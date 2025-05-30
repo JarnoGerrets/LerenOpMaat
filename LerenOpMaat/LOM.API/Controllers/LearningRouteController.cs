@@ -89,30 +89,21 @@ namespace LOM.API.Controllers
 
             }
 
-            if (learningRoute.Users != null && learningRoute.Users.Any())
+            // Validate the user exists
+            var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Id == learningRoute.UserId);
+
+            if (existingUser == null)
             {
-                var userIds = learningRoute.Users.Select(u => u.Id).ToList();
-                var existingUsers = await _context.User.Where(u => userIds.Contains(u.Id)).ToListAsync();
-
-                if (existingUsers.Count != userIds.Count)
-                {
-                    return BadRequest("One or more users do not exist.");
-                }
-
-                foreach (var user in learningRoute.Users)
-                {
-                    var existingUser = existingUsers.FirstOrDefault(u => u.Id == user.Id);
-                    if (existingUser != null)
-                    {
-                        existingUser.StartYear = user.StartYear; // Update startYear
-                    }
-                }
-
-                learningRoute.Users = existingUsers;
+                return BadRequest("User does not exist.");
             }
 
-            _context.LearningRoutes.Add(learningRoute);
+            learningRoute.User = existingUser;
 
+            _context.LearningRoutes.Add(learningRoute);
+            await _context.SaveChangesAsync();
+
+            // Update the user's LearningRouteId after the LearningRoute is saved (so the Id is generated)
+            existingUser.LearningRouteId = learningRoute.Id;
             await _context.SaveChangesAsync();
 
             return Ok();
@@ -124,7 +115,7 @@ namespace LOM.API.Controllers
         {
             var learningRoute = await _context.LearningRoutes
                 .Include(lr => lr.Semesters)
-                .Include(lr => lr.Users)
+                .Include(lr => lr.User)
                 .FirstOrDefaultAsync(lr => lr.Id == id);
 
             if (learningRoute == null)
@@ -132,18 +123,16 @@ namespace LOM.API.Controllers
                 return NotFound();
             }
 
-            // Verwijder gekoppeld Semesters
+            // Remove related Semesters
             if (learningRoute.Semesters != null && learningRoute.Semesters.Any())
             {
                 _context.Semesters.RemoveRange(learningRoute.Semesters);
             }
 
-            if (learningRoute.Users != null && learningRoute.Users.Any())
+            // Unlink the user from the learning route
+            if (learningRoute.User != null)
             {
-                foreach (var user in learningRoute.Users)
-                {
-                    user.LearningRouteId = null;
-                }
+                learningRoute.User.LearningRouteId = null;
             }
 
             _context.LearningRoutes.Remove(learningRoute);
@@ -157,32 +146,33 @@ namespace LOM.API.Controllers
         public async Task<ActionResult<LearningRoute>> GetLearningRouteByUserId(int userId)
         {
             var learningRoute = await _context.LearningRoutes
-                .Include(u => u.Users)
+                .Include(u => u.User)
                 .Include(s => s.Semesters)
                 .ThenInclude(m => m.Module)
-                .FirstOrDefaultAsync(lr => lr.Users.Any(u => u.Id == userId && lr.Id == u.LearningRouteId));
+                .FirstOrDefaultAsync(lr => lr.UserId == userId);
 
             var getUser = await _context.User.FirstOrDefaultAsync(ui => ui.Id == userId);
 
             if (learningRoute == null)
             {
-                // Return altijd de user gegevens. 
+                // Always return the user data.
                 return new LearningRoute
                 {
-                    Users = new List<User>
-                        {
-                            new User
-                            {
-                                Id = getUser.Id,
-                                ExternalID = getUser.ExternalID,
-                                FirstName = getUser.FirstName,
-                                LastName = getUser.LastName
-                            }
-                        }
+                    UserId = getUser.Id,
+                    User = new User
+                    {
+                        Id = getUser.Id,
+                        ExternalID = getUser.ExternalID,
+                        FirstName = getUser.FirstName,
+                        LastName = getUser.LastName
+                    }
                 };
             }
 
-            learningRoute.Users ??= new List<User>();
+            if (learningRoute.User == null)
+            {
+                learningRoute.User = getUser;
+            }
 
             return learningRoute;
         }

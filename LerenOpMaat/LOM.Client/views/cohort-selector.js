@@ -50,17 +50,29 @@ export default async function CohortSelector(setStartYear) {
   });
 
   submitBtn.addEventListener("click", async () => {
-    if (selected) {
-      let userData = await window.userData;
+  if (selected) {
+    let userData = await window.userData;
 
+    try { 
       if (userData && userData.InternalId) {
         await setStartYear(userData.InternalId, selected);
-      }
-
-      localStorage.setItem("cohortYear", selected);
-      window.location.reload();
+      } 
+    } catch (e) {
+      console.error("Error in setStartYear:", e);
     }
-  });
+
+    localStorage.setItem("cohortYear", selected);
+
+    const app = document.getElementById("app") || document.body;
+    app.innerHTML = "";
+
+    const learning = await LearningRoute();
+    if (learning?.fragment) {
+      app.appendChild(learning.fragment);
+      learning.init?.();
+    }
+  }
+});
 
     return { fragment, init: () => null };
 }

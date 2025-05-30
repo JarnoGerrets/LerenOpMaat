@@ -1,18 +1,25 @@
-import SemesterPair from "../components/semester-pair.js";
-import { getLearningRoutesByUserId, postLearningRoute, updateSemester, postConversation, getConversationByUserId, deleteRoute } from "../client/api-client.js"
+import {
+    getLearningRoutesByUserId,
+    postLearningRoute,
+    updateSemester,
+    postConversation,
+    getConversationByUserId,
+    deleteRoute
+} from "../client/api-client.js"
+
 import { learningRouteArray } from "../components/semester-pair.js";
-import confirmationPopup from "./partials/confirmation-popup.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
+
+import SemesterPair from "../components/semester-pair.js";
+import confirmationPopup from "./partials/confirmation-popup.js";
 import AddIconButton from "../components/add-icon-button.js";
 
-let apiResponse = [];
-export let currentUserId = null;
-export let learningRouteId = null;
 
+let apiResponse = [];
 export default async function LearningRoute() {
     showLoading();
-
+    const cohortYear = parseInt(localStorage.getItem("cohortYear"));
     const response = await fetch("/templates/learning-route.html");
     const html = await response.text();
     const template = document.createElement("template");
@@ -23,12 +30,10 @@ export default async function LearningRoute() {
     let routeId = null;
 
     let userData = await window.userData;
-    let tries = 0;
 
     try {
         if (userData && userData.InternalId) {
             apiResponse = await getLearningRoutesByUserId(userData.InternalId);
-
             if (
                 !apiResponse.Semesters ||
                 !Array.isArray(apiResponse.Semesters) ||
@@ -114,7 +119,7 @@ export default async function LearningRoute() {
 
                 // Its assumed here that no student will have more than 20 semesters in their learning route.
                 // This is a safety check which prevents the user from purposely trying to overload the system.
-                if (index < 20) { 
+                if (index < 20) {
                     grid.appendChild(addSemesterContainer);
                 }
             }
@@ -151,9 +156,18 @@ export default async function LearningRoute() {
         const exportButton = fragment.getElementById("exportLearningRoute");
         if (exportButton) {
             exportButton.addEventListener("click", async () => {
-                if (!apiResponse || !apiResponse.Users || !apiResponse.Semesters) {
-                    console.error("Geen geldige API Response beschikbaar om te exporteren.");
-                    return;
+                let user, semesters, isFallback = false;
+                if (!apiResponse || !apiResponse.User || !apiResponse.Semesters) {
+                    semesters = learningRouteArray;
+                    user = {
+                        FirstName: "Gast",
+                        LastName: "",
+                        StartYear: cohortYear
+                    };
+                    isFallback = true;
+                } else {
+                    semesters = apiResponse.Semesters;
+                    user = apiResponse.User;
                 }
 
                 const { jsPDF } = window.jspdf;
@@ -173,7 +187,6 @@ export default async function LearningRoute() {
                 img.onload = () => {
                     doc.addImage(img, "PNG", xPosition, yPosition, imgWidth, imgHeight);
 
-                    const user = apiResponse.Users[0];
                     doc.setFontSize(12);
                     doc.text(`Voornaam: ${user.FirstName}`, 10, 40);
                     doc.text(`Achternaam: ${user.LastName}`, 10, 50);
@@ -182,26 +195,33 @@ export default async function LearningRoute() {
                     doc.setLineWidth(0.5);
                     doc.line(10, 65, 200, 65);
 
-                    let currentYPosition = 70;
-                    currentYPosition = 75;
+                    let currentYPosition = 75;
 
-                    const groupedByYear = apiResponse.Semesters.reduce((acc, semester) => {
-                        if (!acc[semester.Year]) {
-                            acc[semester.Year] = [];
-                        }
-                        acc[semester.Year].push(semester);
+                    // Groepeer semesters per jaar
+                    const groupedByYear = semesters.reduce((acc, semester) => {
+                        const year = semester.Year;
+                        if (!acc[year]) acc[year] = [];
+                        acc[year].push(semester);
                         return acc;
                     }, {});
-
 
                     for (const year in groupedByYear) {
                         doc.text(`Jaar ${year}:`, 10, currentYPosition);
                         currentYPosition += 10;
 
                         groupedByYear[year].forEach(semester => {
-                            if (semester.Module) { // Controleer of Module niet null is
+                            // Fallback: module info kan anders zijn
+                            let moduleName = semester.Module?.Name;
+                            if (isFallback) {
+                                moduleName = semester.moduleName || "Onbekend";
+                            }
+                            // Maak leeg als de moduleName "Selecteer je module" is
+                            if (moduleName === "Selecteer je module") {
+                                moduleName = "";
+                            }
+                            if (moduleName) {
                                 doc.text(
-                                    `Periode ${semester.Period}: ${semester.Module.Name}`,
+                                    `Periode ${semester.Period}: ${moduleName}`,
                                     20,
                                     currentYPosition
                                 );
@@ -254,7 +274,7 @@ export default async function LearningRoute() {
             e.preventDefault();
 
             // Haal gebruiker en routeId op
-            const user = apiResponse?.Users?.[0];
+            const user = apiResponse?.User;
             if (!user || !routeId) {
                 console.error("Gebruiker of routeId niet gevonden.");
                 window.location.hash = "#feedback";
@@ -268,7 +288,6 @@ export default async function LearningRoute() {
                 // Conversation bestaat niet, maak een nieuwe aan
                 const conversationBody = {
                     LearningRouteId: routeId,
-                    TeacherId: 47, // Pas eventueel aan
                     StudentId: user.Id
                 };
                 try {
@@ -291,20 +310,12 @@ export default async function LearningRoute() {
 
 async function saveLearningRoute(learningRouteArray) {
     if (Array.isArray(learningRouteArray) && learningRouteArray.length > 0) {
-        const user = apiResponse?.Users?.[0];
+        const user = apiResponse?.User;
         if (!user) {
             throw new Error("Geen gebruikersgegevens gevonden in de API-response.");
         }
         const jsonData = {
-            Users: [
-                {
-                    Id: user.Id,
-                    ExternalId: user.ExternalID,
-                    FirstName:  user.FirstName,
-                    LastName: user.LastName,
-                    StartYear: 2025,
-                }
-            ],
+            UserId: user.Id,
             Semesters: learningRouteArray.map(item => ({
                 Year: item.Year,
                 Period: item.Period,
