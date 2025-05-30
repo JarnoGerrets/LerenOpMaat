@@ -183,5 +183,46 @@ namespace LOM.API.Controllers
         {
             return _context.Conversations.Any(e => e.Id == id);
         }
+
+        [HttpGet("notifications/{id}")]
+        public async Task<ActionResult> GetNotificationsByUserId(int id)
+        {
+            var unreadMessages = await _context.Messages
+                .Include(m => m.Conversation)
+                    .ThenInclude(c => c.LearningRoute)
+                .Include(m => m.Conversation.Student)
+                .Include(m => m.Conversation.Teacher)
+                .Where(m => m.IsRead == false
+                    && m.UserId != id
+                    && m.Conversation != null
+                    && (
+                        m.Conversation.StudentId == id ||
+                        m.Conversation.TeacherId == id
+                    ))
+                .ToListAsync();
+
+
+            return Ok(unreadMessages);
+        }
+
+        [HttpPatch("notifications/markasread")]
+        public async Task<IActionResult> MarkMessagesAsRead([FromBody] MarkAsReadRequestDto request)
+        {
+            var messages = await _context.Messages
+                .Where(m => m.ConversationId == request.ConversationId
+                            && m.UserId != request.UserId
+                            && !m.IsRead)
+                .ToListAsync();
+
+            foreach (var msg in messages)
+            {
+                msg.IsRead = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
     }
 }

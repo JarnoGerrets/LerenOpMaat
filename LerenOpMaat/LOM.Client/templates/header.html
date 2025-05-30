@@ -18,7 +18,15 @@
     <!-- Linkerkant: menu en notificatie -->
     <div class="left-section">
       <i class="bi bi-list icon" onclick="toggleMenu()"></i>
-      <i class="bi bi-bell-fill icon"></i>
+      <div class="notification-icon-wrapper">
+        <i class="bi bi-bell-fill icon" id="notification-bell"></i>
+        <span id="notificationAmount" class="notification-badge hidden">3</span>
+        <div class="notification-dropdown hidden" id="notification-dropdown">
+          <div class="notification-item">Je hebt een nieuwe melding</div>
+          <div class="notification-item">Nog een melding</div>
+          <div class="notification-item">Nog eentje</div>
+        </div>
+      </div>
     </div>
 
     <!-- Rechterkant: logo + login/account -->
@@ -58,13 +66,13 @@
     function growItem(element) {
       element.style.transform = 'scale(1.1)';
       element.style.transition = 'transform 0.2s ease-in-out';
-    }   
-    
+    }
+
     function shrinkItem(element) {
-        element.style.transform = 'scale(1)';
-      }
-      // when clicked anywhere outside sidebar, its closed
-      document.addEventListener('click', function(event) {
+      element.style.transform = 'scale(1)';
+    }
+
+    document.addEventListener('click', function (event) {
       const menu = document.getElementById('menu');
       const menuButton = document.querySelector('.bi-list');
 
@@ -73,7 +81,6 @@
       }
     });
 
-    // add event listeners to all <a> links inside the menu to close it when clicked
     const menuLinks = document.querySelectorAll('#menu a');
     menuLinks.forEach(link => {
       link.addEventListener('click', () => {

@@ -146,6 +146,69 @@ header {
   gap: 40px;
 }
 
+.notification-icon-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.hidden {
+  display: none;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(40%, -26%);
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  box-shadow: 0 0 0 2px white;
+  /* optioneel: wit randje voor betere leesbaarheid */
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 50;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 8px;
+  min-width: 200px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.notification-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background-color: #f5f5f5;
+}
+.notification-item:hover:first-child{
+  border-radius: 8px 8px 0 0 ;
+}
+.notification-item:hover:last-child{
+  border-radius: 0 0 8px 8px ;
+}
+
 .bi-chevron-left {
   transition: transform 0.2s ease-in-out;
   transform-origin: center center;
@@ -221,4 +284,3 @@ header {
     margin: 20px;
   }
 }
-
