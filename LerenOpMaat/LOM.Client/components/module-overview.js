@@ -62,21 +62,49 @@ class ModuleOverview extends HTMLElement {
         }
 
         const profiles = await getProfiles();
-        const profileString = profiles.map(i => `<p><span style="background: ${i.ColorCode}"></span> ${i.Name}</p>`).join("")
+        const profileString = profiles.map(i =>
+            `<p style="display: flex; align-items: center; margin: 4px 0;">
+      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background: ${i.ColorCode}; margin-right: 8px; border: 1px solid #ccc;"></span>
+      ${i.Name}
+   </p>`
+        ).join("");
 
-        this.querySelector("#legendButton").addEventListener("click", () => {
-            new Popup({
-                extraButtons: false,
-                header: `Legenda`,
-                sizeCloseButton: 18,
-                content: `
-                    <div class="legend-wrapper" style="width: 500px; padding: 20px">
-                        ${profileString}
-                    </div>
-                `
-            }).open();
-        })
-        
+        const button = this.querySelector("#legendButton");
+
+        const tooltip = document.createElement("div");
+        tooltip.classList.add("legend-tooltip");
+        tooltip.style.position = "absolute";
+        tooltip.style.display = "none";
+        tooltip.style.zIndex = "999";
+        tooltip.style.padding = "10px";
+        tooltip.style.border = "1px solid #ccc";
+        tooltip.style.background = "white";
+        tooltip.innerHTML = profileString;
+
+        document.body.appendChild(tooltip);
+
+        let isOpen = false;
+
+        button.addEventListener("click", (e) => {
+            e.stopPropagation();
+            isOpen = !isOpen;
+            if (isOpen) {
+                const rect = button.getBoundingClientRect();
+                tooltip.style.left = `${rect.left + 40}px`;
+                tooltip.style.top = `${rect.bottom + 5}px`;
+                tooltip.style.display = "block";
+            } else {
+                tooltip.style.display = "none";
+            }
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!button.contains(e.target) && !tooltip.contains(e.target)) {
+                tooltip.style.display = "none";
+                isOpen = false;
+            }
+        });
+
     }
 
     renderModules(modules) {
