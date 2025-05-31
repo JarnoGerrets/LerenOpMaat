@@ -1,7 +1,8 @@
-import Popup from "../../components/Popup.js";
-import { uploadOerPdf, getCurrentOerPdf } from "../../client/api-client.js";
+import Popup from "../components/Popup.js";
 
-export default async function oerView() {
+export default async function oerView(uploadOerPdf, getCurrentOerPdf) {
+  let userData = localStorage.getItem("userData");
+  let parsedUserData = JSON.parse(userData);
   const response = await fetch("/templates/Oer.html");
   const html = await response.text();
 
@@ -24,8 +25,11 @@ export default async function oerView() {
       objectElement.replaceWith("Geen OER beschikbaar.");
     }
   }
-
+  
   const uploadBtn = fragment.getElementById("uploadBtn");
+  if(!parsedUserData || !parsedUserData.Roles.includes("Administrator") && !parsedUserData.Roles.includes("Lecturer")){
+    uploadBtn.style.display = "none";
+  }
 
   uploadBtn?.addEventListener("click", () => {
     const popup = new Popup({
@@ -39,9 +43,13 @@ export default async function oerView() {
             <img src="/images/UploadIcon.svg" alt="Upload Icon" class="upload-icon" />
             <p class="upload-instruction">Sleep een PDF-bestand hierheen</p>
             <p class="upload-or">of</p>
-            <input type="file" id="fileInput" accept="application/pdf" class="file-input-styled" />
+            <div class="custom-file-upload">
+              <label for="fileInput" class="upload-label">Kies een bestand</label>
+              <span id="file-name">Geen bestand gekozen</span>
+              <input type="file" id="fileInput" accept="application/pdf" hidden />
+            </div>
           </div>
-          <p id="upload-status" class="upload-status" style="color: red;"></p>
+          <p id="upload-status" class="upload-status"></p>
           <div class="confirmation-popup-buttons">
             <button id="confirm-upload" class="confirmation-accept-btn">Upload</button>
             <button id="cancel-upload" class="confirmation-deny-btn">Annuleren</button>
@@ -52,7 +60,7 @@ export default async function oerView() {
 
     popup.open();
 
-    setTimeout(() => {
+
       const fileInput = document.getElementById("fileInput");
       const status = document.getElementById("upload-status");
       const dropzone = document.getElementById("dropzone");
@@ -77,11 +85,18 @@ export default async function oerView() {
         const files = e.dataTransfer.files;
         if (files.length > 0 && files[0].type === "application/pdf") {
           fileInput.files = files;
+          const fileName = files[0]?.name || "Geen bestand gekozen";
+          document.getElementById("file-name").textContent = fileName;
         } else {
           status.textContent = "Alleen PDF-bestanden zijn toegestaan.";
         }
       });
 
+
+      document.getElementById("fileInput")?.addEventListener("change", function () {
+        const fileName = this.files[0]?.name || "Geen bestand gekozen";
+        document.getElementById("file-name").textContent = fileName;
+      });
 
       document.getElementById("confirm-upload")?.addEventListener("click", async () => {
         const file = fileInput.files[0];
@@ -92,26 +107,25 @@ export default async function oerView() {
         }
 
         try {
-          status.textContent = "Uploaden...";
+          showToast(`Uploading...`, 'success');
           await uploadOerPdf(file);
-
-          status.textContent = "Upload succesvol!";
+          showToast(`${file} Upload succesvol!`, 'success');
 
           const newBlob = await getCurrentOerPdf();
           const newUrl = URL.createObjectURL(newBlob);
-          objectElement.setAttribute("data", newUrl);
+          objectElement.setAttribute("data", newUrl)
 
           popup.close();
-        } catch (err) {
-          status.textContent = "Upload mislukt: " + err.message;
-          console.error(err);
+          return true;
+        } catch (error) {
+            showToast(`Er is een fout opgetreden, probeer opnieuw: ${error}`, 'error')
+            return false;
         }
       });
 
       document.getElementById("cancel-upload")?.addEventListener("click", () => {
         popup.close();
       });
-    }, 0);
 
     window.addEventListener("beforeunload", () => popup.close());
     window.addEventListener("popstate", () => popup.close());

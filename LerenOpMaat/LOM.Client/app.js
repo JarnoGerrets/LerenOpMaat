@@ -8,6 +8,7 @@ import settingsPage from './views/settings-page.js';
 import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
 import beheerderFeedback from './views/beheerder-feedback.js';
 import administratorLearningRoute from './views/beheerder-learning-route.js';
+import { uploadOerPdf, getCurrentOerPdf, setStartYear, getStartYear } from "./client/api-client.js";
 let userData = await window.userData;
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
@@ -20,7 +21,7 @@ const routes = {
     ) {
       return await renderTeacherLearningRoutes();
     }
-    return await RouteOrSelector();
+    return await RouteOrSelector(setStartYear, getStartYear);
   },
   "#Module/:id": async (id) => {
     return await ModuleInfo(id);
@@ -29,7 +30,7 @@ const routes = {
     return await moduleOverview();
   },
   "#oer-view": async () => {
-    return await oerView();
+    return await oerView(uploadOerPdf, getCurrentOerPdf);
   },
   "#feedback": async () => {
     return await feedback();

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LOM.API.Controllers
 {
@@ -20,15 +21,20 @@ namespace LOM.API.Controllers
         {
             _context = context;
         }
-        
+
+        [Authorize(Roles = "Administrator")]
         [HttpPost("upload")]
         public async Task<IActionResult> UploadOer(IFormFile file)
         {
             if (file == null || file.Length == 0)
+            {
                 return BadRequest("Geen bestand geüpload.");
+            }
 
             if (file.ContentType != "application/pdf" || Path.GetExtension(file.FileName).ToLower() != ".pdf")
+            {
                 return BadRequest("Alleen PDF-bestanden zijn toegestaan.");
+            }
 
             byte[] fileBytes;
             using (var ms = new MemoryStream())
@@ -60,8 +66,9 @@ namespace LOM.API.Controllers
                 .FirstOrDefaultAsync();
 
             if (latest == null)
+            {
                 return NotFound("Geen OER gevonden.");
-
+            }
             var fileBytes = Convert.FromBase64String(latest.Base64PDF);
             var stream = new MemoryStream(fileBytes);
 

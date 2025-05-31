@@ -1,5 +1,5 @@
-import SemesterPair from "../../components/semester-pair.js";
 import { JSDOM } from 'jsdom';
+import SemesterPair from "../../components/semester-pair.js";
 
 // Set up a DOM environment for testing
 // This is necessary because the code being tested relies on DOM APIs
