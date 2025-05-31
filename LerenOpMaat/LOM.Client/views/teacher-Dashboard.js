@@ -54,9 +54,8 @@ export default async function renderTeacherLearningRoutes() {
             const openBtn = routeDiv.querySelector('.open-route-btn');
             openBtn.addEventListener('click', async () => {
                 const conversationId = conversations[idx].Id;
-                const userId = conversations[idx].StudentId;
-
-                if (!conversationId || !userId) {
+                const StudentId = conversations[idx].StudentId;
+                if (!conversationId || !StudentId) {
                     alert("Kan deze conversatie niet openen: ontbrekende gegevens.");
                     return;
                 }
@@ -73,7 +72,7 @@ export default async function renderTeacherLearningRoutes() {
                 }
 
                 sessionStorage.setItem('lom_conversationId', conversationId);
-                sessionStorage.setItem('lom_userId', userId);
+                sessionStorage.setItem('lom_StudentId', StudentId);
                 window.location.hash = "#beheerder-feedback";
                 document.querySelector("lom-header").initializeNotifications();
             });
