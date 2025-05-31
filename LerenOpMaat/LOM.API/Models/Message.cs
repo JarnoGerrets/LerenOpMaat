@@ -17,6 +17,7 @@ namespace LOM.API.Models
         [ForeignKey(nameof(User))]
         public int UserId { get; set; }
         public User? User { get; set; }
+        public bool IsRead { get; set; }
 
     }
 }

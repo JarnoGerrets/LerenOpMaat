@@ -45,43 +45,43 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 30, 11, 22, 53, 800, DateTimeKind.Local).AddTicks(5705)
+                            StartDate = new DateTime(2025, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6229)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 30, 11, 22, 53, 800, DateTimeKind.Local).AddTicks(5775)
+                            StartDate = new DateTime(2026, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6269)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 30, 11, 22, 53, 800, DateTimeKind.Local).AddTicks(5782)
+                            StartDate = new DateTime(2027, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6274)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 30, 11, 22, 53, 800, DateTimeKind.Local).AddTicks(5786)
+                            StartDate = new DateTime(2024, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6275)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 30, 11, 22, 53, 800, DateTimeKind.Local).AddTicks(5789)
+                            StartDate = new DateTime(2023, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6278)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 30, 11, 22, 53, 800, DateTimeKind.Local).AddTicks(5793)
+                            StartDate = new DateTime(2022, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6279)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 30, 11, 22, 53, 800, DateTimeKind.Local).AddTicks(5796)
+                            StartDate = new DateTime(2021, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6281)
                         });
                 });
 
@@ -256,6 +256,9 @@ namespace LOM.API.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -273,7 +276,8 @@ namespace LOM.API.Migrations
                             Id = 1,
                             Commentary = "Hoi, mag ik een feedback krijgen op mijn leerroute?",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 11, 22, 54, 390, DateTimeKind.Local).AddTicks(2145),
+                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1410),
+                            IsRead = false,
                             UserId = 1
                         },
                         new
@@ -281,7 +285,8 @@ namespace LOM.API.Migrations
                             Id = 2,
                             Commentary = "Ik zou semester 2 van het jaar 2 aanpassen naar iets anders.",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 11, 22, 54, 390, DateTimeKind.Local).AddTicks(2186),
+                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1432),
+                            IsRead = false,
                             UserId = 3
                         },
                         new
@@ -289,7 +294,8 @@ namespace LOM.API.Migrations
                             Id = 3,
                             Commentary = "Hoi, Ik heb het aangepast",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 11, 22, 54, 390, DateTimeKind.Local).AddTicks(2191),
+                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1434),
+                            IsRead = false,
                             UserId = 1
                         },
                         new
@@ -297,7 +303,8 @@ namespace LOM.API.Migrations
                             Id = 4,
                             Commentary = "Leerroute ziet er goed uit!",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 11, 22, 54, 390, DateTimeKind.Local).AddTicks(2195),
+                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1436),
+                            IsRead = false,
                             UserId = 3
                         });
                 });
