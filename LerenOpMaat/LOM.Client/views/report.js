@@ -130,7 +130,8 @@ export default async function report(services = reportServices) {
                     legend: { display: false },
                     title: {
                         display: true,
-                        text: 'Verdeling modulekeuzes'
+                        text: 'Verdeling modulekeuzes',
+                        font: { size: 20 }
                     },
                     tooltip: {
                         callbacks: {
@@ -174,7 +175,12 @@ export default async function report(services = reportServices) {
 
         if (toShow) {
             listContainer.innerHTML = "";
-            if (modules.length === 0) {
+            const filteredModules = modules.filter(m =>
+                m.ModuleName !== "Afstuderen" &&
+                m.ModuleName !== "Multidisciplinaire Opdracht"
+            );
+
+            if (filteredModules.length === 0) {
                 listContainer.innerHTML = "<p>Alle modules zijn minstens één keer gekozen.</p>";
                 return;
             }
@@ -188,7 +194,7 @@ export default async function report(services = reportServices) {
             const totalColumns = Math.ceil(modules.length / itemsPerColumn);
             const columns = Array.from({ length: totalColumns }, () => []);
 
-            modules.forEach((module, index) => {
+            filteredModules.forEach((module, index) => {
                 const columnIndex = Math.floor(index / itemsPerColumn);
                 columns[columnIndex].push(module);
             });
@@ -212,12 +218,6 @@ export default async function report(services = reportServices) {
             listContainer.innerHTML = "";
         }
     }
-
-
-
-
-
-
 
     return { fragment };
 }

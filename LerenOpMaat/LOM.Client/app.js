@@ -136,6 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   router();
 });
+// dont ask me why... but somehow adding this second copy of the exact statement as above it will correctly reload on login
 window.addEventListener("popstate", router);
 
 let scrollArea;
