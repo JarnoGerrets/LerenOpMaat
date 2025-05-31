@@ -6,6 +6,7 @@ using Microsoft.Identity.Web;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using LOM.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 IEnumerable<string>? initialScopes = builder.Configuration.GetSection("DownstreamApis:MicrosoftGraph:Scopes").Get<IEnumerable<string>>();
@@ -91,6 +92,10 @@ builder.Services.AddSession();
 builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
+
+// Middleware
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
 app.UseSession();
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
