@@ -9,7 +9,7 @@ import {
 
 export default async function beheerderFeedback() {
     const conversationId = sessionStorage.getItem('lom_conversationId');
-    const userId = sessionStorage.getItem('lom_userId');
+    const studentId = sessionStorage.getItem('lom_StudentId');
     const response = await fetch("/templates/beheerder-feedback.html");
     const html = await response.text();
     const userData = await window.userData;
@@ -49,7 +49,7 @@ export default async function beheerderFeedback() {
     async function renderMessages() {
         messageContainer.innerHTML = "";
         try {
-            conversation = await getConversationByUserId(userId);
+            conversation = await getConversationByUserId(studentId);
             if (conversation && conversation.TeacherId) {
                 selectedTeacherIdFromConversation = conversation.TeacherId;
             }
@@ -130,7 +130,6 @@ export default async function beheerderFeedback() {
             updateTextareaPlaceholder();
 
             const selectedTeacherId = dropdown.value;
-            conversation = await getConversationByUserId(userId);
 
             // Alleen updaten als conversation bestaat en TeacherId echt anders is
             if (conversation && String(conversation.TeacherId) !== String(selectedTeacherId)) {
@@ -142,7 +141,7 @@ export default async function beheerderFeedback() {
                 };
                 try {
                     await updateConversation(conversationId, updateBody);
-                    conversation = await getConversationByUserId(userId);
+                    conversation = await getConversationByUserId(studentId);
                     await renderMessages();
                 } catch (err) {
                     errorMsg.textContent = "Kon begeleider niet aanpassen.";
@@ -194,7 +193,7 @@ export default async function beheerderFeedback() {
                         ...conversation,
                         TeacherId: Number(selectedTeacherId)
                     });
-                    conversation = await getConversationByUserId(userId);
+                    conversation = await getConversationByUserId(studentId);
                 }
 
                 await postFeedbackMessage(conversationId, feedback, currentUserId);
@@ -218,7 +217,7 @@ export default async function beheerderFeedback() {
         learningRouteLink.addEventListener('click', (e) => {
             e.preventDefault();
             sessionStorage.setItem('lom_conversationId', conversationId);
-            sessionStorage.setItem('lom_userId', userId);
+            sessionStorage.setItem('lom_StudentId', studentId);
             window.location.hash = "#beheerder-learning-route";
         });
     }
@@ -226,8 +225,8 @@ export default async function beheerderFeedback() {
     return { fragment };
 }
 
-async function getOrCreateConversation(usedrId) {
-    return await getConversationByUserId(usedrId);
+async function getOrCreateConversation(studentId) {
+    return await getConversationByUserId(studentId);
 }
 
 async function postFeedbackMessage(conversationId, feedback, currentUserId) {

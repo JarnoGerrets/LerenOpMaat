@@ -2,8 +2,7 @@ import SemesterCard from "../components/semester-card.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 export let learningRouteArray = [];
 
-export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears, options = {}) {
-    const readonly = options.readonly; //readonly mode
+export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears,) {
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
     const wrapper = document.createElement("div");
     wrapper.classList.add("semester-pair");
@@ -13,10 +12,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         wrapper.classList.remove("reverse");
     } else {
         wrapper.classList.add("reverse");
-    }
-
-    if (readonly) {
-        wrapper.style.pointerEvents = "none";
     }
 
     // Fallback for semester1
