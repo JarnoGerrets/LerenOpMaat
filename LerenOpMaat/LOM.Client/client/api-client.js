@@ -41,6 +41,24 @@ export async function getUserData() {
   }
 }
 
+export async function getAllRoles() {
+  try {
+    const res = await fetch(`${API_BASE}/account/roles`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const roles = await res.json();
+    return roles;
+  } catch {
+    return null;
+  }
+}
+
+
 
 export async function getModules(q) {
   const res = await fetch(`${API_BASE}/Module?q=${q || ''}`, {
@@ -704,4 +722,26 @@ export async function markNotificationsAsRead(body) {
   if (!res.ok) {
     throw new Error(`Failed to mark notifications as read: ${res.status}`);
   }
+}
+
+export async function getModulesEngagement(year = null) {
+  let url = `${API_BASE}/Module/reporting/modules-engagement`;
+  if (year !== null) {
+    url += `?year=${year}`;
+  }
+  const response = await fetch(url, {
+    method: "GET",
+    credentials: "include"
+  });
+  if (!response.ok) throw new Error("Failed to fetch modules engagement");
+  return await response.json();
+}
+
+export async function getAvailableYears() {
+  const response = await fetch(`${API_BASE}/Module/reporting/available-years`, {
+    method: "GET",
+    credentials: "include"
+  });
+  if (!response.ok) throw new Error("Failed to fetch available years");
+  return await response.json();
 }

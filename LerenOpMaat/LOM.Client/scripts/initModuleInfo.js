@@ -11,10 +11,10 @@ export default async function initModuleInfo(id, services = initModuleInfoServic
     } = services;
 
     let userData = await window.userData;
-    let tries = 0;
+    console.log(userData);
     let correctRole = false;
 
-    if (userData && userData?.Role !== "Student") {
+    if (userData && userData?.EffectiveRole !== "Student") {
         correctRole = true;
     }
     const CardContainer = document.getElementById('card-column');

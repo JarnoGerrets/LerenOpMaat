@@ -1,4 +1,3 @@
-
 import {
     getConversationByUserId,
     getAllTeachers,
@@ -26,6 +25,18 @@ export default async function beheerderFeedback() {
     let selectedTeacherIdFromConversation = null;
 
     const messageContainer = fragment.querySelector(".message-feedback-container");
+    messageContainer.addEventListener('scroll', () => {
+        messageContainer.classList.add('show-scrollbar');
+
+        // Clear previous timer if still running
+        clearTimeout(messageContainer._scrollTimer);
+
+        // Set timer to hide scrollbar after inactivity (e.g. 1.5s)
+        messageContainer._scrollTimer = setTimeout(() => {
+            messageContainer.classList.remove('show-scrollbar');
+        }, 1500);
+    });
+
     const dropdown = fragment.querySelector(".feedback-dropdown");
     const textarea = fragment.querySelector(".feedback-box");
     const saveButton = fragment.querySelector(".save-btn");
@@ -167,10 +178,6 @@ export default async function beheerderFeedback() {
             textarea.classList.remove("lom-feedback-placeholder-error");
             dropdown.style.borderColor = "";
 
-            // Haal altijd de conversatie op
-            let conversation = await getOrCreateConversation(currentUserId);
-            //let conversationId = conversation && conversation.Id ? conversation.Id : null;
-
             let valid = true;
             if (!conversationId) {
                 errorMsg.textContent = "Er bestaat nog geen conversatie. Vraag eerst een begeleider aan.";
@@ -253,3 +260,4 @@ function formatDateTime(dateString) {
     const minutes = pad(date.getMinutes());
     return `${day}-${month}-${year} ${hours}:${minutes}`;
 }
+

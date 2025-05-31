@@ -51,7 +51,7 @@ public class Seeder
            );
 
         _modelBuilder.Entity<User>().HasData(
-            new User { Id = 1, FirstName = "Jhon", LastName = "Doe", LearningRouteId = 1, StartYear = 2023, ExternalID = "TEST123", RoleId = 2 },
+            new User { Id = 1, FirstName = "John", LastName = "Doe", LearningRouteId = 1, StartYear = 2023, ExternalID = "TEST123", RoleId = 2 },
             new User { Id = 2, FirstName = "Robin", LastName = "Hood", ExternalID = "TEST345", RoleId = 2 },
             new User { Id = 3, FirstName = "Begeleider", LastName = "Begeleider", ExternalID = "Test54321", RoleId = 1 }
             );
@@ -82,14 +82,14 @@ public class Seeder
             .HasForeignKey(m => m.GraduateProfileId);
 
         _modelBuilder.Entity<Semester>().HasData(
-            new Semester { Id = 1, Year = 1, Period = 1, ModuleId = 1, LearningRouteId = 1 },
-            new Semester { Id = 2, Year = 1, Period = 2, ModuleId = 2, LearningRouteId = 1 },
-            new Semester { Id = 3, Year = 2, Period = 1, ModuleId = 3, LearningRouteId = 1 },
-            new Semester { Id = 4, Year = 2, Period = 2, ModuleId = 4, LearningRouteId = 1 },
-            new Semester { Id = 5, Year = 3, Period = 1, ModuleId = 5, LearningRouteId = 1 },
-            new Semester { Id = 6, Year = 3, Period = 2, ModuleId = 6, LearningRouteId = 1 },
-            new Semester { Id = 7, Year = 4, Period = 1, ModuleId = 7, LearningRouteId = 1 },
-            new Semester { Id = 8, Year = 4, Period = 2, ModuleId = 8, LearningRouteId = 1 }
+            new Semester { Id = 1, Year = 1, Period = 1, ModuleId = 1, LearningRouteId = 1, Locked = false },
+            new Semester { Id = 2, Year = 1, Period = 2, ModuleId = 2, LearningRouteId = 1, Locked = false  },
+            new Semester { Id = 3, Year = 2, Period = 1, ModuleId = 3, LearningRouteId = 1, Locked = false  },
+            new Semester { Id = 4, Year = 2, Period = 2, ModuleId = 4, LearningRouteId = 1, Locked = false  },
+            new Semester { Id = 5, Year = 3, Period = 1, ModuleId = 5, LearningRouteId = 1, Locked = false  },
+            new Semester { Id = 6, Year = 3, Period = 2, ModuleId = 6, LearningRouteId = 1, Locked = false  },
+            new Semester { Id = 7, Year = 4, Period = 1, ModuleId = 7, LearningRouteId = 1, Locked = false  },
+            new Semester { Id = 8, Year = 4, Period = 2, ModuleId = 8, LearningRouteId = 1, Locked = false  }
             );
 
         _modelBuilder.Entity<Requirement>().HasData(

@@ -1,4 +1,4 @@
-import { getConversationByAdminId } from '../client/api-client.js';
+import { getConversationByAdminId, markNotificationsAsRead } from '../client/api-client.js';
 
 export default async function renderTeacherLearningRoutes() {
     const res = await fetch('./templates/teacher-Dashboard.html');
@@ -55,13 +55,27 @@ export default async function renderTeacherLearningRoutes() {
             openBtn.addEventListener('click', async () => {
                 const conversationId = conversations[idx].Id;
                 const userId = conversations[idx].StudentId;
+
                 if (!conversationId || !userId) {
                     alert("Kan deze conversatie niet openen: ontbrekende gegevens.");
                     return;
                 }
+
+                let body = {
+                    UserId: userData.InternalId,
+                    ConversationId: conversationId
+                };
+
+                try {
+                    await markNotificationsAsRead(body);
+                } catch (err) {
+                    console.error("Failed to mark notifications as read:", err);
+                }
+
                 sessionStorage.setItem('lom_conversationId', conversationId);
                 sessionStorage.setItem('lom_userId', userId);
                 window.location.hash = "#beheerder-feedback";
+                document.querySelector("lom-header").initializeNotifications();
             });
         });
     }

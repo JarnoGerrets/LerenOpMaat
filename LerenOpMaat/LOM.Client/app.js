@@ -8,23 +8,24 @@ import settingsPage from './views/settings-page.js';
 import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
 import beheerderFeedback from './views/beheerder-feedback.js';
 import administratorLearningRoute from './views/beheerder-learning-route.js';
+import rapportage from './views/rapportage.js';
 let userData = await window.userData;
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
   "": async () => {
-    // Controleer of de gebruiker een administrator
-    if (userData && userData.Roles && userData.Roles.some(
-      r => r.toLowerCase() === "administrator"
-    )
-    ) {
-      return await renderTeacherLearningRoutes();
-    }
     return await RouteOrSelector();
   },
   "#Module/:id": async (id) => {
     return await ModuleInfo(id);
   },
+  "#Dashboard": async () => {
+    if (userData?.EffectiveRole?.toLowerCase() === "administrator" || userData?.EffectiveRole?.toLowerCase() === "teacher") {
+      return await renderTeacherLearningRoutes();
+    }
+    return await RouteOrSelector();
+  }
+  ,
   "#module-overview": async () => {
     return await moduleOverview();
   },
@@ -49,6 +50,12 @@ const routes = {
     document.getElementById('app').innerHTML = '';
     document.getElementById('app').appendChild(fragment);
   },
+  "#rapportage": async () => {
+    if (userData?.EffectiveRole?.toLowerCase() === "administrator") {
+      return await rapportage();
+    }
+    return await RouteOrSelector();
+  }
 };
 
 //function which takes for example and Id and gives it to the router as parameter to be used. 
@@ -151,6 +158,7 @@ function getHashParams() {
   if (!hash) return {};
   return Object.fromEntries(new URLSearchParams(hash));
 }
+document.body.style.visibility = 'visible';
 
 //----------------------Old Router---------------------------------------------------------------------------------------------------------------//
 

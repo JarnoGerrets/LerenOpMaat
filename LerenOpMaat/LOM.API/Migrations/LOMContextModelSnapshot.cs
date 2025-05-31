@@ -45,43 +45,43 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6229)
+                            StartDate = new DateTime(2025, 5, 31, 11, 47, 30, 667, DateTimeKind.Local).AddTicks(3024)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6269)
+                            StartDate = new DateTime(2026, 5, 31, 11, 47, 30, 667, DateTimeKind.Local).AddTicks(3084)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6274)
+                            StartDate = new DateTime(2027, 5, 31, 11, 47, 30, 667, DateTimeKind.Local).AddTicks(3088)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6275)
+                            StartDate = new DateTime(2024, 5, 31, 11, 47, 30, 667, DateTimeKind.Local).AddTicks(3090)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6278)
+                            StartDate = new DateTime(2023, 5, 31, 11, 47, 30, 667, DateTimeKind.Local).AddTicks(3093)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6279)
+                            StartDate = new DateTime(2022, 5, 31, 11, 47, 30, 667, DateTimeKind.Local).AddTicks(3094)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6281)
+                            StartDate = new DateTime(2021, 5, 31, 11, 47, 30, 667, DateTimeKind.Local).AddTicks(3096)
                         });
                 });
 
@@ -276,7 +276,7 @@ namespace LOM.API.Migrations
                             Id = 1,
                             Commentary = "Hoi, mag ik een feedback krijgen op mijn leerroute?",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1410),
+                            DateTime = new DateTime(2025, 5, 31, 11, 47, 30, 676, DateTimeKind.Local).AddTicks(3138),
                             IsRead = false,
                             UserId = 1
                         },
@@ -285,7 +285,7 @@ namespace LOM.API.Migrations
                             Id = 2,
                             Commentary = "Ik zou semester 2 van het jaar 2 aanpassen naar iets anders.",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1432),
+                            DateTime = new DateTime(2025, 5, 31, 11, 47, 30, 676, DateTimeKind.Local).AddTicks(3188),
                             IsRead = false,
                             UserId = 3
                         },
@@ -294,7 +294,7 @@ namespace LOM.API.Migrations
                             Id = 3,
                             Commentary = "Hoi, Ik heb het aangepast",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1434),
+                            DateTime = new DateTime(2025, 5, 31, 11, 47, 30, 676, DateTimeKind.Local).AddTicks(3191),
                             IsRead = false,
                             UserId = 1
                         },
@@ -303,7 +303,7 @@ namespace LOM.API.Migrations
                             Id = 4,
                             Commentary = "Leerroute ziet er goed uit!",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1436),
+                            DateTime = new DateTime(2025, 5, 31, 11, 47, 30, 676, DateTimeKind.Local).AddTicks(3193),
                             IsRead = false,
                             UserId = 3
                         });
@@ -1088,6 +1088,9 @@ namespace LOM.API.Migrations
                     b.Property<int>("LearningRouteId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Locked")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<int?>("ModuleId")
                         .HasColumnType("int");
 
@@ -1110,6 +1113,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 1,
                             Period = (byte)1,
                             Year = 1
@@ -1118,6 +1122,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 2,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 2,
                             Period = (byte)2,
                             Year = 1
@@ -1126,6 +1131,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 3,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 3,
                             Period = (byte)1,
                             Year = 2
@@ -1134,6 +1140,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 4,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 4,
                             Period = (byte)2,
                             Year = 2
@@ -1142,6 +1149,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 5,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 5,
                             Period = (byte)1,
                             Year = 3
@@ -1150,6 +1158,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 6,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 6,
                             Period = (byte)2,
                             Year = 3
@@ -1158,6 +1167,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 7,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 7,
                             Period = (byte)1,
                             Year = 4
@@ -1166,6 +1176,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 8,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 8,
                             Period = (byte)2,
                             Year = 4
@@ -1212,7 +1223,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             ExternalID = "TEST123",
-                            FirstName = "Jhon",
+                            FirstName = "John",
                             LastName = "Doe",
                             LearningRouteId = 1,
                             RoleId = 2,

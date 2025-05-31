@@ -1,5 +1,5 @@
 import { userData } from "../scripts/utils/getUserData.js";
-import { getLoginUrl, logout, getNotificationsByUserId, markNotificationsAsRead } from '../client/api-client.js';
+import { getLoginUrl, logout, getNotificationsByUserId, markNotificationsAsRead, getAllRoles } from '../client/api-client.js';
 
 export default class Header extends HTMLElement {
   constructor() {
@@ -21,6 +21,7 @@ export default class Header extends HTMLElement {
   runScripts(root) {
     this.initializeLogin();
     this.initializeNotifications();
+    this.setupNotificationHandlers();
 
     const scripts = root.querySelectorAll("script");
     scripts.forEach(oldScript => {
@@ -37,40 +38,66 @@ export default class Header extends HTMLElement {
   async initializeLogin() {
     const loginObj = this.querySelector("#login-url");
     const logoutObj = this.querySelector("#logout");
-
+    const simulatedRoleObj = this.querySelector("#simulated-role");
+    const simulatedDropdown = this.querySelector("#simulated-role-dropdown");
     const _userData = await userData;
 
     if (_userData) {
-      loginObj.innerHTML = _userData.Username;
+      if (_userData.Roles.includes("Administrator")) {
+        simulatedRoleObj.classList.remove("hidden");
+        loginObj.innerHTML = "Administrator";
+        simulatedRoleObj.style.display = "inline-block";
+        const roles = await getAllRoles();
+
+        simulatedRoleObj.innerHTML = `Toon applicatie als: ${roleTranslations[_userData.EffectiveRole] || _userData.EffectiveRole} ⯆`;
+        
+        simulatedDropdown.innerHTML = "";
+        roles.forEach(role => {
+          const option = document.createElement("div");
+          option.textContent = roleTranslations[role.RoleName] || role.RoleName;
+          option.classList.add("simulated-role-option");
+          option.addEventListener("click", () => {
+            simulatedRoleObj.innerHTML = `Toon applicatie als: ${roleTranslations[role.RoleName] || role.RoleName} ⯆`;
+            simulatedDropdown.classList.add("hidden");
+            sessionStorage.setItem("simulatedRole", JSON.stringify(role));
+            window.location.reload();
+          });
+          simulatedDropdown.appendChild(option);
+        });
+
+        simulatedRoleObj.addEventListener("click", (e) => {
+          e.stopPropagation();
+          simulatedDropdown.classList.toggle("hidden");
+        });
+
+        document.addEventListener("click", () => {
+          simulatedDropdown.classList.add("hidden");
+        });
+      } else {
+        loginObj.innerHTML = _userData.Username;
+      }
+
       logoutObj.classList.remove("d-none");
       logoutObj.addEventListener("click", () => logout());
     } else {
       loginObj.href = getLoginUrl();
     }
 
-    const overviewLink = this.querySelector('a[data-link][href="/"]');
-    if (_userData?.Roles?.some(r => r.toLowerCase() === "administrator")) {
-      if (overviewLink) overviewLink.textContent = "Dashboard";
+    const dashboardLink = this.querySelector('a[data-link][href="#Dashboard"]')
+    if (_userData && _userData?.EffectiveRole?.toLowerCase() != "student") {
+      dashboardLink.classList.remove("hidden");
+    }
+    const reportLink = this.querySelector('a[data-link][href="#rapportage"]')
+    if (_userData && _userData?.EffectiveRole?.toLowerCase() === "administrator") {
+      reportLink.classList.remove("hidden");
     }
   }
+
 
   async initializeNotifications() {
     const bell = this.querySelector("#notification-bell");
     const dropdown = this.querySelector("#notification-dropdown");
     const badge = this.querySelector("#notificationAmount");
-
-    bell.addEventListener("click", function (event) {
-      dropdown.classList.toggle("hidden");
-      event.stopPropagation();
-    });
-
-    document.addEventListener("click", function () {
-      dropdown.classList.add("hidden");
-    });
-
-    dropdown.addEventListener("click", function (event) {
-      event.stopPropagation();
-    });
 
     const _userData = await userData;
     if (!_userData) return;
@@ -140,6 +167,31 @@ export default class Header extends HTMLElement {
 
     }
   }
+  setupNotificationHandlers() {
+    const bell = this.querySelector("#notification-bell");
+    const dropdown = this.querySelector("#notification-dropdown");
+
+    bell.addEventListener("click", (event) => {
+      dropdown.classList.toggle("hidden");
+      event.stopPropagation();
+    });
+
+    document.addEventListener("click", () => {
+      dropdown.classList.add("hidden");
+    });
+
+    dropdown.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+  }
+
 }
 
 customElements.define("lom-header", Header);
+
+const roleTranslations = {
+  "Administrator": "Beheerder",
+  "Teacher": "Docent",
+  "Student": "Student",
+  "Developer": "Ontwikkelaar"
+};

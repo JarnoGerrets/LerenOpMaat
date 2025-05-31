@@ -68,14 +68,38 @@
 }
 
 .message-feedback-container {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-height: 0;
-    max-height: 100%;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  max-height: 100%;
+
+  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* Edge */
+
+}
+
+.message-feedback-container::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+
+.message-feedback-container.show-scrollbar {
+  scrollbar-width: auto;
+  -ms-overflow-style: auto;
+}
+
+.message-feedback-container.show-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.message-feedback-container.show-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 4px;
 }
 
 

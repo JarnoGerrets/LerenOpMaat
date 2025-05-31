@@ -106,6 +106,13 @@ namespace LOM.API.Controllers
                 ExternalID = userId,
             });
         }
+    	[Authorize(Roles = "Administrator")]
+        [HttpGet("roles")]
+        public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles()
+        {
+            var roles = await _context.Roles.ToListAsync();
+            return Ok(roles);
+        }
     }
 
 

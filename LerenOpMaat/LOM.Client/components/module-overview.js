@@ -47,7 +47,7 @@ class ModuleOverview extends HTMLElement {
         let userData = await window.userData;
 
         if (userData) {
-            if (userData.Roles != 'Student') {
+            if (userData.EffectiveRole != 'Student') {
                 //add module handler        
                 const addModuleInput = this.querySelector('#add-module-button');
                 addModuleInput.style.display = 'flex';
