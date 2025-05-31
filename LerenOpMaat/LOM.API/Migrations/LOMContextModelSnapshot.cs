@@ -45,43 +45,43 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             IsActive = true,
-                            StartDate = new DateTime(2025, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6229)
+                            StartDate = new DateTime(2025, 5, 31, 14, 1, 58, 948, DateTimeKind.Local).AddTicks(2868)
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
-                            StartDate = new DateTime(2026, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6269)
+                            StartDate = new DateTime(2026, 5, 31, 14, 1, 58, 948, DateTimeKind.Local).AddTicks(2908)
                         },
                         new
                         {
                             Id = 3,
                             IsActive = false,
-                            StartDate = new DateTime(2027, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6274)
+                            StartDate = new DateTime(2027, 5, 31, 14, 1, 58, 948, DateTimeKind.Local).AddTicks(2912)
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
-                            StartDate = new DateTime(2024, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6275)
+                            StartDate = new DateTime(2024, 5, 31, 14, 1, 58, 948, DateTimeKind.Local).AddTicks(2914)
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
-                            StartDate = new DateTime(2023, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6278)
+                            StartDate = new DateTime(2023, 5, 31, 14, 1, 58, 948, DateTimeKind.Local).AddTicks(2917)
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
-                            StartDate = new DateTime(2022, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6279)
+                            StartDate = new DateTime(2022, 5, 31, 14, 1, 58, 948, DateTimeKind.Local).AddTicks(2919)
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
-                            StartDate = new DateTime(2021, 5, 30, 22, 43, 33, 396, DateTimeKind.Local).AddTicks(6281)
+                            StartDate = new DateTime(2021, 5, 31, 14, 1, 58, 948, DateTimeKind.Local).AddTicks(2921)
                         });
                 });
 
@@ -276,7 +276,7 @@ namespace LOM.API.Migrations
                             Id = 1,
                             Commentary = "Hoi, mag ik een feedback krijgen op mijn leerroute?",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1410),
+                            DateTime = new DateTime(2025, 5, 31, 14, 1, 59, 874, DateTimeKind.Local).AddTicks(9737),
                             IsRead = false,
                             UserId = 1
                         },
@@ -285,7 +285,7 @@ namespace LOM.API.Migrations
                             Id = 2,
                             Commentary = "Ik zou semester 2 van het jaar 2 aanpassen naar iets anders.",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1432),
+                            DateTime = new DateTime(2025, 5, 31, 14, 1, 59, 874, DateTimeKind.Local).AddTicks(9770),
                             IsRead = false,
                             UserId = 3
                         },
@@ -294,7 +294,7 @@ namespace LOM.API.Migrations
                             Id = 3,
                             Commentary = "Hoi, Ik heb het aangepast",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1434),
+                            DateTime = new DateTime(2025, 5, 31, 14, 1, 59, 874, DateTimeKind.Local).AddTicks(9773),
                             IsRead = false,
                             UserId = 1
                         },
@@ -303,7 +303,7 @@ namespace LOM.API.Migrations
                             Id = 4,
                             Commentary = "Leerroute ziet er goed uit!",
                             ConversationId = 1,
-                            DateTime = new DateTime(2025, 5, 30, 22, 43, 33, 406, DateTimeKind.Local).AddTicks(1436),
+                            DateTime = new DateTime(2025, 5, 31, 14, 1, 59, 874, DateTimeKind.Local).AddTicks(9781),
                             IsRead = false,
                             UserId = 3
                         });
@@ -1198,7 +1198,7 @@ namespace LOM.API.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StartYear")
+                    b.Property<int?>("StartYear")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1224,8 +1224,7 @@ namespace LOM.API.Migrations
                             ExternalID = "TEST345",
                             FirstName = "Robin",
                             LastName = "Hood",
-                            RoleId = 2,
-                            StartYear = 0
+                            RoleId = 2
                         },
                         new
                         {
@@ -1233,8 +1232,7 @@ namespace LOM.API.Migrations
                             ExternalID = "Test54321",
                             FirstName = "Begeleider",
                             LastName = "Begeleider",
-                            RoleId = 1,
-                            StartYear = 0
+                            RoleId = 1
                         });
                 });
 

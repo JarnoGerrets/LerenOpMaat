@@ -1,30 +1,27 @@
 import LearningRoute from "../views/learning-route.js";
-import { getStartYear } from "../client/api-client.js";
-import { setStartYear } from "../client/api-client.js";
 
-export async function RouteOrSelector() {
+export async function RouteOrSelector(setStartYear, getStartYear) {
   let cohortYear = localStorage.getItem("cohortYear");
-  let userId = '';//userId moet nog toegevoegd worden zodra authenticatie rond is.
+  let userData = await window.userData;
 
-  if (!cohortYear) {
-    if (userId) {
-      const startYearFromUser = await getStartYear(userId);
-
-      if (startYearFromUser) {
-        cohortYear = startYearFromUser;
-        localStorage.setItem('cohortYear', cohortYear);
-      }
+  if (userData && userData.InternalId) {
+    localStorage.removeItem('cohortYear');
+    const startYearFromUser = await getStartYear(userData.InternalId);
+    
+    if (startYearFromUser) {
+      cohortYear = startYearFromUser;
+      localStorage.setItem('cohortYear', cohortYear);
     }
   }
 
   if (!cohortYear) {
-    return await CohortSelector();
+    return await CohortSelector(setStartYear);
   }
 
   return await LearningRoute();
 }
 
-export default async function CohortSelector() {
+export default async function CohortSelector(setStartYear) {
   const response = await fetch("/templates/cohort-selector.html");
   const html = await response.text();
   const template = document.createElement("template");
@@ -45,7 +42,7 @@ export default async function CohortSelector() {
     button.className = "cohort-button";
     button.addEventListener("click", () => {
       selected = year;
-      fragment.querySelectorAll(".cohort-button").forEach(b => b.classList.remove("selected"));
+      cohortButtonsContainer.querySelectorAll(".cohort-button").forEach(b => b.classList.remove("selected"));
       button.classList.add("selected");
       submitBtn.disabled = false;
     });
@@ -53,17 +50,29 @@ export default async function CohortSelector() {
   });
 
   submitBtn.addEventListener("click", async () => {
-    if (selected) {
-      const userId = localStorage.getItem("userId");
+  if (selected) {
+    let userData = await window.userData;
 
-      if (userId) {
-        await setStartYear(userId, selected);
-      }
-
-      localStorage.setItem("cohortYear", selected);
-      window.location.reload();
+    try { 
+      if (userData && userData.InternalId) {
+        await setStartYear(userData.InternalId, selected);
+      } 
+    } catch (e) {
+      console.error("Error in setStartYear:", e);
     }
-  });
+
+    localStorage.setItem("cohortYear", selected);
+
+    const app = document.getElementById("app") || document.body;
+    app.innerHTML = "";
+
+    const learning = await LearningRoute();
+    if (learning?.fragment) {
+      app.appendChild(learning.fragment);
+      learning.init?.();
+    }
+  }
+});
 
     return { fragment, init: () => null };
 }
