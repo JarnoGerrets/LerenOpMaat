@@ -150,7 +150,9 @@ export default class Header extends HTMLElement {
       groups.forEach(group => {
         const item = document.createElement("div");
         item.className = "notification-item";
-        item.textContent = `${group.count} nieuwe berichten in gesprek met ${group.otherUserName}`;
+
+        const messageWord = group.count === 1 ? "bericht" : "berichten";
+        item.textContent = `${group.count} ongelezen ${messageWord} in het gesprek met ${group.otherUserName}`;
 
         item.addEventListener('click', async () => {
           dropdown.classList.add("hidden");
@@ -167,6 +169,7 @@ export default class Header extends HTMLElement {
 
         dropdown.appendChild(item);
       });
+
 
     }
   }
