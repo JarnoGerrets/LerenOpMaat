@@ -104,7 +104,6 @@ export default async function report(services = reportServices) {
         const chosenModules = data.filter(row => row.AssignedCount > 0);
         const unchosenModules = data.filter(row => row.AssignedCount === 0);
 
-        // Prepare chart data
         const labels = chosenModules.map(row => row.ModuleCode);
         const values = chosenModules.map(row => row.Percentage);
 

@@ -192,7 +192,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
   onModuleChange({
     semester,
     moduleId: selectedModule.Id,
-    moduleName: selectedModule.Name // <-- voeg moduleName toe
+    moduleName: selectedModule.Name
   });
 
   const finalValidation = await validateRoute(learningRouteArray);

@@ -24,14 +24,13 @@ export default async function beheerderFeedback() {
     let conversation = null;
     let selectedTeacherIdFromConversation = null;
 
+    // make scrollbar only visible when scrolling
     const messageContainer = fragment.querySelector(".message-feedback-container");
     messageContainer.addEventListener('scroll', () => {
         messageContainer.classList.add('show-scrollbar');
 
-        // Clear previous timer if still running
         clearTimeout(messageContainer._scrollTimer);
 
-        // Set timer to hide scrollbar after inactivity (e.g. 1.5s)
         messageContainer._scrollTimer = setTimeout(() => {
             messageContainer.classList.remove('show-scrollbar');
         }, 1500);
