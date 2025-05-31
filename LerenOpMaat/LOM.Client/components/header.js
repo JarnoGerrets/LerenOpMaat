@@ -40,6 +40,7 @@ export default class Header extends HTMLElement {
     const logoutObj = this.querySelector("#logout");
     const simulatedRoleObj = this.querySelector("#simulated-role");
     const simulatedDropdown = this.querySelector("#simulated-role-dropdown");
+    const bell = this.querySelector("#notification-bell");
     const _userData = await userData;
 
     if (_userData) {
@@ -50,7 +51,7 @@ export default class Header extends HTMLElement {
         const roles = await getAllRoles();
 
         simulatedRoleObj.innerHTML = `Toon applicatie als: ${roleTranslations[_userData.EffectiveRole] || _userData.EffectiveRole} ⯆`;
-        
+
         simulatedDropdown.innerHTML = "";
         roles.forEach(role => {
           const option = document.createElement("div");
@@ -81,6 +82,8 @@ export default class Header extends HTMLElement {
       logoutObj.addEventListener("click", () => logout());
     } else {
       loginObj.href = getLoginUrl();
+      bell.classList.add("hidden");
+      return;
     }
 
     const dashboardLink = this.querySelector('a[data-link][href="#Dashboard"]')

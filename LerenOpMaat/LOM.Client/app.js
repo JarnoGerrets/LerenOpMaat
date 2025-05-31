@@ -15,7 +15,7 @@ let userData = await window.userData;
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
   "": async () => {
-    return await RouteOrSelector();
+    return await RouteOrSelector(setStartYear, getStartYear);
   },
   "#Module/:id": async (id) => {
     return await ModuleInfo(id);
@@ -24,7 +24,7 @@ const routes = {
     if (userData?.EffectiveRole?.toLowerCase() === "administrator" || userData?.EffectiveRole?.toLowerCase() === "teacher") {
       return await renderTeacherLearningRoutes();
     }
-    return await RouteOrSelector();
+    return await RouteOrSelector(setStartYear, getStartYear);
   }
   ,
   "#module-overview": async () => {
@@ -55,7 +55,7 @@ const routes = {
     if (userData?.EffectiveRole?.toLowerCase() === "administrator") {
       return await rapportage();
     }
-    return await RouteOrSelector();
+    return await RouteOrSelector(setStartYear, getStartYear);
   }
 };
 

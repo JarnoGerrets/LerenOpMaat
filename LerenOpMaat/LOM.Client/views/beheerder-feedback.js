@@ -71,7 +71,7 @@ export default async function beheerderFeedback() {
                     const sortedMessages = messages.slice().sort((a, b) => a.Id - b.Id);
                     sortedMessages.forEach(msg => {
                         let senderName = "Onbekend";
-                        if (msg.User && msg.User.FirstName && msg.User.LastName) {
+                        if (msg.User && msg.User.FirstName) {
                             senderName = `${msg.User.FirstName} ${msg.User.LastName}`;
                         }
                         const formattedDate = msg.DateTime ? formatDateTime(msg.DateTime) : "";
