@@ -16,6 +16,7 @@ export async function logout() {
     });
 
     localStorage.removeItem("userData");
+    localStorage.removeItem("cohortYear");
     location.reload();
 
   } catch { }
@@ -611,6 +612,7 @@ export async function getStartYear(id) {
   try {
     const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
       method: 'GET',
+      credentials: "include",
       headers: {
         'Content-Type': 'application/json'
       }
@@ -623,7 +625,6 @@ export async function getStartYear(id) {
     const startYear = await response.json();
     return startYear;
   } catch (error) {
-    console.error('Fout bij ophalen startjaar:', error);
     return null;
   }
 }
@@ -632,6 +633,7 @@ export async function setStartYear(id, startYear) {
   try {
     const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
       method: 'POST',
+      credentials: "include",
       headers: {
         'Content-Type': 'application/json'
       },
@@ -653,6 +655,7 @@ export async function uploadOerPdf(file, userId) {
 
   const res = await fetch(`${API_BASE}/Oer/upload`, {
     method: "POST",
+    credentials: "include",
     body: formData
   });
 

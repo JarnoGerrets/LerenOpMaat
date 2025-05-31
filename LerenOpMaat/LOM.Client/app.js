@@ -8,6 +8,7 @@ import settingsPage from './views/settings-page.js';
 import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
 import beheerderFeedback from './views/beheerder-feedback.js';
 import administratorLearningRoute from './views/beheerder-learning-route.js';
+import { uploadOerPdf, getCurrentOerPdf, setStartYear, getStartYear } from "./client/api-client.js";
 import rapportage from './views/rapportage.js';
 let userData = await window.userData;
 
@@ -30,7 +31,7 @@ const routes = {
     return await moduleOverview();
   },
   "#oer-view": async () => {
-    return await oerView();
+    return await oerView(uploadOerPdf, getCurrentOerPdf);
   },
   "#feedback": async () => {
     return await feedback();
