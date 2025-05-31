@@ -22,15 +22,19 @@ namespace LOM.API.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Administrator")]
         [HttpPost("upload")]
         public async Task<IActionResult> UploadOer(IFormFile file)
         {
             if (file == null || file.Length == 0)
+            {
                 return BadRequest("Geen bestand geüpload.");
+            }
 
             if (file.ContentType != "application/pdf" || Path.GetExtension(file.FileName).ToLower() != ".pdf")
+            {
                 return BadRequest("Alleen PDF-bestanden zijn toegestaan.");
+            }
 
             byte[] fileBytes;
             using (var ms = new MemoryStream())
