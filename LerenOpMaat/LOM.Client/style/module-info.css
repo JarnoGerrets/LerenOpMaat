@@ -204,6 +204,7 @@ button {
 
 .title-module-card {
     margin-bottom: 25px;
+    min-height: 70px !important;
 }
 
 .requirement-card-title-row {
