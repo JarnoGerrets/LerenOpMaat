@@ -9,7 +9,7 @@ import SemesterPair from "../components/semester-pair.js";
 let apiResponse = [];
 export default async function administratorLearningRoute() {
     const conversationId = sessionStorage.getItem('lom_conversationId');
-    const userId = sessionStorage.getItem('lom_userId');
+    const userId = sessionStorage.getItem('lom_StudentId');
     showLoading();
     const response = await fetch("/templates/beheerder-learning-route.html");
     const html = await response.text();
@@ -58,7 +58,7 @@ export default async function administratorLearningRoute() {
             const semester1 = semesterGroup.find(s => s.Period === 1);
             const semester2 = semesterGroup.find(s => s.Period === 2);
 
-            const semesterPair = await SemesterPair(semester1, semester2, index, totalAmountOfYears, { readonly: true });
+            const semesterPair = await SemesterPair(semester1, semester2, index, totalAmountOfYears);
 
             if (!(semesterPair instanceof Node)) {
                 console.error(`SemesterPair for year ${year} is not a valid Node:`, semesterPair);
@@ -77,7 +77,7 @@ export default async function administratorLearningRoute() {
 
             for (let i = 0; i < missingSemesters; i++) {
 
-                const dummySemesterPair = await SemesterPair(dummySemester1, dummySemester2, index, totalSemestersGroup, { readonly: true });
+                const dummySemesterPair = await SemesterPair(dummySemester1, dummySemester2, index, totalSemestersGroup);
 
                 if (!(dummySemesterPair instanceof Node)) {
                     console.error(`Dummy SemesterPair for index ${index} is not a valid Node:`, dummySemesterPair);

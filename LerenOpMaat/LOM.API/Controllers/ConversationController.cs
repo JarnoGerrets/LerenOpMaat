@@ -82,7 +82,7 @@ namespace LOM.API.Controllers
             existingConversation.TeacherId = conversation.TeacherId;
 
             // Always set the LearningRouteId from the user, not from the client
-            existingConversation.LearningRouteId = user.LearningRouteId ?? 0;
+            user.LearningRouteId = existingConversation.LearningRouteId;
 
             try
             {
