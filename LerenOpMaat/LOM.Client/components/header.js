@@ -107,7 +107,7 @@ export default class Header extends HTMLElement {
     const currentUserId = _userData.InternalId;
 
     const notifications = await getNotificationsByUserId(_userData.InternalId);
-    console.log(notifications);
+
     const grouped = {};
     notifications.forEach(msg => {
       const conversationId = msg.Conversation.Id;

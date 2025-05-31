@@ -219,7 +219,7 @@ export default async function beheerderFeedback() {
         });
     }
 
-    const learningRouteLink = fragment.querySelector('.learning-route-link');
+    const learningRouteLink = fragment.querySelector('#learning-route-link');
     if (learningRouteLink) {
         learningRouteLink.addEventListener('click', (e) => {
             e.preventDefault();
@@ -228,6 +228,15 @@ export default async function beheerderFeedback() {
             window.location.hash = "#beheerder-learning-route";
         });
     }
+
+    const gobackLink = fragment.querySelector('#go-back-link');
+    if (gobackLink) {
+        gobackLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.hash = "#Dashboard";
+        });
+    }
+
 
     return { fragment };
 }

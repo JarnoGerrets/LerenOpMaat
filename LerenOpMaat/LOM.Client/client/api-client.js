@@ -43,6 +43,20 @@ export async function getUserData() {
   }
 }
 
+export async function getStudent(id) {
+  const res = await fetch(`${API_BASE}/account/getstudent/${id}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch student: ${res.status}`);
+  }
+  return res.json();
+}
+
 export async function getAllRoles() {
   try {
     const res = await fetch(`${API_BASE}/account/roles`, {
@@ -498,6 +512,25 @@ export async function updateSemester(learningRouteId, semesterData) {
     console.warn("Response bevat geen JSON, retourneer een standaardwaarde.");
     return { message: "Semesters updated successfully (geen JSON)" }; // Standaardwaarde
   }
+}
+
+
+export async function updateLockedSemester(semesterData) {
+  const res = await fetch(`${API_BASE}/Semester/updatedlockedsemester`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(semesterData),
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to change locked status semester: ${res.status}`);
+  }
+
+  return true;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 

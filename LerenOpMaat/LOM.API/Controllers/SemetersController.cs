@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
+using LOM.API.DTO;
 
 namespace LOM.API.Controllers
 {
@@ -141,6 +142,24 @@ namespace LOM.API.Controllers
 
             return Ok(learningRoute);
         }
+
+        [Authorize(Roles = "Teacher, Administrator")]
+        [HttpPatch("updatedlockedsemester")]
+        public async Task<IActionResult> UpdateLockSemester([FromBody] SemesterUpdateLockDto request)
+        {
+            var semesterUpdate = _context.Semesters.FirstOrDefault(s => s.Id == request.SemesterId);
+
+            if (semesterUpdate == null)
+            {
+                return NotFound();
+            }
+
+            semesterUpdate.Locked = request.Locked;
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         private bool SemesterExists(int id)
         {
             return _context.Semesters.Any(e => e.Id == id);

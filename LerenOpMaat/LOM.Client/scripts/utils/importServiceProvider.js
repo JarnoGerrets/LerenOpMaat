@@ -25,8 +25,7 @@ const baseServices = {
     SemesterModule,
     confirmationPopup,
     editRequirementPopup,
-    mapPeriodToPresentableString
-
+    mapPeriodToPresentableString,
 };
 
 export const semesterCardServices = Object.freeze({
@@ -82,5 +81,11 @@ export const moduleActionsServices = Object.freeze({
     updateEvlSelectionHeader: baseServices.updateEvlSelectionHeader,
     confirmationPopup: baseServices.confirmationPopup,
     mapPeriodToPresentableString: baseServices.mapPeriodToPresentableString
+});
+
+export const reportServices = Object.freeze({
+    getModulesEngagement: baseServices.getModulesEngagement,
+    getAvailableYears:  baseServices.getAvailableYears,
+    Chart: window.Chart
 });
 

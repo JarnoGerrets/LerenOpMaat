@@ -9,7 +9,7 @@ import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
 import beheerderFeedback from './views/beheerder-feedback.js';
 import administratorLearningRoute from './views/beheerder-learning-route.js';
 import { uploadOerPdf, getCurrentOerPdf, setStartYear, getStartYear } from "./client/api-client.js";
-import rapportage from './views/rapportage.js';
+import report from './views/report.js';
 let userData = await window.userData;
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
@@ -53,7 +53,7 @@ const routes = {
   },
   "#rapportage": async () => {
     if (userData?.EffectiveRole?.toLowerCase() === "administrator") {
-      return await rapportage();
+      return await report();
     }
     return await RouteOrSelector(setStartYear, getStartYear);
   }

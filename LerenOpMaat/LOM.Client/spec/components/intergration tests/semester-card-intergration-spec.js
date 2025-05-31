@@ -289,7 +289,7 @@ describe("SemesterCard integration", () => {
 
         await wait(100);
 
-        const coursePoints = fragment.querySelector("#coursePoints");
+        const coursePoints = fragment.querySelector("#coursePoints-888");
         expect(coursePoints.textContent).toContain("5/15");
     });
 
@@ -452,7 +452,7 @@ describe("SemesterCard integration", () => {
 
         await wait(200);
 
-        const coursePoints = fragment.querySelector("#coursePoints");
+        const coursePoints = fragment.querySelector("#coursePoints-101");
         expect(coursePoints.textContent).not.toContain("10/10");
     });
 

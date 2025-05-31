@@ -31,7 +31,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card1 = await SemesterCard({
             id: semester1.id,
-            semester: semester1.Period,
+            semester: semester1,
             module: semester1.Module.Name,
             moduleId: semester1.ModuleId,
             isActive: semester1.Module.IsActive,
@@ -46,7 +46,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                 } else {
                     learningRouteArray.push({
                         Year: index + 1,
-                        Period: semester,
+                        Period: semester.Period,
                         moduleId,
                         moduleName,
                     });
@@ -81,7 +81,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card2 = await SemesterCard({
             id: semester2.id,
-            semester: semester2.Period,
+            semester: semester2,
             module: semester2.Module.Name,
             moduleId: semester2.Module.Id,
             isActive: semester2.Module.IsActive,
@@ -96,7 +96,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                 } else {
                     learningRouteArray.push({
                         Year: index + 1,
-                        Period: semester,
+                        Period: semester.Period,
                         moduleId,
                         moduleName,
                     });

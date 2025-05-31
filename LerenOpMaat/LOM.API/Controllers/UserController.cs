@@ -106,7 +106,22 @@ namespace LOM.API.Controllers
                 ExternalID = userId,
             });
         }
-    	[Authorize(Roles = "Administrator")]
+
+        [Authorize(Roles = "Administrator, Teacher")]
+        [HttpGet("getstudent/{id}")]
+        public async Task<ActionResult<User>> GetStudent(int id)
+        {
+            var student = await _context.User.FirstOrDefaultAsync(u => u.Id == id);
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(student);
+        }
+
+        [Authorize(Roles = "Administrator")]
         [HttpGet("roles")]
         public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles()
         {

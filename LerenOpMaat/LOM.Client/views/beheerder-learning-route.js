@@ -1,5 +1,5 @@
 import {
-    getLearningRoutesByUserId,
+    getLearningRoutesByUserId, updateLockedSemester, getStudent
 } from "../client/api-client.js"
 
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
@@ -16,6 +16,13 @@ export default async function administratorLearningRoute() {
     const template = document.createElement("template");
     template.innerHTML = html;
     const fragment = template.content.cloneNode(true);
+    const student = await getStudent(userId);
+    let studentName;
+    if(student){
+        studentName = `${student.FirstName} ${student.LastName}`;
+    }
+    const title = fragment.querySelector("#title-header");
+    title.innerHTML = `Leerroute van ${studentName}`
     const grid = fragment.querySelector(".semester-grid");
     let semesterData = [];
     let routeId = null;
@@ -104,6 +111,34 @@ export default async function administratorLearningRoute() {
             window.location.hash = "#beheerder-feedback";
         });
     }
+
+    fragment.querySelectorAll('[id^="coursePoints-"]').forEach(el => {
+        el.classList.remove("d-block");
+        el.style.display = "none";
+    });
+    fragment.querySelectorAll("#select-module").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            const cardElement = btn.closest(".semester-card");
+            const semesterId = cardElement?.getAttribute("data-semester-id");
+            const isLocked = btn.getAttribute("data-locked") === "true";
+
+            if (semesterId > 400000) {
+                return null;
+            }
+            const body = {
+                SemesterId: parseInt(semesterId),
+                Locked: !isLocked
+            }
+
+            let result = await updateLockedSemester(body);
+            if (result){
+                window.location.reload();
+            }
+
+        }, { capture: true });
+    });
     return { fragment };
 }
 
