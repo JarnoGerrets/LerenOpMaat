@@ -675,3 +675,35 @@ export async function getConversationByAdminId(adminId) {
 
   return await res.json();
 }
+
+export async function getNotificationsByUserId(id) {
+  const res = await fetch(`${API_BASE}/Conversation/notifications/${id}`, {
+    method: "GET",
+    headers: {
+      "Accept": "application/json"
+    },
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch notifications: ${res.status}`);
+  }
+
+  return await res.json();
+}
+
+export async function markNotificationsAsRead(body) {
+  const res = await fetch(`${API_BASE}/Conversation/notifications/markasread`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    credentials: "include",
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to mark notifications as read: ${res.status}`);
+  }
+}
