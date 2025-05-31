@@ -9,6 +9,7 @@
 
 .cohort-container {
   width: 100%;
+  margin-top: 2rem;
   max-width: 24rem;
 }
 
@@ -43,6 +44,14 @@
   color: #1D4ED8;
 }
 
+.cohort-button:hover {
+  background-color: #EFF6FF;
+  border-color: #60A5FA;
+  color: #2563EB;
+  transform: scale(1.02);
+  cursor: pointer;
+}
+
 .cohort-submit {
   margin-top: 2rem;
   width: 100%;
@@ -52,6 +61,13 @@
   border-radius: 0.75rem;
   background-color: #1E3A8A;
   opacity: 1;
+}
+
+.cohort-submit:hover {
+  background-color: #1D4ED8;
+  border-color: #3B82F6;
+  transform: scale(1.02);
+  cursor: pointer;
 }
 
 .cohort-submit:disabled {
