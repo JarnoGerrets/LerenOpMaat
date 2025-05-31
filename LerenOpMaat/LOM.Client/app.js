@@ -136,6 +136,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   router();
 });
+window.addEventListener("popstate", router);
+
 let scrollArea;
 setTimeout(() => {
   scrollArea = document.getElementById('app');

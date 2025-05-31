@@ -2,9 +2,10 @@ const BASE = "http://localhost:5073";
 const API_BASE = `${BASE}/api`;
 
 export function getLoginUrl() {
-  return `${BASE}/authenticate`;
+  const currentHash = window.location.hash || "#/";
+  const frontendBaseUrl = "http://localhost:3000";
+  return `${BASE}/authenticate?returnUrl=${encodeURIComponent(frontendBaseUrl + currentHash)}`;
 }
-
 export async function logout() {
   try {
     await fetch(`${BASE}/authenticate/logout`, {
