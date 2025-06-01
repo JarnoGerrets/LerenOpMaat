@@ -689,7 +689,7 @@ export async function uploadOerPdf(file, userId) {
   formData.append("userId", userId);
 
   const res = await fetch(`${API_BASE}/Oer/upload`, {
-    method: "POST",
+    method: "PUT",
     credentials: "include",
     body: formData
   });
