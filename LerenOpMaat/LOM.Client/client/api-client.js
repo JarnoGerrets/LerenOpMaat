@@ -2,7 +2,9 @@ const BASE = "http://localhost:5073";
 const API_BASE = `${BASE}/api`;
 
 export function getLoginUrl() {
-  return `${BASE}/authenticate`;
+  const returnUrl = encodeURIComponent(window.location.href);
+  
+  return `${BASE}/authenticate?returnUrl=${returnUrl}`;
 }
 
 export async function logout() {

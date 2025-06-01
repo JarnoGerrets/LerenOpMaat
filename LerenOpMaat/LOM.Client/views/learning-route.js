@@ -135,19 +135,20 @@ export default async function LearningRoute() {
         if (saveButton) {
             saveButton.addEventListener("click", async () => {
                 JSON.stringify(learningRouteArray, null, 2);
+                console.log(routeId);
                 if (routeId !== null) {
                     try {
                         await updateLearningRoute(routeId, learningRouteArray);
-
+                        showToast("Leerroute opgeslagen", "success");
                     } catch (error) {
-                        console.error("Fout bij het updaten van de learning route:", error.message);
+                        showToast("Fout bij het opslaan van de leerroute", "error");
                     }
                 } else {
                     try {
                         await saveLearningRoute(learningRouteArray);
-                        console.log("Nieuwe learning route succesvol aangemaakt.");
+                        showToast("Leerroute opgeslagen", "successs");
                     } catch (error) {
-                        console.error("Fout bij het aanmaken van een nieuwe learning route:", error.message);
+                        showToast("Fout bij het opslaan van de leerroute", "error");
                     }
                 }
             });
@@ -233,7 +234,7 @@ export default async function LearningRoute() {
                 };
 
                 img.onerror = () => {
-                    console.error("Fout bij het laden van de afbeelding.");
+                    showToast("Er is een fout opgetreden, neem contact op met de beheerder", "error");
                 };
             });
         }
@@ -256,14 +257,14 @@ export default async function LearningRoute() {
             deleteButton.addEventListener("click", async () => {
                 if (routeId !== null) {
                     await confirmationPopup("Leerroute", routeId, header, content, deleteRoute, "/");
+                    showToast("Leerroute verwijderd", "success");
                 } else {
-                    console.error("Geen routeId beschikbaar om te verwijderen.");
+                    showToast("Fout bij het verwijderen van leerroute", "error");
                 }
             });
         }
     } catch (error) {
         showToast("Er ging iets fouten tijdens het laden van de leerroute, probeer het later nog eens.", "error");
-        console.error("Error fetching semester data:", error.message);
     } finally {
         hideLoading();
     }
@@ -323,11 +324,17 @@ async function saveLearningRoute(learningRouteArray) {
             }))
         };
         const result = await postLearningRoute(jsonData);
+        sessionStorage.setItem("postReloadToast", JSON.stringify({
+            message: "Leerroute opgeslagen",
+            type: "success"
+        }));
         if (!result) {
+            showToast("Fout bij het opslaan van de leerroute", "error");
             throw new Error("De server gaf geen geldige respons terug bij het aanmaken van de leerroute.");
         }
         location.reload();
     } else {
+        showToast("Fout bij het opslaan van de leerroute", "error");
         throw new Error("learningRouteArray is leeg of geen array!");
     }
 };
@@ -347,17 +354,20 @@ async function updateLearningRoute(routeId, semesterData) {
         const response = await updateSemester(routeId, body);
 
         if (!response) {
-            console.error(`Fout bij het updaten van de learning route: ${response.status} `);
+            showToast("Fout bij het opslaan van leerroute", "error");
             return;
         } else {
-            console.log("Learning route succesvol gepdatet.");
+            sessionStorage.setItem("postReloadToast", JSON.stringify({
+                message: "Leerroute opgeslagen",
+                type: "success"
+            }));
             location.reload();
         }
     } catch (error) {
         if (error && error.message) {
-            console.error("Fout bij het updaten van de learning route:", error.message);
+            showToast("Fout bij het opslaan van leerroute", "error");
         } else {
-            console.error("Onbekende fout bij het updaten van de learning route.");
+            showToast("Fout bij het opslaan van leerroute", "error");
         }
     }
 };

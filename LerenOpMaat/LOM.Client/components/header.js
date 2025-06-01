@@ -46,7 +46,7 @@ export default class Header extends HTMLElement {
     if (_userData) {
       if (_userData.Roles.includes("Administrator")) {
         simulatedRoleObj.classList.remove("hidden");
-        loginObj.innerHTML = "Administrator";
+        loginObj.innerHTML = '<i class="bi bi-person-circle"></i> Administrator';
         simulatedRoleObj.style.display = "inline-block";
         const roles = await getAllRoles();
 
@@ -75,13 +75,16 @@ export default class Header extends HTMLElement {
           simulatedDropdown.classList.add("hidden");
         });
       } else {
-        loginObj.innerHTML = _userData.Username;
+        loginObj.innerHTML = '<i class="bi bi-person-circle"></i> _userData.Username';
       }
 
       logoutObj.classList.remove("d-none");
       logoutObj.addEventListener("click", () => logout());
     } else {
-      loginObj.href = getLoginUrl();
+      loginObj.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = getLoginUrl();
+      });
       bell.classList.add("hidden");
       return;
     }

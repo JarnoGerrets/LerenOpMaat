@@ -246,6 +246,12 @@ header {
   display: none !important;
 }
 
+#logout i {
+  font-size: 18px;
+}
+.bi-box-arrow-in-right{
+  font-size: 20px;
+}
 
 /* Desktop stijl (768px en breder) */
 @media (min-width: 768px) {
