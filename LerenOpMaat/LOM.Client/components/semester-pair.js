@@ -33,7 +33,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             id: semester1.id,
             semester: semester1,
             module: semester1.Module.Name,
-            moduleId: semester1.ModuleId,
+            moduleId: semester1.Module.Id,
             isActive: semester1.Module.IsActive,
             locked: semester1.Locked,
             onModuleChange: async ({ semester, moduleId, moduleName }) => {

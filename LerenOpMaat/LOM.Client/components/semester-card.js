@@ -16,6 +16,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
     updateExclamationIcon,
     debounce
   } = services;
+
   let userData = await window.userData;
   const role = userData?.EffectiveRole;
 
@@ -119,7 +120,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
   const clearSelection = async () => {
     const moduleId = parseInt(cardElement.getAttribute("data-module-id"));
-    coursePoints.Id = `coursePoints-${moduleId || ""}`;
+
     await updateModuleUI(button, coursePoints, locked, null, learningRouteArray);
     const cardContainer = cardElement.closest(".semester-card-container");
     const moduleActiveStatus = selectedModule?.IsActive ?? true;
@@ -188,6 +189,10 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
   updateInactiveLabel(cardContainer, moduleActiveStatus);
 
   cardElement.setAttribute("data-module-id", selectedModule.Id);
+
+  const newCoursePoints = cardElement.querySelector(`#${coursePoints.id}`);
+  newCoursePoints.id = `coursePoints-${selectedModule.Id || ""}`;
+
   onModuleChange({
     semester,
     moduleId: selectedModule.Id,
@@ -196,6 +201,21 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
   const finalValidation = await validateRoute(learningRouteArray);
   handleValidationResult(finalValidation);
+
+  document.addEventListener("click", (event) => {
+    const allEvlWrappers = document.querySelectorAll(".evl-list-wrapper");
+
+    allEvlWrappers.forEach(wrapper => {
+      const card = wrapper.closest(".semester-card-container")?.querySelector(".semester-card");
+      const toggle = card?.querySelector(`#${coursePoints.id}`);
+
+      const toggleContains = toggle?.contains(event.target) ?? false;
+
+      if (!wrapper.contains(event.target) && !toggleContains) {
+        wrapper.classList.remove("expand");
+      }
+    });
+  });
 
 }
 
@@ -209,22 +229,6 @@ function updateInactiveLabel(cardContainer, isActive) {
     button.style.color = isActive ? '' : 'red';
   }
 }
-
-
-document.addEventListener("click", (event) => {
-  const allEvlWrappers = document.querySelectorAll(".evl-list-wrapper");
-
-  allEvlWrappers.forEach(wrapper => {
-    const card = wrapper.closest(".semester-card-container")?.querySelector(".semester-card");
-    const toggle = card?.querySelector("#coursePoints");
-
-    const toggleContains = toggle?.contains(event.target) ?? false;
-
-    if (!wrapper.contains(event.target) && !toggleContains) {
-      wrapper.classList.remove("expand");
-    }
-  });
-});
 
 
 window.validationState = validationState;
