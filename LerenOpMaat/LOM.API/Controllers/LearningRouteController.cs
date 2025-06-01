@@ -90,10 +90,10 @@ namespace LOM.API.Controllers
             if (existingUser == null)
                 return BadRequest("User does not exist.");
 
-            // VALIDATE before saving
             var validationResults = await ValidateSemesters(learningRoute.Semesters.ToList(), learningRoute.UserId);
-            if (validationResults.Any())
-                return BadRequest(validationResults);
+
+            if (validationResults.Any(r => !r.IsValid))
+                return Ok(validationResults);
 
             learningRoute.User = existingUser;
             _context.LearningRoutes.Add(learningRoute);

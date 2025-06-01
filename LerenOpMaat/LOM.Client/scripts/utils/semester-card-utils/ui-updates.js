@@ -1,4 +1,4 @@
-import {uiUpdatesServices} from '../importServiceProvider.js'
+import { uiUpdatesServices } from '../importServiceProvider.js'
 
 export function updateExclamationIcon(cardElement, validationMsg, isValid) {
   const icon = cardElement.querySelector('.exclamation-icon');
@@ -60,14 +60,14 @@ export function updateCardStyle(card, moduleId, validationMessages = []) {
 }
 
 export async function updateModuleUI(button, coursePoints, locked, selectedModule, progress = null, learningRouteArray = null, services = uiUpdatesServices) {
-  const{
+  const {
     validateRoute,
     addCompletedEvl,
     removeCompletedEvl,
     handleValidationResult,
     calculateAchievedECs
   } = services;
-  
+
   let isActive = selectedModule ? selectedModule.IsActive : true;
   button.innerHTML = `
     ${selectedModule ? selectedModule.Name : 'Selecteer je module'}
@@ -78,7 +78,8 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
   const evlList = evlWrapper.querySelector(".evl-list");
 
   const achievedECs = calculateAchievedECs(progress, selectedModule);
-  const loggedIn = await window.userData
+  const loggedIn = window.userData;
+
   if (selectedModule?.Evls && loggedIn) {
     evlList.innerHTML = selectedModule.Evls.map(ev => {
       const isChecked = progress?.CompletedEvls?.some(completed => completed.ModuleEvl.Id === ev.Id);
@@ -140,10 +141,13 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
   if (selectedModule && loggedIn) {
     coursePoints.innerHTML = `Behaalde ec's (${achievedECs}/${selectedModule.Ec}) ↓`;
     coursePoints.style.cursor = "pointer";
+
     coursePoints.onclick = () => {
+      const evlWrapper = card.parentElement.querySelector(".evl-list-wrapper");
+      const evlList = evlWrapper.querySelector(".evl-list");
       evlWrapper.classList.toggle("expand");
       evlList.classList.toggle("expand");
-    }
+    };
   } else {
     coursePoints.innerHTML = "";
     coursePoints.style.cursor = "default";

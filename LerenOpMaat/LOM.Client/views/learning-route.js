@@ -139,14 +139,12 @@ export default async function LearningRoute() {
                 if (routeId !== null) {
                     try {
                         await updateLearningRoute(routeId, learningRouteArray);
-                        showToast("Leerroute opgeslagen", "success");
                     } catch (error) {
-                        showToast("111Fout bij het opslaan van de leerroute", "error");
+                        showToast("Fout bij het opslaan van de leerroute", "error");
                     }
                 } else {
                     try {
                         await saveLearningRoute(learningRouteArray);
-                        showToast("Leerroute opgeslagen", "successs");
                     } catch (error) {
                         showToast("Fout bij het opslaan van de leerroute", "error");
                     }
@@ -323,23 +321,31 @@ async function saveLearningRoute(learningRouteArray) {
                 ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
             }))
         };
+        try {
+            const result = await postLearningRoute(jsonData);
+            if (result) {
+                if (Array.isArray(result)) {
+                    handleValidationResult(result);
+                    console.log(result);
+                } else {
+                    showToast("Leerroute opgeslagen", "success");
+                }
+                return;
+            }
 
-        const result = await postLearningRoute(jsonData);
-        handleValidationResult(result);
-        if (!result) {
-            showToast("Fout bij het opslaan van de leerroute", "error");
-            throw new Error("De server gaf geen geldige respons terug bij het aanmaken van de leerroute.");
-        } else {
             sessionStorage.setItem("postReloadToast", JSON.stringify({
                 message: "Leerroute opgeslagen",
                 type: "success"
             }));
+            location.reload();
+        } catch (error) {
+            showToast("Fout bij het opslaan van de leerroute", "error");
         }
-        location.reload();
     } else {
         showToast("Fout bij het opslaan van de leerroute", "error");
         throw new Error("learningRouteArray is leeg of geen array!");
     }
+
 };
 
 async function updateLearningRoute(routeId, semesterData) {
@@ -360,19 +366,21 @@ async function updateLearningRoute(routeId, semesterData) {
 
 
     try {
-        const response = await updateSemester(routeId, body);
-        console.log(response);
-        handleValidationResult(response);
-        if (!response) {
-            showToast("Fout bij het opslaan van leerroute", "error");
+        const result = await updateSemester(routeId, body);
+        if (result) {
+            if (Array.isArray(result)) {
+                handleValidationResult(result);
+            } else {
+                showToast("Leerroute opgeslagen", "success");
+            }
             return;
-        } else {
-            sessionStorage.setItem("postReloadToast", JSON.stringify({
-                message: "Leerroute opgeslagen",
-                type: "success"
-            }));
-            location.reload();
         }
+
+        sessionStorage.setItem("postReloadToast", JSON.stringify({
+            message: "Leerroute opgeslagen",
+            type: "success"
+        }));
+        // location.reload();
     } catch (error) {
         if (error && error.message) {
             showToast("Fout bij het opslaan van leerroute", "error");
