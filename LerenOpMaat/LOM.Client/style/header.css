@@ -222,7 +222,7 @@ header {
 
 .simulated-role-dropdown {
   position: absolute;
-  right: 0;
+  right: 185px;
   top: 100%;
   background: white;
   border: 1px solid #ccc;
