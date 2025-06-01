@@ -21,8 +21,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
   const role = userData?.EffectiveRole;
   const isAdminOrTeacher = ['Administrator', 'Teacher'].includes(role);
   const isSelecteerJeModule = module == "Selecteer je module";
-
-  let canEdit = (!locked && !isAdminOrTeacher) || (isAdminOrTeacher && !isSelecteerJeModule) || (!isAdminOrTeacher && isSelecteerJeModule);
+  let canEdit = (!locked) || (isAdminOrTeacher && !isSelecteerJeModule) || (!isAdminOrTeacher && isSelecteerJeModule);
 
   const template = document.createElement("template");
   template.innerHTML = `
