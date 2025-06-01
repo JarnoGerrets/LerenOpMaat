@@ -66,7 +66,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
   const fragment = template.content.cloneNode(true);
   const cardElement = fragment.querySelector(".semester-card");
   const button = fragment.querySelector("#select-module");
-  const coursePoints = fragment.querySelector(`#coursePoints-${moduleId}`);
+  const coursePoints = fragment.querySelector(`#coursePoints-${moduleId || ''}`);
 
   const debouncedModuleSelection = debounce(
     (params) => handleModuleSelection({ ...params, services }), 500
@@ -90,7 +90,6 @@ export default async function SemesterCard({ semester, module, locked = false, i
   if (moduleId && moduleId !== 200000 && moduleId !== 300000) {
     const selectedModule = await getModule(moduleId);
     try {
-
       const progress = await getModuleProgress(moduleId);
       await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
 
@@ -120,7 +119,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
   const clearSelection = async () => {
     const moduleId = parseInt(cardElement.getAttribute("data-module-id"));
-
+    coursePoints.Id = `coursePoints-${moduleId || ""}`;
     await updateModuleUI(button, coursePoints, locked, null, learningRouteArray);
     const cardContainer = cardElement.closest(".semester-card-container");
     const moduleActiveStatus = selectedModule?.IsActive ?? true;

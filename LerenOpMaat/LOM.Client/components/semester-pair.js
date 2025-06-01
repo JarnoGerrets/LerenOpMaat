@@ -38,7 +38,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             locked: semester1.Locked,
             onModuleChange: async ({ semester, moduleId, moduleName }) => {
                 const existingItem = learningRouteArray.find(
-                    (item) => item.Year === index + 1 && item.Period === semester
+                    (item) => item.Year === index + 1 && item.Period === semester.Period
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
@@ -88,7 +88,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
             locked: semester2.Locked,
             onModuleChange: async ({ semester, moduleId, moduleName }) => {
                 const existingItem = learningRouteArray.find(
-                    (item) => item.Year === index + 1 && item.Period === semester
+                    (item) => item.Year === index + 1 && item.Period === semester.Period
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
