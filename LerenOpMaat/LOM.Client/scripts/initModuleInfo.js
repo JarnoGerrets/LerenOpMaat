@@ -11,7 +11,6 @@ export default async function initModuleInfo(id, services = initModuleInfoServic
     } = services;
 
     let userData = await window.userData;
-    console.log(userData);
     let correctRole = false;
 
     if (userData && userData?.EffectiveRole !== "Student") {

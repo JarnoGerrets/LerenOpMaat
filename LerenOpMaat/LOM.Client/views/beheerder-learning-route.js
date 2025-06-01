@@ -18,7 +18,7 @@ export default async function administratorLearningRoute() {
     const fragment = template.content.cloneNode(true);
     const student = await getStudent(userId);
     let studentName;
-    if(student){
+    if (student) {
         studentName = `${student.FirstName} ${student.LastName}`;
     }
     const title = fragment.querySelector("#title-header");
@@ -133,12 +133,29 @@ export default async function administratorLearningRoute() {
             }
 
             let result = await updateLockedSemester(body);
-            if (result){
-                window.location.reload();
+            if (result) {
+                let tempWord = isLocked ? "ontgrendeld" : "vergrendeld";
+                showToast(`Module ${tempWord}`, "info");
+
+                updateModuleLockState(cardElement, !isLocked);
             }
 
         }, { capture: true });
     });
+
+    function updateModuleLockState(cardElement, newLockState) {
+        const button = cardElement.querySelector("#select-module");
+        button.setAttribute("data-locked", newLockState);
+
+        const icon = button.querySelector("i");
+        if (newLockState) {
+            icon.classList.remove("bi-unlock-fill");
+            icon.classList.add("bi-lock-fill");
+        } else {
+            icon.classList.remove("bi-lock-fill");
+            icon.classList.add("bi-unlock-fill");
+        }
+    }
     return { fragment };
 }
 
