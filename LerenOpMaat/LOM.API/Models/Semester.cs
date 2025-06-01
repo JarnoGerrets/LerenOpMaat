@@ -19,5 +19,6 @@ namespace LOM.API.Models
         [ForeignKey(nameof(Module))]
         public int? ModuleId { get; set; }
         public Module? Module { get; set; }
+        public bool Locked { get; set; }
     }
 }

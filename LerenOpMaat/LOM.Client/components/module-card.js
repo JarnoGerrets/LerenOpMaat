@@ -40,7 +40,7 @@ export default class ModuleCard extends customElements.get("base-card") {
         this.dataset.id = module.Id;
         let colorcode = module.GraduateProfile?.ColorCode || "";
         if (!(module.IsActive)) {
-            colorcode = "#D3D3D3"; // light gray for inactive modules
+            colorcode = "#D3D3D3";
         }
         this.renderCard(content, colorcode);
     }

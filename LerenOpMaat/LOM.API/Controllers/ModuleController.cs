@@ -377,5 +377,54 @@ namespace LOM.API.Controllers
 			var result = ModuleProgressDto.FromModel(updatedProgress);
 			return Ok(result);
 		}
+
+		[Authorize(Roles = "Administrator")]
+		[HttpGet("reporting/modules-engagement")]
+		public async Task<IActionResult> GetModulesEngagement(int? year = null)
+		{
+			var assignedCounts = await _context.Modules
+				.Select(m => new
+				{
+					ModuleCode = m.Code,
+					ModuleName = m.Name,
+					AssignedCount = _context.Semesters
+						.Where(s => s.ModuleId == m.Id && (year == null || s.Year == year))
+						.Count()
+				})
+				.ToListAsync();
+
+			// totaal aantal keren dat modules gekozen zijn
+			int totalAssigned = assignedCounts.Sum(m => m.AssignedCount);
+
+			var result = assignedCounts
+				.OrderByDescending(m => m.AssignedCount)
+				.Select(m => new
+				{
+					m.ModuleCode,
+					m.ModuleName,
+					m.AssignedCount,
+					Percentage = totalAssigned == 0 ? 0 : (double)m.AssignedCount / totalAssigned * 100
+				});
+
+			return Ok(result);
+		}
+
+
+
+		[Authorize(Roles = "Administrator")]
+		[HttpGet("reporting/available-years")]
+		public async Task<IActionResult> GetAvailableYears()
+		{
+			var years = await _context.Semesters
+				.Select(s => s.Year)
+				.Distinct()
+				.OrderByDescending(y => y)
+				.ToListAsync();
+
+			return Ok(years);
+		}
+
+
+
 	}
 }

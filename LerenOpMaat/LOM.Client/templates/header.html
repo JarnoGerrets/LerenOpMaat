@@ -22,9 +22,6 @@
         <i class="bi bi-bell-fill icon" id="notification-bell"></i>
         <span id="notificationAmount" class="notification-badge hidden">3</span>
         <div class="notification-dropdown hidden" id="notification-dropdown">
-          <div class="notification-item">Je hebt een nieuwe melding</div>
-          <div class="notification-item">Nog een melding</div>
-          <div class="notification-item">Nog eentje</div>
         </div>
       </div>
     </div>
@@ -36,11 +33,14 @@
         <div id="guest-info" class="guest-box">
           <a id="logout" class="login-btn d-none">Uitloggen</a>
           <a id="login-url" class="login-btn">Inloggen</a>
+          <a id="simulated-role" class="login-btn simulated-role-toggle hidden"></a>
+          <div id="simulated-role-dropdown" class="simulated-role-dropdown hidden"></div>
         </div>
         <div class="logo">
           <img src="../images/Windesheim_logo_Zwart.png" alt="Windesheim Logo" />
         </div>
       </div>
+
     </div>
   </header>
 
@@ -48,10 +48,11 @@
   <div id="menu" class="menu-overlay">
     <nav>
       <a href="/" data-link>Leerroute Overzicht</a>
+      <a class="hidden" href="#Dashboard" data-link>Dashboard</a>
       <a href="#module-overview" data-link>Module Overzicht</a>
       <a href="#oer-view" data-link>OER</a>
-      <a href="#" data-link>Help & Support</a>
       <a href="#instellingen" data-link>Instellingen</a>
+      <a class="hidden"  href="#rapportage" data-link>Rapportage</a>
     </nav>
     <i class="bi bi-chevron-up mobile-close-btn" onclick="toggleMenu()"></i>
     <div class="desktop-close-btn" onclick="toggleMenu()">

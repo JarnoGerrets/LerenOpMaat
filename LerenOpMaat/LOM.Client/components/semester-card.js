@@ -17,16 +17,33 @@ export default async function SemesterCard({ semester, module, locked = false, i
     debounce
   } = services;
 
+  let userData = await window.userData;
+  const role = userData?.EffectiveRole;
+
+  const isAdminOrTeacher = ['Administrator', 'Teacher'].includes(role);
+
+  const isSelecteerJeModule = module == "Selecteer je module";
+
+  let canEdit = false;
+
+  if (!locked & !isAdminOrTeacher) {
+    canEdit = true;
+  } else if (isAdminOrTeacher && !isSelecteerJeModule) {
+    canEdit = true;
+  } else if (!isAdminOrTeacher && isSelecteerJeModule) {
+    canEdit = true;
+  }
+
   const template = document.createElement("template");
   template.innerHTML = `
   <div class="semester-card-container">
     <div class="semester-card">
-      <h3>Semester ${semester}</h3>
-      <button id="select-module" class="semester-button btn btn-light border ${!isActive || locked ? 'locked' : ''}" style="${!isActive ? 'color: red;' : ''}">
+      <h3>Semester ${semester.Period}</h3>
+      <button id="select-module" class="semester-button btn btn-light border ${!canEdit ? 'locked' : ''}" style="${!isActive ? 'color: red;' : ''}" data-locked="${locked}">
         ${module}
         <i class="ms-1 bi ${!isActive || locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i> 
       </button>
-      <span id="coursePoints" class="text-start d-block course-points-link"></span>
+      <span id="coursePoints-${moduleId || ""}" class="text-start d-block course-points-link"></span>
       <div class="exclamation-icon" data-bs-toggle="tooltip" data-bs-custom-class="tool-tip-style" title="">
         <i class="bi bi-exclamation-triangle-fill"></i>
       </div>
@@ -44,10 +61,13 @@ export default async function SemesterCard({ semester, module, locked = false, i
   const updateModuleId = (moduleId) => {
     cardElement.setAttribute("data-module-id", moduleId || '');
   };
+  const updatedSemesterId = (semesterId) => {
+    cardElement.setAttribute("data-semester-id", semesterId || '');
+  };
   const fragment = template.content.cloneNode(true);
   const cardElement = fragment.querySelector(".semester-card");
   const button = fragment.querySelector("#select-module");
-  const coursePoints = fragment.querySelector("#coursePoints");
+  const coursePoints = fragment.querySelector(`#coursePoints-${moduleId || ''}`);
 
   const debouncedModuleSelection = debounce(
     (params) => handleModuleSelection({ ...params, services }), 500
@@ -62,13 +82,15 @@ export default async function SemesterCard({ semester, module, locked = false, i
   }
 
   if (moduleId) {
-    cardElement.setAttribute("data-module-id", moduleId);
+    updateModuleId(moduleId)
+  }
+  if (semester.Id) {
+    updatedSemesterId(semester.Id);
   }
 
   if (moduleId && moduleId !== 200000 && moduleId !== 300000) {
     const selectedModule = await getModule(moduleId);
     try {
-
       const progress = await getModuleProgress(moduleId);
       await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
 
@@ -163,18 +185,37 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
   const cardContainer = cardElement.closest(".semester-card-container");
   const moduleActiveStatus = selectedModule?.IsActive ?? true;
-  
+
   updateInactiveLabel(cardContainer, moduleActiveStatus);
 
   cardElement.setAttribute("data-module-id", selectedModule.Id);
+
+  const newCoursePoints = cardElement.querySelector(`#${coursePoints.id}`);
+  newCoursePoints.id = `coursePoints-${selectedModule.Id || ""}`;
+
   onModuleChange({
     semester,
     moduleId: selectedModule.Id,
-    moduleName: selectedModule.Name // <-- voeg moduleName toe
+    moduleName: selectedModule.Name
   });
 
   const finalValidation = await validateRoute(learningRouteArray);
   handleValidationResult(finalValidation);
+
+  document.addEventListener("click", (event) => {
+    const allEvlWrappers = document.querySelectorAll(".evl-list-wrapper");
+
+    allEvlWrappers.forEach(wrapper => {
+      const card = wrapper.closest(".semester-card-container")?.querySelector(".semester-card");
+      const toggle = card?.querySelector(`#${coursePoints.id}`);
+
+      const toggleContains = toggle?.contains(event.target) ?? false;
+
+      if (!wrapper.contains(event.target) && !toggleContains) {
+        wrapper.classList.remove("expand");
+      }
+    });
+  });
 
 }
 
@@ -188,20 +229,6 @@ function updateInactiveLabel(cardContainer, isActive) {
     button.style.color = isActive ? '' : 'red';
   }
 }
-
-
-document.addEventListener("click", (event) => {
-  const allEvlWrappers = document.querySelectorAll(".evl-list-wrapper");
-
-  allEvlWrappers.forEach(wrapper => {
-    const card = wrapper.closest(".semester-card-container")?.querySelector(".semester-card");
-    const toggle = card?.querySelector("#coursePoints");
-
-    if (!wrapper.contains(event.target) && !toggle.contains(event.target)) {
-      wrapper.classList.remove("expand");
-    }
-  });
-});
 
 
 window.validationState = validationState;

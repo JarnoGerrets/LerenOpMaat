@@ -1,0 +1,20 @@
+<div style="padding-bottom: 15px;">
+    <label style="padding-left: 15px;" for="year-select">Studiejaar:</label></h3>
+    <select id="year-select"></select>
+    <button id="show-chart-button">Toon grafiek</button>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Module code</th>
+            <th>Module naam</th>
+            <th>Aantal keren gekozen</th>
+            <th>Percentage van alle gekozen modules</th>
+        </tr>
+    </thead>
+    <tbody id="modules-engagement-body"></tbody>
+</table>
+<div style="padding-left: 15px;" id="rapportage-container">
+    <canvas style="display: none;" id="chart-canvas"></canvas>
+    <div style="padding-left: 15px; padding-bottom: 15px;" id="unchosen-modules"></div>
+</div>

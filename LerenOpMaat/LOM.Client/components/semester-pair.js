@@ -31,14 +31,14 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card1 = await SemesterCard({
             id: semester1.id,
-            semester: semester1.Period,
+            semester: semester1,
             module: semester1.Module.Name,
-            moduleId: semester1.ModuleId,
+            moduleId: semester1.Module.Id,
             isActive: semester1.Module.IsActive,
-            locked: semester1.locked,
+            locked: semester1.Locked,
             onModuleChange: async ({ semester, moduleId, moduleName }) => {
                 const existingItem = learningRouteArray.find(
-                    (item) => item.Year === index + 1 && item.Period === semester
+                    (item) => item.Year === index + 1 && item.Period === semester.Period
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
@@ -46,7 +46,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                 } else {
                     learningRouteArray.push({
                         Year: index + 1,
-                        Period: semester,
+                        Period: semester.Period,
                         moduleId,
                         moduleName,
                     });
@@ -81,14 +81,14 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
         const card2 = await SemesterCard({
             id: semester2.id,
-            semester: semester2.Period,
+            semester: semester2,
             module: semester2.Module.Name,
             moduleId: semester2.Module.Id,
             isActive: semester2.Module.IsActive,
-            locked: semester2.locked,
+            locked: semester2.Locked,
             onModuleChange: async ({ semester, moduleId, moduleName }) => {
                 const existingItem = learningRouteArray.find(
-                    (item) => item.Year === index + 1 && item.Period === semester
+                    (item) => item.Year === index + 1 && item.Period === semester.Period
                 );
                 if (existingItem) {
                     existingItem.moduleId = moduleId;
@@ -96,7 +96,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                 } else {
                     learningRouteArray.push({
                         Year: index + 1,
-                        Period: semester,
+                        Period: semester.Period,
                         moduleId,
                         moduleName,
                     });

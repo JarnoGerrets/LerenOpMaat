@@ -11,7 +11,7 @@
     padding: 0 36px;
     font-size: 1.15em;
     position: fixed;
-    right: 40px;
+    right: 110px;
     bottom: 40px;
     background: #1976d2;
     color: #fff;
@@ -24,9 +24,21 @@
 .feedback-input-row {
     display: flex;
     gap: 12px;
-    padding: 24px 24px 24px 24px;
+    padding: 15px;
     border-top: 1px solid #e0e0e0;
     align-items: flex-end;
+}
+
+.left-side-buttons {
+    position: relative;
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.feedback-dropdown-row {
+    align-items: center;
 }
 
 
@@ -55,6 +67,7 @@
     align-items: center;
     width: 100%;
     flex-shrink: 0;
+    padding-top: 15px;
 }
 
 .message-feedback-outer {
@@ -76,6 +89,32 @@
     gap: 8px;
     min-height: 0;
     max-height: 100%;
+
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* Edge */
+
+}
+
+.message-feedback-container::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+
+.message-feedback-container.show-scrollbar {
+    scrollbar-width: auto;
+    -ms-overflow-style: auto;
+}
+
+.message-feedback-container.show-scrollbar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.message-feedback-container.show-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    border-radius: 4px;
 }
 
 
@@ -94,12 +133,10 @@
 
 .learning-route-link {
     display: block;
-    align-self: flex-start;
-    margin: 24px 0px 10px 0px;
     font-weight: bold;
     color: #222;
     text-decoration: none;
-    padding: 6px 14px;
+    padding-right: 14px;
     border-radius: 6px;
     transition: background 0.2s;
     width: fit-content;
@@ -126,7 +163,8 @@
     min-width: 90px;
     height: 32px;
     line-height: 32px;
-    position: relative;
+    margin-right: 20px;
+    align-self: center;
 }
 
 .feedback-dropdown:focus {

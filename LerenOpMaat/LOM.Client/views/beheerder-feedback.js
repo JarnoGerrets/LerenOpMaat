@@ -1,4 +1,3 @@
-
 import {
     getConversationByUserId,
     getAllTeachers,
@@ -25,7 +24,18 @@ export default async function beheerderFeedback() {
     let conversation = null;
     let selectedTeacherIdFromConversation = null;
 
+    // make scrollbar only visible when scrolling
     const messageContainer = fragment.querySelector(".message-feedback-container");
+    messageContainer.addEventListener('scroll', () => {
+        messageContainer.classList.add('show-scrollbar');
+
+        clearTimeout(messageContainer._scrollTimer);
+
+        messageContainer._scrollTimer = setTimeout(() => {
+            messageContainer.classList.remove('show-scrollbar');
+        }, 1500);
+    });
+
     const dropdown = fragment.querySelector(".feedback-dropdown");
     const textarea = fragment.querySelector(".feedback-box");
     const saveButton = fragment.querySelector(".save-btn");
@@ -60,7 +70,7 @@ export default async function beheerderFeedback() {
                     const sortedMessages = messages.slice().sort((a, b) => a.Id - b.Id);
                     sortedMessages.forEach(msg => {
                         let senderName = "Onbekend";
-                        if (msg.User && msg.User.FirstName && msg.User.LastName) {
+                        if (msg.User && msg.User.FirstName) {
                             senderName = `${msg.User.FirstName} ${msg.User.LastName}`;
                         }
                         const formattedDate = msg.DateTime ? formatDateTime(msg.DateTime) : "";
@@ -166,10 +176,6 @@ export default async function beheerderFeedback() {
             textarea.classList.remove("lom-feedback-placeholder-error");
             dropdown.style.borderColor = "";
 
-            // Haal altijd de conversatie op
-            let conversation = await getOrCreateConversation(currentUserId);
-            //let conversationId = conversation && conversation.Id ? conversation.Id : null;
-
             let valid = true;
             if (!conversationId) {
                 errorMsg.textContent = "Er bestaat nog geen conversatie. Vraag eerst een begeleider aan.";
@@ -212,7 +218,7 @@ export default async function beheerderFeedback() {
         });
     }
 
-    const learningRouteLink = fragment.querySelector('.learning-route-link');
+    const learningRouteLink = fragment.querySelector('#learning-route-link');
     if (learningRouteLink) {
         learningRouteLink.addEventListener('click', (e) => {
             e.preventDefault();
@@ -221,6 +227,15 @@ export default async function beheerderFeedback() {
             window.location.hash = "#beheerder-learning-route";
         });
     }
+
+    const gobackLink = fragment.querySelector('#go-back-link');
+    if (gobackLink) {
+        gobackLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.hash = "#Dashboard";
+        });
+    }
+
 
     return { fragment };
 }
@@ -252,3 +267,4 @@ function formatDateTime(dateString) {
     const minutes = pad(date.getMinutes());
     return `${day}-${month}-${year} ${hours}:${minutes}`;
 }
+

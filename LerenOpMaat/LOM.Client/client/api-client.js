@@ -42,6 +42,38 @@ export async function getUserData() {
   }
 }
 
+export async function getStudent(id) {
+  const res = await fetch(`${API_BASE}/account/getstudent/${id}`, {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      "Accept": "application/json"
+    }
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch student: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function getAllRoles() {
+  try {
+    const res = await fetch(`${API_BASE}/account/roles`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const roles = await res.json();
+    return roles;
+  } catch {
+    return null;
+  }
+}
+
+
 
 export async function getModules(q) {
   const res = await fetch(`${API_BASE}/Module?q=${q || ''}`, {
@@ -480,6 +512,25 @@ export async function updateSemester(learningRouteId, semesterData) {
     return { message: "Semesters updated successfully (geen JSON)" }; // Standaardwaarde
   }
 }
+
+
+export async function updateLockedSemester(semesterData) {
+  const res = await fetch(`${API_BASE}/Semester/updatedlockedsemester`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(semesterData),
+    credentials: "include"
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to change locked status semester: ${res.status}`);
+  }
+
+  return true;
+}
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 export async function getConversationByUserId(userId) {
@@ -707,4 +758,26 @@ export async function markNotificationsAsRead(body) {
   if (!res.ok) {
     throw new Error(`Failed to mark notifications as read: ${res.status}`);
   }
+}
+
+export async function getModulesEngagement(year = null) {
+  let url = `${API_BASE}/Module/reporting/modules-engagement`;
+  if (year !== null) {
+    url += `?year=${year}`;
+  }
+  const response = await fetch(url, {
+    method: "GET",
+    credentials: "include"
+  });
+  if (!response.ok) throw new Error("Failed to fetch modules engagement");
+  return await response.json();
+}
+
+export async function getAvailableYears() {
+  const response = await fetch(`${API_BASE}/Module/reporting/available-years`, {
+    method: "GET",
+    credentials: "include"
+  });
+  if (!response.ok) throw new Error("Failed to fetch available years");
+  return await response.json();
 }

@@ -61,7 +61,7 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
                 Type = ModulePreconditionType.RequiredEcFromPropedeuse,
                 Value = "20"
             });
-            
+
 
 
             context.ModuleProgresses.AddRange(
@@ -366,8 +366,8 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
             Assert.NotNull(success);
             Assert.True(success.IsValid);
         }
-        
-                [Fact]
+
+        [Fact]
         [Description("Should fail when there are not enough ECs in the learning route")]
         public void ValidateLearningRoute_NotEoughEcsFromPropedeuse()
         {
@@ -402,6 +402,54 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
             Assert.NotNull(error);
             Assert.False(error.IsValid);
         }
+
+        // [Fact]
+        // public async Task ValidateRoute_WithValidAndInvalidModules_ReturnsExpectedValidationResults()
+        // {
+        //     // Arrange
+        //     var options = new DbContextOptionsBuilder<LOMContext>()
+        //         .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+        //         .Options;
+
+        //     using var context = new LOMContext(options);
+
+        //     var user = new User { Id = 1, FirstName = "Jarno" };
+        //     context.User.Add(user);
+
+        //     var requiredModule = new Module { Id = 10, Name = "Intro to Programming", Code = "IP101", Level = 1 };
+        //     context.Modules.Add(requiredModule);
+
+        //     var dependentModule = new Module
+        //     {
+        //         Id = 20,
+        //         Name = "Advanced Programming",
+        //         Code = "AP201",
+        //         Level = 2,
+        //         Requirements = new List<ModuleRequirement>
+        // {
+        //     new ModuleRequirement { Type = ModulePreconditionType.RequiredModule, Value = requiredModule.Id.ToString() }
+        // }
+        //     };
+        //     context.Modules.Add(dependentModule);
+        //     await context.SaveChangesAsync();
+
+        //     // Create Semesters
+        //     var semesters = new List<Semester>
+        //     {
+        //         new Semester { Period = 1, ModuleId = dependentModule.Id, Module = dependentModule }
+        //     };
+
+        //     // Build Controller
+        //     var controller = new LearningRouteController(context);
+
+        //     // Act
+        //     var result = await controller.ValidateRoute(semesters);
+        //     var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        //     var validationResults = Assert.IsAssignableFrom<ICollection<IValidationResult>>(okResult.Value);
+
+        //     // Assert
+        //     Assert.Contains(validationResults, r => !r.IsValid && r.Message.Contains("moet eerst worden gevolgd"));
+        // }
 
 
 

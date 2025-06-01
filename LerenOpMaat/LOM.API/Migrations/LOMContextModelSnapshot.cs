@@ -1088,6 +1088,9 @@ namespace LOM.API.Migrations
                     b.Property<int>("LearningRouteId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Locked")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<int?>("ModuleId")
                         .HasColumnType("int");
 
@@ -1110,6 +1113,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 1,
                             Period = (byte)1,
                             Year = 1
@@ -1118,6 +1122,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 2,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 2,
                             Period = (byte)2,
                             Year = 1
@@ -1126,6 +1131,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 3,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 3,
                             Period = (byte)1,
                             Year = 2
@@ -1134,6 +1140,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 4,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 4,
                             Period = (byte)2,
                             Year = 2
@@ -1142,6 +1149,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 5,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 5,
                             Period = (byte)1,
                             Year = 3
@@ -1150,6 +1158,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 6,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 6,
                             Period = (byte)2,
                             Year = 3
@@ -1158,6 +1167,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 7,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 7,
                             Period = (byte)1,
                             Year = 4
@@ -1166,6 +1176,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 8,
                             LearningRouteId = 1,
+                            Locked = false,
                             ModuleId = 8,
                             Period = (byte)2,
                             Year = 4
@@ -1212,7 +1223,7 @@ namespace LOM.API.Migrations
                         {
                             Id = 1,
                             ExternalID = "TEST123",
-                            FirstName = "Jhon",
+                            FirstName = "John",
                             LastName = "Doe",
                             LearningRouteId = 1,
                             RoleId = 2,
