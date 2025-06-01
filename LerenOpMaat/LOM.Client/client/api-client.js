@@ -3,7 +3,7 @@ const API_BASE = `${BASE}/api`;
 
 export function getLoginUrl() {
   const returnUrl = encodeURIComponent(window.location.href);
-  
+
   return `${BASE}/authenticate?returnUrl=${returnUrl}`;
 }
 
@@ -762,11 +762,20 @@ export async function markNotificationsAsRead(body) {
   }
 }
 
-export async function getModulesEngagement(year = null) {
+export async function getModulesEngagement(year = null, profile = null) {
   let url = `${API_BASE}/Module/reporting/modules-engagement`;
+  const params = [];
+
   if (year !== null) {
-    url += `?year=${year}`;
+    params.push(`year=${encodeURIComponent(year)}`);
   }
+  if (profile !== null) {
+    params.push(`profileId=${encodeURIComponent(profile)}`);
+  }
+  if (params.length > 0) {
+    url += `?${params.join("&")}`;
+  }
+
   const response = await fetch(url, {
     method: "GET",
     credentials: "include"

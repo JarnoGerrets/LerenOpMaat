@@ -2,7 +2,7 @@ import { reportServices } from "../scripts/utils/importServiceProvider.js";
 
 
 export default async function report(services = reportServices) {
-    const { getModulesEngagement, getAvailableYears, Chart } = services;
+    const { getProfiles, getModulesEngagement, getAvailableYears, Chart } = services;
     let showingChart = false;
     const response = await fetch('./templates/report.html');
     const html = await response.text();
@@ -18,6 +18,7 @@ export default async function report(services = reportServices) {
 
     const tableBody = fragment.querySelector("#modules-engagement-body");
     const yearSelect = fragment.querySelector("#year-select");
+    const profileSelect = fragment.querySelector("#profile-select");
     const canvas = fragment.querySelector("#chart-canvas");
     const chartButton = fragment.querySelector("#show-chart-button");
     chartButton.textContent = "Laat grafiek zien";
@@ -26,10 +27,33 @@ export default async function report(services = reportServices) {
     let chartInstance = null;
 
     await initializeYears();
+    await initializeProfiles();
+
+    profileSelect.addEventListener("change", () => {
+        const year = yearSelect.value ? parseInt(yearSelect.value) : null;
+        const profile = profileSelect.value || null;
+        loadData(year, profile);
+    });
+
     yearSelect.addEventListener("change", () => {
         const year = yearSelect.value ? parseInt(yearSelect.value) : null;
-        loadData(year);
+        const profile = profileSelect.value || null;
+        loadData(year, profile);
     });
+
+    async function initializeProfiles() {
+        try {
+            const profiles = await getProfiles();
+            profiles.forEach(profile => {
+                const option = document.createElement("option");
+                option.value = profile.Id;
+                option.textContent = profile.Name;
+                profileSelect.appendChild(option);
+            });
+        } catch (err) {
+            console.error("Fout bij ophalen profielen:", err);
+        }
+    }
 
     const table = fragment.querySelector("table");
     chartButton.addEventListener("click", () => {
@@ -66,10 +90,10 @@ export default async function report(services = reportServices) {
         }
     }
 
-    async function loadData(year) {
+    async function loadData(year, profile) {
         tableBody.innerHTML = `<tr><td colspan="4">Laden...</td></tr>`;
         try {
-            const data = await getModulesEngagement(year);
+            const data = await getModulesEngagement(year, profile);
             latestData = data;
 
             if (data.length === 0) {
