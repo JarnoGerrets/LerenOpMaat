@@ -152,14 +152,15 @@ export default async function report(services = reportServices) {
                         title: {
                             display: true,
                             text: 'Percentage gekozen (→)',
-                            font: { size: 14 }
+                            font: { size: 14, weight: 'bold' }
                         }
                     },
                     x: {
                         title: {
                             display: true,
                             text: 'Module codes (→)',
-                            font: { size: 14 }
+                            font: { size: 14, weight: 'bold' }
+
                         }
                     }
                 }
