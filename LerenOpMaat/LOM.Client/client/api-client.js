@@ -497,7 +497,7 @@ export async function updateSemester(learningRouteId, semesterData) {
       "Accept": "application/json"
     },
     credentials: "include",
-    body: JSON.stringify(semesterData) // Verstuur de array van semesters
+    body: JSON.stringify(semesterData)
   });
 
   if (!res.ok) {

@@ -79,35 +79,32 @@ namespace LOM.API.Controllers
 
         // POST: api/learningRoutes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<LearningRoute>> PostlearningRoute([FromBody] LearningRoute learningRoute)
         {
-
             if (learningRoute == null)
-            {
                 return BadRequest("Learning route cannot be null.");
 
-            }
-
-            // Validate the user exists
             var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Id == learningRoute.UserId);
-
             if (existingUser == null)
-            {
                 return BadRequest("User does not exist.");
-            }
+
+            // VALIDATE before saving
+            var validationResults = await ValidateSemesters(learningRoute.Semesters.ToList(), learningRoute.UserId);
+            if (validationResults.Any())
+                return BadRequest(validationResults);
 
             learningRoute.User = existingUser;
-
             _context.LearningRoutes.Add(learningRoute);
             await _context.SaveChangesAsync();
 
-            // Update the user's LearningRouteId after the LearningRoute is saved (so the Id is generated)
             existingUser.LearningRouteId = learningRoute.Id;
             await _context.SaveChangesAsync();
 
             return Ok();
         }
+
 
         // DELETE: api/learningRoutes/5
         [HttpDelete("{id}")]
@@ -207,5 +204,27 @@ namespace LOM.API.Controllers
         {
             return _context.LearningRoutes.Any(e => e.Id == id);
         }
+
+        private async Task<ICollection<IValidationResult>> ValidateSemesters(List<Semester> semesters, int userId)
+        {
+            foreach (var semester in semesters)
+            {
+                if (semester.ModuleId.HasValue)
+                {
+                    var module = await _context.Modules
+                        .Include(m => m.Requirements)
+                        .FirstOrDefaultAsync(m => m.Id == semester.ModuleId);
+                    if (module != null)
+                    {
+                        semester.Module = module;
+                    }
+                }
+            }
+
+            var validator = new LearningRouteValidator(_context, userId);
+            var results = validator.ValidateLearningRoute(semesters);
+            return results;
+        }
+
     }
 }

@@ -9,6 +9,8 @@ using LOM.API.DAL;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using LOM.API.DTO;
+using LOM.API.Validator;
+using LOM.API.Validator.ValidationResults;
 
 namespace LOM.API.Controllers
 {
@@ -164,5 +166,27 @@ namespace LOM.API.Controllers
         {
             return _context.Semesters.Any(e => e.Id == id);
         }
+
+        private async Task<ICollection<IValidationResult>> ValidateSemesters(List<Semester> semesters, int userId)
+        {
+            foreach (var semester in semesters)
+            {
+                if (semester.ModuleId.HasValue)
+                {
+                    var module = await _context.Modules
+                        .Include(m => m.Requirements)
+                        .FirstOrDefaultAsync(m => m.Id == semester.ModuleId);
+                    if (module != null)
+                    {
+                        semester.Module = module;
+                    }
+                }
+            }
+
+            var validator = new LearningRouteValidator(_context, userId);
+            var results = validator.ValidateLearningRoute(semesters);
+            return results;
+        }
+
     }
 }

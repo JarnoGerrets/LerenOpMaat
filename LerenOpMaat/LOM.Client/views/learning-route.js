@@ -4,7 +4,8 @@ import {
     updateSemester,
     postConversation,
     getConversationByUserId,
-    deleteRoute
+    deleteRoute,
+    validateRoute
 } from "../client/api-client.js"
 
 import { learningRouteArray } from "../components/semester-pair.js";
@@ -14,7 +15,7 @@ import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
 import SemesterPair from "../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-popup.js";
 import AddIconButton from "../components/add-icon-button.js";
-
+import { handleValidationResult } from "../scripts/utils/semester-card-utils/validations.js";
 
 let apiResponse = [];
 export default async function LearningRoute() {
@@ -140,7 +141,7 @@ export default async function LearningRoute() {
                         await updateLearningRoute(routeId, learningRouteArray);
                         showToast("Leerroute opgeslagen", "success");
                     } catch (error) {
-                        showToast("Fout bij het opslaan van de leerroute", "error");
+                        showToast("111Fout bij het opslaan van de leerroute", "error");
                     }
                 } else {
                     try {
@@ -322,14 +323,17 @@ async function saveLearningRoute(learningRouteArray) {
                 ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
             }))
         };
+
         const result = await postLearningRoute(jsonData);
-        sessionStorage.setItem("postReloadToast", JSON.stringify({
-            message: "Leerroute opgeslagen",
-            type: "success"
-        }));
+        handleValidationResult(result);
         if (!result) {
             showToast("Fout bij het opslaan van de leerroute", "error");
             throw new Error("De server gaf geen geldige respons terug bij het aanmaken van de leerroute.");
+        } else {
+            sessionStorage.setItem("postReloadToast", JSON.stringify({
+                message: "Leerroute opgeslagen",
+                type: "success"
+            }));
         }
         location.reload();
     } else {
@@ -339,19 +343,26 @@ async function saveLearningRoute(learningRouteArray) {
 };
 
 async function updateLearningRoute(routeId, semesterData) {
+    const user = apiResponse?.User;
     if (!routeId) {
         console.error("Route ID is niet beschikbaar!");
         return;
     }
-    const body = semesterData.map(item => ({
-        Year: item.Year,
-        Period: item.Period,
-        ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
-    }));
+    const body = {
+        Id: routeId,
+        UserId: user.Id,
+        Semesters: semesterData.map(item => ({
+            Year: item.Year,
+            Period: item.Period,
+            ModuleId: (item.moduleId === 200000 || item.moduleId === 300000) ? null : item.moduleId
+        }))
+    };
+
 
     try {
         const response = await updateSemester(routeId, body);
-
+        console.log(response);
+        handleValidationResult(response);
         if (!response) {
             showToast("Fout bij het opslaan van leerroute", "error");
             return;
