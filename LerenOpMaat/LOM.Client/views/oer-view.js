@@ -109,7 +109,7 @@ export default async function oerView(uploadOerPdf, getCurrentOerPdf) {
         try {
           showToast(`Uploading...`, 'success');
           await uploadOerPdf(file);
-          showToast(`${file} Upload succesvol!`, 'success');
+          showToast(`Upload succesvol!`, 'success');
 
           const newBlob = await getCurrentOerPdf();
           const newUrl = URL.createObjectURL(newBlob);

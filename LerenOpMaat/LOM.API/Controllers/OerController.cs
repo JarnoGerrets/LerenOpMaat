@@ -23,18 +23,14 @@ namespace LOM.API.Controllers
         }
 
         [Authorize(Roles = "Administrator")]
-        [HttpPost("upload")]
+        [HttpPut("upload")]
         public async Task<IActionResult> UploadOer(IFormFile file)
         {
             if (file == null || file.Length == 0)
-            {
                 return BadRequest("Geen bestand geüpload.");
-            }
 
             if (file.ContentType != "application/pdf" || Path.GetExtension(file.FileName).ToLower() != ".pdf")
-            {
                 return BadRequest("Alleen PDF-bestanden zijn toegestaan.");
-            }
 
             byte[] fileBytes;
             using (var ms = new MemoryStream())
@@ -43,36 +39,37 @@ namespace LOM.API.Controllers
                 fileBytes = ms.ToArray();
             }
 
-            var base64String = Convert.ToBase64String(fileBytes);
+            var oer = await _context.Oers.FindAsync(1);
 
-            var oer = new Oer
+            if (oer == null)
             {
-                Base64PDF = base64String,
-                UploadDate = DateTime.UtcNow
-            };
+                oer = new Oer { Id = 1 };
+                _context.Oers.Add(oer);
+            }
 
-            _context.Oers.Add(oer);
+            oer.Base64PDF = Convert.ToBase64String(fileBytes);
+            oer.UploadDate = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
 
             return Ok(new { id = oer.Id });
         }
 
 
+
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrentOer()
         {
-            var latest = await _context.Oers
-                .OrderByDescending(o => o.UploadDate)
-                .FirstOrDefaultAsync();
+            var oer = await _context.Oers.FindAsync(1);
 
-            if (latest == null)
-            {
+            if (oer == null)
                 return NotFound("Geen OER gevonden.");
-            }
-            var fileBytes = Convert.FromBase64String(latest.Base64PDF);
+
+            var fileBytes = Convert.FromBase64String(oer.Base64PDF);
             var stream = new MemoryStream(fileBytes);
 
             return File(stream, "application/pdf", enableRangeProcessing: true);
         }
+
     }
 }
