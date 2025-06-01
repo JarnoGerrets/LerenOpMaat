@@ -10,7 +10,7 @@ import beheerderFeedback from './views/beheerder-feedback.js';
 import administratorLearningRoute from './views/beheerder-learning-route.js';
 import { uploadOerPdf, getCurrentOerPdf, setStartYear, getStartYear } from "./client/api-client.js";
 import report from './views/report.js';
-let userData = await window.userData;
+let userData;
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
@@ -94,6 +94,7 @@ const router = async () => {
   const path = window.location.hash;
   const app = document.getElementById("app");
   app.innerHTML = "";
+  userData = await window.userData;
 
   // Speciaal afhandelen voor beheerder-feedback met parameters
   if (path.startsWith("#beheerder-feedback")) {
@@ -127,13 +128,23 @@ const router = async () => {
 window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", () => {
+  const storedToast = sessionStorage.getItem("postReloadToast");
+  if (storedToast) {
+    try {
+      const { message, type } = JSON.parse(storedToast);
+      showToast(message, type);
+    } catch (e) {
+      console.error("Failed to parse postReloadToast:", e);
+    }
+    sessionStorage.removeItem("postReloadToast");
+  }
   document.body.addEventListener("click", e => {
     if (e.target.matches("[data-link]")) {
       e.preventDefault();
       navigateTo(e.target.href);
     }
   });
-
+  window.addEventListener("popstate", router);
   router();
 });
 // dont ask me why... but somehow adding this second copy of the exact statement as above it will correctly reload on login

@@ -84,6 +84,7 @@ export const moduleActionsServices = Object.freeze({
 });
 
 export const reportServices = Object.freeze({
+    getProfiles: baseServices.getProfiles,
     getModulesEngagement: baseServices.getModulesEngagement,
     getAvailableYears:  baseServices.getAvailableYears,
     Chart: window.Chart

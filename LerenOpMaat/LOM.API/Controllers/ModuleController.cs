@@ -380,9 +380,14 @@ namespace LOM.API.Controllers
 
 		[Authorize(Roles = "Administrator")]
 		[HttpGet("reporting/modules-engagement")]
-		public async Task<IActionResult> GetModulesEngagement(int? year = null)
+		public async Task<IActionResult> GetModulesEngagement(int? year = null, int? profileId = null)
 		{
-			var assignedCounts = await _context.Modules
+			var modules = _context.Modules.AsQueryable();
+
+			if (profileId != null)
+				modules = modules.Where(m => m.GraduateProfileId == profileId);
+
+			var assignedCounts = await modules
 				.Select(m => new
 				{
 					ModuleCode = m.Code,
@@ -393,7 +398,6 @@ namespace LOM.API.Controllers
 				})
 				.ToListAsync();
 
-			// totaal aantal keren dat modules gekozen zijn
 			int totalAssigned = assignedCounts.Sum(m => m.AssignedCount);
 
 			var result = assignedCounts
