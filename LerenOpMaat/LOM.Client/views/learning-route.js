@@ -135,7 +135,6 @@ export default async function LearningRoute() {
         if (saveButton) {
             saveButton.addEventListener("click", async () => {
                 JSON.stringify(learningRouteArray, null, 2);
-                console.log(routeId);
                 if (routeId !== null) {
                     try {
                         await updateLearningRoute(routeId, learningRouteArray);
