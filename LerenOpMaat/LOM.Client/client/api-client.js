@@ -467,7 +467,7 @@ export async function postLearningRoute(learningRoute) {
     throw new Error(`Failed to post learning route: ${res.status}`);
   }
 
-  return true;
+  return await res.json();
 }
 
 export async function deleteRoute(learningRouteId) {
@@ -497,7 +497,7 @@ export async function updateSemester(learningRouteId, semesterData) {
       "Accept": "application/json"
     },
     credentials: "include",
-    body: JSON.stringify(semesterData) // Verstuur de array van semesters
+    body: JSON.stringify(semesterData)
   });
 
   if (!res.ok) {
@@ -510,8 +510,7 @@ export async function updateSemester(learningRouteId, semesterData) {
   if (res.headers.get("Content-Type")?.includes("application/json")) {
     return await res.json();
   } else {
-    console.warn("Response bevat geen JSON, retourneer een standaardwaarde.");
-    return { message: "Semesters updated successfully (geen JSON)" }; // Standaardwaarde
+    return { message: "Semesters updated successfully (geen JSON)" };
   }
 }
 

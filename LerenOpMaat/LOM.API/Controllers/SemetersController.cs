@@ -9,6 +9,8 @@ using LOM.API.DAL;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using LOM.API.DTO;
+using LOM.API.Validator;
+using LOM.API.Validator.ValidationResults;
 
 namespace LOM.API.Controllers
 {
@@ -105,43 +107,37 @@ namespace LOM.API.Controllers
 
         //Speciaal update semester call
         [HttpPut("/api/[controller]/updateSemesters/{learningRouteId}")]
-        public async Task<IActionResult> UpdateSemesters(int learningRouteId, [FromBody] List<Semester> semesters)
+        public async Task<IActionResult> UpdateSemesters(int learningRouteId, [FromBody] UpdateSemestersDto dto)
         {
             var learningRoute = await _context.LearningRoutes
                 .Include(lr => lr.Semesters)
                 .FirstOrDefaultAsync(lr => lr.Id == learningRouteId);
 
             if (learningRoute == null)
-            {
                 return NotFound($"No learningRoute found for Id: {learningRouteId}");
-            }
 
-            foreach (var semester in semesters)
+            foreach (var semester in dto.Semesters)
             {
-                // Zoek het semester obv de Year, senester en learningRouteId
                 var semesterToUpdate = await _context.Semesters
                     .FirstOrDefaultAsync(s => s.Year == semester.Year && s.Period == semester.Period && s.LearningRouteId == learningRouteId);
 
                 if (semesterToUpdate == null)
-                {
-                    return NotFound($"No semester found with Id: {semester.Id} for learningRouteId: {learningRouteId}");
-                }
+                    return NotFound($"No semester found for Year {semester.Year} Period {semester.Period} for learningRouteId: {learningRouteId}");
 
                 semesterToUpdate.Year = semester.Year;
                 semesterToUpdate.Period = semester.Period;
                 semesterToUpdate.ModuleId = semester.ModuleId;
             }
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the semesters.");
-            }
 
-            return Ok(learningRoute);
+            var validationResults = await ValidateSemesters(dto.Semesters, dto.UserId);
+
+            if (validationResults.Any(r => !r.IsValid))
+                return Ok(validationResults);
+
+            await _context.SaveChangesAsync();
+            return Ok();
         }
+
 
         [Authorize(Roles = "Teacher, Administrator")]
         [HttpPatch("updatedlockedsemester")]
@@ -164,5 +160,27 @@ namespace LOM.API.Controllers
         {
             return _context.Semesters.Any(e => e.Id == id);
         }
+
+        private async Task<ICollection<IValidationResult>> ValidateSemesters(List<Semester> semesters, int userId)
+        {
+            foreach (var semester in semesters)
+            {
+                if (semester.ModuleId.HasValue)
+                {
+                    var module = await _context.Modules
+                        .Include(m => m.Requirements)
+                        .FirstOrDefaultAsync(m => m.Id == semester.ModuleId);
+                    if (module != null)
+                    {
+                        semester.Module = module;
+                    }
+                }
+            }
+
+            var validator = new LearningRouteValidator(_context, userId);
+            var results = validator.ValidateLearningRoute(semesters);
+            return results;
+        }
+
     }
 }

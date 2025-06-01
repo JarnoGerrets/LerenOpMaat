@@ -156,6 +156,12 @@ export default async function administratorLearningRoute() {
             icon.classList.add("bi-unlock-fill");
         }
     }
+
+    fragment.querySelectorAll('#select-module').forEach(button => {
+        if (button.textContent.trim() === "Selecteer je module") {
+            button.classList.add("locked");
+        }
+    });
     return { fragment };
 }
 

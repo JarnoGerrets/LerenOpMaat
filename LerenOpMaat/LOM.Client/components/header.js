@@ -199,7 +199,7 @@ export default class Header extends HTMLElement {
 customElements.define("lom-header", Header);
 
 const roleTranslations = {
-  "Administrator": "Beheerder",
+  "Administrator": "Administrator",
   "Teacher": "Docent",
   "Student": "Student",
   "Developer": "Ontwikkelaar"

@@ -383,7 +383,7 @@ namespace LOM.API.Controllers
 		public async Task<IActionResult> GetModulesEngagement(int? year = null, int? profileId = null)
 		{
 			var modules = _context.Modules.AsQueryable();
-
+			
 			if (profileId != null)
 				modules = modules.Where(m => m.GraduateProfileId == profileId);
 
