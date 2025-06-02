@@ -1,18 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using LOM.API.DAL;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace LOM.API.Tests.TestHelpers
 {
 	public static class DbContextHelper
 	{
-		public static Mock<DbSet<T>> CreateMockDbSet<T>(IQueryable<T> data) where T : class
+		public static LOMContext GetInMemoryContext()
 		{
-			var mockSet = new Mock<DbSet<T>>();
-			mockSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(data.Provider);
-			mockSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(data.Expression);
-			mockSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(data.ElementType);
-			mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
-			return mockSet;
+			var options = new DbContextOptionsBuilder<LOMContext>()
+				.UseInMemoryDatabase(databaseName: System.Guid.NewGuid().ToString())
+				.Options;
+
+			return new LOMContext(options);
 		}
+
 	}
 }

@@ -4,7 +4,6 @@ using LOM.API.DAL;
 using LOM.API.Models;
 using LOM.API.DTO;
 using Microsoft.AspNetCore.Authorization;
-using System.Diagnostics;
 
 namespace LOM.API.Controllers
 {
@@ -117,13 +116,15 @@ namespace LOM.API.Controllers
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutModule(ModuleDto moduleDto)
 		{
-
 			var existingModule = await _context.Modules
 				.Include(m => m.Evls)
 				.FirstOrDefaultAsync(m => m.Id == moduleDto.Id);
 
 			if (existingModule == null)
 				return NotFound();
+
+			if (ModuleCodeExists(moduleDto.Code))
+				return Conflict(new { message = "Module code bestaat al." });
 
 			existingModule.Name = moduleDto.Name;
 			existingModule.Code = moduleDto.Code;
