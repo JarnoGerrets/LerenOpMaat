@@ -13,7 +13,7 @@ describe("initModuleInfo integration", () => {
     });
 
     it("renders module-card and requirements-card with correct data", async () => {
-        const { default: initModuleInfo } = await import("../../../scripts/initModuleInfo.js");
+        const { default: initModuleInfo } = await import("../../../scripts/utils/module-info-utils/initModuleInfo.js");
         const mockedModule = getMockModuleData();
         const mockedServices = getMockServices(mockedModule);
 
