@@ -115,12 +115,12 @@ namespace LOM.API.Controllers
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPut("{id}")]
-		public async Task<IActionResult> PutModule(int id, ModuleDto moduleDto)
+		public async Task<IActionResult> PutModule(ModuleDto moduleDto)
 		{
 
 			var existingModule = await _context.Modules
 				.Include(m => m.Evls)
-				.FirstOrDefaultAsync(m => m.Id == id);
+				.FirstOrDefaultAsync(m => m.Id == moduleDto.Id);
 
 			if (existingModule == null)
 				return NotFound();

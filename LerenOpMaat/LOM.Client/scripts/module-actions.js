@@ -318,6 +318,6 @@ async function saveChanges(module, textArea, services) {
     module.Description = textArea.value;
     module.GraduateProfile = module.GraduateProfile;
     module.Evls = evls;
-    const response = await updateModule(module.Id, module);
+    const response = await updateModule(module);
     showToast(`${module.Name} succesvol gewijzigd`, 'success');
 }
