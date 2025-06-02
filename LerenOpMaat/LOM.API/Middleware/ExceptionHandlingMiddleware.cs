@@ -19,7 +19,13 @@ public class ExceptionHandlingMiddleware
 		}
 		catch (Exception ex)
 		{
-			// TODO Log to sentry from here.
+			SentrySdk.CaptureException(ex, scope =>
+			{
+				scope.SetTag("endpoint", context.Request.Path);
+				scope.SetTag("method", context.Request.Method);
+				scope.SetExtra("query_string", context.Request.QueryString.ToString());
+				scope.SetExtra("headers", context.Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString()));
+			});
 
 			context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 			context.Response.ContentType = "application/json";

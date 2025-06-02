@@ -109,31 +109,6 @@ builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
 
-
-// Add Sentry exception handler first to catch all exceptions
-app.Use(async (context, next) =>
-{
-    try
-    {
-        await next();
-    }
-    catch (Exception ex)
-    {
-        // Capture the exception in Sentry
-        SentrySdk.CaptureException(ex, scope =>
-        {
-            scope.SetTag("endpoint", context.Request.Path);
-            scope.SetTag("method", context.Request.Method);
-            scope.SetExtra("query_string", context.Request.QueryString.ToString());
-            scope.SetExtra("headers", context.Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString()));
-        });
-
-        // Re-throw the exception to maintain the original behavior
-        throw;
-    }
-});
-
-
 // Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
