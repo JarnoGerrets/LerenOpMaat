@@ -263,7 +263,30 @@
     max-height: 500px;
 }
 
+
+.lock-checkmark {
+    position: absolute;
+    top: 20.5px;
+    right: 20px;
+    width: 30px;
+    height: 24px;
+    z-index: 20;
+}
+
+.lock-checkmark svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    fill: #28a745;
+}
+
 @media screen and (max-width: 1040px) {
+    .lock-checkmark {
+        top: 18px;
+        right: 28px;
+    }
+
+
     .semester-grid {
         gap: 2rem;
     }
@@ -356,33 +379,33 @@
     }
 }
 
-.locked{
+.locked {
     pointer-events: none;
 }
 
 .inactive-label-tag {
-  position: absolute;
-  bottom: -27px;
-  left: 40%;
-  transform: translateX(-50%);
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #942530;
-  padding: 6px 10px;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 0.85rem;
-  font-weight: 600;
-  width: 75%;
-  z-index: 6;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  display: block;
+    position: absolute;
+    bottom: -27px;
+    left: 40%;
+    transform: translateX(-50%);
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #942530;
+    padding: 6px 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    width: 75%;
+    z-index: 6;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: block;
 }
 
 .inactive-label-tag.hidden {
-  display: none;
+    display: none;
 }
 
-.checkbox-text{
+.checkbox-text {
     cursor: pointer;
 }

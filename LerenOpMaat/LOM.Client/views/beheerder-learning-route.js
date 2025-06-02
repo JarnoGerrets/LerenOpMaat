@@ -152,13 +152,16 @@ export default async function administratorLearningRoute() {
 
     function updateModuleLockState(cardElement, newLockState) {
         const button = cardElement.querySelector("#select-module");
+        const checkMark = cardElement.querySelector("#checked");
         button.setAttribute("data-locked", newLockState);
 
         const icon = button.querySelector("i");
         if (newLockState) {
+            checkMark.classList.remove("hidden");
             icon.classList.remove("bi-unlock-fill");
             icon.classList.add("bi-lock-fill");
         } else {
+            checkMark.classList.add("hidden");
             icon.classList.remove("bi-lock-fill");
             icon.classList.add("bi-unlock-fill");
         }

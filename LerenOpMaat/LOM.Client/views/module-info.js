@@ -1,5 +1,5 @@
 import initModuleInfo from "../scripts/utils/module-info-utils/initModuleInfo.js";
-import loadTemplate from "../scripts/utils/universal-utils.js";
+import { loadTemplate } from "../scripts/utils/universal-utils.js";
 
 export default async function ModuleInfo(id) {
     const template = await loadTemplate("/templates/module-info.html");
@@ -11,6 +11,6 @@ export default async function ModuleInfo(id) {
     while (tempDiv.firstChild) {
         fragment.appendChild(tempDiv.firstChild);
     }
-    
+
     return { fragment, init: () => initModuleInfo(id) };
 }
