@@ -29,7 +29,7 @@ namespace LOM.API.Tests.Controllers
 		//	var dto = new ModuleDto { Id = 2 };
 
 		//	// Act
-		//	var result = await _controller.PutModule(1, dto);
+		//	var result = await _controller.PutModule(dto);
 
 		//	// Assert
 		//	Assert.IsType<BadRequestResult>(result);
