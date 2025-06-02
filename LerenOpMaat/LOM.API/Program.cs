@@ -11,7 +11,23 @@ using LOM.API.Validator;
 using LOM.API.Validator.ValidationService;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Sentry first to catch every exception
+builder.WebHost.UseSentry((Action<Sentry.AspNetCore.SentryAspNetCoreOptions>)(options =>
+{
+    options.Dsn = builder.Configuration["Sentry:Dsn"];
+    options.TracesSampleRate = 1.0;
+    options.Environment = builder.Environment.EnvironmentName;
+    options.MinimumBreadcrumbLevel = LogLevel.Information;
+    options.MinimumEventLevel = LogLevel.Warning;
+    options.MaxBreadcrumbs = 100;
+    options.AttachStacktrace = true;
+    options.SendDefaultPii = true;
+    options.Debug = builder.Environment.IsDevelopment();
+}));
+
 IEnumerable<string>? initialScopes = builder.Configuration.GetSection("DownstreamApis:MicrosoftGraph:Scopes").Get<IEnumerable<string>>();
+
 
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, "AzureAd")
     .EnableTokenAcquisitionToCallDownstreamApi(initialScopes)
@@ -95,6 +111,31 @@ builder.Services.AddSession();
 builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
+
+
+// Add Sentry exception handler first to catch all exceptions
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        // Capture the exception in Sentry
+        SentrySdk.CaptureException(ex, scope =>
+        {
+            scope.SetTag("endpoint", context.Request.Path);
+            scope.SetTag("method", context.Request.Method);
+            scope.SetExtra("query_string", context.Request.QueryString.ToString());
+            scope.SetExtra("headers", context.Request.Headers.ToDictionary(h => h.Key, h => h.Value.ToString()));
+        });
+
+        // Re-throw the exception to maintain the original behavior
+        throw;
+    }
+});
+
 
 // Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
