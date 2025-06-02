@@ -179,7 +179,7 @@ header {
 .notification-dropdown {
   position: absolute;
   top: 95%;
-  right: -155px;
+  right: -157px;
   background: white;
   border: none;
   border-radius: 6px;
@@ -204,13 +204,13 @@ header {
 
 .notification-arrow {
   position: absolute;
-  top: -18px;
+  top: -16px;
   left: 17.225px;
   width: 0;
   height: 0;
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
-  border-bottom: 18px solid #FFCB05;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 16px solid #FFCB05;
 }
 
 
@@ -218,12 +218,12 @@ header {
   content: '';
   position: absolute;
   top: 0;
-  left: -17.225px;
+  left: -16px;
   width: 0;
   height: 0;
-  border-left: 18px solid transparent;
-  border-right: 18px solid transparent;
-  border-bottom: 18px solid rgba(0, 0, 0, 0.3);
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 16px solid rgba(0, 0, 0, 0.3);
   filter: blur(2px);
   z-index: -1;
 }
@@ -308,18 +308,25 @@ header {
 @media (min-width: 768px) {
 
   .notification-dropdown {
-    top: 90%;
-    right: -180px;
+    top: 85%;
+    right: -300.2px;
+    min-width: 350px;
   }
 
   .notification-arrow {
-    top: -18px;
-    left: 17.225px;
+    top: -16px;
+    left: 19.225px;
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-bottom: 16px solid #FFCB05;
   }
 
   .notification-arrow::before {
     top: 0;
-    left: -17.225px;
+    left: -16px;
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-bottom: 16px solid rgba(0, 0, 0, 0.3);
   }
 
   .simulated-role-toggle {
