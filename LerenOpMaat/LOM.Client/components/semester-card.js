@@ -27,12 +27,12 @@ export default async function SemesterCard({ semester, module, locked = false, i
   template.innerHTML = `
     <div class="semester-card-container">
       <div class="semester-card">
-        <h3>Semester ${semester.Period}</h3>
-        <button id="select-module" class="semester-button btn btn-light border ${!canEdit ? 'locked' : ''}" style="${!isActive ? 'color: red;' : ''}" data-locked="${locked}">
+        <h3 style="color: ${locked ? 'gray' : 'black'}">Semester ${semester.Period}</h3>
+        <button id="select-module" class="semester-button btn btn-light border ${!canEdit ? 'locked' : ''}" data-locked="${locked}">
           ${module}
           <i class="ms-1 bi ${!isActive || locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i> 
         </button>
-        <span id="coursePoints-${moduleId || ""}" class="text-start d-block course-points-link"></span>
+        <span id="coursePoints-${moduleId || ""}" class="text-start d-block course-points-link" style="color: ${locked ? 'gray' : 'black'}"></span>
         <div class="exclamation-icon" data-bs-toggle="tooltip" data-bs-custom-class="tool-tip-style" title="">
           <i class="bi bi-exclamation-triangle-fill"></i>
         </div>
@@ -48,10 +48,15 @@ export default async function SemesterCard({ semester, module, locked = false, i
       </div>
     </div>
   `;
+
   const fragment = template.content.cloneNode(true);
   const cardElement = fragment.querySelector(".semester-card");
   const button = fragment.querySelector("#select-module");
-  
+  if (locked) {
+    button.classList.add("locked");
+  } else {
+    button.classList.remove("locked");
+  }
   let coursePoints = fragment.querySelector(`#coursePoints-${moduleId || ''}`);
 
   const debouncedModuleSelection = debounce((params) => handleModuleSelection({ ...params, services }), 500);

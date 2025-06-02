@@ -73,6 +73,13 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
     ${selectedModule ? selectedModule.Name : 'Selecteer je module'}
     <i class="bi ${!isActive || locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i>
   `
+  if (!isActive) {
+    button.style.color = 'red';
+  } else if (locked) {
+    button.style.color = 'gray';
+  } else {
+    button.style.color = 'black';
+  }
   const card = button.closest('.semester-card');
   const evlWrapper = card.parentElement.querySelector(".evl-list-wrapper");
   const evlList = evlWrapper.querySelector(".evl-list");
