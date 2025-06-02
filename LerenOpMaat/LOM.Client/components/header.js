@@ -100,82 +100,84 @@ export default class Header extends HTMLElement {
   }
 
 
-  async initializeNotifications() {
-    const bell = this.querySelector("#notification-bell");
-    const dropdown = this.querySelector("#notification-dropdown");
-    const badge = this.querySelector("#notificationAmount");
+async initializeNotifications() {
+  const bell = this.querySelector("#notification-bell");
+  const dropdown = this.querySelector("#notification-dropdown");
+  const badge = this.querySelector("#notificationAmount");
+  const itemsContainer = this.querySelector(".notification-items");
 
-    const _userData = await userData;
-    if (!_userData) return;
-    const currentUserId = _userData.InternalId;
+  const _userData = await userData;
+  if (!_userData) return;
+  const currentUserId = _userData.InternalId;
 
-    const notifications = await getNotificationsByUserId(_userData.InternalId);
+  const notifications = await getNotificationsByUserId(_userData.InternalId);
 
-    const grouped = {};
-    notifications.forEach(msg => {
-      const conversationId = msg.Conversation.Id;
+  const grouped = {};
+  notifications.forEach(msg => {
+    const conversationId = msg.Conversation.Id;
 
-      let otherUser = null;
-      if (msg.Conversation.Student?.id !== currentUserId) {
-        otherUser = msg.Conversation.Student;
-      } else {
-        otherUser = msg.Conversation.Teacher;
-      }
-
-      const otherUserName = `${otherUser?.FirstName} ${otherUser?.LastName}` || "Onbekend";
-
-      if (!grouped[conversationId]) {
-        grouped[conversationId] = {
-          count: 0,
-          otherUserName: otherUserName,
-          conversationId: conversationId,
-          userId: (msg.Conversation.Student?.Id === currentUserId ? msg.Conversation.Teacher?.Id : msg.Conversation.Student?.Id)
-        };
-      }
-      grouped[conversationId].count++;
-    });
-
-    const groups = Object.values(grouped);
-    const totalCount = groups.reduce((sum, group) => sum + group.count, 0);
-
-    if (totalCount > 0) {
-      badge.textContent = totalCount;
-      badge.classList.remove("hidden");
+    let otherUser = null;
+    if (msg.Conversation.Student?.id !== currentUserId) {
+      otherUser = msg.Conversation.Student;
     } else {
-      badge.classList.add("hidden");
+      otherUser = msg.Conversation.Teacher;
     }
 
-    dropdown.innerHTML = '';
+    const otherUserName = `${otherUser?.FirstName} ${otherUser?.LastName}` || "Onbekend";
 
-    if (groups.length === 0) {
-      dropdown.innerHTML = '<div class="notification-item">Geen nieuwe meldingen</div>';
-    } else {
-      groups.forEach(group => {
-        const item = document.createElement("div");
-        item.className = "notification-item";
+    if (!grouped[conversationId]) {
+      grouped[conversationId] = {
+        count: 0,
+        otherUserName: otherUserName,
+        conversationId: conversationId,
+        userId: (msg.Conversation.Student?.Id === currentUserId ? msg.Conversation.Teacher?.Id : msg.Conversation.Student?.Id)
+      };
+    }
+    grouped[conversationId].count++;
+  });
 
-        const messageWord = group.count === 1 ? "bericht" : "berichten";
-        item.textContent = `${group.count} ongelezen ${messageWord} in het gesprek met ${group.otherUserName}`;
+  const groups = Object.values(grouped);
+  const totalCount = groups.reduce((sum, group) => sum + group.count, 0);
 
-        item.addEventListener('click', async () => {
-          dropdown.classList.add("hidden");
-          sessionStorage.setItem('lom_conversationId', group.conversationId);
-          sessionStorage.setItem('lom_userId', group.userId);
-          window.location.hash = "#beheerder-feedback";
-          let body = {
-            UserId: currentUserId,
-            ConversationId: group.conversationId
-          }
-          await markNotificationsAsRead(body);
-          await this.initializeNotifications();
-        });
+  if (totalCount > 0) {
+    badge.textContent = totalCount;
+    badge.classList.remove("hidden");
+  } else {
+    badge.classList.add("hidden");
+  }
 
-        dropdown.appendChild(item);
+  // 🔧 Now only clear and update the items container:
+  itemsContainer.innerHTML = '';
+
+  if (groups.length === 0) {
+    itemsContainer.innerHTML = '<div class="notification-item">Geen nieuwe meldingen</div>';
+  } else {
+    groups.forEach(group => {
+      const item = document.createElement("div");
+      item.className = "notification-item";
+
+      const messageWord = group.count === 1 ? "bericht" : "berichten";
+      item.textContent = `${group.count} ongelezen ${messageWord} in het gesprek met ${group.otherUserName}`;
+
+      item.addEventListener('click', async () => {
+        dropdown.classList.add("hidden");
+        sessionStorage.setItem('lom_conversationId', group.conversationId);
+        sessionStorage.setItem('lom_userId', group.userId);
+        window.location.hash = "#beheerder-feedback";
+        let body = {
+          UserId: currentUserId,
+          ConversationId: group.conversationId
+        }
+        await markNotificationsAsRead(body);
+        await this.initializeNotifications();
       });
 
-
-    }
+      itemsContainer.appendChild(item);
+    });
   }
+}
+
+
   setupNotificationHandlers() {
     const bell = this.querySelector("#notification-bell");
     const dropdown = this.querySelector("#notification-dropdown");

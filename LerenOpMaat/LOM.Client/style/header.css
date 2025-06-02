@@ -172,25 +172,62 @@ header {
   font-weight: bold;
   line-height: .9;
   box-shadow: 0 0 0 2px white;
-  /* optioneel: wit randje voor betere leesbaarheid */
+  pointer-events: none;
+  user-select: none;
 }
 
 .notification-dropdown {
   position: absolute;
-  top: 100%;
-  right: 50;
+  top: 95%;
+  right: -155px;
   background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-top: 8px;
+  border: none;
+  border-radius: 6px;
+  margin-top: 20px;
   min-width: 200px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 12px 4px rgba(0, 0, 0, 0.15);
   z-index: 100;
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
+
+.notification-header {
+  background-color: #FFCB05;
+  padding: 4px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  font-weight: bold;
+  text-align: center;
+  position: relative;
+  height: 30px;
+  color: white;
+}
+
+.notification-arrow {
+  position: absolute;
+  top: -18px;
+  left: 17.225px;
+  width: 0;
+  height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-bottom: 18px solid #FFCB05;
+}
+
+
+.notification-arrow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -17.225px;
+  width: 0;
+  height: 0;
+  border-left: 18px solid transparent;
+  border-right: 18px solid transparent;
+  border-bottom: 18px solid rgba(0, 0, 0, 0.3);
+  filter: blur(2px);
+  z-index: -1;
+}
+
 
 .notification-item {
   padding: 10px;
@@ -208,11 +245,11 @@ header {
 }
 
 .notification-item:hover:first-child {
-  border-radius: 8px 8px 0 0;
+  border-radius: 0;
 }
 
 .notification-item:hover:last-child {
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 6px 6px;
 }
 
 .bi-chevron-left {
@@ -269,6 +306,22 @@ header {
 
 /* Desktop stijl (768px en breder) */
 @media (min-width: 768px) {
+
+  .notification-dropdown {
+    top: 90%;
+    right: -180px;
+  }
+
+  .notification-arrow {
+    top: -18px;
+    left: 17.225px;
+  }
+
+  .notification-arrow::before {
+    top: 0;
+    left: -17.225px;
+  }
+
   .simulated-role-toggle {
     display: block !important;
   }
