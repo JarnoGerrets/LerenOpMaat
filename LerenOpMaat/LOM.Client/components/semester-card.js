@@ -52,24 +52,27 @@ export default async function SemesterCard({ semester, module, locked = false, i
   const fragment = template.content.cloneNode(true);
   const cardElement = fragment.querySelector(".semester-card");
   const button = fragment.querySelector("#select-module");
+  let coursePoints = fragment.querySelector(`#coursePoints-${moduleId || ''}`);
+
+  // this will make sure button text and lock symbol appear gray for the enduser.
   if (locked) {
     button.classList.add("locked");
   } else {
     button.classList.remove("locked");
   }
-  let coursePoints = fragment.querySelector(`#coursePoints-${moduleId || ''}`);
 
   const debouncedModuleSelection = debounce((params) => handleModuleSelection({ ...params, services }), 500);
-
+  // prevent unnecessary event listeners in the DOM by validating status.
   if (!locked && button) {
     button.addEventListener("click", () => debouncedModuleSelection({
       button, coursePoints, semester, locked, onModuleChange, cardElement
     }));
   }
-
+  //updating the Id's to correspond the loaded module id's
   if (moduleId) cardElement.setAttribute("data-module-id", moduleId);
   if (semester.Id) cardElement.setAttribute("data-semester-id", semester.Id);
 
+  //current implementation has 2000000 and 3000000 as id's for dummy modules. in production this has to be amended and supplied with a solid structure from API.
   if (moduleId && moduleId !== 200000 && moduleId !== 300000) {
     const selectedModule = await getModule(moduleId);
     try {
@@ -99,9 +102,8 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
   } = services;
 
   const selectedModule = await SemesterChoice(button.textContent.trim());
-
   if (!selectedModule) return;
-
+  // returning UI to original empty state when no module is selected.
   if (selectedModule.Name === "Geen Keuze") {
     await clearSelection(cardElement, coursePoints, locked, semester, onModuleChange, services);
     return;

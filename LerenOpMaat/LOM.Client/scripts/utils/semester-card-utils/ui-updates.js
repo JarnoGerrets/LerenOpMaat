@@ -90,7 +90,6 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
   if (selectedModule?.Evls && loggedIn) {
     evlList.innerHTML = selectedModule.Evls.map(ev => {
       const isChecked = progress?.CompletedEvls?.some(completed => completed.ModuleEvl.Id === ev.Id);
-
       return `
         <label class="checkbox-wrapper-30">
           <span class="checkbox" style="margin-right: 15px;">
