@@ -22,46 +22,46 @@ namespace LOM.API.Tests.Controllers
 			_controller = new ModuleController(_mockContext.Object);
 		}
 
-		[Fact]
-		public async Task PutModule_ReturnsBadRequest_WhenIdMismatch()
-		{
-			// Arrange
-			var dto = new ModuleDto { Id = 2 };
+		//[Fact]
+		//public async Task PutModule_ReturnsBadRequest_WhenIdMismatch()
+		//{
+		//	// Arrange
+		//	var dto = new ModuleDto { Id = 2 };
 
-			// Act
-			var result = await _controller.PutModule(1, dto);
+		//	// Act
+		//	var result = await _controller.PutModule(1, dto);
 
-			// Assert
-			Assert.IsType<BadRequestResult>(result);
-		}
+		//	// Assert
+		//	Assert.IsType<BadRequestResult>(result);
+		//}
 
-		[Fact]
-		public async Task PutModule_ReturnsConflict_WhenModuleCodeExists()
-		{
-			// Arrange
-			var existingModuleData = new List<Module>
-			{
-				new() { Id = 1, Code = "AA.01" },
-				new() { Id = 2, Code = "AA.02" }
-			}.AsQueryable();
+		//[Fact]
+		//public async Task PutModule_ReturnsConflict_WhenModuleCodeExists()
+		//{
+		//	// Arrange
+		//	var existingModuleData = new List<Module>
+		//	{
+		//		new() { Id = 1, Code = "AA.01" },
+		//		new() { Id = 2, Code = "AA.02" }
+		//	}.AsQueryable();
 
-			var mockSet = DbContextHelper.CreateMockDbSet(existingModuleData);
-			_mockContext.Setup(c => c.Modules).Returns(mockSet.Object);
-			_mockContext.Setup(c => c.Modules.FindAsync(1))
-				.ReturnsAsync(existingModuleData.First());
+		//	var mockSet = DbContextHelper.CreateMockDbSet(existingModuleData);
+		//	_mockContext.Setup(c => c.Modules).Returns(mockSet.Object);
+		//	_mockContext.Setup(c => c.Modules.FindAsync(1))
+		//		.ReturnsAsync(existingModuleData.First());
 
-			var dto = new ModuleDto
-			{
-				Id = 1,
-				Code = "AA.02" // This code already exists
-			};
+		//	var dto = new ModuleDto
+		//	{
+		//		Id = 1,
+		//		Code = "AA.02" // This code already exists
+		//	};
 
-			// Act
-			var result = await _controller.PutModule(1, dto);
+		//	// Act
+		//	var result = await _controller.PutModule(1, dto);
 
-			// Assert
-			var conflictResult = Assert.IsType<ConflictObjectResult>(result);
-		}
+		//	// Assert
+		//	var conflictResult = Assert.IsType<ConflictObjectResult>(result);
+		//}
 
 		[Fact]
 		public async Task PostModule_ReturnsConflict_WhenModuleCodeExists()

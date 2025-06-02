@@ -29,7 +29,7 @@ namespace LOM.API.Tests.Controllers
             context.LearningRoutes.Add(route);
             await context.SaveChangesAsync();
 
-            var controller = new LearningRouteController(context);
+            var controller = new LearningRouteController(context, null);
 
             // Act
             var result = await controller.GetLearningRouteByUserId(1);
@@ -51,7 +51,7 @@ namespace LOM.API.Tests.Controllers
             context.User.Add(user);
             await context.SaveChangesAsync();
 
-            var controller = new LearningRouteController(context);
+            var controller = new LearningRouteController(context, null);
 
             // Act
             var result = await controller.GetLearningRouteByUserId(2);
