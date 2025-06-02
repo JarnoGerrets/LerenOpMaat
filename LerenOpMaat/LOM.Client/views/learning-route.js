@@ -11,7 +11,7 @@ import {
 import { learningRouteArray } from "../components/semester-pair.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
-
+import { debounce } from "../scripts/utils/universal-utils.js";
 import SemesterPair from "../components/semester-pair.js";
 import confirmationPopup from "./partials/confirmation-popup.js";
 import AddIconButton from "../components/add-icon-button.js";
@@ -134,7 +134,7 @@ export default async function LearningRoute() {
         //Als er nog geen route is gekoppeld aan de  gebruiker dan maakt hij een nieuwe route
         const saveButton = fragment.getElementById("saveLearningRoute");
         if (saveButton) {
-            saveButton.addEventListener("click", async () => {
+            const debouncedSave = debounce(async () => {
                 JSON.stringify(learningRouteArray, null, 2);
                 if (routeId !== null) {
                     try {
@@ -149,8 +149,10 @@ export default async function LearningRoute() {
                         showToast("Fout bij het opslaan van de leerroute", "error");
                     }
                 }
-            });
-        };
+            }, 500);
+
+            saveButton.addEventListener("click", debouncedSave);
+        }
 
         const exportButton = fragment.getElementById("exportLearningRoute");
         if (exportButton) {
@@ -326,7 +328,7 @@ async function saveLearningRoute(learningRouteArray) {
             if (result) {
                 if (Array.isArray(result)) {
                     handleValidationResult(result);
-                    console.log(result);
+                    showToast("Kan leerroute niet opslaan", "error");
                 } else {
                     showToast("Leerroute opgeslagen", "success");
                 }
@@ -370,6 +372,7 @@ async function updateLearningRoute(routeId, semesterData) {
         if (result) {
             if (Array.isArray(result)) {
                 handleValidationResult(result);
+                showToast("Kan leerroute niet opslaan", "error");
             } else {
                 showToast("Leerroute opgeslagen", "success");
             }

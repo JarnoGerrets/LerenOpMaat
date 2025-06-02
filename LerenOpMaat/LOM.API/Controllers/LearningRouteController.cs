@@ -19,10 +19,12 @@ namespace LOM.API.Controllers
     public class LearningRouteController : ControllerBase
     {
         private readonly LOMContext _context;
+        private readonly SemesterValidationService _validationService;
 
-        public LearningRouteController(LOMContext context)
+        public LearningRouteController(LOMContext context, SemesterValidationService validationService)
         {
             _context = context;
+            _validationService = validationService;
         }
 
         // GET: api/learningRoutes
@@ -90,7 +92,7 @@ namespace LOM.API.Controllers
             if (existingUser == null)
                 return BadRequest("User does not exist.");
 
-            var validationResults = await ValidateSemesters(learningRoute.Semesters.ToList(), learningRoute.UserId);
+            var validationResults = await _validationService.ValidateSemestersAsync(learningRoute.Semesters.ToList(), learningRoute.UserId);
 
             if (validationResults.Any(r => !r.IsValid))
                 return Ok(validationResults);
@@ -179,24 +181,7 @@ namespace LOM.API.Controllers
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
-
-            foreach (var semester in semesters)
-            {
-                if (semester.ModuleId.HasValue)
-                {
-                    var module = await _context.Modules
-                        .Include(m => m.Requirements)
-                        .FirstOrDefaultAsync(m => m.Id == semester.ModuleId);
-                    if (module != null)
-                    {
-                        semester.Module = module;
-                    }
-                }
-            }
-
-            var validator = new LearningRouteValidator(_context, userId);
-            var results = validator.ValidateLearningRoute(semesters);
-
+            var results = await _validationService.ValidateSemestersAsync(semesters, userId);
             return Ok(results);
         }
 
@@ -205,26 +190,6 @@ namespace LOM.API.Controllers
             return _context.LearningRoutes.Any(e => e.Id == id);
         }
 
-        private async Task<ICollection<IValidationResult>> ValidateSemesters(List<Semester> semesters, int userId)
-        {
-            foreach (var semester in semesters)
-            {
-                if (semester.ModuleId.HasValue)
-                {
-                    var module = await _context.Modules
-                        .Include(m => m.Requirements)
-                        .FirstOrDefaultAsync(m => m.Id == semester.ModuleId);
-                    if (module != null)
-                    {
-                        semester.Module = module;
-                    }
-                }
-            }
-
-            var validator = new LearningRouteValidator(_context, userId);
-            var results = validator.ValidateLearningRoute(semesters);
-            return results;
-        }
 
     }
 }
