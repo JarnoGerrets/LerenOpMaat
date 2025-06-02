@@ -131,9 +131,12 @@ header {
   padding: 8px 16px;
   border-radius: 6px;
   font-weight: 600;
+  font-size: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   text-decoration: none;
+  align-items: center;
+  display: flex;
 }
 
 .login-btn:hover {
@@ -143,7 +146,8 @@ header {
 .account-section {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 15px;
+  padding-left: 25px;
 }
 
 .notification-icon-wrapper {
@@ -233,6 +237,10 @@ header {
   padding: 5px 0;
 }
 
+.simulated-role-toggle {
+  display: none !important;
+}
+
 .simulated-role-option {
   padding: 8px 12px;
   cursor: pointer;
@@ -247,14 +255,45 @@ header {
 }
 
 #logout i {
-  font-size: 18px;
+  font-size: 0px;
 }
-.bi-box-arrow-in-right{
-  font-size: 20px;
+
+.bi-box-arrow-in-right {
+  font-size: 0px;
 }
+
+.bi-person-circle {
+  font-size: 0px;
+}
+
 
 /* Desktop stijl (768px en breder) */
 @media (min-width: 768px) {
+  .simulated-role-toggle {
+    display: block !important;
+  }
+
+  .login-btn {
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  #logout i {
+    font-size: 18px;
+    padding-left: 10px;
+  }
+
+  .bi-person-circle {
+    font-size: 16px;
+    padding-right: 10px;
+  }
+
+  .bi-box-arrow-in-right {
+    font-size: 20px;
+  }
+
+
   .menu-overlay {
     top: 0;
     left: -350px;

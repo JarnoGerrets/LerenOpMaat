@@ -87,7 +87,7 @@ builder.Services.AddDbContext<LOMContext>(options =>
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 );
-builder.Services.AddScoped<SemesterValidationService>();
+builder.Services.AddScoped<ISemesterValidationService, SemesterValidationService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
