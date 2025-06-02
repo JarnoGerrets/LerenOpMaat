@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace LOM.API.Controllers
 {
 	[Route("api/[controller]")]
+	[Authorize]
 	[ApiController]
 	public class ModuleController : ControllerBase
 	{
@@ -20,6 +21,7 @@ namespace LOM.API.Controllers
 
 		// GET: api/Module
 		[HttpGet]
+		[AllowAnonymous]
 		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules([FromQuery] string? q)
 		{
 			IQueryable<Module> query;
@@ -61,6 +63,7 @@ namespace LOM.API.Controllers
 
 		// GET: api/Module/Active
 		[HttpGet("Active")]
+		[AllowAnonymous]
 		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetActiveModules([FromQuery] string? q)
 		{
 
@@ -92,6 +95,7 @@ namespace LOM.API.Controllers
 
 		// GET: api/Module/5
 		[HttpGet("{id}")]
+		[AllowAnonymous]
 		public async Task<ActionResult<ModuleDto>> GetModule(int id)
 		{
 			var module = await _context.Modules
@@ -263,8 +267,8 @@ namespace LOM.API.Controllers
 
 			return NoContent();
 		}
+
 		// GET: api/Module/5/progress
-		[Authorize]
 		[HttpGet("{id}/progress")]
 		public async Task<ActionResult<ModuleProgressDto>> GetModuleProgress(int id)
 		{
@@ -286,7 +290,6 @@ namespace LOM.API.Controllers
 		}
 
 		// POST: api/Module/5/completedevl
-		[Authorize]
 		[HttpPost("{id}/addcompletedevl")]
 		public async Task<ActionResult<ModuleProgressDto>> AddCompletedEvl(int id, [FromBody] int evlId)
 		{
@@ -339,7 +342,6 @@ namespace LOM.API.Controllers
 		}
 
 		// DELETE: api/Module/5/completedevl/10
-		[Authorize]
 		[HttpDelete("{moduleId}/removecompletedevl/{evlId}")]
 		public async Task<ActionResult<ModuleProgressDto>> RemoveCompletedEvl(int moduleId, int evlId)
 		{
@@ -414,8 +416,6 @@ namespace LOM.API.Controllers
 			return Ok(result);
 		}
 
-
-
 		[Authorize(Roles = "Administrator")]
 		[HttpGet("reporting/available-years")]
 		public async Task<IActionResult> GetAvailableYears()
@@ -428,8 +428,5 @@ namespace LOM.API.Controllers
 
 			return Ok(years);
 		}
-
-
-
 	}
 }

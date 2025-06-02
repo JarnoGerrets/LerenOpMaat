@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using LOM.API.DAL;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 
 namespace LOM.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+	[Route("api/[controller]")]
+	[Authorize]
+	[ApiController]
     public class OerController : ControllerBase
     {
         private readonly LOMContext _context;
@@ -56,7 +51,7 @@ namespace LOM.API.Controllers
         }
 
 
-
+        [AllowAnonymous]
         [HttpGet("current")]
         public async Task<IActionResult> GetCurrentOer()
         {
