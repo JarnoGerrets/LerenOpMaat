@@ -3,10 +3,10 @@ using LOM.API.Models;
 using LOM.API.Validator.ValidationResults;
 using Microsoft.EntityFrameworkCore;
 
-namespace LOM.API.Validator
+namespace LOM.API.Validator.ValidationService
 {
-    public class SemesterValidationService
-    {
+    public class SemesterValidationService : ISemesterValidationService
+	{
         private readonly LOMContext _context;
 
         public SemesterValidationService(LOMContext context)

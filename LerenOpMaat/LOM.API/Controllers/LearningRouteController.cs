@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LOM.API.DAL;
+using LOM.API.Models;
+using LOM.API.Validator;
+using LOM.API.Validator.ValidationResults;
+using LOM.API.Validator.ValidationService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using LOM.API.DAL;
-using LOM.API.Models;
-using LOM.API.Validator.ValidationResults;
-using LOM.API.Validator;
 using Microsoft.Extensions.Configuration.UserSecrets;
-using Microsoft.AspNetCore.Authorization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace LOM.API.Controllers
 {
@@ -19,9 +20,9 @@ namespace LOM.API.Controllers
     public class LearningRouteController : ControllerBase
     {
         private readonly LOMContext _context;
-        private readonly SemesterValidationService _validationService;
+        private readonly ISemesterValidationService _validationService;
 
-        public LearningRouteController(LOMContext context, SemesterValidationService validationService)
+        public LearningRouteController(LOMContext context, ISemesterValidationService validationService)
         {
             _context = context;
             _validationService = validationService;
