@@ -27,9 +27,9 @@ export default async function LearningRoute() {
     template.innerHTML = html;
     const fragment = template.content.cloneNode(true);
     const grid = fragment.querySelector(".semester-grid");
+
     let semesterData = [];
     let routeId = null;
-
     let userData = await window.userData;
 
     try {
@@ -47,8 +47,6 @@ export default async function LearningRoute() {
                 routeId = apiResponse.Id;
             }
         } else {
-            semesterData = [dummySemester1, dummySemester2];
-            //document.querySelector("#app").appendChild(fragment);
             ["saveLearningRoute", "deleteRoute", "feedBack"].forEach(id => {
                 const btn = fragment.getElementById(id);
                 if (btn) btn.disabled = true;
@@ -75,7 +73,6 @@ export default async function LearningRoute() {
 
             const semester1 = semesterGroup.find(s => s.Period === 1);
             const semester2 = semesterGroup.find(s => s.Period === 2);
-
             const semesterPair = await SemesterPair(semester1, semester2, index, totalAmountOfYears);
 
             if (!(semesterPair instanceof Node)) {
@@ -94,7 +91,6 @@ export default async function LearningRoute() {
             const missingSemesters = totalSemestersGroup - index;
 
             for (let i = 0; i < missingSemesters; i++) {
-
                 const dummySemesterPair = await SemesterPair(dummySemester1, dummySemester2, index, totalSemestersGroup);
 
                 if (!(dummySemesterPair instanceof Node)) {
@@ -112,7 +108,8 @@ export default async function LearningRoute() {
         const addSemesterContainer = document.createElement("div");
         const addIconButton = new AddIconButton({
             onclick: async () => {
-                const newSemesterPair = await SemesterPair(dummySemester1, dummySemester2, index);
+                insertCornerConnector();
+                const newSemesterPair = await SemesterPair(dummySemester1, dummySemester2, index, index + 1);
                 grid.appendChild(newSemesterPair);
                 index++;
 
@@ -125,6 +122,28 @@ export default async function LearningRoute() {
                 }
             }
         });
+
+        const isEven = (num) => num % 2 === 0;
+        const insertCornerConnector = () => {
+            // Replace the placeholder with a corner connector because its not the last year anymore.
+            const placeholder = document.querySelector(".connector-placeholder");
+            if (!placeholder) {
+                console.error("Connector placeholder not found.");
+                return;
+            }
+
+            // Remove all classes and styling from the placeholder
+            placeholder.className = "";
+            placeholder.style = "";
+
+            // Replace with corner connector
+            placeholder.classList.add("corner-connector");
+            if (isEven(index)) {
+                placeholder.classList.add("left");
+            } else {
+                placeholder.classList.add("right");
+            }
+        };
 
         addSemesterContainer.appendChild(addIconButton.getHtml());
 
