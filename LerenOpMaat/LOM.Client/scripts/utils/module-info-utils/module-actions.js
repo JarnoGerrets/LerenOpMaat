@@ -1,4 +1,4 @@
-import { moduleActionsServices} from "./utils/importServiceProvider.js";
+import { moduleActionsServices} from "../importServiceProvider.js";
 
 
 export function setupButtons(module, textArea, canBeDeleted = false, services = moduleActionsServices) {
@@ -318,6 +318,6 @@ async function saveChanges(module, textArea, services) {
     module.Description = textArea.value;
     module.GraduateProfile = module.GraduateProfile;
     module.Evls = evls;
-    const response = await updateModule(module.Id, module);
+    const response = await updateModule(module);
     showToast(`${module.Name} succesvol gewijzigd`, 'success');
 }

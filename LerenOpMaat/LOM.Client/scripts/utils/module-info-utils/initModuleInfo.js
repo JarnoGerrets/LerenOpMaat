@@ -1,6 +1,6 @@
-import { initModuleInfoServices } from './utils/importServiceProvider.js';
-import '../components/module-card.js';
-import '../components/requirements-card.js'; 
+import { initModuleInfoServices } from '../importServiceProvider.js';
+import '../../../components/module-card.js';
+import '../../../components/requirements-card.js'; 
 
 export default async function initModuleInfo(id, services = initModuleInfoServices) {
     const{

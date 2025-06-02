@@ -4,6 +4,7 @@ import {
 
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
+import { debounce } from "../scripts/utils/universal-utils.js";
 import SemesterPair from "../components/semester-pair.js";
 
 let apiResponse = [];
@@ -116,42 +117,51 @@ export default async function administratorLearningRoute() {
         el.classList.remove("d-block");
         el.style.display = "none";
     });
+
+    const debouncedToggleLock = debounce(async (btn) => {
+        const cardElement = btn.closest(".semester-card");
+        const semesterId = cardElement?.getAttribute("data-semester-id");
+        const isLocked = btn.getAttribute("data-locked") === "true";
+
+        if (semesterId > 400000) {
+            return null;
+        }
+
+        const body = {
+            SemesterId: parseInt(semesterId),
+            Locked: !isLocked
+        };
+
+        let result = await updateLockedSemester(body);
+        if (result) {
+            let tempWord = isLocked ? "ontgrendeld" : "vergrendeld";
+            showToast(`Module ${tempWord}`, "info");
+
+            updateModuleLockState(cardElement, !isLocked);
+        }
+    }, 400);
+
     fragment.querySelectorAll("#select-module").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
+        btn.addEventListener("click", (e) => {
             e.stopImmediatePropagation();
             e.preventDefault();
-            const cardElement = btn.closest(".semester-card");
-            const semesterId = cardElement?.getAttribute("data-semester-id");
-            const isLocked = btn.getAttribute("data-locked") === "true";
-
-            if (semesterId > 400000) {
-                return null;
-            }
-            const body = {
-                SemesterId: parseInt(semesterId),
-                Locked: !isLocked
-            }
-
-            let result = await updateLockedSemester(body);
-            if (result) {
-                let tempWord = isLocked ? "ontgrendeld" : "vergrendeld";
-                showToast(`Module ${tempWord}`, "info");
-
-                updateModuleLockState(cardElement, !isLocked);
-            }
-
+            debouncedToggleLock(btn);
         }, { capture: true });
     });
 
+
     function updateModuleLockState(cardElement, newLockState) {
         const button = cardElement.querySelector("#select-module");
+        const checkMark = cardElement.querySelector("#checked");
         button.setAttribute("data-locked", newLockState);
 
         const icon = button.querySelector("i");
         if (newLockState) {
+            checkMark.classList.remove("hidden");
             icon.classList.remove("bi-unlock-fill");
             icon.classList.add("bi-lock-fill");
         } else {
+            checkMark.classList.add("hidden");
             icon.classList.remove("bi-lock-fill");
             icon.classList.add("bi-unlock-fill");
         }

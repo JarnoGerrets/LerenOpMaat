@@ -1,9 +1,18 @@
-using System.ComponentModel;
+using LOM.API.Controllers;
 using LOM.API.DAL;
 using LOM.API.Enums;
 using LOM.API.Models;
+using LOM.API.Tests.TestHelpers;
 using LOM.API.Validator;
+using LOM.API.Validator.ValidationResults;
+using LOM.API.Validator.ValidationService;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
+using Moq;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace LerenOpMaat.LOM.API.Tests.Validators
 {
@@ -403,53 +412,149 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
             Assert.False(error.IsValid);
         }
 
-        // [Fact]
-        // public async Task ValidateRoute_WithValidAndInvalidModules_ReturnsExpectedValidationResults()
-        // {
-        //     // Arrange
-        //     var options = new DbContextOptionsBuilder<LOMContext>()
-        //         .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-        //         .Options;
+        [Fact]
+        public async Task ValidateRoute_WithValidAndInvalidModules_ReturnsExpectedValidationResults()
+        {
+            // Arrange
+            var httpContext = new DefaultHttpContext();
+            httpContext.Session = new MockHttpSession();
+            httpContext.Session.SetInt32("UserId", 1);
 
-        //     using var context = new LOMContext(options);
+            var options = new DbContextOptionsBuilder<LOMContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
 
-        //     var user = new User { Id = 1, FirstName = "Jarno" };
-        //     context.User.Add(user);
+            using var context = new LOMContext(options);
 
-        //     var requiredModule = new Module { Id = 10, Name = "Intro to Programming", Code = "IP101", Level = 1 };
-        //     context.Modules.Add(requiredModule);
+            var user = new User { Id = 1, FirstName = "Jarno", LastName = "Gerrets", ExternalID = "1" };
+            context.User.Add(user);
 
-        //     var dependentModule = new Module
-        //     {
-        //         Id = 20,
-        //         Name = "Advanced Programming",
-        //         Code = "AP201",
-        //         Level = 2,
-        //         Requirements = new List<ModuleRequirement>
-        // {
-        //     new ModuleRequirement { Type = ModulePreconditionType.RequiredModule, Value = requiredModule.Id.ToString() }
-        // }
-        //     };
-        //     context.Modules.Add(dependentModule);
-        //     await context.SaveChangesAsync();
+            var requiredModule = new Module { Id = 10, Name = "Intro to Programming", Code = "IP101", Level = 1 };
+            context.Modules.Add(requiredModule);
 
-        //     // Create Semesters
-        //     var semesters = new List<Semester>
-        //     {
-        //         new Semester { Period = 1, ModuleId = dependentModule.Id, Module = dependentModule }
-        //     };
+            var dependentModule = new Module
+            {
+                Id = 20,
+                Name = "Advanced Programming",
+                Code = "AP201",
+                Level = 2,
+                Requirements = new List<Requirement>
+            {
+                new Requirement { Type = ModulePreconditionType.RequiredModule, Value = requiredModule.Id.ToString() }
+            }
+            };
+            context.Modules.Add(dependentModule);
+            await context.SaveChangesAsync();
 
-        //     // Build Controller
-        //     var controller = new LearningRouteController(context);
+            // Semesters to validate
+            var semesters = new List<Semester>
+            {
+                new Semester { Period = 1, ModuleId = dependentModule.Id, Module = dependentModule }
+            };
+            var mockValidationService = new Mock<ISemesterValidationService>();
 
-        //     // Act
-        //     var result = await controller.ValidateRoute(semesters);
-        //     var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        //     var validationResults = Assert.IsAssignableFrom<ICollection<IValidationResult>>(okResult.Value);
 
-        //     // Assert
-        //     Assert.Contains(validationResults, r => !r.IsValid && r.Message.Contains("moet eerst worden gevolgd"));
-        // }
+            // Bouw een fake validatieresultaat die lijkt op wat de echte validator zou teruggeven
+            var validationResults = new List<IValidationResult>
+                {
+                    new ValidationResult(false, $"Module '{dependentModule.Name}' moet eerst worden gevolgd.")
+                };
+
+            mockValidationService
+                .Setup(s => s.ValidateSemestersAsync(It.IsAny<List<Semester>>(), It.IsAny<int>()))
+                .ReturnsAsync(validationResults);
+
+            // Bouw Controller met de mock service
+            var controller = new LearningRouteController(context, mockValidationService.Object);
+            controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = httpContext
+            };
+            // Act
+            var result = await controller.ValidateRoute(semesters);
+            var okResult = Assert.IsType<OkObjectResult>(result.Result);
+            var returnedResults = Assert.IsAssignableFrom<ICollection<IValidationResult>>(okResult.Value);
+
+            // Assert
+            Assert.Contains(returnedResults, r => !r.IsValid && r.Message.Contains("moet eerst worden gevolgd"));
+        }
+
+        [Fact]
+        public async Task UpdateSemesters_WithValidData_UpdatesSemestersSuccessfully()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<LOMContext>()
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                .Options;
+
+            using var context = new LOMContext(options);
+
+            // Setup User
+            var user = new User { Id = 1, FirstName = "Jarno", LastName = "Gerrets", ExternalID = "1" };
+            context.User.Add(user);
+            await context.SaveChangesAsync();
+
+            // Setup Modules
+            var module1 = new Module { Id = 10, Name = "Intro to Programming", Code = "IP101", Level = 1, Period = 1 };
+            var module2 = new Module { Id = 20, Name = "Advanced Programming", Code = "AP201", Level = 2, Period = 2 };
+            module2.Requirements = new List<Requirement>
+                {
+                    new Requirement { Type = ModulePreconditionType.RequiredModule, Value = module1.Id.ToString() }
+                };
+            context.Modules.AddRange(module1, module2);
+            await context.SaveChangesAsync();
+
+            // Setup LearningRoute & Semesters
+            var learningRoute = new LearningRoute
+            {
+                Id = 100,
+                UserId = user.Id,
+                Semesters = new List<Semester>
+    {
+        new Semester { Id = 1, Year = 2025, Period = 1, ModuleId = module1.Id, LearningRouteId = 100 },
+        new Semester { Id = 2, Year = 2025, Period = 2, ModuleId = null, LearningRouteId = 100 }
+    }
+            };
+            context.LearningRoutes.Add(learningRoute);
+            await context.SaveChangesAsync();
+
+            // Prepare DTO for update
+            var dto = new UpdateSemestersDto
+            {
+                UserId = user.Id,
+                Semesters = new List<Semester>
+    {
+        new Semester { Year = 2025, Period = 1, ModuleId = module1.Id },
+        new Semester { Year = 2025, Period = 2, ModuleId = module2.Id }
+    }
+            };
+
+            // Use real validation service for full integration test
+            var validationService = new SemesterValidationService(context);
+
+            var controller = new SemesterController(context, validationService);
+
+            // Act
+            var result = await controller.UpdateSemesters(learningRoute.Id, dto);
+            if (result is OkObjectResult objectResult)
+            {
+                var returnedValidationResults = objectResult.Value as ICollection<IValidationResult>;
+                var firstMessage = returnedValidationResults?.FirstOrDefault()?.Message ?? "No validation message";
+                Debug.WriteLine("First validation message: " + firstMessage);
+            }
+            else
+            {
+                Debug.WriteLine("Result was not an OkObjectResult, probably OkResult.");
+            }
+            // Assert
+            var okResult = Assert.IsType<OkResult>(result);
+
+            // Reload updated data from DB to verify update
+            var updatedSemester = await context.Semesters.FirstOrDefaultAsync(s => s.Id == 2);
+            Assert.NotNull(updatedSemester);
+            Assert.Equal(module2.Id, updatedSemester.ModuleId);
+        }
+
 
 
 

@@ -6,11 +6,3 @@ export function calculateAchievedECs(progress, selectedModule) {
     return sum + (evl?.Ec || 10);
   }, 0);
 }
-
-export function debounce(fn, delay) {
-  let timer;
-  return function (...args) {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn.apply(this, args), delay);
-  };
-}

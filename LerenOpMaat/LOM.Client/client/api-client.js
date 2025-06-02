@@ -125,15 +125,15 @@ export async function getModule(id) {
 
 }
 
-export async function updateModule(id, moduleData) {
-  const res = await fetch(`${API_BASE}/Module/${id}`, {
+export async function updateModule(module) {
+  const res = await fetch(`${API_BASE}/Module/${module.Id}`, {
     method: "PUT",
     headers: {
       "Accept": "application/json",
       "Content-Type": "application/json"
     },
     credentials: "include",
-    body: JSON.stringify(moduleData)
+    body: JSON.stringify(module)
   });
 
   if (!res.ok) {

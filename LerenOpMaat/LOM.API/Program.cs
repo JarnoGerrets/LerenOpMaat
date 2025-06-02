@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using LOM.API.Middleware;
+using LOM.API.Validator;
+using LOM.API.Validator.ValidationService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,6 +103,7 @@ builder.Services.AddDbContext<LOMContext>(options =>
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 );
+builder.Services.AddScoped<ISemesterValidationService, SemesterValidationService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -131,9 +131,12 @@ header {
   padding: 8px 16px;
   border-radius: 6px;
   font-weight: 600;
+  font-size: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   text-decoration: none;
+  align-items: center;
+  display: flex;
 }
 
 .login-btn:hover {
@@ -143,7 +146,8 @@ header {
 .account-section {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 15px;
+  padding-left: 25px;
 }
 
 .notification-icon-wrapper {
@@ -168,25 +172,62 @@ header {
   font-weight: bold;
   line-height: .9;
   box-shadow: 0 0 0 2px white;
-  /* optioneel: wit randje voor betere leesbaarheid */
+  pointer-events: none;
+  user-select: none;
 }
 
 .notification-dropdown {
   position: absolute;
-  top: 100%;
-  right: 50;
+  top: 95%;
+  right: -157px;
   background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-top: 8px;
+  border: none;
+  border-radius: 6px;
+  margin-top: 20px;
   min-width: 200px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 12px 4px rgba(0, 0, 0, 0.15);
   z-index: 100;
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
+
+.notification-header {
+  background-color: #FFCB05;
+  padding: 4px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  font-weight: bold;
+  text-align: center;
+  position: relative;
+  height: 30px;
+  color: white;
+}
+
+.notification-arrow {
+  position: absolute;
+  top: -16px;
+  left: 17.225px;
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 16px solid #FFCB05;
+}
+
+
+.notification-arrow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -16px;
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 16px solid rgba(0, 0, 0, 0.3);
+  filter: blur(2px);
+  z-index: -1;
+}
+
 
 .notification-item {
   padding: 10px;
@@ -204,11 +245,11 @@ header {
 }
 
 .notification-item:hover:first-child {
-  border-radius: 8px 8px 0 0;
+  border-radius: 0;
 }
 
 .notification-item:hover:last-child {
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 6px 6px;
 }
 
 .bi-chevron-left {
@@ -233,6 +274,10 @@ header {
   padding: 5px 0;
 }
 
+.simulated-role-toggle {
+  display: none !important;
+}
+
 .simulated-role-option {
   padding: 8px 12px;
   cursor: pointer;
@@ -247,14 +292,68 @@ header {
 }
 
 #logout i {
-  font-size: 18px;
+  font-size: 0px;
 }
-.bi-box-arrow-in-right{
-  font-size: 20px;
+
+.bi-box-arrow-in-right {
+  font-size: 0px;
 }
+
+.bi-person-circle {
+  font-size: 0px;
+}
+
 
 /* Desktop stijl (768px en breder) */
 @media (min-width: 768px) {
+
+  .notification-dropdown {
+    top: 85%;
+    right: -300.2px;
+    min-width: 350px;
+  }
+
+  .notification-arrow {
+    top: -16px;
+    left: 19.225px;
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-bottom: 16px solid #FFCB05;
+  }
+
+  .notification-arrow::before {
+    top: 0;
+    left: -16px;
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-bottom: 16px solid rgba(0, 0, 0, 0.3);
+  }
+
+  .simulated-role-toggle {
+    display: block !important;
+  }
+
+  .login-btn {
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  #logout i {
+    font-size: 18px;
+    padding-left: 10px;
+  }
+
+  .bi-person-circle {
+    font-size: 16px;
+    padding-right: 10px;
+  }
+
+  .bi-box-arrow-in-right {
+    font-size: 20px;
+  }
+
+
   .menu-overlay {
     top: 0;
     left: -350px;

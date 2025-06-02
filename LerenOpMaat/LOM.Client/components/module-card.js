@@ -1,5 +1,5 @@
 import './card.js';
-import { mapPeriodToPresentableString } from '../scripts/utils/presentationMapper.js';
+import { mapPeriodToPresentableString } from '../scripts/utils/universal-utils.js';
 
 export default class ModuleCard extends customElements.get("base-card") {
     constructor() {
