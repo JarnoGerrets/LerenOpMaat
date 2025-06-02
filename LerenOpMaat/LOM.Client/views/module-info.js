@@ -1,4 +1,4 @@
-import initModuleInfo from "../scripts/initModuleInfo.js";
+import initModuleInfo from "../scripts/utils/module-info-utils/initModuleInfo.js";
 import loadTemplate from "../scripts/utils/universal-utils.js";
 
 export default async function ModuleInfo(id) {

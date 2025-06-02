@@ -2,7 +2,7 @@ import * as apiClient from "../../client/api-client.js";
 import * as validations from "./semester-card-utils/validations.js";
 import * as ui from "./semester-card-utils/ui-updates.js";
 import * as cardUtils from "./semester-card-utils/utils.js";
-import * as moduleActions from "../module-actions.js";
+import * as moduleActions from "./module-info-utils/module-actions.js";
 import * as evlDropdownUtils from "../utils/evl-dropdown/evl-dropdown-utils.js"
 import * as utils from "../utils/universal-utils.js";
 import Popup from "../../components/Popup.js";

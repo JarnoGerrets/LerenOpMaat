@@ -1,4 +1,4 @@
-import { moduleActionsServices} from "./utils/importServiceProvider.js";
+import { moduleActionsServices} from "../importServiceProvider.js";
 
 
 export function setupButtons(module, textArea, canBeDeleted = false, services = moduleActionsServices) {
