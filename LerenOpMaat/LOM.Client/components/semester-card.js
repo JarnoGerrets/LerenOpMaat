@@ -27,12 +27,12 @@ export default async function SemesterCard({ semester, module, locked = false, i
   template.innerHTML = `
     <div class="semester-card-container">
       <div class="semester-card">
-        <h3 style="color: ${locked ? 'gray' : 'black'}">Semester ${semester.Period}</h3>
+        <h3>Semester ${semester.Period}</h3>
         <button id="select-module" class="semester-button btn btn-light border ${!canEdit ? 'locked' : ''}" data-locked="${locked}">
           ${module}
           <i class="ms-1 bi ${!isActive || locked ? 'bi-lock-fill' : 'bi-unlock-fill'}"></i> 
         </button>
-        <span id="coursePoints-${moduleId || ""}" class="text-start d-block course-points-link" style="color: ${locked ? 'gray' : 'black'}"></span>
+        <span id="coursePoints-${moduleId || ""}" class="text-start d-block course-points-link"></span>
         <div class="exclamation-icon" data-bs-toggle="tooltip" data-bs-custom-class="tool-tip-style" title="">
           <i class="bi bi-exclamation-triangle-fill"></i>
         </div>
