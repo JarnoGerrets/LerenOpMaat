@@ -2,7 +2,7 @@ import SemesterCard from "../components/semester-card.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 export let learningRouteArray = [];
 
-export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears,) {
+export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
     const wrapper = document.createElement("div");
     wrapper.classList.add("semester-pair");
@@ -146,7 +146,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
 
     function addYearIconPlaceholder() {
         const placeholder = document.createElement("div");
-        placeholder.classList.add("year-container");
+        placeholder.classList.add("connector-placeholder");
         placeholder.style.width = "150px";
         wrapper.appendChild(placeholder);
     }
