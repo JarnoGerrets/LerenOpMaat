@@ -21,7 +21,7 @@ class ModuleOverview extends HTMLElement {
         this.innerHTML = `
             <div class="container my-5">
                 <div id="top-section-module-overview">
-                    <h1 class="module-overview-title">Module Overview</h1>
+                    <h1 class="module-overview-title">Module Overzicht</h1>
                     <div class="d-flex">
                         <div id="add-module-button" style="display: none;">
                             <i class="bi bi-plus-circle"></i><span class="icon-text-module-overview">Module toevoegen</span>
