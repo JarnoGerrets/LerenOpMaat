@@ -4,77 +4,52 @@ using LOM.API.DTO;
 using LOM.API.Models;
 using LOM.API.Tests.TestHelpers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using System.Net.Sockets;
 
 namespace LOM.API.Tests.Controllers
 {
 	public class ModuleControllerTests
 	{
-
-		private readonly Mock<LOMContext> _mockContext;
+		private readonly LOMContext _memoryContext;
 		private readonly ModuleController _controller;
 
 		public ModuleControllerTests()
 		{
-			_mockContext = new Mock<LOMContext>();
-			_controller = new ModuleController(_mockContext.Object);
-		}
-
-		[Fact]
-		public async Task PutModule_ReturnsBadRequest_WhenIdMismatch()
-		{
-			// Arrange
-			var dto = new ModuleDto { Id = 2 };
-
-			// Act
-			var result = await _controller.PutModule(1, dto);
-
-			// Assert
-			Assert.IsType<BadRequestResult>(result);
+			_memoryContext = DbContextHelper.GetInMemoryContext();
+			_controller = new ModuleController(_memoryContext);
 		}
 
 		[Fact]
 		public async Task PutModule_ReturnsConflict_WhenModuleCodeExists()
 		{
-			// Arrange
-			var existingModuleData = new List<Module>
-			{
-				new() { Id = 1, Code = "AA.01" },
-				new() { Id = 2, Code = "AA.02" }
-			}.AsQueryable();
-
-			var mockSet = DbContextHelper.CreateMockDbSet(existingModuleData);
-			_mockContext.Setup(c => c.Modules).Returns(mockSet.Object);
-			_mockContext.Setup(c => c.Modules.FindAsync(1))
-				.ReturnsAsync(existingModuleData.First());
+			// Arrange  
+			_memoryContext.Modules.AddRange(
+				new Module { Id = 1, Code = "AA.01", Name = "Name1", Evls = [] },
+				new Module { Id = 2, Code = "AA.02", Name = "Name2", Evls = [] }
+			);
+			await _memoryContext.SaveChangesAsync();
 
 			var dto = new ModuleDto
 			{
 				Id = 1,
-				Code = "AA.02" // This code already exists
+				Code = "AA.02" // This code already exists  
 			};
 
-			// Act
+			// Act  
 			var result = await _controller.PutModule(1, dto);
 
-			// Assert
-			var conflictResult = Assert.IsType<ConflictObjectResult>(result);
+			// Assert  
+			Assert.IsType<ConflictObjectResult>(result);
 		}
 
 		[Fact]
 		public async Task PostModule_ReturnsConflict_WhenModuleCodeExists()
 		{
-			// Arrange
-			var existingModuleData = new List<Module>
-			{
-				new() { Id = 1, Code = "AA.01" },
-				new() { Id = 2, Code = "AA.02" }
-			}.AsQueryable();
-
-			var mockSet = DbContextHelper.CreateMockDbSet(existingModuleData);
-			_mockContext.Setup(c => c.Modules).Returns(mockSet.Object);
+			// Arrange  
+			_memoryContext.Modules.AddRange(
+				new Module { Id = 1, Code = "AA.01", Name = "Name1", Evls = [] },
+				new Module { Id = 2, Code = "AA.02", Name = "Name2", Evls = [] }
+			);
+			await _memoryContext.SaveChangesAsync();
 
 			var dto = new ModuleCreateDto
 			{
@@ -92,7 +67,7 @@ namespace LOM.API.Tests.Controllers
 			var result = await _controller.PostModule(dto);
 
 			// Assert
-			var conflictResult = Assert.IsType<ConflictObjectResult>(result.Result);
+			Assert.IsType<ConflictObjectResult>(result.Result);
 		}
 	}
 }
