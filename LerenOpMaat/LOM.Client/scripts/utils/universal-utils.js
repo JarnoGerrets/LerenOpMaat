@@ -11,3 +11,11 @@ export default async function loadTemplate(link) {
     const template = await response.text();
     return template;
 }
+
+export function mapPeriodToPresentableString(period) {
+    if (period === 3 || period === '3'){
+        return "Beide";
+    }
+
+    return period.toString();
+}

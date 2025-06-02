@@ -10,7 +10,6 @@ import SemesterModule from "../../components/SemesterModule.js";
 import SemesterChoice from "../../views/partials/semester-choice.js";
 import confirmationPopup from "../../views/partials/confirmation-popup.js"
 import editRequirementPopup from "../../views/partials/edit-requirement-popup.js"
-import { mapPeriodToPresentableString } from "./presentationMapper.js";
 
 
 
@@ -27,7 +26,6 @@ const baseServices = {
     SemesterModule,
     confirmationPopup,
     editRequirementPopup,
-    mapPeriodToPresentableString,
 };
 
 export const semesterCardServices = Object.freeze({

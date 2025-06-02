@@ -1,5 +1,5 @@
 import loadTemplate from "../scripts/utils/universal-utils.js";
-import { mapPeriodToPresentableString } from "../scripts/utils/presentationMapper.js"
+import { mapPeriodToPresentableString } from "../scripts/utils/universal-utils.js"
 
 export default class SemesterModule {
     constructor(modules, onModuleSelect) {

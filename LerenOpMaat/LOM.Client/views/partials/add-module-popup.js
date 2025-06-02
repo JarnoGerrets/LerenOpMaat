@@ -1,7 +1,7 @@
 import Popup from "../../components/Popup.js";
 import { getProfiles, addModule } from "../../client/api-client.js";
 import {getSelectedEVLs, setupListeners} from "../../scripts/utils/evl-dropdown/evl-dropdown-utils.js"
-import { mapPeriodToPresentableString } from "../../scripts/utils/presentationMapper.js";
+import { mapPeriodToPresentableString } from "../../scripts/utils/universal-utils.js";
 let mijnPopup;
 
 export default async function addModulePopup() {

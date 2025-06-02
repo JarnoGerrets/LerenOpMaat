@@ -6,7 +6,7 @@ class CardComponent extends HTMLElement {
     renderCard(contentHtml, backgroundColor) {
         this.innerHTML = `
             <a class="rm-a-style">
-                <div style="position: relative; border-radius: 25px; background: ${backgroundColor};" class="card-style shadow p-5 d-flex flex-column justify-content-between h-100">
+                <div style="position: relative; border-radius: 15px; background: ${backgroundColor};" class="card-style shadow p-5 d-flex flex-column justify-content-between h-100">
                     ${contentHtml}
                 </div>
             </a>
