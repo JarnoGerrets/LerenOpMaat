@@ -25,6 +25,7 @@ namespace LOM.API.Controllers
 
         // GET: api/learningRoutes/5
         [HttpGet("{id}")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<LearningRoute>> GetlearningRoute(int id)
         {
             var learningRoute = await _context.LearningRoutes.Include(s => s.Semesters).ThenInclude(m => m.Module).FirstOrDefaultAsync(lr => lr.Id == id);
@@ -40,6 +41,7 @@ namespace LOM.API.Controllers
         // PUT: api/learningRoutes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [EnableRateLimiting("PostLimiter")]
         public async Task<IActionResult> PutlearningRoute(int id, LearningRoute learningRoute)
         {
             if (id != learningRoute.Id)
@@ -71,6 +73,7 @@ namespace LOM.API.Controllers
         // POST: api/learningRoutes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [EnableRateLimiting("PostLimiter")]
         public async Task<ActionResult<LearningRoute>> PostlearningRoute([FromBody] LearningRoute learningRoute)
         {
             if (learningRoute == null)
@@ -130,6 +133,7 @@ namespace LOM.API.Controllers
 
         //Speciaal get leerroute call
         [HttpGet("/api/LearningRoute/User/{userId}")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<LearningRoute>> GetLearningRouteByUserId(int userId)
         {
             var learningRoute = await _context.LearningRoutes
@@ -165,7 +169,7 @@ namespace LOM.API.Controllers
         }
         //LearningRoute/ValidateRoute
         [HttpPost("ValidateRoute")]
-        [EnableRateLimiting("UpdateLimiter")]
+        [EnableRateLimiting("ValidateLimiter")]
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;

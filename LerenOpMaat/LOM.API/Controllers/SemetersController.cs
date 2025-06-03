@@ -32,7 +32,7 @@ namespace LOM.API.Controllers
 
         //Speciaal update semester call
         [HttpPut("/api/[controller]/updateSemesters/{learningRouteId}")]
-        [EnableRateLimiting("UpdateLimiter")]
+        [EnableRateLimiting("ValidateLimiter")]
         public async Task<IActionResult> UpdateSemesters(int learningRouteId, [FromBody] UpdateSemestersDto dto)
         {
             var learningRoute = await _context.LearningRoutes
@@ -89,6 +89,7 @@ namespace LOM.API.Controllers
 
         [Authorize(Roles = "Lecturer, Administrator")]
         [HttpPatch("updatedlockedsemester")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<IActionResult> UpdateLockSemester([FromBody] SemesterUpdateLockDto request)
         {
             var semesterUpdate = _context.Semesters.FirstOrDefault(s => s.Id == request.SemesterId);

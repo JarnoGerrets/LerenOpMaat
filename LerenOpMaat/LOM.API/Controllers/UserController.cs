@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LOM.API.Controllers
 {
@@ -14,6 +15,8 @@ namespace LOM.API.Controllers
     public class AuthController : Controller
     {
         [HttpGet]
+        [EnableRateLimiting("LoginLimiter")]
+
         public IActionResult Authenticate(string? returnUrl = null)
         {
             // 1. Gebruik de opgegeven returnUrl of de Referer-header als fallback
@@ -59,6 +62,8 @@ namespace LOM.API.Controllers
         }
 
         [HttpGet]
+        [EnableRateLimiting("GetLimiter")]
+
         public IActionResult GetUser()
         {
             // Haal user claims op
@@ -107,9 +112,11 @@ namespace LOM.API.Controllers
             });
         }
 
-		[Authorize(Roles = "Lecturer, Administrator")]
-		[HttpGet("getstudent/{id}")]
-		public async Task<ActionResult<User>> GetStudent(int id)
+        [Authorize(Roles = "Lecturer, Administrator")]
+        [HttpGet("getstudent/{id}")]
+        [EnableRateLimiting("GetLimiter")]
+
+        public async Task<ActionResult<User>> GetStudent(int id)
         {
             var student = await _context.User.FirstOrDefaultAsync(u => u.Id == id);
 
@@ -131,10 +138,10 @@ namespace LOM.API.Controllers
     }
 
 
-	[Route("api/[controller]")]
-	[Authorize]
-	[ApiController]
-	public class UserController : ControllerBase
+    [Route("api/[controller]")]
+    [Authorize]
+    [ApiController]
+    public class UserController : ControllerBase
     {
         private readonly LOMContext _context;
 
@@ -144,6 +151,8 @@ namespace LOM.API.Controllers
         }
 
         [HttpGet("startyear/{id}")]
+        [EnableRateLimiting("GetLimiter")]
+
         public async Task<ActionResult<int?>> GetStartYear(int id)
         {
             var user = await _context.User.FindAsync(id);
@@ -169,6 +178,8 @@ namespace LOM.API.Controllers
 
 
         [HttpPost("startyear/{id}")]
+        [EnableRateLimiting("PostLimiter")]
+
         public async Task<IActionResult> SetStartYear(int id, [FromBody] int startYear)
         {
             var currentYear = DateTime.Now.Year + 1;
@@ -203,6 +214,7 @@ namespace LOM.API.Controllers
         }
 
         [HttpGet("teachers")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsersWithIdOne()
         {
             var teachers = await _context.User.Where(u => u.RoleId == 1).ToListAsync();

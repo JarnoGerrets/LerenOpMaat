@@ -2,12 +2,13 @@
 using LOM.API.DAL;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LOM.API.Controllers
 {
-	[Route("api/[controller]")]
-	[Authorize]
-	[ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
+    [ApiController]
     public class OerController : ControllerBase
     {
         private readonly LOMContext _context;
@@ -19,6 +20,7 @@ namespace LOM.API.Controllers
 
         [Authorize(Roles = "Administrator, Lecturer")]
         [HttpPut("upload")]
+        [EnableRateLimiting("PostLimiter")]
         public async Task<IActionResult> UploadOer(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -53,6 +55,7 @@ namespace LOM.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("current")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<IActionResult> GetCurrentOer()
         {
             var oer = await _context.Oers.FindAsync(1);

@@ -3,6 +3,7 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,8 @@ namespace LOM.API.Controllers
 
         // GET: api/Conversation/5
         [HttpGet("{id}")]
+        [EnableRateLimiting("GetLimiter")]
+
         public async Task<ActionResult<Conversation>> GetConversation(int id)
         {
             var conversation = await _context.Conversations.FindAsync(id);
@@ -48,6 +51,8 @@ namespace LOM.API.Controllers
         // PUT: api/Conversation/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [EnableRateLimiting("MessageLimiter")]
+
         public async Task<IActionResult> PutConversation(int id, Conversation conversation)
         {
             if (id != conversation.Id)
@@ -106,6 +111,7 @@ namespace LOM.API.Controllers
         // POST: api/Conversation
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [EnableRateLimiting("PostLimiter")]
         public async Task<ActionResult<Conversation>> PostConversation(Conversation conversation)
         {
             var externalId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -134,6 +140,7 @@ namespace LOM.API.Controllers
 
         // DELETE: api/Conversation/5
         [HttpDelete("{id}")]
+        [EnableRateLimiting("DeleteLimiter")]
         public async Task<IActionResult> DeleteConversation(int id)
         {
             var conversation = await _context.Conversations.FindAsync(id);
@@ -149,6 +156,7 @@ namespace LOM.API.Controllers
         }
 
         [HttpGet("conversationByStudentId/{userId}")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<Conversation>> getConversationByStudentId(int userId)
         {
             var conversation = await _context.Conversations
@@ -165,6 +173,7 @@ namespace LOM.API.Controllers
         }
 
         [HttpGet("conversationByAdministratorId/{administratorId}")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<IEnumerable<Conversation>>> getConversationsByAdministratorId(int administratorId)
         {
             // Haal alle conversations op waar de admin als Teacher gekoppeld is
@@ -185,6 +194,7 @@ namespace LOM.API.Controllers
         }
 
         [HttpGet("notifications/{id}")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult> GetNotificationsByUserId(int id)
         {
             var unreadMessages = await _context.Messages
@@ -206,6 +216,7 @@ namespace LOM.API.Controllers
         }
 
         [HttpPatch("notifications/markasread")]
+        [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> MarkMessagesAsRead([FromBody] MarkAsReadRequestDto request)
         {
             var messages = await _context.Messages
