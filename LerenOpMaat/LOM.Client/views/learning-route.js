@@ -323,7 +323,8 @@ export default async function LearningRoute() {
         });
     }
 
-
+    const validation = await validateRoute(learningRouteArray);
+    handleValidationResult(validation, undefined, fragment);
 
     return { fragment };
 }

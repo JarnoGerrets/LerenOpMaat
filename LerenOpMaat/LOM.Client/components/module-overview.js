@@ -1,7 +1,6 @@
 // module-overview.js
 import { getModules, getProfiles } from '../client/api-client.js';
 import addModulePopup from '../views/partials/add-module-popup.js';
-import Popup from "./Popup.js";
 import './module-card.js';
 
 class ModuleOverview extends HTMLElement {

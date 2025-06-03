@@ -1,77 +1,53 @@
-﻿using LOM.API.DAL;
+﻿using System.Reflection;
+using LOM.API.DAL;
 using LOM.API.Enums;
 using LOM.API.Models;
 using LOM.API.Validator.Spec.Specifications;
 
 namespace LOM.API.Validator.Specifications
 {
-	public class SpecificationFactory
-	{
-		private readonly LOMContext _context;
-		private readonly int _userId;
+public class SpecificationFactory
+{
+    private readonly ValidationContext _validationContext;
+    private readonly int _userId;
 
-		public SpecificationFactory(LOMContext context, int userId)
-		{
-			_context = context;
-			_userId = userId;
-		}
+    public SpecificationFactory(ValidationContext ValidationContext)
+    {
+        _validationContext = ValidationContext ;
+        _userId = ValidationContext.UserId;
+    }
 
-		public Dictionary<ModulePreconditionType, Func<string, int, ISpecification<IEnumerable<Semester>>>> CreateSpecifications()
-		{
-			return new Dictionary<ModulePreconditionType, Func<string, int, ISpecification<IEnumerable<Semester>>>>
-			{
-				{
-					ModulePreconditionType.RequiredModule,
-					(value, index) =>
-					{
-						if (int.TryParse(value, out var requiredModuleId))
-						{
-							return new RequiredModuleSpecification(requiredModuleId, index, _context);
-						}
-						else
-						{
-							throw new ArgumentException($"Invalid module ID '{value}' for RequiredModule.");
-						}
-					}
-				},
-								{
-					ModulePreconditionType.RequiredLevel2ModulesCount,
-					(_, index) => new RequiredLevel2ModulesCountSpecification(index)
-				},
-				{
-					ModulePreconditionType.RequiredLevel3ModulesCount,
-					(_, index) => new RequiredLevel3ModulesCountSpecification(index)
-				},
-				{
-					ModulePreconditionType.RequiredEc,
-					(value, index) =>
-					{
-						if (int.TryParse(value, out var requiredEc))
-						{
-								return new RequiredEcSpecification(requiredEc,  index, _userId, _context);
-						}
-						else
-						{
-							throw new ArgumentException($"Invalid ec value '{value}' for this requirement.");
-						}
-					}
-				},
-				{
-					ModulePreconditionType.RequiredEcFromPropedeuse,
-					(value, index) =>
-					{
-						if (int.TryParse(value, out var requiredEc))
-						{
-								return new RequiredEcFromPropedeuseSpecification(requiredEc,  index, _userId, _context);
-						}
-						else
-						{
-							throw new ArgumentException($"Invalid ec value '{value}' for this requirement.");
-						}
-					}
-				}
-				// Add new requirements here after adding their respective files in the /Validator/Specifications folder
-			};
-		}
-	}
+    public ISpecification<IEnumerable<Semester>> CreateSpecification(ModulePreconditionType type, string value, int index)
+    {
+        string className = $"{type}Specification";
+        var assembly = typeof(SpecificationFactory).Assembly;
+
+        var specType = assembly.GetTypes()
+            .FirstOrDefault(t => t.Name == className && typeof(ISpecification<IEnumerable<Semester>>).IsAssignableFrom(t));
+
+        if (specType == null)
+            throw new InvalidOperationException($"Specification class '{className}' not found.");
+
+        var ctor = specType.GetConstructors().FirstOrDefault();
+        if (ctor == null)
+            throw new InvalidOperationException($"No constructor found for {className}.");
+
+        var ctorParams = ctor.GetParameters();
+        var args = ctorParams.Select(p => GetParameterValue(p, value, index)).ToArray();
+
+        return (ISpecification<IEnumerable<Semester>>)Activator.CreateInstance(specType, args);
+    }
+
+    private object GetParameterValue(ParameterInfo p, string value, int index)
+    {
+        return p.Name switch
+        {
+            "value" => value,
+            "index" => index,
+            "validationContext" => _validationContext,
+            _ => throw new InvalidOperationException($"Unknown parameter '{p.Name}' in specification constructor.")
+        };
+    }
+}
+
 }

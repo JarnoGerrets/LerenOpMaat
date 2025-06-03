@@ -31,20 +31,18 @@ export function updateExclamationIcon(cardElement, validationMsg, isValid) {
   }
 }
 
-export function updateAllCardsStyling(validationResults = {}) {
-  const allCards = document.querySelectorAll(".semester-card");
+export function updateAllCardsStyling(validationResults = {}, scope = document) {
+  const allCards = scope.querySelectorAll(".semester-card");
 
   allCards.forEach((card) => {
     const moduleId = parseInt(card.getAttribute("data-module-id"));
     const messages = validationResults[moduleId] || [];
-
     updateCardStyle(card, moduleId, messages);
   });
 }
 
 export function updateCardStyle(card, moduleId, validationMessages = []) {
   const isValid = validationState[moduleId] ?? true;
-
   if (isValid) {
     if (card.classList.contains("invalid-module")) {
       showToast("Geen conflicten meer", "success");

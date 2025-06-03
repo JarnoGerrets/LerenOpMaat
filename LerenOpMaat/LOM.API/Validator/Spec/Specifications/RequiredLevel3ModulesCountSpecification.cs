@@ -1,11 +1,21 @@
-﻿using LOM.API.Models;
+﻿using LOM.API.DAL;
+using LOM.API.Models;
 using LOM.API.Validator.Spec.Specifications;
 using LOM.API.Validator.ValidationResults;
 
 namespace LOM.API.Validator.Spec.Specifications
 {
-	public class RequiredLevel3ModulesCountSpecification(int currentModuleId) : ISpecification<IEnumerable<Semester>>
+	public class RequiredLevel3ModulesCountSpecification : ISpecification<IEnumerable<Semester>>
 	{
+		private readonly int CurrentModuleId;
+
+		public RequiredLevel3ModulesCountSpecification(string value, int index, ValidationContext validationContext)
+		{
+			if (!int.TryParse(value, out var parsedValue))
+				throw new ArgumentException($"Invalid value '{value}' for value."); // not needed but will throw errors in constructor if not catched
+
+			CurrentModuleId = index;
+		}
 		public IValidationResult IsSatisfiedBy(IEnumerable<Semester> semesters)
 		{
 			var previousModules = semesters
@@ -18,9 +28,9 @@ namespace LOM.API.Validator.Spec.Specifications
 
 			if (!ismet)
 			{
-				return new ValidationResult(false, "Minimaal één module van niveau 3 is vereist", currentModuleId);
+				return new ValidationResult(false, "Minimaal één module van niveau 3 is vereist", CurrentModuleId);
 			}
-			return new ValidationResult(true, "Module van niveau 3 gevonden in leerroute", currentModuleId);
+			return new ValidationResult(true, "Module van niveau 3 gevonden in leerroute", CurrentModuleId);
 		}
 	}
 }

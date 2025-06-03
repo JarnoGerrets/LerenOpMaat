@@ -6,26 +6,38 @@ using LOM.API.Validator.ValidationResults;
 
 namespace LOM.API.Validator.Spec.Specifications
 {
-    public class RequiredModuleSpecification(int requiredModuleId, int currentSemesterIndex, LOMContext context) : ISpecification<IEnumerable<Semester>>
+    public class RequiredModuleSpecification : ISpecification<IEnumerable<Semester>>
     {
+        private readonly int RequiredModuleId;
+        private readonly int CurrentSemesterIndex;
+        private readonly ValidationContext ValidationContext;
+
+        public RequiredModuleSpecification(string value, int index, ValidationContext validationContext)
+        {
+            if (!int.TryParse(value, out var parsedId))
+                throw new ArgumentException($"Invalid module ID '{value}' for RequiredModule.");
+
+            RequiredModuleId = parsedId;
+            CurrentSemesterIndex = index;
+            ValidationContext = validationContext;
+        }
         public IValidationResult IsSatisfiedBy(IEnumerable<Semester> semesters)
         {
             var semestersList = semesters.ToList();
             bool exists = semesters
-                .Take(currentSemesterIndex)
-                .Any(s => s.Module != null && s.Module.Id == requiredModuleId);
+                .Take(CurrentSemesterIndex)
+                .Any(s => s.Module != null && s.Module.Id == RequiredModuleId);
 
-            if (!exists)
+
+            if (!exists && ValidationContext.Modules.TryGetValue(RequiredModuleId, out var requiredModule))
             {
-                var requiredModule = context.Modules.FirstOrDefault(m => m.Id == requiredModuleId);
-                if (requiredModule != null)
-                {
-                    return new ValidationResult(false,
-                        $"{requiredModule.Name} ({requiredModule.Code}) moet eerst worden gevolgd.", semestersList[currentSemesterIndex].ModuleId);
-                }
+                // requiredModule is found
+                return new ValidationResult(false,
+                    $"{requiredModule.Name} ({requiredModule.Code}) moet eerst worden gevolgd.", semestersList[CurrentSemesterIndex].ModuleId);
             }
-            return new ValidationResult(true, "Required module is satisfied.", semestersList[currentSemesterIndex].ModuleId);
-        }
-    }
+            return new ValidationResult(true, "Required module is satisfied.", semestersList[CurrentSemesterIndex].ModuleId);
 
+        }
+
+    }
 }

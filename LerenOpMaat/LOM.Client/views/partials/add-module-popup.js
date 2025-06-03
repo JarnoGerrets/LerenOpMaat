@@ -2,11 +2,11 @@ import Popup from "../../components/Popup.js";
 import { getProfiles, addModule } from "../../client/api-client.js";
 import {getSelectedEVLs, setupListeners} from "../../scripts/utils/evl-dropdown/evl-dropdown-utils.js"
 import { mapPeriodToPresentableString } from "../../scripts/utils/universal-utils.js";
-let mijnPopup;
+let addPopup;
 
 export default async function addModulePopup() {
     return new Promise(async (resolve) => {
-        mijnPopup = new Popup({
+        addPopup = new Popup({
             maxWidth: 'auto',
             height: 'auto',
             sizeCloseButton: '0',
@@ -119,7 +119,7 @@ export default async function addModulePopup() {
             `
         });
 
-        mijnPopup.open();
+        addPopup.open();
         setupListeners();
 
         const graduateProfiles = await getProfiles();
@@ -159,7 +159,7 @@ export default async function addModulePopup() {
                 const result = await addModule(moduleToSend);
                 showToast(`${result.Name} succesvol toegevoegd`, 'success');
                 resolve(true);
-                mijnPopup.close();
+                addPopup.close();
             } catch (error) {
                 resolve(false);
                 showToast(`Er is een fout opgetreden, probeer opnieuw: ${error}`, 'error')
@@ -170,11 +170,11 @@ export default async function addModulePopup() {
         window.addEventListener('popstate', handleUnload);
 
         function handleUnload() {
-            mijnPopup.close();
+            addPopup.close();
         }
         document.getElementById("cancel-save").addEventListener("click", () => {
             resolve(false);
-            mijnPopup.close();
+            addPopup.close();
         });
 
     });

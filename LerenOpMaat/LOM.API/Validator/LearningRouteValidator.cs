@@ -10,13 +10,12 @@ namespace LOM.API.Validator
 	public class LearningRouteValidator
 	{
 		private const int FlexiblePeriod = 3;
-
+        private readonly SpecificationFactory _specificationFactory;
 		private readonly Dictionary<ModulePreconditionType, Func<string, int, ISpecification<IEnumerable<Semester>>>> _specifications;
 
-		public LearningRouteValidator(LOMContext context, int userId = 0)
+		public LearningRouteValidator(ValidationContext validationContext)
 		{
-			var specificationsFactory = new SpecificationFactory(context, userId);
-			_specifications = specificationsFactory.CreateSpecifications();
+            _specificationFactory = new SpecificationFactory(validationContext);
 		}
 
 		public ICollection<IValidationResult> ValidateLearningRoute(List<Semester> semesters)
@@ -75,16 +74,16 @@ namespace LOM.API.Validator
 		{
 			foreach (var requirement in currentModule.Requirements)
 			{
-				if (_specifications.TryGetValue(requirement.Type, out var specBuilder))
-				{
-					var specification = specBuilder(requirement.Value, index);
-					var result = specification.IsSatisfiedBy(semesters);
-					resultCollection.Add(result);
-				}
-				else
-				{
-					throw new InvalidOperationException($"No specification found for requirement type {requirement.Type}");
-				}
+                try
+                {
+                    var specification = _specificationFactory.CreateSpecification(requirement.Type, requirement.Value, index);
+                    var result = specification.IsSatisfiedBy(semesters);
+                    resultCollection.Add(result);
+                }
+                catch (Exception ex)
+                {
+                    resultCollection.Add(new ValidationResult(false, $"Validatiefout bij {requirement.Type}: {ex.Message}", currentModule.Id));
+                }
 			}
 		}
 	}
