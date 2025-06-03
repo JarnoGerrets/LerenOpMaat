@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using LOM.API.Middleware;
 using LOM.API.Validator;
 using LOM.API.Validator.ValidationService;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,6 +104,21 @@ builder.Services.AddDbContext<LOMContext>(options =>
         .EnableSensitiveDataLogging()
         .EnableDetailedErrors()
 );
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy("UpdateLimiter", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.User.Identity?.Name ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous",
+            factory: key => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 50,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+});
+
+
 builder.Services.AddScoped<ISemesterValidationService, SemesterValidationService>();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -114,7 +130,7 @@ var app = builder.Build();
 
 // Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-
+app.UseRateLimiter();
 app.UseSession();
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {

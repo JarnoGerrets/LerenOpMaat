@@ -7,6 +7,7 @@ using LOM.API.Validator.ValidationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace LOM.API.Controllers
 
         //Speciaal update semester call
         [HttpPut("/api/[controller]/updateSemesters/{learningRouteId}")]
+        [EnableRateLimiting("UpdateLimiter")]
         public async Task<IActionResult> UpdateSemesters(int learningRouteId, [FromBody] UpdateSemestersDto dto)
         {
             var learningRoute = await _context.LearningRoutes
@@ -40,6 +42,9 @@ namespace LOM.API.Controllers
             if (learningRoute == null)
                 return NotFound($"No learningRoute found for Id: {learningRouteId}");
 
+            if (learningRoute?.Semesters?.Count > 30)
+                return BadRequest("The number of semesters exceeds the allowed limit (30).");
+
             foreach (var semester in dto.Semesters)
             {
                 var semesterToUpdate = await _context.Semesters
@@ -47,35 +52,43 @@ namespace LOM.API.Controllers
 
                 if (semesterToUpdate == null)
                 {
-					// Create a new semester if it doesn't exist
-					semesterToUpdate = new Semester
-					{
-						Year = semester.Year,
-						Period = semester.Period,
-						LearningRouteId = learningRouteId,
-						ModuleId = semester.ModuleId,
-						Locked = false
-					};
-					_context.Semesters.Add(semesterToUpdate);
-				}
-				else
+                    // Create a new semester if it doesn't exist
+                    semesterToUpdate = new Semester
+                    {
+                        Year = semester.Year,
+                        Period = semester.Period,
+                        LearningRouteId = learningRouteId,
+                        ModuleId = semester.ModuleId,
+                        Locked = false
+                    };
+                    _context.Semesters.Add(semesterToUpdate);
+                }
+                else
                 {
-					semesterToUpdate.Year = semester.Year;
-					semesterToUpdate.Period = semester.Period;
-					semesterToUpdate.ModuleId = semester.ModuleId;
-				}
+                    semesterToUpdate.Year = semester.Year;
+                    semesterToUpdate.Period = semester.Period;
+                    semesterToUpdate.ModuleId = semester.ModuleId;
+                }
             }
-            var validationResults = await _validationService.ValidateSemestersAsync(dto.Semesters, dto.UserId);
-
-            if (validationResults.Any(r => !r.IsValid))
-                return Ok(validationResults);
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            ICollection<IValidationResult> results;
+            try
+            {
+                results = await _validationService.ValidateSemestersAsync(dto.Semesters, dto.UserId);
+            }
+            catch (InvalidDataException)
+            {
+                return BadRequest("Teveel semesters voor validatie");
+            }
+            if (results.Any(r => !r.IsValid))
+                return Ok(results);
 
             await _context.SaveChangesAsync();
             return Ok();
         }
 
-		[Authorize(Roles = "Lecturer, Administrator")]
-		[HttpPatch("updatedlockedsemester")]
+        [Authorize(Roles = "Lecturer, Administrator")]
+        [HttpPatch("updatedlockedsemester")]
         public async Task<IActionResult> UpdateLockSemester([FromBody] SemesterUpdateLockDto request)
         {
             var semesterUpdate = _context.Semesters.FirstOrDefault(s => s.Id == request.SemesterId);

@@ -4,14 +4,15 @@ using LOM.API.Validator.ValidationResults;
 using LOM.API.Validator.ValidationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 namespace LOM.API.Controllers
 {
-	[Route("api/[controller]")]
-	[Authorize]
-	[ApiController]
-	public class LearningRouteController : ControllerBase
+    [Route("api/[controller]")]
+    [Authorize]
+    [ApiController]
+    public class LearningRouteController : ControllerBase
     {
         private readonly LOMContext _context;
         private readonly ISemesterValidationService _validationService;
@@ -36,13 +37,13 @@ namespace LOM.API.Controllers
             return learningRoute;
         }
 
-		// PUT: api/learningRoutes/5
-		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-		[HttpPut("{id}")]
-		public async Task<IActionResult> PutlearningRoute(int id, LearningRoute learningRoute)
-		{
-			if (id != learningRoute.Id)
-			{
+        // PUT: api/learningRoutes/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutlearningRoute(int id, LearningRoute learningRoute)
+        {
+            if (id != learningRoute.Id)
+            {
                 return BadRequest();
             }
 
@@ -162,13 +163,21 @@ namespace LOM.API.Controllers
 
             return learningRoute;
         }
-
-
+        //LearningRoute/ValidateRoute
         [HttpPost("ValidateRoute")]
+        [EnableRateLimiting("UpdateLimiter")]
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
-            var results = await _validationService.ValidateSemestersAsync(semesters, userId);
+            ICollection<IValidationResult> results;
+            try
+            {
+                results = await _validationService.ValidateSemestersAsync(semesters, userId);
+            }
+            catch (InvalidDataException)
+            {
+                return BadRequest("Teveel semesters voor validatie");
+            }
             return Ok(results);
         }
 
