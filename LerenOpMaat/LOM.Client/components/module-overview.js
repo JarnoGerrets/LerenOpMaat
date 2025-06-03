@@ -1,5 +1,5 @@
 // module-overview.js
-import { getModules, getProfiles } from '../client/api-client.js';
+import { getModules, getProfiles, hasPermission } from '../client/api-client.js';
 import addModulePopup from '../views/partials/add-module-popup.js';
 import './module-card.js';
 
@@ -43,21 +43,19 @@ class ModuleOverview extends HTMLElement {
             this.renderModules(filteredModules);
         });
 
-        let userData = await window.userData;
+        const student = await hasPermission("student");
 
-        if (userData) {
-            if (userData.EffectiveRole != 'Student') {
-                //add module handler        
-                const addModuleInput = this.querySelector('#add-module-button');
-                addModuleInput.style.display = 'flex';
-                addModuleInput.addEventListener('click', async () => {
-                    const success = await addModulePopup();
-                    if (success) {
-                        const modules = await getModules();
-                        this.renderModules(modules);
-                    }
-                });
-            }
+        if (!student) {
+            //add module handler        
+            const addModuleInput = this.querySelector('#add-module-button');
+            addModuleInput.style.display = 'flex';
+            addModuleInput.addEventListener('click', async () => {
+                const success = await addModulePopup();
+                if (success) {
+                    const modules = await getModules();
+                    this.renderModules(modules);
+                }
+            });
         }
 
         const profiles = await getProfiles();

@@ -177,7 +177,7 @@ builder.Services.AddSession();
 builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
-
+app.MapGet("/debug/student", () => "Student reached");
 // Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRateLimiter();

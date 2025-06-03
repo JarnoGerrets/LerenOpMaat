@@ -1,5 +1,5 @@
 import { userData } from "../scripts/utils/getUserData.js";
-import { getLoginUrl, logout, getNotificationsByUserId, markNotificationsAsRead, getAllRoles } from '../client/api-client.js';
+import { getLoginUrl, logout, getNotificationsByUserId, markNotificationsAsRead, getAllRoles, hasPermission } from '../client/api-client.js';
 
 export default class Header extends HTMLElement {
   constructor() {
@@ -42,9 +42,10 @@ export default class Header extends HTMLElement {
     const simulatedDropdown = this.querySelector("#simulated-role-dropdown");
     const bell = this.querySelector("#notification-bell");
     const _userData = await userData;
+    const isAdmin = await hasPermission("admin");
 
     if (_userData) {
-      if (_userData.Roles.includes("Administrator")) {
+      if (isAdmin) {
         simulatedRoleObj.classList.remove("hidden");
         loginObj.innerHTML = '<i class="bi bi-person-circle"></i> Administrator';
         simulatedRoleObj.style.display = "inline-block";
@@ -75,7 +76,7 @@ export default class Header extends HTMLElement {
           simulatedDropdown.classList.add("hidden");
         });
       } else {
-        loginObj.innerHTML = '<i class="bi bi-person-circle"></i> _userData.Username';
+        loginObj.innerHTML = `<i class="bi bi-person-circle"></i> ${_userData.Username}`;
       }
 
       logoutObj.classList.remove("d-none");
@@ -100,82 +101,82 @@ export default class Header extends HTMLElement {
   }
 
 
-async initializeNotifications() {
-  const bell = this.querySelector("#notification-bell");
-  const dropdown = this.querySelector("#notification-dropdown");
-  const badge = this.querySelector("#notificationAmount");
-  const itemsContainer = this.querySelector(".notification-items");
+  async initializeNotifications() {
+    const bell = this.querySelector("#notification-bell");
+    const dropdown = this.querySelector("#notification-dropdown");
+    const badge = this.querySelector("#notificationAmount");
+    const itemsContainer = this.querySelector(".notification-items");
 
-  const _userData = await userData;
-  if (!_userData) return;
-  const currentUserId = _userData.InternalId;
+    const _userData = await userData;
+    if (!_userData) return;
+    const currentUserId = _userData.InternalId;
 
-  const notifications = await getNotificationsByUserId(_userData.InternalId);
+    const notifications = await getNotificationsByUserId(_userData.InternalId);
 
-  const grouped = {};
-  notifications.forEach(msg => {
-    const conversationId = msg.Conversation.Id;
+    const grouped = {};
+    notifications.forEach(msg => {
+      const conversationId = msg.Conversation.Id;
 
-    let otherUser = null;
-    if (msg.Conversation.Student?.id !== currentUserId) {
-      otherUser = msg.Conversation.Student;
-    } else {
-      otherUser = msg.Conversation.Teacher;
-    }
+      let otherUser = null;
+      if (msg.Conversation.Student?.id !== currentUserId) {
+        otherUser = msg.Conversation.Student;
+      } else {
+        otherUser = msg.Conversation.Teacher;
+      }
 
-    const otherUserName = `${otherUser?.FirstName} ${otherUser?.LastName}` || "Onbekend";
+      const otherUserName = `${otherUser?.FirstName} ${otherUser?.LastName}` || "Onbekend";
 
-    if (!grouped[conversationId]) {
-      grouped[conversationId] = {
-        count: 0,
-        otherUserName: otherUserName,
-        conversationId: conversationId,
-        userId: (msg.Conversation.Student?.Id === currentUserId ? msg.Conversation.Teacher?.Id : msg.Conversation.Student?.Id)
-      };
-    }
-    grouped[conversationId].count++;
-  });
-
-  const groups = Object.values(grouped);
-  const totalCount = groups.reduce((sum, group) => sum + group.count, 0);
-
-  if (totalCount > 0) {
-    badge.textContent = totalCount;
-    badge.classList.remove("hidden");
-  } else {
-    badge.classList.add("hidden");
-  }
-
-  // 🔧 Now only clear and update the items container:
-  itemsContainer.innerHTML = '';
-
-  if (groups.length === 0) {
-    itemsContainer.innerHTML = '<div class="notification-item">Geen nieuwe meldingen</div>';
-  } else {
-    groups.forEach(group => {
-      const item = document.createElement("div");
-      item.className = "notification-item";
-
-      const messageWord = group.count === 1 ? "bericht" : "berichten";
-      item.textContent = `${group.count} ongelezen ${messageWord} in het gesprek met ${group.otherUserName}`;
-
-      item.addEventListener('click', async () => {
-        dropdown.classList.add("hidden");
-        sessionStorage.setItem('lom_conversationId', group.conversationId);
-        sessionStorage.setItem('lom_userId', group.userId);
-        window.location.hash = "#beheerder-feedback";
-        let body = {
-          UserId: currentUserId,
-          ConversationId: group.conversationId
-        }
-        await markNotificationsAsRead(body);
-        await this.initializeNotifications();
-      });
-
-      itemsContainer.appendChild(item);
+      if (!grouped[conversationId]) {
+        grouped[conversationId] = {
+          count: 0,
+          otherUserName: otherUserName,
+          conversationId: conversationId,
+          userId: (msg.Conversation.Student?.Id === currentUserId ? msg.Conversation.Teacher?.Id : msg.Conversation.Student?.Id)
+        };
+      }
+      grouped[conversationId].count++;
     });
+
+    const groups = Object.values(grouped);
+    const totalCount = groups.reduce((sum, group) => sum + group.count, 0);
+
+    if (totalCount > 0) {
+      badge.textContent = totalCount;
+      badge.classList.remove("hidden");
+    } else {
+      badge.classList.add("hidden");
+    }
+
+    // 🔧 Now only clear and update the items container:
+    itemsContainer.innerHTML = '';
+
+    if (groups.length === 0) {
+      itemsContainer.innerHTML = '<div class="notification-item">Geen nieuwe meldingen</div>';
+    } else {
+      groups.forEach(group => {
+        const item = document.createElement("div");
+        item.className = "notification-item";
+
+        const messageWord = group.count === 1 ? "bericht" : "berichten";
+        item.textContent = `${group.count} ongelezen ${messageWord} in het gesprek met ${group.otherUserName}`;
+
+        item.addEventListener('click', async () => {
+          dropdown.classList.add("hidden");
+          sessionStorage.setItem('lom_conversationId', group.conversationId);
+          sessionStorage.setItem('lom_userId', group.userId);
+          window.location.hash = "#beheerder-feedback";
+          let body = {
+            UserId: currentUserId,
+            ConversationId: group.conversationId
+          }
+          await markNotificationsAsRead(body);
+          await this.initializeNotifications();
+        });
+
+        itemsContainer.appendChild(item);
+      });
+    }
   }
-}
 
 
   setupNotificationHandlers() {

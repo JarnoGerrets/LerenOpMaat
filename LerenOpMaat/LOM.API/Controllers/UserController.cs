@@ -49,7 +49,6 @@ namespace LOM.API.Controllers
 
     }
 
-    [Authorize]
     [ApiController]
     [Route("api/account")]
     public class AccountController : Controller
@@ -60,7 +59,7 @@ namespace LOM.API.Controllers
         {
             _context = context;
         }
-
+        [Authorize]
         [HttpGet]
         [EnableRateLimiting("GetLimiter")]
 
@@ -176,7 +175,6 @@ namespace LOM.API.Controllers
             return Ok(user.StartYear);
         }
 
-
         [HttpPost("startyear/{id}")]
         [EnableRateLimiting("PostLimiter")]
 
@@ -223,4 +221,37 @@ namespace LOM.API.Controllers
         }
 
     }
+
+    [Authorize]
+    [Route("api/[controller]")]
+    public class PermissionController : Controller
+    {
+        [HttpGet("{feature}")]
+        public IActionResult HasPermission(string feature)
+        {
+            var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+
+            bool hasPermission = feature.ToLower() switch
+            {
+                "teacher" => roles.Contains("Administrator") || roles.Contains("Lecturer"),
+                "student" => roles.Contains("Student") || roles.Contains("Administrator"),
+                "admin" => roles.Contains("Administrator"),
+                _ => false
+            };
+
+            return Ok(hasPermission);
+        }
+    }
+
+    [AllowAnonymous]
+    [Route("api/[controller]")]
+    public class StatusController : Controller
+    {
+        [HttpGet]
+        public IActionResult GetLoginStatus()
+        {
+            return Ok(new { IsAuthenticated = User?.Identity?.IsAuthenticated == true });
+        }
+    }
+
 }

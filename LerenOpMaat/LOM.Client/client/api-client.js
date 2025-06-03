@@ -44,6 +44,45 @@ export async function getUserData() {
   }
 }
 
+export async function isLoggedIn() {
+  const res = await fetch(`${API_BASE}/status`, {
+    credentials: "include",
+    headers: { "Accept": "application/json" }
+  });
+  const json = await res.json();
+  if (json.IsAuthenticated) return true;
+  return false;
+}
+
+export async function hasPermission(role) {
+  const loggedIn = await isLoggedIn();
+  if (!loggedIn) {
+    return false;
+  }
+  try {
+    const res = await fetch(`${API_BASE}/permission/${role}`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+    const allowed = await res.json();
+    if (res.ok) {
+      return allowed;
+    }
+
+    if (res.status === 403) return false;
+
+    if (res.status === 401) return false;
+
+    throw new Error(`Unexpected response: ${res.status}`);
+  } catch (err) {
+    console.error("Error while checking permission:", err);
+    throw err;
+  }
+}
+
 export async function getStudent(id) {
   const res = await fetch(`${API_BASE}/account/getstudent/${id}`, {
     method: "GET",
