@@ -1,6 +1,7 @@
 using LOM.API.DAL;
 using LOM.API.Models;
 using LOM.API.Validator.ValidationResults;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace LOM.API.Validator.ValidationService
@@ -17,6 +18,10 @@ namespace LOM.API.Validator.ValidationService
         public async Task<ICollection<IValidationResult>> ValidateSemestersAsync(List<Semester> semesters, int userId)
         {
 
+            if (semesters.Count > 30)
+            {
+                throw new InvalidDataException("Too many semester, cannot process this request");
+            }
             var modules = await _context.Modules
                 .Include(m => m.Requirements)
                 .ToDictionaryAsync(m => m.Id);

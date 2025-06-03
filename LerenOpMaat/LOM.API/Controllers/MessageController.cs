@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LOM.API.Controllers
 {
@@ -25,6 +26,7 @@ namespace LOM.API.Controllers
 
         // GET: api/Message
         [HttpGet]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<IEnumerable<Message>>> GetMessages()
         {
             return await _context.Messages.ToListAsync();
@@ -47,6 +49,7 @@ namespace LOM.API.Controllers
         // PUT: api/Message/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> PutMessage(int id, Message message)
         {
             if (id != message.Id)
@@ -78,6 +81,7 @@ namespace LOM.API.Controllers
         // POST: api/Message
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [EnableRateLimiting("MessageLimiter")]
         public async Task<ActionResult<Message>> PostMessage(Message message)
         {
             _context.Messages.Add(message);
@@ -88,6 +92,7 @@ namespace LOM.API.Controllers
 
         // DELETE: api/Message/5
         [HttpDelete("{id}")]
+        [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> DeleteMessage(int id)
         {
             var message = await _context.Messages.FindAsync(id);
@@ -103,6 +108,7 @@ namespace LOM.API.Controllers
         }
 
         [HttpGet("messagesByConversationId/{id}")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<IEnumerable<Message>>> GetMessagesByConversationId(int id)
         {
             var messages = await _context.Messages.Include(u => u.User)

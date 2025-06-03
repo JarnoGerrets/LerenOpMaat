@@ -4,6 +4,7 @@ using LOM.API.DAL;
 using LOM.API.Models;
 using LOM.API.DTO;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LOM.API.Controllers
 {
@@ -22,6 +23,7 @@ namespace LOM.API.Controllers
 		// GET: api/Module
 		[HttpGet]
 		[AllowAnonymous]
+		[EnableRateLimiting("GetLimiter")]
 		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules([FromQuery] string? q)
 		{
 			IQueryable<Module> query;
@@ -63,6 +65,7 @@ namespace LOM.API.Controllers
 
 		// GET: api/Module/Active
 		[HttpGet("Active")]
+		[EnableRateLimiting("GetLimiter")]
 		[AllowAnonymous]
 		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetActiveModules([FromQuery] string? q)
 		{
@@ -95,6 +98,7 @@ namespace LOM.API.Controllers
 
 		// GET: api/Module/5
 		[HttpGet("{id}")]
+		[EnableRateLimiting("GetLimiter")]
 		[AllowAnonymous]
 		public async Task<ActionResult<ModuleDto>> GetModule(int id)
 		{
@@ -118,6 +122,7 @@ namespace LOM.API.Controllers
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPut("{id}")]
+		[EnableRateLimiting("PostLimiter")]
 		public async Task<IActionResult> PutModule(ModuleDto moduleDto)
 		{
 			var existingModule = await _context.Modules
@@ -164,6 +169,7 @@ namespace LOM.API.Controllers
 
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpGet("existence/{id}")]
+		[EnableRateLimiting("GetLimiter")]
 		public async Task<IActionResult> CheckModuleExistence(int id)
 		{
 			var exists = await _context.Semesters.AnyAsync(s => s.ModuleId == id);
@@ -175,6 +181,7 @@ namespace LOM.API.Controllers
 		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPost]
+		[EnableRateLimiting("PostLimiter")]
 		public async Task<ActionResult<Module>> PostModule(ModuleCreateDto @dto)
 		{
 			if (dto == null)
@@ -219,6 +226,7 @@ namespace LOM.API.Controllers
 		// deactivate: api/Module/deactivate/5
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPatch("deactivate/{id}")]
+		[EnableRateLimiting("PostLimiter")]
 		public async Task<IActionResult> DeactivateModule(int id)
 		{
 			var @module = await _context.Modules.FindAsync(id);
@@ -237,6 +245,7 @@ namespace LOM.API.Controllers
 		// activate: api/Module/activate/5
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPatch("activate/{id}")]
+		[EnableRateLimiting("PostLimiter")]
 		public async Task<IActionResult> ActivateModule(int id)
 		{
 			var @module = await _context.Modules.FindAsync(id);
@@ -254,6 +263,7 @@ namespace LOM.API.Controllers
 		// DELETE: api/Module/5
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpDelete("{id}")]
+		[EnableRateLimiting("DeleteLimiter")]
 		public async Task<IActionResult> DeleteModule(int id)
 		{
 			var module = await _context.Modules.FindAsync(id);
@@ -270,6 +280,7 @@ namespace LOM.API.Controllers
 
 		// GET: api/Module/5/progress
 		[HttpGet("{id}/progress")]
+		[EnableRateLimiting("GetLimiter")]
 		public async Task<ActionResult<ModuleProgressDto>> GetModuleProgress(int id)
 		{
 			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -343,6 +354,7 @@ namespace LOM.API.Controllers
 
 		// DELETE: api/Module/5/completedevl/10
 		[HttpDelete("{moduleId}/removecompletedevl/{evlId}")]
+		[EnableRateLimiting("DeleteLimiter")]
 		public async Task<ActionResult<ModuleProgressDto>> RemoveCompletedEvl(int moduleId, int evlId)
 		{
 			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
@@ -383,10 +395,11 @@ namespace LOM.API.Controllers
 
 		[Authorize(Roles = "Administrator")]
 		[HttpGet("reporting/modules-engagement")]
+		[EnableRateLimiting("GetLimiter")]
 		public async Task<IActionResult> GetModulesEngagement(int? year = null, int? profileId = null)
 		{
 			var modules = _context.Modules.AsQueryable();
-			
+
 			if (profileId != null)
 				modules = modules.Where(m => m.GraduateProfileId == profileId);
 
@@ -418,6 +431,7 @@ namespace LOM.API.Controllers
 
 		[Authorize(Roles = "Administrator")]
 		[HttpGet("reporting/available-years")]
+		[EnableRateLimiting("GetLimiter")]
 		public async Task<IActionResult> GetAvailableYears()
 		{
 			var years = await _context.Semesters

@@ -5,6 +5,7 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 namespace LOM.API.Controllers
@@ -23,6 +24,8 @@ namespace LOM.API.Controllers
 
 		[AllowAnonymous]
 		[HttpGet("{id}")]
+		[EnableRateLimiting("GetLimiter")]
+
 		public async Task<ActionResult<Requirement>> GetRequirement(int id)
 		{
 			var requirement = await _context.Requirements.FindAsync(id);
@@ -35,6 +38,8 @@ namespace LOM.API.Controllers
 
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpGet("types")]
+		[EnableRateLimiting("GetLimiter")]
+
 		public ActionResult<IEnumerable<ModuleRequirementTypeDto>> GetRequirementTypes()
 		{
 			var types = Enum.GetValues(typeof(ModulePreconditionType))
@@ -47,8 +52,10 @@ namespace LOM.API.Controllers
 
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPost]
-        public async Task<ActionResult> PostRequirement(Requirement requirement)
-        {
+		[EnableRateLimiting("PostLimiter")]
+
+		public async Task<ActionResult> PostRequirement(Requirement requirement)
+		{
 			if (requirement == null)
 			{
 				return BadRequest();
@@ -62,6 +69,8 @@ namespace LOM.API.Controllers
 
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPut("{id}")]
+		[EnableRateLimiting("PostLimiter")]
+
 		public async Task<IActionResult> PutRequirement(int id, Requirement requirement)
 		{
 			if (id != requirement.Id)
@@ -78,6 +87,8 @@ namespace LOM.API.Controllers
 
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpDelete("{id}")]
+		[EnableRateLimiting("DeleteLimiter")]
+
 		public async Task<IActionResult> DeleteRequirement(int id)
 		{
 			var requirement = await _context.Requirements.FindAsync(id);

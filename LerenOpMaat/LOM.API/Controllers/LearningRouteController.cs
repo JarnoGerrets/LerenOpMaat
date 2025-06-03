@@ -4,14 +4,15 @@ using LOM.API.Validator.ValidationResults;
 using LOM.API.Validator.ValidationService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 namespace LOM.API.Controllers
 {
-	[Route("api/[controller]")]
-	[Authorize]
-	[ApiController]
-	public class LearningRouteController : ControllerBase
+    [Route("api/[controller]")]
+    [Authorize]
+    [ApiController]
+    public class LearningRouteController : ControllerBase
     {
         private readonly LOMContext _context;
         private readonly ISemesterValidationService _validationService;
@@ -24,6 +25,7 @@ namespace LOM.API.Controllers
 
         // GET: api/learningRoutes/5
         [HttpGet("{id}")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<LearningRoute>> GetlearningRoute(int id)
         {
             var learningRoute = await _context.LearningRoutes.Include(s => s.Semesters).ThenInclude(m => m.Module).FirstOrDefaultAsync(lr => lr.Id == id);
@@ -36,13 +38,14 @@ namespace LOM.API.Controllers
             return learningRoute;
         }
 
-		// PUT: api/learningRoutes/5
-		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-		[HttpPut("{id}")]
-		public async Task<IActionResult> PutlearningRoute(int id, LearningRoute learningRoute)
-		{
-			if (id != learningRoute.Id)
-			{
+        // PUT: api/learningRoutes/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        [EnableRateLimiting("PostLimiter")]
+        public async Task<IActionResult> PutlearningRoute(int id, LearningRoute learningRoute)
+        {
+            if (id != learningRoute.Id)
+            {
                 return BadRequest();
             }
 
@@ -70,6 +73,7 @@ namespace LOM.API.Controllers
         // POST: api/learningRoutes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [EnableRateLimiting("PostLimiter")]
         public async Task<ActionResult<LearningRoute>> PostlearningRoute([FromBody] LearningRoute learningRoute)
         {
             if (learningRoute == null)
@@ -129,6 +133,7 @@ namespace LOM.API.Controllers
 
         //Speciaal get leerroute call
         [HttpGet("/api/LearningRoute/User/{userId}")]
+        [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<LearningRoute>> GetLearningRouteByUserId(int userId)
         {
             var learningRoute = await _context.LearningRoutes
@@ -162,13 +167,21 @@ namespace LOM.API.Controllers
 
             return learningRoute;
         }
-
-
+        //LearningRoute/ValidateRoute
         [HttpPost("ValidateRoute")]
+        [EnableRateLimiting("ValidateLimiter")]
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {
             int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
-            var results = await _validationService.ValidateSemestersAsync(semesters, userId);
+            ICollection<IValidationResult> results;
+            try
+            {
+                results = await _validationService.ValidateSemestersAsync(semesters, userId);
+            }
+            catch (InvalidDataException)
+            {
+                return BadRequest("Teveel semesters voor validatie");
+            }
             return Ok(results);
         }
 
