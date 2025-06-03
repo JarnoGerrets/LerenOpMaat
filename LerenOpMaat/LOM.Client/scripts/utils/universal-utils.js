@@ -13,9 +13,13 @@ export async function loadTemplate(link) {
 }
 
 export function mapPeriodToPresentableString(period) {
-    if (period === 3 || period === '3'){
-        return "Beide";
-    }
+  if (period === 3 || period === '3') {
+    return "Beide";
+  }
 
-    return period.toString();
+  if (period === undefined) {
+    return "undefined";
+  }
+
+  return period.toString();
 }
