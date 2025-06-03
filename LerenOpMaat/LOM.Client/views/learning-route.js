@@ -322,9 +322,10 @@ export default async function LearningRoute() {
             window.location.hash = "#feedback";
         });
     }
-
-    const validation = await validateRoute(learningRouteArray);
-    handleValidationResult(validation, undefined, fragment);
+    if (userData && userData.InternalId) {
+        const validation = await validateRoute(learningRouteArray);
+        handleValidationResult(validation, undefined, fragment);
+    }
 
     return { fragment };
 }
