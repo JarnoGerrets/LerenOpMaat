@@ -125,11 +125,24 @@ namespace LOM.API.Controllers
                     .FirstOrDefaultAsync(s => s.Year == semester.Year && s.Period == semester.Period && s.LearningRouteId == learningRouteId);
 
                 if (semesterToUpdate == null)
-                    return NotFound($"No semester found for Year {semester.Year} Period {semester.Period} for learningRouteId: {learningRouteId}");
-
-                semesterToUpdate.Year = semester.Year;
-                semesterToUpdate.Period = semester.Period;
-                semesterToUpdate.ModuleId = semester.ModuleId;
+                {
+					// Create a new semester if it doesn't exist
+					semesterToUpdate = new Semester
+					{
+						Year = semester.Year,
+						Period = semester.Period,
+						LearningRouteId = learningRouteId,
+						ModuleId = semester.ModuleId,
+						Locked = false
+					};
+					_context.Semesters.Add(semesterToUpdate);
+				}
+				else
+                {
+					semesterToUpdate.Year = semester.Year;
+					semesterToUpdate.Period = semester.Period;
+					semesterToUpdate.ModuleId = semester.ModuleId;
+				}
             }
             var validationResults = await _validationService.ValidateSemestersAsync(dto.Semesters, dto.UserId);
 
@@ -139,7 +152,6 @@ namespace LOM.API.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
-
 
         [Authorize(Roles = "Teacher, Administrator")]
         [HttpPatch("updatedlockedsemester")]
