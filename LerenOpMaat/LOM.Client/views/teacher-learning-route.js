@@ -8,7 +8,7 @@ import { debounce } from "../scripts/utils/universal-utils.js";
 import SemesterPair from "../components/semester-pair.js";
 
 let apiResponse = [];
-export default async function administratorLearningRoute() {
+export default async function teacherLearningRoute() {
     const conversationId = sessionStorage.getItem('lom_conversationId');
     const userId = sessionStorage.getItem('lom_StudentId');
     showLoading();

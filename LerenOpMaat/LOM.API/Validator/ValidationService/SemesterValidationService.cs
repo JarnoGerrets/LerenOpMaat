@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LOM.API.Validator.ValidationService
 {
     public class SemesterValidationService : ISemesterValidationService
-	{
+    {
         private readonly LOMContext _context;
 
         public SemesterValidationService(LOMContext context)
@@ -16,21 +16,27 @@ namespace LOM.API.Validator.ValidationService
 
         public async Task<ICollection<IValidationResult>> ValidateSemestersAsync(List<Semester> semesters, int userId)
         {
+
+            var modules = await _context.Modules
+                .Include(m => m.Requirements)
+                .ToDictionaryAsync(m => m.Id);
+
+            var progresses = await _context.ModuleProgresses
+                .Include(p => p.CompletedEVLs).ThenInclude(e => e.ModuleEvl)
+                .Where(p => p.UserId == userId)
+                .ToListAsync();
+
             foreach (var semester in semesters)
             {
-                if (semester.ModuleId.HasValue)
+                if (semester.ModuleId.HasValue && modules.TryGetValue(semester.ModuleId.Value, out var module))
                 {
-                    var module = await _context.Modules
-                        .Include(m => m.Requirements)
-                        .FirstOrDefaultAsync(m => m.Id == semester.ModuleId);
-                    if (module != null)
-                    {
-                        semester.Module = module;
-                    }
+                    semester.Module = module;
                 }
             }
 
-            var validator = new LearningRouteValidator(_context, userId);
+            var validationContext = new ValidationContext(userId, progresses, modules);
+
+            var validator = new LearningRouteValidator(validationContext);
             return validator.ValidateLearningRoute(semesters);
         }
     }

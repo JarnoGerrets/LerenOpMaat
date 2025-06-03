@@ -1,15 +1,15 @@
-import {validationsServices} from '../importServiceProvider.js'
+import { validationsServices } from '../importServiceProvider.js'
 
 function updateValidationState(moduleId, isValid) {
   validationState[moduleId] = isValid;
 }
 
 
-export function handleValidationResult(result, services = validationsServices) {
-  const{
+export function handleValidationResult(result, services = validationsServices, fragment = document) {
+  const {
     updateAllCardsStyling
   } = services;
-  
+
   let validationResults = {};
 
   for (const validation of result) {
@@ -33,5 +33,5 @@ export function handleValidationResult(result, services = validationsServices) {
 
   }
 
-  updateAllCardsStyling(validationResults);
+  updateAllCardsStyling(validationResults, fragment);
 }

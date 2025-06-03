@@ -1,8 +1,5 @@
-﻿using LOM.API.DAL;
-using LOM.API.Enums;
-using LOM.API.Models;
-using LOM.API.Validator.Spec.Specifications;
-using LOM.API.Validator.Specifications;
+﻿using LOM.API.Models;
+using LOM.API.Validator.Specifications.Factories;
 using LOM.API.Validator.ValidationResults;
 
 namespace LOM.API.Validator
@@ -10,13 +7,13 @@ namespace LOM.API.Validator
 	public class LearningRouteValidator
 	{
 		private const int FlexiblePeriod = 3;
+		private readonly BusinessSpecificationFactory _businessSpecificationFactory;
+		private readonly StructuralSpecificationFactory _structuralSpecificationFactory;
 
-		private readonly Dictionary<ModulePreconditionType, Func<string, int, ISpecification<IEnumerable<Semester>>>> _specifications;
-
-		public LearningRouteValidator(LOMContext context, int userId = 0)
+		public LearningRouteValidator(ValidationContext validationContext)
 		{
-			var specificationsFactory = new SpecificationFactory(context, userId);
-			_specifications = specificationsFactory.CreateSpecifications();
+			_businessSpecificationFactory = new BusinessSpecificationFactory(validationContext);
+			_structuralSpecificationFactory = new StructuralSpecificationFactory(validationContext);
 		}
 
 		public ICollection<IValidationResult> ValidateLearningRoute(List<Semester> semesters)
@@ -31,24 +28,13 @@ namespace LOM.API.Validator
 				if (currentModule != null)
 				{
 
-					if (IsModuleInRoute(semesters, currentModule, i))
+					var hasFailed = ValidateModuleStructuralRequirements(currentModule, semesters, i, resultCollection);
+					if (hasFailed)
 					{
-						var validation = new ValidationResult(false,
-							$"Module {currentModule.Name} komt al voor in de leerroute.",
-							currentModule.Id);
-						resultCollection.Add(validation);
 						continue;
 					}
-
-					if (!IsModuleInCorrectPeriod(currentSemester, currentModule))
-					{
-						var validation = new ValidationResult(false,
-							$"Module {currentModule.Name} moet in periode {currentModule.Period} gevolgd worden.",
-							currentModule.Id);
-						resultCollection.Add(validation);
-					}
-
-					ValidateModuleRequirements(currentModule, semesters, i, resultCollection);
+					
+					ValidateModuleBusinessRequirements(currentModule, semesters, i, resultCollection);
 				}
 			}
 
@@ -60,33 +46,45 @@ namespace LOM.API.Validator
 			return resultCollection;
 		}
 
-		private bool IsModuleInCorrectPeriod(Semester semester, Module currentModule)
-		{
-			return currentModule.Period == semester.Period || currentModule.Period == FlexiblePeriod;
-		}
-
-		private bool IsModuleInRoute(List<Semester> semesters, Module module, int currentIndex)
-		{
-			return semesters.Where((s, idx) => idx != currentIndex)
-				.Any(s => s.Module != null && s.Module.Id == module.Id);
-		}
-
-		private void ValidateModuleRequirements(Module currentModule, List<Semester> semesters, int index, ICollection<IValidationResult> resultCollection)
+		private void ValidateModuleBusinessRequirements(Module currentModule, List<Semester> semesters, int index, ICollection<IValidationResult> resultCollection)
 		{
 			foreach (var requirement in currentModule.Requirements)
 			{
-				if (_specifications.TryGetValue(requirement.Type, out var specBuilder))
+				try
 				{
-					var specification = specBuilder(requirement.Value, index);
+					var specification = _businessSpecificationFactory.CreateSpecification(requirement.Type, requirement.Value, index);
 					var result = specification.IsSatisfiedBy(semesters);
 					resultCollection.Add(result);
 				}
-				else
+				catch (Exception ex)
 				{
-					throw new InvalidOperationException($"No specification found for requirement type {requirement.Type}");
+					resultCollection.Add(new ValidationResult(false, $"Validatiefout bij {requirement.Type}: {ex.Message}", currentModule.Id));
 				}
 			}
+		}
+
+		private bool ValidateModuleStructuralRequirements(Module currentModule, List<Semester> semesters, int index, ICollection<IValidationResult> resultCollection)
+		{
+			foreach (var structuralSpec in _structuralSpecificationFactory.CreateAllSpecifications())
+			{
+				try
+				{
+					var structuralResult = structuralSpec.IsSatisfiedBy(semesters, currentModule, index);
+
+					if (!structuralResult.IsValid)
+					{
+						resultCollection.Add(structuralResult);
+						return true;
+					}
+				}
+				catch (Exception ex)
+				{
+					resultCollection.Add(new ValidationResult(false, $"Fout in structurele validatie {structuralSpec.GetType().Name}: {ex.Message}", currentModule.Id));
+				}
+			}
+			return false;
 		}
 	}
 
 }
+

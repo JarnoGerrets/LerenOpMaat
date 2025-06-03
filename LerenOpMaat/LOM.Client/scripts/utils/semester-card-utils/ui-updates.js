@@ -31,20 +31,18 @@ export function updateExclamationIcon(cardElement, validationMsg, isValid) {
   }
 }
 
-export function updateAllCardsStyling(validationResults = {}) {
-  const allCards = document.querySelectorAll(".semester-card");
+export function updateAllCardsStyling(validationResults = {}, scope = document) {
+  const allCards = scope.querySelectorAll(".semester-card");
 
   allCards.forEach((card) => {
     const moduleId = parseInt(card.getAttribute("data-module-id"));
     const messages = validationResults[moduleId] || [];
-
     updateCardStyle(card, moduleId, messages);
   });
 }
 
 export function updateCardStyle(card, moduleId, validationMessages = []) {
   const isValid = validationState[moduleId] ?? true;
-
   if (isValid) {
     if (card.classList.contains("invalid-module")) {
       showToast("Geen conflicten meer", "success");
@@ -86,11 +84,10 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
 
   const achievedECs = calculateAchievedECs(progress, selectedModule);
   const loggedIn = window.userData;
-
+  // only loggedin users should be able to update evl's as the feature represents progress of education.
   if (selectedModule?.Evls && loggedIn) {
     evlList.innerHTML = selectedModule.Evls.map(ev => {
       const isChecked = progress?.CompletedEvls?.some(completed => completed.ModuleEvl.Id === ev.Id);
-
       return `
         <label class="checkbox-wrapper-30">
           <span class="checkbox" style="margin-right: 15px;">
@@ -144,7 +141,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
   } else {
     evlList.innerHTML = "";
   }
-
+  // updating the text in the card to show current progression of education.
   if (selectedModule && loggedIn) {
     coursePoints.innerHTML = `Behaalde ec's (${achievedECs}/${selectedModule.Ec}) ↓`;
     coursePoints.style.cursor = "pointer";

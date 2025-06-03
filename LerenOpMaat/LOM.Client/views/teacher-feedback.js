@@ -6,7 +6,7 @@ import {
     getMessagesByConversationId,
 } from "../client/api-client.js";
 
-export default async function beheerderFeedback() {
+export default async function teacherFeedback() {
     const conversationId = sessionStorage.getItem('lom_conversationId');
     const studentId = sessionStorage.getItem('lom_StudentId');
     const response = await fetch("/templates/beheerder-feedback.html");
