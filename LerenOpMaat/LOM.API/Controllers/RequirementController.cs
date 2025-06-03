@@ -2,6 +2,7 @@
 using LOM.API.DTO;
 using LOM.API.Enums;
 using LOM.API.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LOM.API.Controllers
 {
 	[Route("api/[controller]")]
+	[Authorize]
 	[ApiController]
 	public class RequirementController : Controller
 	{
@@ -19,6 +21,7 @@ namespace LOM.API.Controllers
 			_context = context;
 		}
 
+		[AllowAnonymous]
 		[HttpGet("{id}")]
 		public async Task<ActionResult<Requirement>> GetRequirement(int id)
 		{
@@ -30,6 +33,7 @@ namespace LOM.API.Controllers
 			return requirement;
 		}
 
+		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpGet("types")]
 		public ActionResult<IEnumerable<ModuleRequirementTypeDto>> GetRequirementTypes()
 		{
@@ -41,6 +45,7 @@ namespace LOM.API.Controllers
 			return Ok(types);
 		}
 
+		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPost]
         public async Task<ActionResult> PostRequirement(Requirement requirement)
         {
@@ -55,6 +60,7 @@ namespace LOM.API.Controllers
 			return CreatedAtAction("GetRequirement", new { id = requirement.Id }, requirement);
 		}
 
+		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPut("{id}")]
 		public async Task<IActionResult> PutRequirement(int id, Requirement requirement)
 		{
@@ -70,6 +76,7 @@ namespace LOM.API.Controllers
 			return NoContent();
 		}
 
+		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteRequirement(int id)
 		{

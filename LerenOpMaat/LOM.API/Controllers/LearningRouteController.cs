@@ -1,23 +1,17 @@
 ﻿using LOM.API.DAL;
 using LOM.API.Models;
-using LOM.API.Validator;
 using LOM.API.Validator.ValidationResults;
 using LOM.API.Validator.ValidationService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration.UserSecrets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LOM.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class LearningRouteController : ControllerBase
+	[Route("api/[controller]")]
+	[Authorize]
+	[ApiController]
+	public class LearningRouteController : ControllerBase
     {
         private readonly LOMContext _context;
         private readonly ISemesterValidationService _validationService;
@@ -26,13 +20,6 @@ namespace LOM.API.Controllers
         {
             _context = context;
             _validationService = validationService;
-        }
-
-        // GET: api/learningRoutes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<LearningRoute>>> GetlearningRoute()
-        {
-            return await _context.LearningRoutes.Include(s => s.Semesters).ThenInclude(m => m.Module).ToListAsync();
         }
 
         // GET: api/learningRoutes/5
@@ -49,13 +36,13 @@ namespace LOM.API.Controllers
             return learningRoute;
         }
 
-        // PUT: api/learningRoutes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutlearningRoute(int id, LearningRoute learningRoute)
-        {
-            if (id != learningRoute.Id)
-            {
+		// PUT: api/learningRoutes/5
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPut("{id}")]
+		public async Task<IActionResult> PutlearningRoute(int id, LearningRoute learningRoute)
+		{
+			if (id != learningRoute.Id)
+			{
                 return BadRequest();
             }
 
@@ -82,7 +69,6 @@ namespace LOM.API.Controllers
 
         // POST: api/learningRoutes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize]
         [HttpPost]
         public async Task<ActionResult<LearningRoute>> PostlearningRoute([FromBody] LearningRoute learningRoute)
         {
