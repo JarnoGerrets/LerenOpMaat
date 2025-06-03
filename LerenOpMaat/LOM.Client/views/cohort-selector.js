@@ -13,7 +13,7 @@ export async function RouteOrSelector(setStartYear, getStartYear, LearningRoute)
   }
 
   if (!cohortYear) {
-    return await CohortSelector(setStartYear);
+    return await CohortSelector(setStartYear, LearningRoute);
   }
 
   return await LearningRoute();
