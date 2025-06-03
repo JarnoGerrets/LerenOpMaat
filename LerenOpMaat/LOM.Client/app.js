@@ -10,12 +10,13 @@ import teacherFeedback from './views/teacher-feedback.js';
 import teacherLearningRoute from './views/teacher-learning-route.js';
 import { uploadOerPdf, getCurrentOerPdf, setStartYear, getStartYear } from "./client/api-client.js";
 import report from './views/report.js';
+import LearningRoute from "./views/learning-route.js";
 let userData;
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
   "": async () => {
-    return await RouteOrSelector(setStartYear, getStartYear);
+    return await RouteOrSelector(setStartYear, getStartYear, LearningRoute);
   },
   "#Module/:id": async (id) => {
     return await ModuleInfo(id);
