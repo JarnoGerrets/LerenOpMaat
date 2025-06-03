@@ -1,8 +1,8 @@
 ﻿using LOM.API.Validator.ValidationResults;
 
-namespace LOM.API.Validator.Spec.Specifications
+namespace LOM.API.Validator.Spec.BusinessSpecifications
 {
-    public interface ISpecification<T>
+    public interface IBusinessSpecification<T>
     {
         IValidationResult IsSatisfiedBy(T entity);
     }

@@ -1,13 +1,9 @@
-﻿using LOM.API.DAL;
-using LOM.API.Models;
+﻿using LOM.API.Models;
 using LOM.API.Validator.ValidationResults;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
-namespace LOM.API.Validator.Spec.Specifications
+namespace LOM.API.Validator.Spec.BusinessSpecifications
 {
-	public class RequiredEcSpecification : ISpecification<IEnumerable<Semester>>
+	public class RequiredEcSpecification : IBusinessSpecification<IEnumerable<Semester>>
 	{
 		private readonly int RequiredEc;
 		private readonly int CurrentSemesterIndex;

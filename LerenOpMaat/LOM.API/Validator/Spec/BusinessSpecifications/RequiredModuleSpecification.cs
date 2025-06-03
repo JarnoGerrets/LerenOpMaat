@@ -1,12 +1,9 @@
-﻿using System.Diagnostics;
-using LOM.API.DAL;
-using LOM.API.Models;
-using LOM.API.Validator.Spec.Specifications;
+﻿using LOM.API.Models;
 using LOM.API.Validator.ValidationResults;
 
-namespace LOM.API.Validator.Spec.Specifications
+namespace LOM.API.Validator.Spec.BusinessSpecifications
 {
-    public class RequiredModuleSpecification : ISpecification<IEnumerable<Semester>>
+    public class RequiredModuleSpecification : IBusinessSpecification<IEnumerable<Semester>>
     {
         private readonly int RequiredModuleId;
         private readonly int CurrentSemesterIndex;
@@ -31,7 +28,6 @@ namespace LOM.API.Validator.Spec.Specifications
 
             if (!exists && ValidationContext.Modules.TryGetValue(RequiredModuleId, out var requiredModule))
             {
-                // requiredModule is found
                 return new ValidationResult(false,
                     $"{requiredModule.Name} ({requiredModule.Code}) moet eerst worden gevolgd.", semestersList[CurrentSemesterIndex].ModuleId);
             }
