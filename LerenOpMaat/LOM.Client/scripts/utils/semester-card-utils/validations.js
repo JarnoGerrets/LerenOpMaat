@@ -5,7 +5,7 @@ function updateValidationState(moduleId, isValid) {
 }
 
 
-export function handleValidationResult(result, services = validationsServices, fragment = null) {
+export function handleValidationResult(result, services = validationsServices, fragment = document) {
   const {
     updateAllCardsStyling
   } = services;
@@ -20,10 +20,7 @@ export function handleValidationResult(result, services = validationsServices, f
     }
     validationResults[moduleId].push("- " + validation.Message);
 
-    updateValidationState(
-      moduleId,
-      validationState[moduleId] === false ? false : validation.IsValid
-    );
+    updateValidationState(moduleId, validation.IsValid);
 
     if (!moduleMessagesMap[moduleId]) {
       moduleMessagesMap[moduleId] = new Set();
