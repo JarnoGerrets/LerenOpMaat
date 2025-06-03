@@ -53,7 +53,7 @@ describe("Semester-card helpers unit", () => {
             expect(showToast).toHaveBeenCalledWith("30 EC is nodig", "error");
             expect(updateAllCardsStylingSpy).toHaveBeenCalledWith({
                 101: ["- 30 EC is nodig"]
-            });
+            }, jasmine.anything());
         });
     });
 

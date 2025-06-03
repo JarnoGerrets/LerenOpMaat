@@ -55,7 +55,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
   let coursePoints = fragment.querySelector(`#coursePoints-${moduleId || ''}`);
 
   // this will make sure button text and lock symbol appear gray for the enduser.
-  if (locked) {
+  if (locked && !isAdminOrTeacher) {
     button.classList.add("locked");
   } else {
     button.classList.remove("locked");
