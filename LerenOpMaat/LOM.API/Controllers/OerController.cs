@@ -22,7 +22,7 @@ namespace LOM.API.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator, Teacher")]
         [HttpPut("upload")]
         public async Task<IActionResult> UploadOer(IFormFile file)
         {
