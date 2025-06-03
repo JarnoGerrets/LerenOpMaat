@@ -1,6 +1,4 @@
-import LearningRoute from "../views/learning-route.js";
-
-export async function RouteOrSelector(setStartYear, getStartYear) {
+export async function RouteOrSelector(setStartYear, getStartYear, LearningRoute) {
   let cohortYear = localStorage.getItem("cohortYear");
   let userData = await window.userData;
 
@@ -15,13 +13,13 @@ export async function RouteOrSelector(setStartYear, getStartYear) {
   }
 
   if (!cohortYear) {
-    return await CohortSelector(setStartYear);
+    return await CohortSelector(setStartYear, LearningRoute);
   }
 
   return await LearningRoute();
 }
 
-export default async function CohortSelector(setStartYear) {
+export default async function CohortSelector(setStartYear, LearningRoute) {
   const response = await fetch("/templates/cohort-selector.html");
   const html = await response.text();
   const template = document.createElement("template");

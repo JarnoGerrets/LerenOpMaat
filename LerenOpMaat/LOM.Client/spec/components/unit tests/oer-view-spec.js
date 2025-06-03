@@ -6,22 +6,18 @@ describe("oerView", () => {
   let mockGetCurrentOerPdf;
   
   beforeAll(() => {
-    // Mock showToast globaal
     window.showToast = jasmine.createSpy("showToast");
 
-    // Voeg test root toe aan DOM
     testRoot = document.createElement("div");
     testRoot.id = "app";
     document.body.appendChild(testRoot);
   });
 
   beforeEach(() => {
-    // Standaard mock van userData in localStorage
     localStorage.setItem("userData", JSON.stringify({
       Roles: ["Lecturer"]
     }));
 
-    // Mock fetch van Oer.html template
     spyOn(window, "fetch").and.callFake((url) => {
       if (url.endsWith("/templates/Oer.html")) {
         return Promise.resolve(new Response(`
