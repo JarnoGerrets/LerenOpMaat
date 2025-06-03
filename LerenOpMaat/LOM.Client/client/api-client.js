@@ -304,7 +304,8 @@ export async function getRequirement(id) {
     method: "GET",
     headers: {
       "Accept": "text/plain"
-    }
+    },
+    credentials: "include"
   });
 
   if (!res.ok) {
@@ -321,6 +322,7 @@ export async function postRequirement(requirement) {
       "Content-Type": "application/json",
       "Accept": "text/plain"
     },
+    credentials: "include",
     body: JSON.stringify(requirement)
   });
 
@@ -336,7 +338,8 @@ export async function deleteRequirement(id) {
     method: "DELETE",
     headers: {
       "Accept": "text/plain"
-    }
+    },
+    credentials: "include"
   });
 
   if (!res.ok) {
@@ -353,6 +356,7 @@ export async function updateRequirement(id, requirement) {
       "Content-Type": "application/json",
       "Accept": "text/plain"
     },
+    credentials: "include",
     body: JSON.stringify(requirement)
   });
   if (!res.ok) {
@@ -369,7 +373,8 @@ export async function getRequirementTypes() {
     method: "GET",
     headers: {
       "Accept": "text/plain"
-    }
+    },
+    credentials: "include"
   });
   if (!res.ok) {
     throw new Error(`Failed to fetch requirement types: ${res.status}`);

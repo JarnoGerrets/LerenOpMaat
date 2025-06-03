@@ -29,85 +29,6 @@ namespace LOM.API.Controllers
             _validationService = validationService;
         }
 
-        // GET: api/Semesters
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Semester>>> GetSemesters()
-        {
-            return await _context.Semesters.ToListAsync();
-        }
-
-        // GET: api/Semesters/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Semester>> GetSemester(int id)
-        {
-            var semester = await _context.Semesters.FindAsync(id);
-
-            if (semester == null)
-            {
-                return NotFound();
-            }
-
-            return semester;
-        }
-
-        // PUT: api/Semesters/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSemester(int id, Semester semester)
-        {
-            if (id != semester.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(semester).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SemesterExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Semesters
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Semester>> PostSemester(Semester semester)
-        {
-            _context.Semesters.Add(semester);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetSemester", new { id = semester.Id }, semester);
-        }
-
-        // DELETE: api/Semesters/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSemester(int id)
-        {
-            var semester = await _context.Semesters.FindAsync(id);
-            if (semester == null)
-            {
-                return NotFound();
-            }
-
-            _context.Semesters.Remove(semester);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
         //Speciaal update semester call
         [HttpPut("/api/[controller]/updateSemesters/{learningRouteId}")]
         public async Task<IActionResult> UpdateSemesters(int learningRouteId, [FromBody] UpdateSemestersDto dto)
@@ -153,8 +74,8 @@ namespace LOM.API.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "Teacher, Administrator")]
-        [HttpPatch("updatedlockedsemester")]
+		[Authorize(Roles = "Lecturer, Administrator")]
+		[HttpPatch("updatedlockedsemester")]
         public async Task<IActionResult> UpdateLockSemester([FromBody] SemesterUpdateLockDto request)
         {
             var semesterUpdate = _context.Semesters.FirstOrDefault(s => s.Id == request.SemesterId);
@@ -169,11 +90,5 @@ namespace LOM.API.Controllers
 
             return Ok();
         }
-
-        private bool SemesterExists(int id)
-        {
-            return _context.Semesters.Any(e => e.Id == id);
-        }
-
     }
 }
