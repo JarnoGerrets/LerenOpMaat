@@ -52,6 +52,8 @@ export default async function report(services = reportServices) {
             });
         } catch (err) {
             console.error("Fout bij ophalen profielen:", err);
+            showToast("Fout bij ophalen profielen", "error");
+            yearSelect.innerHTML = `<option value="">Geen profielen beschikbaar</option>`;
         }
     }
 
@@ -86,6 +88,7 @@ export default async function report(services = reportServices) {
             });
         } catch (err) {
             console.error("Fout bij ophalen jaren:", err);
+            showToast("Fout bij ophalen jaren", "error");
             yearSelect.innerHTML = `<option value="">Geen jaren beschikbaar</option>`;
         }
     }

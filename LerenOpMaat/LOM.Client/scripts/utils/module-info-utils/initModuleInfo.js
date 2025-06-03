@@ -1,9 +1,9 @@
 import { initModuleInfoServices } from '../importServiceProvider.js';
 import '../../../components/module-card.js';
-import '../../../components/requirements-card.js'; 
+import '../../../components/requirements-card.js';
 
 export default async function initModuleInfo(id, services = initModuleInfoServices) {
-    const{
+    const {
         getModule,
         existenceModule,
         setupButtons,
@@ -18,7 +18,9 @@ export default async function initModuleInfo(id, services = initModuleInfoServic
     }
     const CardContainer = document.getElementById('card-column');
     const textArea = document.getElementById('moduleTextArea');
-    textArea.readOnly = true; // by default it's not editable to prevent issues (not secure but without saving options not a real issue)
+    textArea.readOnly = true; 
+    // ^ by default it's not editable to prevent issues (not secure but without saving options not a real issue), 
+    // and to ensure end user is not surprised nor confused
 
     const path = window.location.hash;
     const pathParts = path.split('/');

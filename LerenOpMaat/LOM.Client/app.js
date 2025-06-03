@@ -6,8 +6,8 @@ import oerView from './views/oer-view.js';
 import feedback from './views/feedback.js';
 import settingsPage from './views/settings-page.js';
 import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
-import beheerderFeedback from './views/beheerder-feedback.js';
-import administratorLearningRoute from './views/beheerder-learning-route.js';
+import teacherFeedback from './views/teacher-feedback.js';
+import teacherLearningRoute from './views/teacher-learning-route.js';
 import { uploadOerPdf, getCurrentOerPdf, setStartYear, getStartYear } from "./client/api-client.js";
 import report from './views/report.js';
 let userData;
@@ -41,13 +41,13 @@ const routes = {
   },
   "#beheerder-feedback": async () => {
     const params = getHashParams();
-    const { fragment } = await beheerderFeedback(params);
+    const { fragment } = await teacherFeedback(params);
     document.getElementById('app').innerHTML = '';
     document.getElementById('app').appendChild(fragment);
   },
   "#beheerder-learning-route": async () => {
     const params = getHashParams();
-    const { fragment } = await administratorLearningRoute(params);
+    const { fragment } = await teacherLearningRoute(params);
     document.getElementById('app').innerHTML = '';
     document.getElementById('app').appendChild(fragment);
   },
@@ -99,7 +99,7 @@ const router = async () => {
   // Speciaal afhandelen voor beheerder-feedback met parameters
   if (path.startsWith("#beheerder-feedback")) {
     const params = getHashParams();
-    const { fragment } = await beheerderFeedback(params);
+    const { fragment } = await teacherFeedback(params);
     app.appendChild(fragment);
     return;
   }
@@ -107,7 +107,7 @@ const router = async () => {
   // Speciaal afhandelen voor beheerder-learning-route met parameters
   if (path.startsWith("#beheerder-learning-route")) {
     const params = getHashParams();
-    const { fragment } = await administratorLearningRoute(params);
+    const { fragment } = await teacherLearningRoute(params);
     app.appendChild(fragment);
     return;
   }
