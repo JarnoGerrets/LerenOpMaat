@@ -35,7 +35,7 @@ namespace LOM.API.Tests.Controllers
 			};
 
 			// Act  
-			var result = await _controller.PutModule(1, dto);
+			var result = await _controller.PutModule(dto);
 
 			// Assert  
 			Assert.IsType<ConflictObjectResult>(result);
