@@ -28,7 +28,9 @@ namespace LOM.API.Controllers
         [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<LearningRoute>> GetlearningRoute(int id)
         {
-            var learningRoute = await _context.LearningRoutes.Include(s => s.Semesters).ThenInclude(m => m.Module).FirstOrDefaultAsync(lr => lr.Id == id);
+            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            var learningRoute = await _context.LearningRoutes.Where(l => l.UserId == userId)
+            .Include(s => s.Semesters).ThenInclude(m => m.Module).FirstOrDefaultAsync(lr => lr.Id == id);
 
             if (learningRoute == null)
             {
