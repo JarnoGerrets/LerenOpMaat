@@ -188,6 +188,11 @@ app.MapGet("/debug/student", () => "Student reached");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRateLimiter();
 app.UseSession();
+app.Use(async (context, next) =>
+{
+	context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+	await next();
+});
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
