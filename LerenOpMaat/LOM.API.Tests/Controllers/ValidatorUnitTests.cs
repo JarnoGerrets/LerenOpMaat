@@ -287,8 +287,8 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
             Assert.DoesNotContain(results, r => !r.IsValid);
         }
 
-        [Fact(DisplayName = "RequiredEcFromPropedeuse met voldoende EC's moet slagen")]
-        public void RequiredEcFromPropedeuseMetVoldoendeEc_MoetSlagen()
+        [Fact(DisplayName = "RequiredEcFromPropedeuse with enough EC's should pass")]
+        public void RequiredEcFromPropedeuseWithEnoughEc_ShouldPass()
         {
             // Arrange
             var module = new Module
@@ -351,8 +351,8 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
 
 
 
-        [Fact(DisplayName = "RequiredEcFromPropedeuse met onvoldoende EC's moet falen")]
-        public void RequiredEcFromPropedeuseMetOnvoldoendeEc_MoetFalen()
+        [Fact(DisplayName = "RequiredEcFromPropedeuse without enough EC should fail")]
+        public void RequiredEcFromPropedeuseWithout_ShouldFail()
         {
             // Arrange
             var module = new Module
@@ -398,8 +398,8 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
 
 
 
-        [Fact(DisplayName = "RequiredLevel2ModulesCount met voldoende modules moet slagen")]
-        public void RequiredLevel2ModulesCountVoldoende_MoetSlagen()
+        [Fact(DisplayName = "RequiredLevel2ModulesCount with enough modules should pass")]
+        public void RequiredLevel2ModulesCountEnough_ShouldPass()
         {
             // Arrange
             var module = new Module
@@ -433,8 +433,8 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
         }
 
 
-        [Fact(DisplayName = "RequiredLevel2ModulesCount met te weinig modules moet falen")]
-        public void RequiredLevel2ModulesCountOnvoldoende_MoetFalen()
+        [Fact(DisplayName = "RequiredLevel2ModulesCount without enough modules should fail")]
+        public void RequiredLevel2ModulesCountWithoutEnough_ShouldFail()
         {
             // Arrange
             var module = new Module
@@ -466,8 +466,8 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
             Assert.Contains(results, r => !r.IsValid && r.Message.Contains("Minimaal twee modules van niveau 2"));
         }
 
-        [Fact(DisplayName = "RequiredLevel3ModulesCount met voldoende modules moet slagen")]
-        public void RequiredLevel3ModulesCountVoldoende_MoetSlagen()
+        [Fact(DisplayName = "RequiredLevel3ModulesCount with enough modules should pass")]
+        public void RequiredLevel3ModulesCountEnough_ShouldPass()
         {
             // Arrange
             var module = new Module
@@ -499,8 +499,8 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
         }
 
 
-        [Fact(DisplayName = "RequiredLevel3ModulesCount met onvoldoende modules moet falen")]
-        public void RequiredLevel3ModulesCountOnvoldoende_MoetFalen()
+        [Fact(DisplayName = "RequiredLevel3ModulesCount without enough modules should fail")]
+        public void RequiredLevel3ModulesCountWithoutEnough_ShouldFail()
         {
             // Arrange
             var module = new Module
@@ -528,7 +528,7 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
 
             // Assert
             var results = validator.ValidateLearningRoute(semesters);
-            Assert.Contains(results, r => !r.IsValid && r.Message.Contains("Minimaal ��n module van niveau 3"));
+            Assert.Contains(results, r => !r.IsValid && r.Message.Contains("Minimaal één module van niveau 3"));
         }
 
 
