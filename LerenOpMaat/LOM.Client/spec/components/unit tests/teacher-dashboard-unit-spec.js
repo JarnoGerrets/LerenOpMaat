@@ -30,10 +30,12 @@ describe("renderTeacherLearningRoutes", () => {
                     json: async () => window.__testConversations || []
                 };
             }
+            // Geef altijd een geldige response terug voor andere fetches
             return {
-                ok: false,
-                status: 404,
-                json: async () => { throw new Error("Not found"); }
+                ok: true,
+                status: 200,
+                json: async () => ({}),
+                text: async () => ""
             };
         });
     });
