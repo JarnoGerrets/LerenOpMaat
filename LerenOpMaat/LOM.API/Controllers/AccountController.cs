@@ -3,10 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
-using System.Diagnostics;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace LOM.API.Controllers
@@ -23,9 +20,12 @@ namespace LOM.API.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Haal een gebruiker op aan de hand van OAuth token
+        /// </summary>
+        /// <returns>Object met user data</returns>
         [HttpGet]
         [EnableRateLimiting("GetLimiter")]
-
         public IActionResult GetUser()
         {
             // Haal user claims op
@@ -71,10 +71,15 @@ namespace LOM.API.Controllers
             });
         }
 
+        /// <summary>
+        /// Haal een student op aan de hand van user id.
+        /// Vereiste rol: Lecturer of Administrator
+        /// </summary>
+        /// <param name="id">ID van de student</param>
+        /// <returns>Student model</returns>
         [Authorize(Roles = "Lecturer, Administrator")]
         [HttpGet("getstudent/{id}")]
         [EnableRateLimiting("GetLimiter")]
-
         public async Task<ActionResult<User>> GetStudent(int id)
         {
             var student = await _context.User.FirstOrDefaultAsync(u => u.Id == id);
@@ -87,6 +92,11 @@ namespace LOM.API.Controllers
             return Ok(student);
         }
 
+        /// <summary>
+        /// Haal alle rollen op
+        /// Verseiste rol: Administrator
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "Administrator")]
         [HttpGet("roles")]
         public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles()
