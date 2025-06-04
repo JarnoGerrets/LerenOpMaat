@@ -135,4 +135,19 @@ describe("Feedback frontend", () => {
         const container = document.querySelector(".message-feedback-container");
         expect(container.innerHTML).toContain("Geen berichten gevonden.");
     });
+
+    it("laat een lege dropdown zien als er geen docenten zijn", async () => {
+        teachersMock = [];
+        const { fragment } = await Feedback();
+        app.appendChild(fragment);
+
+        await new Promise(res => setTimeout(res, 0));
+
+        const dropdown = document.querySelector(".feedback-dropdown");
+
+        expect(dropdown.options.length).toBe(1);
+        expect(dropdown.options[0].textContent.trim()).toBe("Kies de leraar");
+    });
+
+    
 });

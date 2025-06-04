@@ -58,7 +58,7 @@ namespace LOM.API.Tests.Controllers
             };
 
             // Act
-            var result = await controller.getConversationByStudentId();
+            var result = await controller.GetConversationByStudentId();
 
             // Assert
             var actionResult = Assert.IsType<ActionResult<Conversation>>(result);
@@ -92,7 +92,7 @@ namespace LOM.API.Tests.Controllers
             };
 
             // Act
-            var result = await controller.getConversationByStudentId();
+            var result = await controller.GetConversationByStudentId();
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
@@ -136,7 +136,7 @@ namespace LOM.API.Tests.Controllers
             };
 
             // Act
-            var result = await controller.getConversationsByAdministratorId();
+            var result = await controller.GetConversationsByAdministratorId();
 
             // Assert
             var actionResult = Assert.IsType<ActionResult<IEnumerable<Conversation>>>(result);
@@ -170,7 +170,7 @@ namespace LOM.API.Tests.Controllers
             };
 
             // Act
-            var result = await controller.getConversationsByAdministratorId();
+            var result = await controller.GetConversationsByAdministratorId();
 
             // Assert
             var actionResult = Assert.IsType<ActionResult<IEnumerable<Conversation>>>(result);

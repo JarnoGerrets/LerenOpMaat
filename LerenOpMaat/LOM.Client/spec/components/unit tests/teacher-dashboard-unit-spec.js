@@ -56,4 +56,5 @@ describe("renderTeacherLearningRoutes", () => {
         expect(msg).not.toBeNull();
         expect(msg.textContent).toContain("Geen Conversaties beschikbaar");
     });
+
 });
