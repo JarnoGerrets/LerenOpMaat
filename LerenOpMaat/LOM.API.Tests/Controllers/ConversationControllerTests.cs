@@ -46,7 +46,7 @@ namespace LOM.API.Tests.Controllers
 
             var controller = new ConversationController(context);
 
-            // Mock ClaimsPrincipal
+            // Mock Claims
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, student.ExternalID) };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             controller.ControllerContext = new ControllerContext
@@ -80,7 +80,7 @@ namespace LOM.API.Tests.Controllers
 
             var controller = new ConversationController(context);
 
-            // Mock ClaimsPrincipal (simulate a student user)
+            // Mock Claims
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "S1") };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             controller.ControllerContext = new ControllerContext
@@ -124,7 +124,7 @@ namespace LOM.API.Tests.Controllers
 
             var controller = new ConversationController(context);
 
-            // Mock ClaimsPrincipal (simulate the admin user)
+            // Mock Claims
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, admin.ExternalID) };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             controller.ControllerContext = new ControllerContext
@@ -151,14 +151,14 @@ namespace LOM.API.Tests.Controllers
         {
             // Arrange
             var context = GetInMemoryContext();
-            // Add an admin user to match the ClaimsPrincipal
+            // Add an admin user for the claim
             var admin = new User { Id = 1, FirstName = "Admin", LastName = "Test", ExternalID = "A1", RoleId = 1 };
             context.User.Add(admin);
             await context.SaveChangesAsync();
 
             var controller = new ConversationController(context);
 
-            // Mock ClaimsPrincipal (simulate an admin user)
+            // Mock Claims
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "A1") };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             controller.ControllerContext = new ControllerContext

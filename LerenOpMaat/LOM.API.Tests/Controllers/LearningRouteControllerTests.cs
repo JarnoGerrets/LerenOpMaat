@@ -33,7 +33,7 @@ namespace LOM.API.Tests.Controllers
 
             var controller = new LearningRouteController(context, null);
 
-            // Mock ClaimsPrincipal
+            // Mock Claims
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.ExternalID) };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             controller.ControllerContext = new ControllerContext
@@ -65,7 +65,7 @@ namespace LOM.API.Tests.Controllers
 
             var controller = new LearningRouteController(context, null);
 
-            // Mock ClaimsPrincipal
+            // Mock Claims
             var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.ExternalID) };
             var identity = new ClaimsIdentity(claims, "TestAuthType");
             controller.ControllerContext = new ControllerContext
