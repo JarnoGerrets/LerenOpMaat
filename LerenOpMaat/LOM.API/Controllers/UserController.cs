@@ -40,6 +40,7 @@ namespace LOM.API.Controllers
         /// </summary>
         /// <param name="startYear"></param>
         /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+        /// <returns>Forbid als het user.Id niet overeen komt met id</returns>
         /// <returns>BadRequest als het startjaar niet voldoet aan de eis</returns>
         /// <returns>Ok als het opslaan van de gebruiker successvol is gelukt</returns>
         [HttpPost("startyear")]
@@ -52,7 +53,12 @@ namespace LOM.API.Controllers
             {
                 return Unauthorized();
             }
-            
+
+            if (user.Id != id)
+            {
+                return Forbid();
+            }
+
             var currentYear = DateTime.Now.Year + 1;
             var validYears = Enumerable.Range(currentYear - 3, 4);
             if (validYears.Contains(startYear) == false)

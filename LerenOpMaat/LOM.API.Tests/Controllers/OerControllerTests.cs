@@ -1,10 +1,10 @@
 ﻿using LOM.API.Controllers;
 using LOM.API.DAL;
 using LOM.API.Models;
+using LOM.API.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Moq;
 using System.Text;
 
@@ -13,7 +13,7 @@ namespace LOM.API.Tests.Controllers
     public class OerControllerTests
     {
         private readonly OerController _controller;
-        private readonly Mock<IConfiguration> _configurationMock;
+        private readonly Mock<IVirusScanner> _virusScannerMock;
         private readonly LOMContext _context;
 
         public OerControllerTests()
@@ -23,8 +23,13 @@ namespace LOM.API.Tests.Controllers
                 .Options;
 
             _context = new LOMContext(options);
-			_configurationMock = new Mock<IConfiguration>();
-			_controller = new OerController(_context, _configurationMock.Object);
+
+            _virusScannerMock = new Mock<IVirusScanner>();
+            _virusScannerMock
+                .Setup(v => v.ScanFileAsync(It.IsAny<byte[]>(), It.IsAny<string>()))
+                .ReturnsAsync((true, null)); // standaard: bestand is veilig
+
+            _controller = new OerController(_context, _virusScannerMock.Object);
         }
 
         [Fact]
@@ -114,6 +119,29 @@ namespace LOM.API.Tests.Controllers
         }
 
         [Fact]
+        public async Task UploadOer_ReturnsBadRequest_WhenVirusFound()
+        {
+            // Arrange
+            _virusScannerMock
+                .Setup(v => v.ScanFileAsync(It.IsAny<byte[]>(), It.IsAny<string>()))
+                .ReturnsAsync((false, "Eicar.Test"));
+
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes("malware"));
+            var file = new FormFile(stream, 0, stream.Length, "file", "oer.pdf")
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "application/pdf"
+            };
+
+            // Act
+            var result = await _controller.UploadOer(file);
+
+            // Assert
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Contains("Virus gevonden", badRequest.Value?.ToString());
+        }
+
+        [Fact]
         public async Task GetCurrentOer_ReturnsPdf_WhenExists()
         {
             // Arrange
@@ -136,7 +164,7 @@ namespace LOM.API.Tests.Controllers
         public async Task GetCurrentOer_ReturnsNotFound_WhenNotExists()
         {
             // Arrange
-            // Geen Oer beschikbaar
+            // Geen Oer toegevoegd
 
             // Act
             var result = await _controller.GetCurrentOer();

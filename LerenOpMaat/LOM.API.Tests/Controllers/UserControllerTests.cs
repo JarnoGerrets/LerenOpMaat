@@ -147,11 +147,20 @@ namespace LOM.API.Tests.Controllers
                 LastName = "User",
                 RoleId = 2
             };
+
+            var otherUser = new User
+            {
+                ExternalID = "ext2",
+                FirstName = "Other",
+                LastName = "User",
+                RoleId = 2
+            };
             _context.User.Add(user);
+            _context.User.Add(otherUser);
             await _context.SaveChangesAsync();
 
             var controller = new UserController(_context);
-            TestUserHelper.SetUser(controller, user.ExternalID + 1);
+            TestUserHelper.SetUser(controller, otherUser.ExternalID);
 
             // Act
             var result = await controller.SetStartYear(user.Id, _currentYear - 1);
