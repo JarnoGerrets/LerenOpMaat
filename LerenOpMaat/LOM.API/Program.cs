@@ -61,6 +61,11 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
     };
 });
 
+// Cross-Site Request Forgery Protection
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-XSRF-TOKEN";
+});
 
 // Add services to the container.
 builder.Services.AddControllers()
@@ -185,6 +190,7 @@ builder.Services.AddDistributedMemoryCache();
 var app = builder.Build();
 app.MapGet("/debug/student", () => "Student reached");
 // Middleware
+app.UseMiddleware<InjectCsrfCookie>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRateLimiter();
 app.UseSession();
@@ -194,7 +200,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 app.UseCookiePolicy(
     new CookiePolicyOptions {
-        Secure = CookieSecurePolicy.Always
+        Secure = CookieSecurePolicy.Always,
+        MinimumSameSitePolicy = SameSiteMode.Strict
     }
 );
 
