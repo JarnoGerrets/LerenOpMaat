@@ -41,8 +41,9 @@ export default class Header extends HTMLElement {
     const simulatedRoleObj = this.querySelector("#simulated-role");
     const simulatedDropdown = this.querySelector("#simulated-role-dropdown");
     const bell = this.querySelector("#notification-bell");
-    const _userData = await userData;
+    const _userData = await window.userData;
     const isAdmin = await hasPermission("admin");
+
 
     if (_userData) {
       if (isAdmin) {
@@ -107,10 +108,11 @@ export default class Header extends HTMLElement {
     const badge = this.querySelector("#notificationAmount");
     const itemsContainer = this.querySelector(".notification-items");
 
-  const _userData = await userData;
-  if (!_userData) return;
+    const _userData = await userData;
+    const currentUserId = _userData.InteralId;
+    if (!_userData) return;
 
-  const notifications = await getNotificationsForActiveUser();
+    const notifications = await getNotificationsForActiveUser();
 
     const grouped = {};
     notifications.forEach(msg => {
@@ -165,7 +167,6 @@ export default class Header extends HTMLElement {
           sessionStorage.setItem('lom_userId', group.userId);
           window.location.hash = "#beheerder-feedback";
           let body = {
-            UserId: currentUserId,
             ConversationId: group.conversationId
           }
           await markNotificationsAsRead(body);
