@@ -794,8 +794,8 @@ export async function getCurrentOerPdf() {
   return await res.blob();
 }
 
-export async function getConversationByAdminId(adminId) {
-  const res = await fetch(`${API_BASE}/Conversation/conversationByAdministratorId/${adminId}`, {
+export async function getConversationByAdminId() {
+  const res = await fetch(`${API_BASE}/Conversation/conversationByAdministratorId`, {
     method: "GET",
     headers: {
       "Accept": "application/json"

@@ -9,9 +9,11 @@ namespace LOM.API.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
+    [ApiController]
     public class RolesController : LOMBaseController
     {
-        public RolesController(LOMContext context) : base(context) {}
+        public RolesController(LOMContext context) : base(context) { }
+
         [HttpGet("{feature}")]
         [EnableRateLimiting("GetLimiter")]
         public IActionResult HasPermission(string feature)
@@ -33,6 +35,8 @@ namespace LOM.API.Controllers
         [HttpPost("effective-role")]
         public IActionResult SetEffectiveRole([FromBody] string role)
         {
+            Console.WriteLine("role = " + role);
+
             var allowedRoles = new[] { "Administrator", "Lecturer", "Student" };
 
             if (!allowedRoles.Contains(role))
@@ -41,7 +45,7 @@ namespace LOM.API.Controllers
             }
 
             HttpContext.Session.SetString("EffectiveRole", role);
-            return Ok();
+            return Ok(role);
         }
 
         [Authorize]
@@ -49,6 +53,7 @@ namespace LOM.API.Controllers
         public IActionResult GetEffectiveRole()
         {
             var effectiveRole = HttpContext.Session.GetString("EffectiveRole");
+            Console.WriteLine("role = " + effectiveRole);
 
             if (string.IsNullOrEmpty(effectiveRole))
             {

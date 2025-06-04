@@ -175,7 +175,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSession(options =>
     {
-        options.Cookie.Name = "__Host-.AspNetCore.Session";
+        // options.Cookie.Name = "__Host-.AspNetCore.Session";
         options.Cookie.HttpOnly = true;
         options.Cookie.IsEssential = true;
     }

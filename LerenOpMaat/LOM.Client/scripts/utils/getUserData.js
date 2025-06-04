@@ -55,7 +55,6 @@ async function resolveUserData() {
     }
 
     const simulatedRole = await getEffectiveRole();
-    console.log(simulatedRole);
     if (simulatedRole) {
         baseData.EffectiveRole = simulatedRole;
     } else {

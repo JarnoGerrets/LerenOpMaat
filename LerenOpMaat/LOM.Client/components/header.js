@@ -36,12 +36,12 @@ export default class Header extends HTMLElement {
   }
 
   async initializeLogin() {
+    const _userData = await window.userData;
     const loginObj = this.querySelector("#login-url");
     const logoutObj = this.querySelector("#logout");
     const simulatedRoleObj = this.querySelector("#simulated-role");
     const simulatedDropdown = this.querySelector("#simulated-role-dropdown");
     const bell = this.querySelector("#notification-bell");
-    const _userData = await window.userData;
     const isAdmin = await hasPermission("admin");
 
 

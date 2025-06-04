@@ -67,7 +67,7 @@ namespace LOM.API.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 InternalId = user.Id,
-                ExternalID = userId,
+                ExternalID = userId
             });
         }
 
