@@ -33,7 +33,7 @@ export default async function LearningRoute() {
     let userData = await window.userData;
 
     try {
-        if (userData && userData.InternalId) {
+        if (userData) {
             apiResponse = await getLearningRoutesByUserId(userData.InternalId);
             if (
                 !apiResponse.Semesters ||

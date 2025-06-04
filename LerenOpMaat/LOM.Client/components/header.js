@@ -1,5 +1,5 @@
 import { userData } from "../scripts/utils/getUserData.js";
-import { getLoginUrl, logout, getNotificationsByUserId, markNotificationsAsRead, getAllRoles } from '../client/api-client.js';
+import { getLoginUrl, logout, getNotificationsForActiveUser, markNotificationsAsRead, getAllRoles } from '../client/api-client.js';
 
 export default class Header extends HTMLElement {
   constructor() {
@@ -108,9 +108,8 @@ async initializeNotifications() {
 
   const _userData = await userData;
   if (!_userData) return;
-  const currentUserId = _userData.InternalId;
 
-  const notifications = await getNotificationsByUserId(_userData.InternalId);
+  const notifications = await getNotificationsForActiveUser();
 
   const grouped = {};
   notifications.forEach(msg => {

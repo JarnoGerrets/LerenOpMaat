@@ -1,4 +1,5 @@
-﻿using LOM.API.DAL;
+﻿using LOM.API.Controllers.Base;
+using LOM.API.DAL;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,14 +17,10 @@ namespace LOM.API.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ConversationController : ControllerBase
+    public class ConversationController : LOMBaseController
     {
-        private readonly LOMContext _context;
 
-        public ConversationController(LOMContext context)
-        {
-            _context = context;
-        }
+        public ConversationController(LOMContext context) : base(context) {}
 
         // GET: api/Conversation
         [HttpGet]
@@ -60,20 +57,12 @@ namespace LOM.API.Controllers
                 return BadRequest();
             }
 
-            // Get the current user from the session (claims)
-            var externalId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(externalId))
-            {
-                return Unauthorized(new { message = "User is authenticated but not found in the database." });
-            }
+            User? user = GetActiveUser();
 
-            var user = await _context.User
-                .Include(u => u.LearningRoute)
-                .FirstOrDefaultAsync(u => u.ExternalID == externalId);
-
-            if (user == null)
+            // Get the current user from the session
+            if (user.Id == null)
             {
-                return Unauthorized();
+                return Unauthorized(new { message = "User not found in the database." });
             }
 
             // Fetch the existing conversation from the database
@@ -114,15 +103,7 @@ namespace LOM.API.Controllers
         [EnableRateLimiting("PostLimiter")]
         public async Task<ActionResult<Conversation>> PostConversation(Conversation conversation)
         {
-            var externalId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(externalId))
-            {
-                return Unauthorized();
-            }
-
-            var user = await _context.User
-                .Include(u => u.LearningRoute)
-                .FirstOrDefaultAsync(u => u.ExternalID == externalId);
+            User? user = GetActiveUser();
 
             if (user == null)
             {
@@ -172,10 +153,12 @@ namespace LOM.API.Controllers
             return conversation;
         }
 
-        [HttpGet("conversationByAdministratorId/{administratorId}")]
+        [HttpGet("conversationByAdministratorId")]
         [EnableRateLimiting("GetLimiter")]
-        public async Task<ActionResult<IEnumerable<Conversation>>> getConversationsByAdministratorId(int administratorId)
+        public async Task<ActionResult<IEnumerable<Conversation>>> getConversationsByAdministratorId()
         {
+            User? user = GetActiveUser();
+
             // Haal alle conversations op waar de admin als Teacher gekoppeld is
             var conversations = await _context.Conversations
                 .Include(c => c.Student)
@@ -183,7 +166,7 @@ namespace LOM.API.Controllers
                 .Include(c => c.LearningRoute)
                 .ThenInclude(s => s.Semesters)
                 .ThenInclude(m => m.Module)
-                .Where(c => c.TeacherId == administratorId)
+                .Where(c => c.TeacherId == user.Id)
                 .ToListAsync();
 
             return conversations;
@@ -193,21 +176,23 @@ namespace LOM.API.Controllers
             return _context.Conversations.Any(e => e.Id == id);
         }
 
-        [HttpGet("notifications/{id}")]
+        [HttpGet("notifications")]
         [EnableRateLimiting("GetLimiter")]
-        public async Task<ActionResult> GetNotificationsByUserId(int id)
+        public async Task<ActionResult> GetNotificationsByUserId()
         {
+            User? user = GetActiveUser();
+
             var unreadMessages = await _context.Messages
                 .Include(m => m.Conversation)
                     .ThenInclude(c => c.LearningRoute)
                 .Include(m => m.Conversation.Student)
                 .Include(m => m.Conversation.Teacher)
                 .Where(m => m.IsRead == false
-                    && m.UserId != id
+                    && m.UserId != user.Id
                     && m.Conversation != null
                     && (
-                        m.Conversation.StudentId == id ||
-                        m.Conversation.TeacherId == id
+                        m.Conversation.StudentId == user.Id ||
+                        m.Conversation.TeacherId == user.Id
                     ))
                 .ToListAsync();
 
@@ -219,9 +204,11 @@ namespace LOM.API.Controllers
         [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> MarkMessagesAsRead([FromBody] MarkAsReadRequestDto request)
         {
+            User? user = GetActiveUser();
+
             var messages = await _context.Messages
                 .Where(m => m.ConversationId == request.ConversationId
-                            && m.UserId != request.UserId
+                            && m.UserId != user.Id
                             && !m.IsRead)
                 .ToListAsync();
 

@@ -7,11 +7,11 @@ export default async function renderTeacherLearningRoutes() {
     const fragment = document.createDocumentFragment();
 
     let userData = await window.userData;
-    let conversations = await getConversationByAdminId(userData.InternalId);
+    let conversations = await getConversationByAdminId();
 
     // Haal conversations op voor deze admin (teacher)
     let routes = [];
-    if (userData && userData.InternalId) {
+    if (userData) {
         try {
             routes = conversations.map(conv => {
                 const user = conv.Student;
@@ -61,7 +61,6 @@ export default async function renderTeacherLearningRoutes() {
                 }
 
                 let body = {
-                    UserId: userData.InternalId,
                     ConversationId: conversationId
                 };
 

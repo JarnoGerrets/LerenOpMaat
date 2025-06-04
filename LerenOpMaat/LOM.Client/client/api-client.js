@@ -441,8 +441,8 @@ export async function validateRoute(learningRoute) {
   return await res.json();
 }
 
-export async function getLearningRoutesByUserId(id) {
-  const res = await fetch(`${API_BASE}/LearningRoute/User/${id}`, {
+export async function getLearningRoutesByUserId() {
+  const res = await fetch(`${API_BASE}/LearningRoute/User`, {
     method: "GET",
     credentials: "include",
     headers: {
@@ -539,7 +539,8 @@ export async function updateLockedSemester(semesterData) {
 }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
-export async function getConversationByUserId(userId) {
+export async function getConversationByUserId(id) {
+  const userId = id || (await window.userData).InternalId;
   const res = await fetch(`${API_BASE}/Conversation/conversationByStudentId/${userId}`, {
     method: "GET",
     headers: {
@@ -560,6 +561,7 @@ export async function getConversationByUserId(userId) {
 }
 
 export async function updateConversation(id, conversationData) {
+  alert("test")
   const res = await fetch(`${API_BASE}/Conversation/${id}`, {
     method: "PUT",
     headers: {
@@ -647,9 +649,9 @@ export async function postMessage(messageBody) {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 
-export async function getStartYear(id) {
+export async function getStartYear() {
   try {
-    const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
+    const response = await fetch(`${API_BASE}/User/startyear`, {
       method: 'GET',
       credentials: "include",
       headers: {
@@ -668,9 +670,9 @@ export async function getStartYear(id) {
   }
 }
 
-export async function setStartYear(id, startYear) {
+export async function setStartYear(startYear) {
   try {
-    const response = await fetch(`${API_BASE}/User/startyear/${id}`, {
+    const response = await fetch(`${API_BASE}/User/startyear`, {
       method: 'POST',
       credentials: "include",
       headers: {
@@ -734,8 +736,8 @@ export async function getConversationByAdminId(adminId) {
   return await res.json();
 }
 
-export async function getNotificationsByUserId(id) {
-  const res = await fetch(`${API_BASE}/Conversation/notifications/${id}`, {
+export async function getNotificationsForActiveUser() {
+  const res = await fetch(`${API_BASE}/Conversation/notifications`, {
     method: "GET",
     headers: {
       "Accept": "application/json"

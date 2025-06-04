@@ -1,4 +1,5 @@
-﻿using LOM.API.DAL;
+﻿using LOM.API.Controllers.Base;
+using LOM.API.DAL;
 using LOM.API.DTO;
 using LOM.API.Enums;
 using LOM.API.Models;
@@ -13,14 +14,10 @@ namespace LOM.API.Controllers
 	[Route("api/[controller]")]
 	[Authorize]
 	[ApiController]
-	public class RequirementController : Controller
+	public class RequirementController : LOMBaseController
 	{
-		private readonly LOMContext _context;
 
-		public RequirementController(LOMContext context)
-		{
-			_context = context;
-		}
+		public RequirementController(LOMContext context) : base(context) {}
 
 		[AllowAnonymous]
 		[HttpGet("{id}")]
