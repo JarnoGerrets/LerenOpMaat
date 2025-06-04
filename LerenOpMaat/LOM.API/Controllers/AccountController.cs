@@ -3,10 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
-using System.Diagnostics;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace LOM.API.Controllers
