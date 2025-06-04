@@ -20,7 +20,7 @@ namespace LOM.API.Controllers
     public class ConversationController : LOMBaseController
     {
 
-        public ConversationController(LOMContext context) : base(context) {}
+        public ConversationController(LOMContext context) : base(context) { }
 
         // GET: api/Conversation
         [HttpGet]
@@ -138,13 +138,15 @@ namespace LOM.API.Controllers
 
         [HttpGet("conversationByStudentId/{userId}")]
         [EnableRateLimiting("GetLimiter")]
-        public async Task<ActionResult<Conversation>> getConversationByStudentId(int userId)
+        public async Task<ActionResult<Conversation>> getConversationByStudentId()
         {
+            User? user = GetActiveUser();
+
             var conversation = await _context.Conversations
                 .Include(t => t.Teacher)
                 .Include(lr => lr.LearningRoute)
                 .Include(s => s.Student)
-                .FirstOrDefaultAsync(s => s.StudentId == userId);
+                .FirstOrDefaultAsync(s => s.StudentId == user.Id);
             if (conversation == null)
             {
                 return NotFound();

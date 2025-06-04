@@ -175,7 +175,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSession(options =>
     {
-        options.Cookie.Name = "__Host-.AspNetCore.Session";
+        // options.Cookie.Name = "__Host-.AspNetCore.Session";
         options.Cookie.HttpOnly = true;
         options.Cookie.IsEssential = true;
     }
@@ -183,7 +183,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
-
+app.MapGet("/debug/student", () => "Student reached");
 // Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRateLimiter();

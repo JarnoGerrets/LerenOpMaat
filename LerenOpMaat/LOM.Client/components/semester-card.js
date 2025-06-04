@@ -4,7 +4,7 @@ import { semesterCardServices } from "../scripts/utils/importServiceProvider.js"
 let validationState = {};
 const moduleMessagesMap = {};
 
-export default async function SemesterCard({ semester, module, locked = false, isActive = true, onModuleChange, moduleId, services = semesterCardServices }) {
+export default async function SemesterCard({isAdmin = false, isTeacher = false, semester, module, locked = false, isActive = true, onModuleChange, moduleId, services = semesterCardServices }) {
   const {
     SemesterChoice,
     getModule,
@@ -16,10 +16,7 @@ export default async function SemesterCard({ semester, module, locked = false, i
     updateExclamationIcon,
     debounce
   } = services;
-
-  const userData = await window.userData;
-  const role = userData?.EffectiveRole;
-  const isAdminOrTeacher = ['Administrator', 'Teacher'].includes(role);
+  const isAdminOrTeacher = isAdmin || isTeacher;
   const isSelecteerJeModule = module == "Selecteer je module";
   let canEdit = (!locked) || (isAdminOrTeacher && !isSelecteerJeModule) || (!isAdminOrTeacher && isSelecteerJeModule);
 

@@ -5,6 +5,7 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using LOM.API.Controllers.Base;
+using System.Security.Claims;
 
 namespace LOM.API.Controllers
 {
@@ -62,4 +63,5 @@ namespace LOM.API.Controllers
         }
 
     }
+
 }
