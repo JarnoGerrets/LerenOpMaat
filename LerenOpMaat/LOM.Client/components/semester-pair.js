@@ -2,7 +2,7 @@ import SemesterCard from "../components/semester-card.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 export let learningRouteArray = [];
 
-export default async function SemesterPair(isAdmin = false, isTeacher = false, semester1, semester2, index, totalAmountOfYears) {
+export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
     const wrapper = document.createElement("div");
     wrapper.classList.add("semester-pair");
