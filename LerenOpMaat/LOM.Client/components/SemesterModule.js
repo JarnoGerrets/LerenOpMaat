@@ -33,6 +33,9 @@ export default class SemesterModule {
                         <div class="module-info-row">
                         Periode: <span id="period-text">${mapPeriodToPresentableString(module.Period)}</span>
                         </div>
+                        <div class="module-info-row">
+                        Profiel: <span id="period-text">${module.GraduateProfile.Name}</span>
+                        </div>
                     </div>
                     <div>
                         <div class="module-info-row">

@@ -75,7 +75,7 @@ export default class Header extends HTMLElement {
           simulatedDropdown.classList.add("hidden");
         });
       } else {
-        loginObj.innerHTML = '<i class="bi bi-person-circle"></i> _userData.Username';
+        loginObj.innerHTML = `<i class="bi bi-person-circle"></i> ${_userData.Username}`;
       }
 
       logoutObj.classList.remove("d-none");

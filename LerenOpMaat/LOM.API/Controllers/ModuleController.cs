@@ -132,7 +132,7 @@ namespace LOM.API.Controllers
 			if (existingModule == null)
 				return NotFound();
 
-			if (ModuleCodeExists(moduleDto.Code))
+			if (ModuleCodeExists(moduleDto.Id, moduleDto.Code))
 				return Conflict(new { message = "Module code bestaat al." });
 
 			existingModule.Name = moduleDto.Name;
@@ -189,7 +189,7 @@ namespace LOM.API.Controllers
 				return BadRequest("Module data is required.");
 			}
 
-			if (ModuleCodeExists(dto.Code))
+			if (ModuleCodeExists(dto.Id, dto.Code))
 			{
 				return Conflict(new { message = "Module code bestaat al." });
 			}
@@ -219,9 +219,9 @@ namespace LOM.API.Controllers
 				return BadRequest("An error occurred while saving the module. Please try again.");
 			}
 		}
-		private bool ModuleCodeExists(string code)
+		private bool ModuleCodeExists(int id, string code)
 		{
-			return _context.Modules.Any(m => m.Code == code);
+			return _context.Modules.Where(m => m.Id != id).Any(m => m.Code == code);
 		}
 		// deactivate: api/Module/deactivate/5
 		[Authorize(Roles = "Lecturer, Administrator")]

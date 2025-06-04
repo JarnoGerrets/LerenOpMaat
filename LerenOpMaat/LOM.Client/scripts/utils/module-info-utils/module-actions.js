@@ -1,4 +1,5 @@
 import { moduleActionsServices} from "../importServiceProvider.js";
+import { getProfiles} from "../../../client/api-client.js";
 
 
 export function setupButtons(module, textArea, canBeDeleted = false, services = moduleActionsServices) {
@@ -166,6 +167,8 @@ function ToggleFields(module, services) {
     } = services;
     const codeText = document.getElementById("code-text");
     const periodText = document.getElementById("period-text");
+    const graduateText = document.getElementById("graduate-text");
+    
     const ecText = document.getElementById("ec-text");
     const levelText = document.getElementById("level-text");
     const addRequirementButton = document.getElementById("add-requirement-button");
@@ -181,7 +184,7 @@ function ToggleFields(module, services) {
 
         codeText.innerHTML = `${module.Code}`;
         periodText.innerHTML = `${mapPeriodToPresentableString(module.Period)}`;
-        ecText.innerHTML = `${module.Ec}`;
+        graduateText.innerHTML = `${module.GraduateProfile.Name}`;
         levelText.innerHTML = `${module.Level}`;
         ecText.innerHTML = `${module.Ec}`;
         addRequirementButton.style.display = "none";
