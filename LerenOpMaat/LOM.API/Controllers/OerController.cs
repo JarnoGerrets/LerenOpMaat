@@ -4,6 +4,7 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using LOM.API.Controllers.Base;
+using System.Security.Cryptography;
 
 namespace LOM.API.Controllers
 {
@@ -118,6 +119,14 @@ namespace LOM.API.Controllers
             var stream = new MemoryStream(fileBytes);
 
             return File(stream, "application/pdf", enableRangeProcessing: true);
+        }
+
+        private string CalculateSHA256(byte[] file)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                return BitConverter.ToString(sha256.ComputeHash(file)).Replace("-", "").ToLowerInvariant();
+            }
         }
     }
 }
