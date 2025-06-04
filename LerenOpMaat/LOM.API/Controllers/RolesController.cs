@@ -12,7 +12,7 @@ namespace LOM.API.Controllers
     [ApiController]
     public class RolesController : LOMBaseController
     {
-        public RolesController(LOMContext context) : base(context) { }
+        public RolesController(LOMContext context) : base(context) {}
 
         [HttpGet("{feature}")]
         [EnableRateLimiting("GetLimiter")]
@@ -35,8 +35,6 @@ namespace LOM.API.Controllers
         [HttpPost("effective-role")]
         public IActionResult SetEffectiveRole([FromBody] string role)
         {
-            Console.WriteLine("role = " + role);
-
             var allowedRoles = new[] { "Administrator", "Lecturer", "Student" };
 
             if (!allowedRoles.Contains(role))
@@ -53,8 +51,6 @@ namespace LOM.API.Controllers
         public IActionResult GetEffectiveRole()
         {
             var effectiveRole = HttpContext.Session.GetString("EffectiveRole");
-            Console.WriteLine("role = " + effectiveRole);
-
             if (string.IsNullOrEmpty(effectiveRole))
             {
                 var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
