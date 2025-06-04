@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using LOM.API.Controllers.Base;
 using System.Security.Cryptography;
+using VirusTotalNet;
+using VirusTotalNet.ResponseCodes;
 
 namespace LOM.API.Controllers
 {
