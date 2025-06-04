@@ -17,7 +17,11 @@ namespace LOM.API.Controllers
 
 		public ModuleController(LOMContext context) : base(context) {}
 
-		// GET: api/Module
+		/// <summary>
+		/// Haal alle modules op, eventueel met een zoekterm
+		/// </summary>
+		/// <param name="q">Zoekterm om te filteren</param>
+		/// <returns>Lijst met ModuleDTO models</returns>
 		[HttpGet]
 		[AllowAnonymous]
 		[EnableRateLimiting("GetLimiter")]
@@ -39,9 +43,10 @@ namespace LOM.API.Controllers
 			{
 				string lowerQ = q.ToLower();
 				query = query.Where(m =>
-					m.Name.ToLower().Contains(lowerQ) ||
-					m.Code.ToLower().Contains(lowerQ) ||
-					m.Description.ToLower().Contains(lowerQ));
+					string.IsNullOrWhiteSpace(m.Description)
+						? m.Name.ToLower().Contains(lowerQ) || m.Code.ToLower().Contains(lowerQ)
+						: m.Name.ToLower().Contains(lowerQ) || m.Code.ToLower().Contains(lowerQ) || m.Description.ToLower().Contains(lowerQ)
+				);
 			}
 
 			var modules = await query
@@ -59,8 +64,11 @@ namespace LOM.API.Controllers
 			return result;
 		}
 
-
-		// GET: api/Module/Active
+		/// <summary>
+		/// Haal alle modules actieve op, eventueel met een zoekterm
+		/// </summary>
+		/// <param name="q">Zoekterm om te filteren</param>
+		/// <returns>Lijst met ModuleDTO models</returns>
 		[HttpGet("Active")]
 		[EnableRateLimiting("GetLimiter")]
 		[AllowAnonymous]
@@ -73,9 +81,10 @@ namespace LOM.API.Controllers
 			{
 				string lowerQ = q.ToLower();
 				query = query.Where(m =>
-					m.Name.ToLower().Contains(lowerQ) ||
-					m.Code.ToLower().Contains(lowerQ) ||
-					m.Description.ToLower().Contains(lowerQ));
+					string.IsNullOrWhiteSpace(m.Description)
+						? m.Name.ToLower().Contains(lowerQ) || m.Code.ToLower().Contains(lowerQ)
+						: m.Name.ToLower().Contains(lowerQ) || m.Code.ToLower().Contains(lowerQ) || m.Description.ToLower().Contains(lowerQ)
+				);
 			}
 
 			var modules = await query
@@ -93,7 +102,12 @@ namespace LOM.API.Controllers
 			return result;
 		}
 
-		// GET: api/Module/5
+		/// <summary>
+		/// Haal een specifieke module
+		/// </summary>
+		/// <param name="id">ID van de module om op te halen</param>
+		/// <returns>NotFound als er geen module gevonden is</returns>
+		/// <returns>ModelDTO model</returns>
 		[HttpGet("{id}")]
 		[EnableRateLimiting("GetLimiter")]
 		[AllowAnonymous]
@@ -115,8 +129,15 @@ namespace LOM.API.Controllers
 			return result;
 		}
 
-		// PUT: api/Module/5
-		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		/// <summary>
+		/// Update een bestaande module
+		/// Vereiste rol: Lecturer of Administrator
+		/// </summary>
+		/// <param name="moduleDto">Module model met geupdate properties</param>
+		/// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+		/// <returns>NotFound als er geen bestaande module gevonden is</returns>
+		/// <returns>Conflict als de module code al bestaat</returns>
+		/// <returns>NoContent als de module successvol opgeslagen is</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPut("{id}")]
 		[EnableRateLimiting("PostLimiter")]
@@ -127,10 +148,14 @@ namespace LOM.API.Controllers
 				.FirstOrDefaultAsync(m => m.Id == moduleDto.Id);
 
 			if (existingModule == null)
+			{
 				return NotFound();
+			}
 
 			if (ModuleCodeExists(moduleDto.Id, moduleDto.Code))
+			{
 				return Conflict(new { message = "Module code bestaat al." });
+			}
 
 			existingModule.Name = moduleDto.Name;
 			existingModule.Code = moduleDto.Code;
@@ -164,6 +189,12 @@ namespace LOM.API.Controllers
 			return NoContent();
 		}
 
+		/// <summary>
+		/// Controleren of een module bestaat
+		/// Vereiste rol: Lecturer of Administrator
+		/// </summary>
+		/// <param name="id">Module model id om te controleren</param>
+		/// <returns>Ok met True of False</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpGet("existence/{id}")]
 		[EnableRateLimiting("GetLimiter")]
@@ -173,13 +204,20 @@ namespace LOM.API.Controllers
 			return Ok(exists);
 		}
 
-
-		// POST: api/Module
-		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		/// <summary>
+		/// Nieuwe module opslaan
+		/// Vereiste rol: Lecturer of Administrator
+		/// </summary>
+		/// <param name="dto">ModuleCreateDTO model met properties</param>
+		/// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+		/// <returns>BadRequest als er geen module data gepost is</returns>
+		/// <returns>Conflict als de module code al bestaat</returns>
+		/// <returns>BadRequest als de module niet successvol opgeslagen kon worden</returns>
+		/// <returns>Created als de module successvol opgeslagen is</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPost]
 		[EnableRateLimiting("PostLimiter")]
-		public async Task<ActionResult<Module>> PostModule(ModuleCreateDto @dto)
+		public async Task<ActionResult<Module>> PostModule(ModuleCreateDto? dto)
 		{
 			if (dto == null)
 			{
@@ -216,18 +254,22 @@ namespace LOM.API.Controllers
 				return BadRequest("An error occurred while saving the module. Please try again.");
 			}
 		}
-		private bool ModuleCodeExists(int id, string code)
-		{
-			return _context.Modules.Where(m => m.Id != id).Any(m => m.Code == code);
-		}
-		// deactivate: api/Module/deactivate/5
+		
+		/// <summary>
+		/// Een module inactief maken
+		/// Vereiste rol: Lecturer of Administrator
+		/// </summary>
+		/// <param name="id">ID van de module om inactief te maken</param>
+		/// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+		/// <returns>NotFound als er geen module gevonden is</returns>
+		/// <returns>NoContent als de module successvol op inactief is gezet</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPatch("deactivate/{id}")]
 		[EnableRateLimiting("PostLimiter")]
 		public async Task<IActionResult> DeactivateModule(int id)
 		{
-			var @module = await _context.Modules.FindAsync(id);
-			if (@module == null)
+			var module = await _context.Modules.FindAsync(id);
+			if (module == null)
 			{
 				return NotFound();
 			}
@@ -239,14 +281,21 @@ namespace LOM.API.Controllers
 			return NoContent();
 		}
 
-		// activate: api/Module/activate/5
+		/// <summary>
+		/// Een module actief maken
+		/// Vereiste rol: Lecturer of Administrator
+		/// </summary>
+		/// <param name="id">ID van de module om actief te maken</param>
+		/// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+		/// <returns>NotFound als er geen module gevonden is</returns>
+		/// <returns>NoContent als de module successvol op actief is gezet</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPatch("activate/{id}")]
 		[EnableRateLimiting("PostLimiter")]
 		public async Task<IActionResult> ActivateModule(int id)
 		{
-			var @module = await _context.Modules.FindAsync(id);
-			if (@module == null)
+			var module = await _context.Modules.FindAsync(id);
+			if (module == null)
 			{
 				return NotFound();
 			}
@@ -257,17 +306,32 @@ namespace LOM.API.Controllers
 
 			return NoContent();
 		}
-		// DELETE: api/Module/5
+
+		/// <summary>
+		/// Een module verwijderen
+		/// Vereiste rol: Lecturer of Administrator
+		/// </summary>
+		/// <param name="id">ID van de module om te verwijderen</param>
+		/// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+		/// <returns>NotFound als er geen module gevonden is</returns>
+		/// <returns>BadRequest als de module in gebruik is</returns>
+		/// <returns>NoContent als de module successvol verwijderd is</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpDelete("{id}")]
 		[EnableRateLimiting("DeleteLimiter")]
 		public async Task<IActionResult> DeleteModule(int id)
 		{
 			var module = await _context.Modules.FindAsync(id);
-			if (module == null) return NotFound();
+			if (module == null)
+			{
+				return NotFound();
+			}
 
 			var isInUse = await _context.Semesters.AnyAsync(s => s.ModuleId == id);
-			if (isInUse) return BadRequest("Module is in use and cannot be deleted.");
+			if (isInUse)
+			{
+				return BadRequest("Module is in use and cannot be deleted.");
+			}
 
 			_context.Modules.Remove(module);
 			await _context.SaveChangesAsync();
@@ -275,12 +339,23 @@ namespace LOM.API.Controllers
 			return NoContent();
 		}
 
-		// GET: api/Module/5/progress
+		/// <summary>
+		/// Progressie van een module ophalen
+		/// </summary>
+		/// <param name="id">ID van de module om te verwijderen</param>
+		/// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+		/// <returns>NoContent als er geen module progressie gevonden is</returns>
+		/// <returns>Ok met module progressie model</returns>
 		[HttpGet("{id}/progress")]
 		[EnableRateLimiting("GetLimiter")]
 		public async Task<ActionResult<ModuleProgressDto>> GetModuleProgress(int id)
 		{
 			User? user = GetActiveUser();
+
+			if (user == null)
+			{
+				return Unauthorized();
+			}
 
 			var progress = await _context.ModuleProgresses
 				.Where(m => m.ModuleId == id && m.UserId == user.Id)
@@ -297,11 +372,23 @@ namespace LOM.API.Controllers
 			return Ok(result);
 		}
 
-		// POST: api/Module/5/completedevl
+		/// <summary>
+		/// Voeg een evl toe aan module van huidige gebruiker
+		/// </summary>
+		/// <param name="id">ID van de module</param>
+		/// <param name="evlId">ID van de evl model om toe te voegen</param>
+		/// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+		/// <returns>NoContent als er niks geupdated is</returns>
+		/// <returns>Ok met ModuleProgressDto model</returns>
 		[HttpPost("{id}/addcompletedevl")]
 		public async Task<ActionResult<ModuleProgressDto>> AddCompletedEvl(int id, [FromBody] int evlId)
 		{
 			User? user = GetActiveUser();
+
+			if (user == null)
+			{
+				return Unauthorized();
+			}
 
 			var progress = await _context.ModuleProgresses
 				.Include(m => m.CompletedEVLs)
@@ -349,12 +436,24 @@ namespace LOM.API.Controllers
 			return Ok(result);
 		}
 
-		// DELETE: api/Module/5/completedevl/10
+		/// <summary>
+		/// Verwijder een evl van een module van huidige gebruiker
+		/// </summary>
+		/// <param name="moduleId">ID van de module om te verwijderen</param>
+		/// <param name="evlId">ID van de completedEVLs model to add</param>
+		/// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+		/// <returns>NoContent als er niks geupdated is</returns>
+		/// <returns>Ok met ModuleProgressDto model</returns>
 		[HttpDelete("{moduleId}/removecompletedevl/{evlId}")]
 		[EnableRateLimiting("DeleteLimiter")]
 		public async Task<ActionResult<ModuleProgressDto>> RemoveCompletedEvl(int moduleId, int evlId)
 		{
 			User? user = GetActiveUser();
+
+			if (user == null)
+			{
+				return Unauthorized();
+			}
 
 			var progress = await _context.ModuleProgresses
 				.Where(m => m.ModuleId == moduleId && m.UserId == user.Id)
@@ -390,6 +489,13 @@ namespace LOM.API.Controllers
 			return Ok(result);
 		}
 
+		/// <summary>                                                           
+		/// Haal module statestieken op                                          
+		/// Vereiste rol: Administrator                             
+		/// </summary>                                                          
+		/// <param name="year">Specifiek jaar om gegevens van op te halen</param>         
+		/// <param name="profileId">ID van de module profiel om gegevens van op te halen</param>         
+		/// <returns>Ok met de statestieken</returns> 
 		[Authorize(Roles = "Administrator")]
 		[HttpGet("reporting/modules-engagement")]
 		[EnableRateLimiting("GetLimiter")]
@@ -405,9 +511,7 @@ namespace LOM.API.Controllers
 				{
 					ModuleCode = m.Code,
 					ModuleName = m.Name,
-					AssignedCount = _context.Semesters
-						.Where(s => s.ModuleId == m.Id && (year == null || s.Year == year))
-						.Count()
+					AssignedCount = _context.Semesters.Count(s => s.ModuleId == m.Id && (year == null || s.Year == year))
 				})
 				.ToListAsync();
 
@@ -426,6 +530,10 @@ namespace LOM.API.Controllers
 			return Ok(result);
 		}
 
+		/// <summary>
+		/// Haal alle beschikbare jaren op
+		/// </summary>
+		/// <returns>Lijst met beschikbare jaren</returns>
 		[Authorize(Roles = "Administrator")]
 		[HttpGet("reporting/available-years")]
 		[EnableRateLimiting("GetLimiter")]
@@ -438,6 +546,11 @@ namespace LOM.API.Controllers
 				.ToListAsync();
 
 			return Ok(years);
+		}
+		
+		private bool ModuleCodeExists(int id, string code)
+		{
+			return _context.Modules.Where(m => m.Id != id).Any(m => m.Code == code);
 		}
 	}
 }
