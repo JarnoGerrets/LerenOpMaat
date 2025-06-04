@@ -9,7 +9,7 @@ namespace LOM.API.Models
         public int Id { get; set; }
 
         [ForeignKey(nameof(User))]
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public User? User { get; set; }
         public ICollection<Semester>? Semesters { get; set; }
     }

@@ -1,7 +1,10 @@
-﻿namespace LOM.API.DTO
+﻿using System.Runtime.InteropServices;
+
+namespace LOM.API.DTO
 {
 	public class ModuleCreateDto
 	{
+		public int Id { get; set; }
 		public string Name { get; set; }
 		public string Code { get; set; }
 		public string Description { get; set; } = string.Empty;

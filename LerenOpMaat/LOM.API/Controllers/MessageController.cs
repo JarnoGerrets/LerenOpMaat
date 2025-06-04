@@ -9,20 +9,17 @@ using LOM.API.DAL;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
+using LOM.API.Controllers.Base;
 
 namespace LOM.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class MessageController : ControllerBase
+    public class MessageController : LOMBaseController
     {
-        private readonly LOMContext _context;
 
-        public MessageController(LOMContext context)
-        {
-            _context = context;
-        }
+        public MessageController(LOMContext context) : base(context) {}
 
         // GET: api/Message
         [HttpGet]
@@ -111,8 +108,13 @@ namespace LOM.API.Controllers
         [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<IEnumerable<Message>>> GetMessagesByConversationId(int id)
         {
-            var messages = await _context.Messages.Include(u => u.User)
-                .Where(s => s.ConversationId == id).ToListAsync();
+            User? user = GetActiveUser();
+
+            var messages = await _context.Messages.Include(u => u.User).Include(u => u.Conversation.Teacher)
+                .Where(s => (
+                    s.ConversationId == id
+                    && (s.User == user || s.Conversation.Teacher == user)
+                )).ToListAsync();
 
             if (messages == null)
             {

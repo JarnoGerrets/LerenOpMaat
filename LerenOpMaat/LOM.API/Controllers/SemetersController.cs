@@ -1,32 +1,24 @@
-﻿using LOM.API.DAL;
-using LOM.API.DTO;
+﻿using LOM.API.Controllers.Base;
+using LOM.API.DAL;
 using LOM.API.Models;
-using LOM.API.Validator;
 using LOM.API.Validator.ValidationResults;
 using LOM.API.Validator.ValidationService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LOM.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class SemesterController : ControllerBase
+    public class SemesterController : LOMBaseController
     {
-        private readonly LOMContext _context;
         private readonly ISemesterValidationService _validationService;
 
-        public SemesterController(LOMContext context, ISemesterValidationService validationService)
+        public SemesterController(LOMContext context, ISemesterValidationService validationService) : base(context)
         {
-            _context = context;
             _validationService = validationService;
         }
 
@@ -70,7 +62,7 @@ namespace LOM.API.Controllers
                     semesterToUpdate.ModuleId = semester.ModuleId;
                 }
             }
-            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+
             ICollection<IValidationResult> results;
             try
             {

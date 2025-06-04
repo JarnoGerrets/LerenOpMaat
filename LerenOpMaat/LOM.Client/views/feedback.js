@@ -42,11 +42,10 @@ export default async function Feedback() {
         }
     }
 
-    const currentUserId = userData.InternalId;
     async function renderMessages() {
         messageContainer.innerHTML = "";
         try {
-            conversation = await getConversationByUserId(currentUserId);
+            conversation = await getConversationByUserId();
             if (conversation && conversation.TeacherId) {
                 selectedTeacherIdFromConversation = conversation.TeacherId;
             }
@@ -127,7 +126,7 @@ export default async function Feedback() {
             updateTextareaPlaceholder();
 
             const selectedTeacherId = dropdown.value;
-            conversation = await getConversationByUserId(currentUserId);
+            conversation = await getConversationByUserId();
 
             // Alleen updaten als conversation bestaat en TeacherId echt anders is
             if (conversation && String(conversation.TeacherId) !== String(selectedTeacherId)) {
@@ -139,7 +138,7 @@ export default async function Feedback() {
                 };
                 try {
                     await updateConversation(conversation.Id, updateBody);
-                    conversation = await getConversationByUserId(currentUserId);
+                    conversation = await getConversationByUserId();
                     await renderMessages();
                 } catch (err) {
                     errorMsg.textContent = "Kon begeleider niet aanpassen.";
@@ -165,7 +164,7 @@ export default async function Feedback() {
             dropdown.style.borderColor = "";
 
             // Haal altijd de conversatie op
-            let conversation = await getOrCreateConversation(currentUserId);
+            let conversation = await getOrCreateConversation();
             let conversationId = conversation && conversation.Id ? conversation.Id : null;
 
             let valid = true;
@@ -191,7 +190,7 @@ export default async function Feedback() {
                         ...conversation,
                         TeacherId: Number(selectedTeacherId)
                     });
-                    conversation = await getConversationByUserId(currentUserId);
+                    conversation = await getConversationByUserId();
                 }
 
                 await postFeedbackMessage(conversation.Id, feedback, currentUserId);

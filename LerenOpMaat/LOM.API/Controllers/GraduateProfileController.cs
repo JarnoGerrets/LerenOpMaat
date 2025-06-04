@@ -1,4 +1,5 @@
-﻿using LOM.API.DAL;
+﻿using LOM.API.Controllers.Base;
+using LOM.API.DAL;
 using LOM.API.DTO;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Http;
@@ -10,14 +11,11 @@ namespace LOM.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GraduateProfileController : Controller
+    public class GraduateProfileController : LOMBaseController
     {
-        private readonly LOMContext _context;
 
-        public GraduateProfileController(LOMContext context)
-        {
-            _context = context;
-        }
+        public GraduateProfileController(LOMContext context) : base(context) {}
+
         // GET: api/GraduateProfile
         [HttpGet]
         [EnableRateLimiting("GetLimiter")]

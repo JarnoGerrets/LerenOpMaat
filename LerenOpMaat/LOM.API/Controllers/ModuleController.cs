@@ -5,20 +5,17 @@ using LOM.API.Models;
 using LOM.API.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
+using LOM.API.Controllers.Base;
 
 namespace LOM.API.Controllers
 {
 	[Route("api/[controller]")]
 	[Authorize]
 	[ApiController]
-	public class ModuleController : ControllerBase
+	public class ModuleController : LOMBaseController
 	{
-		private readonly LOMContext _context;
 
-		public ModuleController(LOMContext context)
-		{
-			_context = context;
-		}
+		public ModuleController(LOMContext context) : base(context) {}
 
 		// GET: api/Module
 		[HttpGet]
@@ -27,9 +24,9 @@ namespace LOM.API.Controllers
 		public async Task<ActionResult<IEnumerable<ModuleDto>>> GetModules([FromQuery] string? q)
 		{
 			IQueryable<Module> query;
-			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+			User? user = GetActiveUser();
 
-			if (userId != 0)
+			if (user != null)
 			{
 				query = _context.Modules.AsQueryable();
 			}
@@ -132,7 +129,7 @@ namespace LOM.API.Controllers
 			if (existingModule == null)
 				return NotFound();
 
-			if (ModuleCodeExists(moduleDto.Code))
+			if (ModuleCodeExists(moduleDto.Id, moduleDto.Code))
 				return Conflict(new { message = "Module code bestaat al." });
 
 			existingModule.Name = moduleDto.Name;
@@ -189,7 +186,7 @@ namespace LOM.API.Controllers
 				return BadRequest("Module data is required.");
 			}
 
-			if (ModuleCodeExists(dto.Code))
+			if (ModuleCodeExists(dto.Id, dto.Code))
 			{
 				return Conflict(new { message = "Module code bestaat al." });
 			}
@@ -219,9 +216,9 @@ namespace LOM.API.Controllers
 				return BadRequest("An error occurred while saving the module. Please try again.");
 			}
 		}
-		private bool ModuleCodeExists(string code)
+		private bool ModuleCodeExists(int id, string code)
 		{
-			return _context.Modules.Any(m => m.Code == code);
+			return _context.Modules.Where(m => m.Id != id).Any(m => m.Code == code);
 		}
 		// deactivate: api/Module/deactivate/5
 		[Authorize(Roles = "Lecturer, Administrator")]
@@ -283,10 +280,10 @@ namespace LOM.API.Controllers
 		[EnableRateLimiting("GetLimiter")]
 		public async Task<ActionResult<ModuleProgressDto>> GetModuleProgress(int id)
 		{
-			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+			User? user = GetActiveUser();
 
 			var progress = await _context.ModuleProgresses
-				.Where(m => m.ModuleId == id && m.UserId == userId)
+				.Where(m => m.ModuleId == id && m.UserId == user.Id)
 				.Include(m => m.CompletedEVLs)
 					.ThenInclude(evl => evl.ModuleEvl)
 				.FirstOrDefaultAsync();
@@ -304,19 +301,19 @@ namespace LOM.API.Controllers
 		[HttpPost("{id}/addcompletedevl")]
 		public async Task<ActionResult<ModuleProgressDto>> AddCompletedEvl(int id, [FromBody] int evlId)
 		{
-			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+			User? user = GetActiveUser();
 
 			var progress = await _context.ModuleProgresses
 				.Include(m => m.CompletedEVLs)
 					.ThenInclude(c => c.ModuleEvl)
-				.FirstOrDefaultAsync(m => m.ModuleId == id && m.UserId == userId);
+				.FirstOrDefaultAsync(m => m.ModuleId == id && m.UserId == user.Id);
 
 			if (progress == null)
 			{
 				progress = new ModuleProgress
 				{
 					ModuleId = id,
-					UserId = userId,
+					UserId = user.Id,
 					CompletedEVLs = new List<CompletedEvl>()
 				};
 				_context.ModuleProgresses.Add(progress);
@@ -338,7 +335,7 @@ namespace LOM.API.Controllers
 			}
 
 			var updatedProgress = await _context.ModuleProgresses
-				.Where(m => m.ModuleId == id && m.UserId == userId)
+				.Where(m => m.ModuleId == id && m.UserId == user.Id)
 				.Include(m => m.CompletedEVLs)
 					.ThenInclude(c => c.ModuleEvl)
 				.FirstOrDefaultAsync();
@@ -357,10 +354,10 @@ namespace LOM.API.Controllers
 		[EnableRateLimiting("DeleteLimiter")]
 		public async Task<ActionResult<ModuleProgressDto>> RemoveCompletedEvl(int moduleId, int evlId)
 		{
-			int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+			User? user = GetActiveUser();
 
 			var progress = await _context.ModuleProgresses
-				.Where(m => m.ModuleId == moduleId && m.UserId == userId)
+				.Where(m => m.ModuleId == moduleId && m.UserId == user.Id)
 				.Include(m => m.CompletedEVLs)
 					.ThenInclude(evl => evl.ModuleEvl)
 				.FirstOrDefaultAsync();
@@ -379,7 +376,7 @@ namespace LOM.API.Controllers
 			}
 
 			var updatedProgress = await _context.ModuleProgresses
-				.Where(m => m.ModuleId == moduleId && m.UserId == userId)
+				.Where(m => m.ModuleId == moduleId && m.UserId == user.Id)
 				.Include(m => m.CompletedEVLs)
 					.ThenInclude(c => c.ModuleEvl)
 				.FirstOrDefaultAsync();

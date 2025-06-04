@@ -25,6 +25,9 @@ export default class ModuleCard extends customElements.get("base-card") {
                     <div class="module-info-row" style="font-weight: bold;">
                     Periode: <span id="period-text">${mapPeriodToPresentableString(module.Period)}</span>
                     </div>
+                    <div class="module-info-row" style="font-weight: bold;">
+                        Profiel: <span id="graduate-text">${module.GraduateProfile.Name}</span>
+                    </div>
                 </div>
                 <div class="w-50">
                     <div class="module-info-row" style="font-weight: bold;">
