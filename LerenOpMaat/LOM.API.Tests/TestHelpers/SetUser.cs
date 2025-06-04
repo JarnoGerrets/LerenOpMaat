@@ -7,16 +7,17 @@ namespace LOM.API.TestHelpers
 {
     public static class TestUserHelper
     {
-        public static void SetUser(UserController controller, string externalId)
+        public static void SetUser(UserController controller, string? externalId)
         {
-            var httpContext = new DefaultHttpContext
+            var httpContext = new DefaultHttpContext();
+
+            if (externalId != null)
             {
-                User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+                httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
                 {
                     new Claim(ClaimTypes.NameIdentifier, externalId)
-                }, "Test"))
-            };
-
+                }, "Test"));
+            }
             controller.ControllerContext = new ControllerContext
             {
                 HttpContext = httpContext
