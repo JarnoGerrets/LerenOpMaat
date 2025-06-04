@@ -14,6 +14,11 @@ namespace LOM.API.Controllers
     {
         public RolesController(LOMContext context) : base(context) {}
 
+        /// <summary>
+        /// Controleren of een gebruiker bepaalde rechten heeft
+        /// </summary>
+        /// <param name="feature">Rechten om te controleren</param>
+        /// <returns>Ok met True of False</returns>
         [HttpGet("{feature}")]
         [EnableRateLimiting("GetLimiter")]
         public IActionResult HasPermission(string feature)
@@ -31,6 +36,13 @@ namespace LOM.API.Controllers
             return Ok(hasPermission);
         }
 
+        /// <summary>
+        /// Zet een nieuwe actieve rol van een gebruiker binnen de huidige sessie
+        /// Vereiste rol: Administrator
+        /// </summary>
+        /// <param name="role">De rol om toe te voegen, (Administrator, Lecturer, Student)</param>
+        /// <returns>BadRequest als er een niet toegestane rol wordt toegevoegd.</returns>
+        /// <returns>Ok als de rol is toegevoegd.</returns>
         [Authorize(Roles = "Administrator")]
         [HttpPost("effective-role")]
         public IActionResult SetEffectiveRole([FromBody] string role)
@@ -46,14 +58,22 @@ namespace LOM.API.Controllers
             return Ok(role);
         }
 
+        /// <summary>
+        /// Haal je huidige actieve rol op
+        /// </summary>
+        /// <returns>Ok met je actieve rol</returns>
         [Authorize]
         [HttpGet("effective-role")]
         public IActionResult GetEffectiveRole()
         {
             var effectiveRole = HttpContext.Session.GetString("EffectiveRole");
+            
             if (string.IsNullOrEmpty(effectiveRole))
             {
-                var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+                var roles = User.FindAll(ClaimTypes.Role)
+                    .Select(r => r.Value)
+                    .ToList();
+                
                 effectiveRole = roles.Contains("Administrator") ? "Administrator"
                               : roles.Contains("Lecturer") ? "Lecturer"
                               : "Student";
