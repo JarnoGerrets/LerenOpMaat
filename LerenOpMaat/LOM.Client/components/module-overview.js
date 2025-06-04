@@ -42,10 +42,10 @@ class ModuleOverview extends HTMLElement {
             const filteredModules = await getModules(query);
             this.renderModules(filteredModules);
         });
-        const userData = window.userData;
-        const student = await hasPermission("student");
+        const userData = await window.userData;
+        let role = userData.EffectiveRole;
 
-        if (!student && userData) {      
+        if (!(role == "Student") && userData) {      
             const addModuleInput = this.querySelector('#add-module-button');
             addModuleInput.style.display = 'flex';
             addModuleInput.addEventListener('click', async () => {

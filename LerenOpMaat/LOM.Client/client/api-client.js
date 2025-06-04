@@ -110,8 +110,6 @@ export async function setEffectiveRole(role) {
       body: JSON.stringify(role)
     });
     if (res.ok) return true;
-    const resultaat = await res.json();
-    console.log(resultaat);
     return false;
   } catch (err) {
     return false;

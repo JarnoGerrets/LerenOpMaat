@@ -13,13 +13,17 @@ namespace LOM.API.Controllers
     public class OerController : LOMBaseController
     {
 
-        public OerController(LOMContext context) : base(context) {}
+        public OerController(LOMContext context) : base(context) { }
 
         [Authorize(Roles = "Administrator, Lecturer")]
         [HttpPut("upload")]
         [EnableRateLimiting("PostLimiter")]
         public async Task<IActionResult> UploadOer(IFormFile file)
         {
+            const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
+            if (file.Length > MaxFileSizeBytes)
+                return BadRequest("Bestand is te groot. Maximaal toegestaan is 10 MB.");
+
             if (file == null || file.Length == 0)
                 return BadRequest("Geen bestand geüpload.");
 
