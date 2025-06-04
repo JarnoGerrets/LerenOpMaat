@@ -3,20 +3,17 @@ using LOM.API.DAL;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
+using LOM.API.Controllers.Base;
 
 namespace LOM.API.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
-    public class OerController : ControllerBase
+    public class OerController : LOMBaseController
     {
-        private readonly LOMContext _context;
 
-        public OerController(LOMContext context)
-        {
-            _context = context;
-        }
+        public OerController(LOMContext context) : base(context) {}
 
         [Authorize(Roles = "Administrator, Lecturer")]
         [HttpPut("upload")]

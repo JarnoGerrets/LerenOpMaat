@@ -2,206 +2,48 @@
 using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
-using System.Diagnostics;
 using Microsoft.AspNetCore.RateLimiting;
+using LOM.API.Controllers.Base;
 
 namespace LOM.API.Controllers
 {
-    [Route("authenticate")]
-    public class AuthController : Controller
-    {
-        [HttpGet]
-        [EnableRateLimiting("LoginLimiter")]
-
-        public IActionResult Authenticate(string? returnUrl = null)
-        {
-            // 1. Gebruik de opgegeven returnUrl of de Referer-header als fallback
-            if (string.IsNullOrEmpty(returnUrl))
-            {
-                returnUrl = Request.Headers["Referer"].ToString();
-            }
-
-            // 2. Fallback naar root als er geen geldige returnUrl is
-            if (string.IsNullOrEmpty(returnUrl))
-            {
-                returnUrl = "/";
-            }
-
-            return Challenge(new AuthenticationProperties
-            {
-                RedirectUri = returnUrl
-            }, OpenIdConnectDefaults.AuthenticationScheme);
-
-        }
-
-        [HttpGet("logout")]
-        public async Task Logout()
-        {
-            HttpContext.Session.Clear();
-            await HttpContext.SignOutAsync("Cookies");
-
-            //Important, this method should never return anything.
-        }
-
-    }
-
-    [ApiController]
-    [Route("api/account")]
-    public class AccountController : Controller
-    {
-        private readonly LOMContext _context;
-
-        public AccountController(LOMContext context)
-        {
-            _context = context;
-        }
-        [Authorize]
-        [HttpGet]
-        [EnableRateLimiting("GetLimiter")]
-
-        public IActionResult GetUser()
-        {
-            // Haal user claims op
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // sub
-            var email = User.FindFirstValue("preferred_username");       // meestal email
-            var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
-
-            if (string.IsNullOrEmpty(userId))
-                return Unauthorized("No user ID found in claims.");
-
-            // Bepaal RoleId op basis van de claims
-            int roleId = (roles.Contains("Administrator")) ? 1 : 2;
-
-            var user = _context.User.FirstOrDefault(u => u.ExternalID == userId);
-
-            if (user == null)
-            {
-                // Maak nieuwe user aan met juiste RoleId
-                user = new User
-                {
-                    ExternalID = userId,
-                    FirstName = "",
-                    LastName = "",
-                    StartYear = null,
-                    RoleId = 2
-                };
-
-                _context.User.Add(user);
-                _context.SaveChanges();
-
-                // Haal de user opnieuw op zodat user.Id correct is
-                user = _context.User.FirstOrDefault(u => u.ExternalID == userId);
-            }
-
-            // Store user ID in session
-            HttpContext.Session.SetInt32("UserId", user.Id);
-
-            return Ok(new
-            {
-                Roles = roles,
-                Username = email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                InternalId = user.Id,
-                ExternalID = userId,
-            });
-        }
-
-        [Authorize(Roles = "Lecturer, Administrator")]
-        [HttpGet("getstudent/{id}")]
-        [EnableRateLimiting("GetLimiter")]
-
-        public async Task<ActionResult<User>> GetStudent(int id)
-        {
-            var student = await _context.User.FirstOrDefaultAsync(u => u.Id == id);
-
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(student);
-        }
-
-        [Authorize(Roles = "Administrator")]
-        [HttpGet("roles")]
-        public async Task<ActionResult<IEnumerable<Role>>> GetAllRoles()
-        {
-            var roles = await _context.Roles.ToListAsync();
-            return Ok(roles);
-        }
-    }
-
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : LOMBaseController
     {
-        private readonly LOMContext _context;
 
-        public UserController(LOMContext context)
-        {
-            _context = context;
-        }
+        public UserController(LOMContext context) : base(context) {}
 
-        [HttpGet("startyear/{id}")]
+        [HttpGet("startyear")]
         [EnableRateLimiting("GetLimiter")]
 
-        public async Task<ActionResult<int?>> GetStartYear(int id)
+        public async Task<ActionResult<int?>> GetStartYear()
         {
-            var user = await _context.User.FindAsync(id);
-            var sessionUserId = HttpContext.Session.GetInt32("UserId");
-
-            if (sessionUserId == null)
-            {
-                return Unauthorized();
-            }
+            User? user = GetActiveUser();
 
             if (user == null)
             {
-                return NotFound();
-            }
-
-            if (sessionUserId != user.Id)
-            {
-                return Forbid();
+                return Unauthorized();
             }
 
             return Ok(user.StartYear);
         }
 
-        [HttpPost("startyear/{id}")]
+
+        [HttpPost("startyear")]
         [EnableRateLimiting("PostLimiter")]
 
         public async Task<IActionResult> SetStartYear(int id, [FromBody] int startYear)
         {
             var currentYear = DateTime.Now.Year + 1;
             var validYears = Enumerable.Range(currentYear - 3, 4);
-            var sessionUserId = HttpContext.Session.GetInt32("UserId");
-            var user = await _context.User.FindAsync(id);
+            User? user = GetActiveUser();
 
             if (user == null)
             {
-                return NotFound();
-            }
-
-            if (sessionUserId == null)
-            {
                 return Unauthorized();
-            }
-
-            if (!validYears.Contains(startYear))
-            {
-                return BadRequest();
-            }
-
-            if (sessionUserId != user.Id)
-            {
-                return Forbid();
             }
 
             user.StartYear = startYear;

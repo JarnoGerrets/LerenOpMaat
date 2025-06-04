@@ -37,7 +37,7 @@ export default async function LearningRoute() {
     const isTeacher = await hasPermission("teacher");
 
     try {
-        if (userData && userData.InternalId) {
+        if (userData) {
             apiResponse = await getLearningRoutesByUserId(userData.InternalId);
             if (
                 !apiResponse.Semesters ||

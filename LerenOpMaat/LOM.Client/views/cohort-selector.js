@@ -2,9 +2,9 @@ export async function RouteOrSelector(setStartYear, getStartYear, LearningRoute)
   let cohortYear = localStorage.getItem("cohortYear");
   let userData = await window.userData;
 
-  if (userData && userData.InternalId) {
+  if (userData) {
     localStorage.removeItem('cohortYear');
-    const startYearFromUser = await getStartYear(userData.InternalId);
+    const startYearFromUser = await getStartYear();
     
     if (startYearFromUser) {
       cohortYear = startYearFromUser;
@@ -52,8 +52,8 @@ export default async function CohortSelector(setStartYear, LearningRoute) {
     let userData = await window.userData;
 
     try { 
-      if (userData && userData.InternalId) {
-        await setStartYear(userData.InternalId, selected);
+      if (userData) {
+        await setStartYear(selected);
       } 
     } catch (e) {
       console.error("Error in setStartYear:", e);

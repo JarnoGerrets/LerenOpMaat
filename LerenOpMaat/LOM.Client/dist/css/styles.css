@@ -1370,6 +1370,7 @@ body {
 
 .semester-button {
     display: flex;
+    overflow: hidden;
     width: -moz-available;
     justify-content: space-between;
     margin-bottom: 5px;

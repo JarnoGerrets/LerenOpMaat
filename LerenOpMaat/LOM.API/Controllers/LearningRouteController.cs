@@ -1,4 +1,5 @@
-﻿using LOM.API.DAL;
+﻿using LOM.API.Controllers.Base;
+using LOM.API.DAL;
 using LOM.API.Models;
 using LOM.API.Validator.ValidationResults;
 using LOM.API.Validator.ValidationService;
@@ -12,14 +13,12 @@ namespace LOM.API.Controllers
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
-    public class LearningRouteController : ControllerBase
+    public class LearningRouteController : LOMBaseController
     {
-        private readonly LOMContext _context;
         private readonly ISemesterValidationService _validationService;
 
-        public LearningRouteController(LOMContext context, ISemesterValidationService validationService)
+        public LearningRouteController(LOMContext context, ISemesterValidationService validationService) : base(context)
         {
-            _context = context;
             _validationService = validationService;
         }
 
@@ -81,20 +80,21 @@ namespace LOM.API.Controllers
             if (learningRoute == null)
                 return BadRequest("Learning route cannot be null.");
 
-            var existingUser = await _context.User.FirstOrDefaultAsync(u => u.Id == learningRoute.UserId);
-            if (existingUser == null)
+            User? user = GetActiveUser();
+
+            if (user == null)
                 return BadRequest("User does not exist.");
 
-            var validationResults = await _validationService.ValidateSemestersAsync(learningRoute.Semesters.ToList(), learningRoute.UserId);
+            var validationResults = await _validationService.ValidateSemestersAsync(learningRoute.Semesters.ToList(), user.Id);
 
             if (validationResults.Any(r => !r.IsValid))
                 return Ok(validationResults);
 
-            learningRoute.User = existingUser;
+            learningRoute.User = user;
             _context.LearningRoutes.Add(learningRoute);
             await _context.SaveChangesAsync();
 
-            existingUser.LearningRouteId = learningRoute.Id;
+            user.LearningRouteId = learningRoute.Id;
             await _context.SaveChangesAsync();
 
             return Ok();
@@ -105,10 +105,12 @@ namespace LOM.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLearningRoute(int id)
         {
+            User? user = GetActiveUser();
+
             var learningRoute = await _context.LearningRoutes
                 .Include(lr => lr.Semesters)
                 .Include(lr => lr.User)
-                .FirstOrDefaultAsync(lr => lr.Id == id);
+                .FirstOrDefaultAsync(lr => lr.Id == id && lr.User == user);
 
             if (learningRoute == null)
             {
@@ -134,17 +136,19 @@ namespace LOM.API.Controllers
         }
 
         //Speciaal get leerroute call
-        [HttpGet("/api/LearningRoute/User/{userId}")]
+        [HttpGet("/api/LearningRoute/User")]
         [EnableRateLimiting("GetLimiter")]
-        public async Task<ActionResult<LearningRoute>> GetLearningRouteByUserId(int userId)
+        public async Task<ActionResult<LearningRoute>> GetLearningRouteByUserId()
         {
+            User? user = GetActiveUser();
+
             var learningRoute = await _context.LearningRoutes
                 .Include(u => u.User)
                 .Include(s => s.Semesters)
                 .ThenInclude(m => m.Module)
-                .FirstOrDefaultAsync(lr => lr.UserId == userId);
+                .FirstOrDefaultAsync(lr => lr.UserId == user.Id);
 
-            var getUser = await _context.User.FirstOrDefaultAsync(ui => ui.Id == userId);
+            var getUser = await _context.User.FirstOrDefaultAsync(ui => ui.Id == user.Id);
 
             if (learningRoute == null)
             {
@@ -174,11 +178,17 @@ namespace LOM.API.Controllers
         [EnableRateLimiting("ValidateLimiter")]
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {
-            int userId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            User? user = GetActiveUser();
+
+            if (user == null)
+            {
+                return BadRequest("Teveel semesters voor validatie");
+            }
+
             ICollection<IValidationResult> results;
             try
             {
-                results = await _validationService.ValidateSemestersAsync(semesters, userId);
+                results = await _validationService.ValidateSemestersAsync(semesters, user.Id);
             }
             catch (InvalidDataException)
             {

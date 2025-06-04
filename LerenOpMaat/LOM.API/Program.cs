@@ -173,7 +173,13 @@ builder.Services.AddScoped<ISemesterValidationService, SemesterValidationService
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+    {
+        options.Cookie.Name = "__Host-.AspNetCore.Session";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+    }
+);
 builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
@@ -186,6 +192,11 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
+app.UseCookiePolicy(
+    new CookiePolicyOptions {
+        Secure = CookieSecurePolicy.Always
+    }
+);
 
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())

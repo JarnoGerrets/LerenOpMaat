@@ -1,8 +1,7 @@
 import Popup from "../components/Popup.js";
 
 export default async function oerView(uploadOerPdf, getCurrentOerPdf) {
-  let userData = localStorage.getItem("userData");
-  let parsedUserData = JSON.parse(userData);
+  let parsedUserData = await window.userData;
   const response = await fetch("/templates/Oer.html");
   const html = await response.text();
 
