@@ -35,7 +35,6 @@ namespace LOM.API.Controllers
 
         [HttpPost("startyear")]
         [EnableRateLimiting("PostLimiter")]
-
         public async Task<IActionResult> SetStartYear(int id, [FromBody] int startYear)
         {
             var currentYear = DateTime.Now.Year + 1;

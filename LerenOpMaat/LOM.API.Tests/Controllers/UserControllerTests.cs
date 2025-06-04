@@ -1,6 +1,7 @@
 ﻿using LOM.API.Controllers;
 using LOM.API.DAL;
 using LOM.API.Models;
+using LOM.API.TestHelpers;
 using LOM.API.Tests.TestHelpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -29,25 +30,6 @@ namespace LOM.API.Tests.Controllers
             _currentYear = DateTime.Now.Year + 1;
         }
 
-        private void SetSession(UserController controller, int? userId)
-        {
-            var httpContext = new DefaultHttpContext();
-            var session = new MockHttpSession();
-
-            if (userId.HasValue)
-            {
-                session.SetInt32("UserId", userId.Value);
-            }
-
-            httpContext.Features.Set<ISessionFeature>(new SessionFeature { Session = session });
-            httpContext.Session = session;
-
-            controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = httpContext
-            };
-        }
-
         [Fact]
         public async Task GetStartYear_ReturnsStartYear_When_SessionUserMatches()
         {
@@ -64,10 +46,10 @@ namespace LOM.API.Tests.Controllers
             await _context.SaveChangesAsync();
 
             var controller = new UserController(_context);
-            SetSession(controller, user.Id);
+            TestUserHelper.SetUser(controller, user.ExternalID);
 
             // Act
-            var result = await controller.GetStartYear(user.Id);
+            var result = await controller.GetStartYear();
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -93,7 +75,7 @@ namespace LOM.API.Tests.Controllers
             await _context.SaveChangesAsync();
 
             var controller = new UserController(_context);
-            SetSession(controller, user.Id);
+            TestUserHelper.SetUser(controller, user.ExternalID);
 
             // Act
             var result = await controller.SetStartYear(user.Id, validYear);
@@ -120,7 +102,7 @@ namespace LOM.API.Tests.Controllers
             await _context.SaveChangesAsync();
 
             var controller = new UserController(_context);
-            SetSession(controller, user.Id);
+            TestUserHelper.SetUser(controller, user.ExternalID);
 
             // Act
             var result = await controller.SetStartYear(user.Id, 2020);
@@ -144,7 +126,8 @@ namespace LOM.API.Tests.Controllers
             await _context.SaveChangesAsync();
 
             var controller = new UserController(_context);
-            SetSession(controller, null);
+            TestUserHelper.SetUser(controller, null);
+
 
             // Act
             var result = await controller.SetStartYear(user.Id, _currentYear - 1);
@@ -168,7 +151,7 @@ namespace LOM.API.Tests.Controllers
             await _context.SaveChangesAsync();
 
             var controller = new UserController(_context);
-            SetSession(controller, user.Id + 1);
+            TestUserHelper.SetUser(controller, user.ExternalID + 1);
 
             // Act
             var result = await controller.SetStartYear(user.Id, _currentYear - 1);
