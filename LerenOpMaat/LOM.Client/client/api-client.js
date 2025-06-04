@@ -60,7 +60,7 @@ export async function hasPermission(role) {
     return false;
   }
   try {
-    const res = await fetch(`${API_BASE}/permission/${role}`, {
+    const res = await fetch(`${API_BASE}/roles/${role}`, {
       method: "GET",
       credentials: "include",
       headers: {
@@ -80,6 +80,43 @@ export async function hasPermission(role) {
   } catch (err) {
     console.error("Error while checking permission:", err);
     throw err;
+  }
+}
+
+export async function getEffectiveRole() {
+  try {
+    const res = await fetch(`${API_BASE}/roles/effective-role`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const role = await res.json();
+    return role;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function setEffectiveRole(role) {
+  try {
+    const res = await fetch(`${API_BASE}/roles/effective-role`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(role)
+    });
+    if (res.ok) return true;
+    const resultaat = await res.json();
+    console.log(resultaat);
+    return false;
+  } catch (err) {
+    return false;
   }
 }
 

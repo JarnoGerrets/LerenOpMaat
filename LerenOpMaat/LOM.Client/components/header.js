@@ -1,5 +1,5 @@
 import { userData } from "../scripts/utils/getUserData.js";
-import { getLoginUrl, logout, getNotificationsByUserId, markNotificationsAsRead, getAllRoles, hasPermission } from '../client/api-client.js';
+import { getLoginUrl, logout, getNotificationsByUserId, markNotificationsAsRead, getAllRoles, hasPermission, setEffectiveRole } from '../client/api-client.js';
 
 export default class Header extends HTMLElement {
   constructor() {
@@ -58,10 +58,10 @@ export default class Header extends HTMLElement {
           const option = document.createElement("div");
           option.textContent = roleTranslations[role.RoleName] || role.RoleName;
           option.classList.add("simulated-role-option");
-          option.addEventListener("click", () => {
+          option.addEventListener("click", async () => {
             simulatedRoleObj.innerHTML = `Toon applicatie als: ${roleTranslations[role.RoleName] || role.RoleName} ⯆`;
             simulatedDropdown.classList.add("hidden");
-            sessionStorage.setItem("simulatedRole", JSON.stringify(role));
+            const setRole = await setEffectiveRole(role.RoleName);
             window.location.reload();
           });
           simulatedDropdown.appendChild(option);
@@ -203,7 +203,6 @@ customElements.define("lom-header", Header);
 
 const roleTranslations = {
   "Administrator": "Administrator",
-  "Teacher": "Docent",
-  "Student": "Student",
-  "Developer": "Ontwikkelaar"
+  "Lecturer": "Docent",
+  "Student": "Student"
 };

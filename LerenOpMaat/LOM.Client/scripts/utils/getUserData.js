@@ -1,4 +1,4 @@
-import { getUserData } from '../../client/api-client.js';
+import { getUserData, getEffectiveRole } from '../../client/api-client.js';
 
 export let userData;
 
@@ -26,10 +26,10 @@ async function resolveUserData() {
         return null;
     }
 
-    const simulatedRole = sessionStorage.getItem("simulatedRole");
+    const simulatedRole = await getEffectiveRole();
+    console.log(simulatedRole);
     if (simulatedRole) {
-        const parsed = JSON.parse(simulatedRole);
-        baseData.EffectiveRole = parsed?.RoleName || parsed?.Name;
+        baseData.EffectiveRole = simulatedRole;
     } else {
         baseData.EffectiveRole = baseData?.Roles?.[0] ?? null;
     }

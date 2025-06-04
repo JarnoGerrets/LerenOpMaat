@@ -136,7 +136,6 @@ namespace LOM.API.Controllers
         }
     }
 
-
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
@@ -224,9 +223,10 @@ namespace LOM.API.Controllers
 
     [Authorize]
     [Route("api/[controller]")]
-    public class PermissionController : Controller
+    public class RolesController : Controller
     {
         [HttpGet("{feature}")]
+        [EnableRateLimiting("GetLimiter")]
         public IActionResult HasPermission(string feature)
         {
             var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
@@ -240,6 +240,38 @@ namespace LOM.API.Controllers
             };
 
             return Ok(hasPermission);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPost("effective-role")]
+        public IActionResult SetEffectiveRole([FromBody] string role)
+        {
+            var allowedRoles = new[] { "Administrator", "Lecturer", "Student" };
+
+            if (!allowedRoles.Contains(role))
+            {
+                return BadRequest("Invalid role");
+            }
+
+            HttpContext.Session.SetString("EffectiveRole", role);
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("effective-role")]
+        public IActionResult GetEffectiveRole()
+        {
+            var effectiveRole = HttpContext.Session.GetString("EffectiveRole");
+
+            if (string.IsNullOrEmpty(effectiveRole))
+            {
+                var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+                effectiveRole = roles.Contains("Administrator") ? "Administrator"
+                              : roles.Contains("Lecturer") ? "Lecturer"
+                              : "Student";
+            }
+
+            return Ok(effectiveRole);
         }
     }
 
