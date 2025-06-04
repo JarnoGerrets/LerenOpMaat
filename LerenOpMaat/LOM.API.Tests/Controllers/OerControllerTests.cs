@@ -4,6 +4,8 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Moq;
 using System.Text;
 
 namespace LOM.API.Tests.Controllers
@@ -11,6 +13,7 @@ namespace LOM.API.Tests.Controllers
     public class OerControllerTests
     {
         private readonly OerController _controller;
+        private readonly Mock<IConfiguration> _configurationMock;
         private readonly LOMContext _context;
 
         public OerControllerTests()
@@ -20,7 +23,8 @@ namespace LOM.API.Tests.Controllers
                 .Options;
 
             _context = new LOMContext(options);
-            _controller = new OerController(_context);
+			_configurationMock = new Mock<IConfiguration>();
+			_controller = new OerController(_context, _configurationMock.Object);
         }
 
         [Fact]

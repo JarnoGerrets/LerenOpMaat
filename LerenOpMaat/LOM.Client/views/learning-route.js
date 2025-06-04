@@ -77,7 +77,7 @@ export default async function LearningRoute() {
 
             const semester1 = semesterGroup.find(s => s.Period === 1);
             const semester2 = semesterGroup.find(s => s.Period === 2);
-            const semesterPair = await SemesterPair(isAdmin, isTeacher, semester1, semester2, index, totalAmountOfYears);
+            const semesterPair = await SemesterPair(semester1, semester2, index, totalAmountOfYears);
 
             if (!(semesterPair instanceof Node)) {
                 console.error(`SemesterPair for year ${year} is not a valid Node:`, semesterPair);
@@ -95,7 +95,7 @@ export default async function LearningRoute() {
             const missingSemesters = totalSemestersGroup - index;
 
             for (let i = 0; i < missingSemesters; i++) {
-                const dummySemesterPair = await SemesterPair(isAdmin, isTeacher, dummySemester1, dummySemester2, index, totalSemestersGroup);
+                const dummySemesterPair = await SemesterPair(dummySemester1, dummySemester2, index, totalSemestersGroup);
 
                 if (!(dummySemesterPair instanceof Node)) {
                     console.error(`Dummy SemesterPair for index ${index} is not a valid Node:`, dummySemesterPair);
@@ -113,7 +113,7 @@ export default async function LearningRoute() {
         const addIconButton = new AddIconButton({
             onclick: async () => {
                 insertCornerConnector();
-                const newSemesterPair = await SemesterPair(isAdmin, isTeacher, dummySemester1, dummySemester2, index, index + 1);
+                const newSemesterPair = await SemesterPair(dummySemester1, dummySemester2, index, index + 1);
                 grid.appendChild(newSemesterPair);
                 index++;
 
