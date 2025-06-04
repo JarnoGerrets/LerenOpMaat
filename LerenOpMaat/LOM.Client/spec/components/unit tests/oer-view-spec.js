@@ -14,9 +14,7 @@ describe("oerView", () => {
   });
 
   beforeEach(() => {
-    localStorage.setItem("userData", JSON.stringify({
-      Roles: ["Lecturer"]
-    }));
+    window.userData = Promise.resolve({ Roles: ["Lecturer"] });
 
     spyOn(window, "fetch").and.callFake((url) => {
       if (url.endsWith("/templates/Oer.html")) {
@@ -58,7 +56,7 @@ describe("oerView", () => {
   });
 
   it("should hide upload button for users without proper role", async () => {
-    localStorage.setItem("userData", JSON.stringify({ Roles: ["Student"] }));
+    window.userData = Promise.resolve({ Roles: ["Student"] });
 
     const { fragment } = await oerView(mockUploadOerPdf, mockGetCurrentOerPdf);
 
@@ -69,7 +67,7 @@ describe("oerView", () => {
   });
 
   it("should show upload button for Administrator or Lecturer role", async () => {
-    localStorage.setItem("userData", JSON.stringify({ Roles: ["Administrator"] }));
+    window.userData = Promise.resolve({ Roles: ["Administrator"] });
 
     const { fragment } = await oerView(mockUploadOerPdf, mockGetCurrentOerPdf);
 
