@@ -22,7 +22,14 @@ namespace LOM.API.Controllers
             _validationService = validationService;
         }
 
-        //Speciaal update semester call
+        /// <summary>
+        /// Update semesters
+        /// </summary>
+        /// <param name="learningRouteId">SemesterUpdateLockDto model from body</param>
+        /// <param name="dto">SemesterUpdateLockDto model from body</param>
+        /// <returns>NotFound als er geen leerroute gevonden is</returns>
+        /// <returns>BadRequest als het aantal semesters meer dan de max van 30 is</returns>
+        /// <returns>Ok</returns>
         [HttpPut("/api/[controller]/updateSemesters/{learningRouteId}")]
         [EnableRateLimiting("ValidateLimiter")]
         public async Task<IActionResult> UpdateSemesters(int learningRouteId, [FromBody] UpdateSemestersDto dto)
@@ -34,7 +41,7 @@ namespace LOM.API.Controllers
             if (learningRoute == null)
                 return NotFound($"No learningRoute found for Id: {learningRouteId}");
 
-            if (learningRoute?.Semesters?.Count > 30)
+            if (learningRoute.Semesters?.Count > 30)
                 return BadRequest("The number of semesters exceeds the allowed limit (30).");
 
             foreach (var semester in dto.Semesters)
@@ -78,7 +85,14 @@ namespace LOM.API.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
-
+        
+        /// <summary>
+        /// Sluit een semester
+        /// Vereiste rol: Lecturer of Administrator
+        /// </summary>
+        /// <param name="request">SemesterUpdateLockDto model from body</param>
+        /// <returns>NotFound als er geen semester gevonden is</returns>
+        /// <returns>Ok</returns>
         [Authorize(Roles = "Lecturer, Administrator")]
         [HttpPatch("updatedlockedsemester")]
         [EnableRateLimiting("GetLimiter")]
