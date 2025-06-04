@@ -5,6 +5,7 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using LOM.API.Controllers.Base;
+using System.Security.Claims;
 
 namespace LOM.API.Controllers
 {
@@ -61,71 +62,6 @@ namespace LOM.API.Controllers
             return Ok(teachers);
         }
 
-    }
-
-    [Authorize]
-    [Route("api/[controller]")]
-    public class RolesController : Controller
-    {
-        [HttpGet("{feature}")]
-        [EnableRateLimiting("GetLimiter")]
-        public IActionResult HasPermission(string feature)
-        {
-            var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
-
-            bool hasPermission = feature.ToLower() switch
-            {
-                "teacher" => roles.Contains("Administrator") || roles.Contains("Lecturer"),
-                "student" => roles.Contains("Student") || roles.Contains("Administrator"),
-                "admin" => roles.Contains("Administrator"),
-                _ => false
-            };
-
-            return Ok(hasPermission);
-        }
-
-        [Authorize(Roles = "Administrator")]
-        [HttpPost("effective-role")]
-        public IActionResult SetEffectiveRole([FromBody] string role)
-        {
-            var allowedRoles = new[] { "Administrator", "Lecturer", "Student" };
-
-            if (!allowedRoles.Contains(role))
-            {
-                return BadRequest("Invalid role");
-            }
-
-            HttpContext.Session.SetString("EffectiveRole", role);
-            return Ok();
-        }
-
-        [Authorize]
-        [HttpGet("effective-role")]
-        public IActionResult GetEffectiveRole()
-        {
-            var effectiveRole = HttpContext.Session.GetString("EffectiveRole");
-
-            if (string.IsNullOrEmpty(effectiveRole))
-            {
-                var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
-                effectiveRole = roles.Contains("Administrator") ? "Administrator"
-                              : roles.Contains("Lecturer") ? "Lecturer"
-                              : "Student";
-            }
-
-            return Ok(effectiveRole);
-        }
-    }
-
-    [AllowAnonymous]
-    [Route("api/[controller]")]
-    public class StatusController : Controller
-    {
-        [HttpGet]
-        public IActionResult GetLoginStatus()
-        {
-            return Ok(new { IsAuthenticated = User?.Identity?.IsAuthenticated == true });
-        }
     }
 
 }
