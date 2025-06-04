@@ -4,6 +4,10 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using LOM.API.Controllers.Base;
+using VirusTotalNet;
+using VirusTotalNet.Enums;
+using System.Security.Cryptography;
+using VirusTotalNet.ResponseCodes;
 
 namespace LOM.API.Controllers
 {
@@ -12,8 +16,11 @@ namespace LOM.API.Controllers
     [ApiController]
     public class OerController : LOMBaseController
     {
-
-        public OerController(LOMContext context) : base(context) { }
+        private readonly string _virusTotalApiKey;
+        public OerController(LOMContext context, IConfiguration config) : base(context)
+        {
+            _virusTotalApiKey = config["VirusTotal:ApiKey"];
+        }
 
         [Authorize(Roles = "Administrator, Lecturer")]
         [HttpPut("upload")]
@@ -35,6 +42,37 @@ namespace LOM.API.Controllers
             {
                 await file.CopyToAsync(ms);
                 fileBytes = ms.ToArray();
+            }
+
+            // -- VIRUS SCAN --
+            var virusTotal = new VirusTotal(_virusTotalApiKey);
+
+            // Optioneel: snellere API call zonder opnieuw scannen als bestand al bekend is
+            var fileHash = CalculateSHA256(fileBytes);
+            var existingScan = await virusTotal.GetFileReportAsync(fileHash);
+            if (existingScan.ResponseCode == FileReportResponseCode.Present)
+            {
+                if (existingScan.Positives > 0)
+                    return BadRequest("Virus gevonden in bestaand bestand.");
+            }
+            else
+            {
+                // Nieuw bestand uploaden
+                var scanResult = await virusTotal.ScanFileAsync(new MemoryStream(fileBytes), file.FileName);
+
+                int maxAttempts = 5;
+                int delayMs = 2000;
+                for (int attempt = 0; attempt < maxAttempts; attempt++)
+                {
+                    var finalReport = await virusTotal.GetFileReportAsync(scanResult.SHA256);
+                    if (finalReport.ResponseCode == FileReportResponseCode.Present)
+                    {
+                        if (finalReport.Positives > 0)
+                            return BadRequest("Virus gevonden in nieuw bestand.");
+                        break;
+                    }
+                    await Task.Delay(delayMs);
+                }
             }
 
             var oer = await _context.Oers.FindAsync(1);
@@ -70,5 +108,13 @@ namespace LOM.API.Controllers
             return File(stream, "application/pdf", enableRangeProcessing: true);
         }
 
+
+        private string CalculateSHA256(byte[] file)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                return BitConverter.ToString(sha256.ComputeHash(file)).Replace("-", "").ToLowerInvariant();
+            }
+        }
     }
 }
