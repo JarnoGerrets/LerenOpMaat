@@ -13,7 +13,11 @@ namespace LOM.API.Controllers
     public class OerController : LOMBaseController
     {
 
-        public OerController(LOMContext context) : base(context) { }
+        private readonly string _virusTotalApiKey;
+        public OerController(LOMContext context, IConfiguration config) : base(context)
+        {
+            _virusTotalApiKey = config["VirusTotal:ApiKey"];
+        }
 
         /// <summary>
         /// Upload een nieuw oer pdf bestand
