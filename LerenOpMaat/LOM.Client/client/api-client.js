@@ -17,7 +17,7 @@ export async function logout() {
       }
     });
 
-    localStorage.removeItem("userData");
+    document.cookie = "userData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=strict";
     localStorage.removeItem("cohortYear");
     location.reload();
 
@@ -35,8 +35,6 @@ export async function getUserData() {
     });
 
     const userData = await res.json();
-
-    localStorage.setItem("userData", JSON.stringify(userData));
 
     return userData;
   } catch {
