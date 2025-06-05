@@ -2,8 +2,8 @@ namespace LOM.API.Enums
 {
     public enum PeriodType
     {
-        FirstPeriod = 0,
-        SecondPeriod = 1,
-        BothPeriods = 2
+        FirstPeriod = 1,
+        SecondPeriod = 2,
+        BothPeriods = 3
     }
 }

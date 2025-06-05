@@ -25,6 +25,10 @@ export async function logout() {
 }
 
 export async function getUserData() {
+  const loggedIn = await isLoggedIn();
+  if (!loggedIn) {
+    return null;
+  }
   try {
     const res = await fetch(`${API_BASE}/account`, {
       method: "GET",
