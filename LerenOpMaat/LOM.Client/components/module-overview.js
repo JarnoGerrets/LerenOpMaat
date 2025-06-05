@@ -43,7 +43,10 @@ class ModuleOverview extends HTMLElement {
             this.renderModules(filteredModules);
         });
         const userData = await window.userData;
-        let role = userData.EffectiveRole;
+        let role;
+        if (userData) {
+            role = userData.EffectiveRole;
+        }
 
         if (!(role == "Student") && userData) {      
             const addModuleInput = this.querySelector('#add-module-button');
