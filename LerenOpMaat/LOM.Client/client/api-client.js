@@ -25,6 +25,10 @@ export async function logout() {
 }
 
 export async function getUserData() {
+  const loggedIn = await isLoggedIn();
+  if (!loggedIn) {
+    return null;
+  }
   try {
     const res = await fetch(`${API_BASE}/account`, {
       method: "GET",
@@ -39,6 +43,80 @@ export async function getUserData() {
     return userData;
   } catch {
     return null;
+  }
+}
+
+export async function isLoggedIn() {
+  const res = await fetch(`${API_BASE}/status`, {
+    credentials: "include",
+    headers: { "Accept": "application/json" }
+  });
+  const json = await res.json();
+  if (json.IsAuthenticated) return true;
+  return false;
+}
+
+export async function hasPermission(role) {
+  const loggedIn = await isLoggedIn();
+  if (!loggedIn) {
+    return false;
+  }
+  try {
+    const res = await fetch(`${API_BASE}/roles/${role}`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+    const allowed = await res.json();
+    if (res.ok) {
+      return allowed;
+    }
+
+    if (res.status === 403) return false;
+
+    if (res.status === 401) return false;
+
+    throw new Error(`Unexpected response: ${res.status}`);
+  } catch (err) {
+    console.error("Error while checking permission:", err);
+    throw err;
+  }
+}
+
+export async function getEffectiveRole() {
+  try {
+    const res = await fetch(`${API_BASE}/roles/effective-role`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
+
+    const role = await res.json();
+    return role;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function setEffectiveRole(role) {
+  try {
+    const res = await fetch(`${API_BASE}/roles/effective-role`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(role)
+    });
+    if (res.ok) return true;
+    return false;
+  } catch (err) {
+    return false;
   }
 }
 
@@ -426,12 +504,14 @@ export async function validateRoute(learningRoute) {
 
 
   if (!res.ok) {
+    let bodyText = await res.text();
+
     let errorMessage;
     try {
-      const errorData = await res.json();
+      const errorData = JSON.parse(bodyText);
       errorMessage = errorData.message || JSON.stringify(errorData);
     } catch {
-      errorMessage = await res.text();
+      errorMessage = bodyText;
     }
 
     throw new Error(`Failed to validate learning route: ${res.status} - ${errorMessage}`);
@@ -718,8 +798,8 @@ export async function getCurrentOerPdf() {
   return await res.blob();
 }
 
-export async function getConversationByAdminId(adminId) {
-  const res = await fetch(`${API_BASE}/Conversation/conversationByAdministratorId/${adminId}`, {
+export async function getConversationByAdminId() {
+  const res = await fetch(`${API_BASE}/Conversation/conversationByAdministratorId`, {
     method: "GET",
     headers: {
       "Accept": "application/json"

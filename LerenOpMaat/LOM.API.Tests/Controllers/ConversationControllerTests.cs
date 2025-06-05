@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using Xunit;
 using LOM.API.Controllers;
 using LOM.API.DAL;
@@ -44,8 +46,19 @@ namespace LOM.API.Tests.Controllers
 
             var controller = new ConversationController(context);
 
+            // Mock Claims
+            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, student.ExternalID) };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(identity)
+                }
+            };
+
             // Act
-            var result = await controller.getConversationByStudentId(1);
+            var result = await controller.GetConversationByStudentId();
 
             // Assert
             var actionResult = Assert.IsType<ActionResult<Conversation>>(result);
@@ -60,14 +73,31 @@ namespace LOM.API.Tests.Controllers
         {
             // Arrange
             var context = GetInMemoryContext();
+            // Add a user to match the ClaimsPrincipal
+            var student = new User { Id = 1, FirstName = "Student", LastName = "Test", ExternalID = "S1", RoleId = 2 };
+            context.User.Add(student);
+            await context.SaveChangesAsync();
+
             var controller = new ConversationController(context);
 
+            // Mock Claims
+            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "S1") };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(identity)
+                }
+            };
+
             // Act
-            var result = await controller.getConversationByStudentId(99);
+            var result = await controller.GetConversationByStudentId();
 
             // Assert
             Assert.IsType<NotFoundResult>(result.Result);
         }
+
 
         [Fact]
         public async Task GetConversationsByAdministratorId_ReturnsConversations_WhenExists()
@@ -94,8 +124,19 @@ namespace LOM.API.Tests.Controllers
 
             var controller = new ConversationController(context);
 
+            // Mock Claims
+            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, admin.ExternalID) };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(identity)
+                }
+            };
+
             // Act
-            var result = await controller.getConversationsByAdministratorId(2);
+            var result = await controller.GetConversationsByAdministratorId();
 
             // Assert
             var actionResult = Assert.IsType<ActionResult<IEnumerable<Conversation>>>(result);
@@ -104,20 +145,39 @@ namespace LOM.API.Tests.Controllers
             Assert.Equal(2, ((Conversation)System.Linq.Enumerable.First(conversations)).TeacherId);
         }
 
+
         [Fact]
         public async Task GetConversationsByAdministratorId_ReturnsEmpty_WhenNoneExist()
         {
             // Arrange
             var context = GetInMemoryContext();
+            // Add an admin user for the claim
+            var admin = new User { Id = 1, FirstName = "Admin", LastName = "Test", ExternalID = "A1", RoleId = 1 };
+            context.User.Add(admin);
+            await context.SaveChangesAsync();
+
             var controller = new ConversationController(context);
 
+            // Mock Claims
+            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, "A1") };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(identity)
+                }
+            };
+
             // Act
-            var result = await controller.getConversationsByAdministratorId(99);
+            var result = await controller.GetConversationsByAdministratorId();
 
             // Assert
             var actionResult = Assert.IsType<ActionResult<IEnumerable<Conversation>>>(result);
             var conversations = Assert.IsAssignableFrom<IEnumerable<Conversation>>(actionResult.Value);
             Assert.Empty(conversations);
         }
+
+
     }
 }

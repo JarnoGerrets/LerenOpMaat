@@ -4,7 +4,6 @@ using LOM.API.DTO;
 using LOM.API.Enums;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +18,15 @@ namespace LOM.API.Controllers
 
 		public RequirementController(LOMContext context) : base(context) {}
 
+		/// <summary>
+		/// Haal een requirement op aan de hand van een id
+		/// </summary>
+		/// <param name="id">requirement id om op te halen</param>
+		/// <returns>NotFound als er geen requirement gevonden is</returns>
+		/// <returns>Ok met requirement model</returns>
 		[AllowAnonymous]
 		[HttpGet("{id}")]
 		[EnableRateLimiting("GetLimiter")]
-
 		public async Task<ActionResult<Requirement>> GetRequirement(int id)
 		{
 			var requirement = await _context.Requirements.FindAsync(id);
@@ -30,13 +34,17 @@ namespace LOM.API.Controllers
 			{
 				return NotFound();
 			}
-			return requirement;
+			return Ok(requirement);
 		}
 
+		/// <summary>
+		/// Haal requirement types op
+		/// Vereiste rol: Lecturer of Administrator
+		/// </summary>
+		/// <returns>Ok met ModuleRequirementTypeDto model</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpGet("types")]
 		[EnableRateLimiting("GetLimiter")]
-
 		public ActionResult<IEnumerable<ModuleRequirementTypeDto>> GetRequirementTypes()
 		{
 			var types = Enum.GetValues(typeof(ModulePreconditionType))
@@ -47,11 +55,16 @@ namespace LOM.API.Controllers
 			return Ok(types);
 		}
 
+		/// <summary>
+		/// Haal requirement types op
+		/// Vereiste rol: Lecturer of Administrator
+		/// </summary>
+		/// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+		/// <returns>Ok met ModuleRequirementTypeDto model</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPost]
 		[EnableRateLimiting("PostLimiter")]
-
-		public async Task<ActionResult> PostRequirement(Requirement requirement)
+		public async Task<ActionResult> PostRequirement(Requirement? requirement)
 		{
 			if (requirement == null)
 			{
@@ -64,10 +77,17 @@ namespace LOM.API.Controllers
 			return CreatedAtAction("GetRequirement", new { id = requirement.Id }, requirement);
 		}
 
+		/// <summary>
+		/// Update een bestaande requirement
+		/// Vereiste rol: Lecturer of Administrator
+		/// </summary>
+		/// <param name="id">ID van de requirement</param>
+		/// <param name="requirement">Requirement model met geupdate properties</param>
+		/// <returns>BadRequest als het id niet overeen komt met requirement model</returns>
+		/// <returns>NoContent als de requirment successvol is opgeslagen</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPut("{id}")]
 		[EnableRateLimiting("PostLimiter")]
-
 		public async Task<IActionResult> PutRequirement(int id, Requirement requirement)
 		{
 			if (id != requirement.Id)
@@ -82,10 +102,16 @@ namespace LOM.API.Controllers
 			return NoContent();
 		}
 
+		/// <summary>
+		/// Verwijder een requirement
+		/// Vereiste rol: Lecturer of Administrator
+		/// </summary>
+		/// <param name="id">ID van de requirement</param>
+		/// <returns>NotFound als er geen requirement gevonden is</returns>
+		/// <returns>NoContent als de requirment successvol is verwijderd</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpDelete("{id}")]
 		[EnableRateLimiting("DeleteLimiter")]
-
 		public async Task<IActionResult> DeleteRequirement(int id)
 		{
 			var requirement = await _context.Requirements.FindAsync(id);

@@ -37,7 +37,7 @@ export const semesterCardServices = Object.freeze({
     updateModuleUI: baseServices.updateModuleUI,
     updateAllCardsStyling: baseServices.updateAllCardsStyling,
     updateExclamationIcon: baseServices.updateExclamationIcon,
-    debounce: baseServices.debounce
+    debounce: baseServices.debounce,
 });
 
 export const uiUpdatesServices = Object.freeze({

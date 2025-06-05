@@ -5,7 +5,8 @@ import {
     postConversation,
     getConversationByUserId,
     deleteRoute,
-    validateRoute
+    validateRoute,
+    hasPermission
 } from "../client/api-client.js"
 
 import { learningRouteArray } from "../components/semester-pair.js";
@@ -31,6 +32,9 @@ export default async function LearningRoute() {
     let semesterData = [];
     let routeId = null;
     let userData = await window.userData;
+
+    const isAdmin = await hasPermission("admin");
+    const isTeacher = await hasPermission("teacher");
 
     try {
         if (userData) {

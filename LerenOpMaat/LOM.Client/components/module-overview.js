@@ -1,7 +1,7 @@
 // module-overview.js
 
 // Import required APIs and components
-import { getModules, getProfiles } from '../client/api-client.js';
+import { getModules, getProfiles, hasPermission, isLoggedIn } from '../client/api-client.js';
 import addModulePopup from '../views/partials/add-module-popup.js';
 import './module-card.js';
 
@@ -50,13 +50,16 @@ class ModuleOverview extends HTMLElement {
         });
 
         // Check if user has permissions to add modules
-        let userData = await window.userData;
+        const userData = await window.userData;
+        let role;
+        if (userData) {
+            role = userData.EffectiveRole;
+        }
 
-        if (userData && userData.EffectiveRole !== 'Student') {
+        if (!(role == "Student") && userData) {
             // Show and handle "Add Module" button
             const addModuleInput = this.querySelector('#add-module-button');
             addModuleInput.style.display = 'flex';
-
             addModuleInput.addEventListener('click', async () => {
                 const success = await addModulePopup();
                 if (success) {

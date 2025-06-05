@@ -8,10 +8,11 @@ import settingsPage from './views/settings-page.js';
 import renderTeacherLearningRoutes from './views/teacher-Dashboard.js';
 import teacherFeedback from './views/teacher-feedback.js';
 import teacherLearningRoute from './views/teacher-learning-route.js';
-import { uploadOerPdf, getCurrentOerPdf, setStartYear, getStartYear } from "./client/api-client.js";
+import { uploadOerPdf, getCurrentOerPdf, setStartYear, getStartYear, hasPermission } from "./client/api-client.js";
 import report from './views/report.js';
 import LearningRoute from "./views/learning-route.js";
-let userData;
+let isAdminOrTeacher = false;
+let isAdmin = false;
 
 //routes are entered here. when a parameter like ID is needed add ": async (param)" to ensure its extracted form the url.
 const routes = {
@@ -22,10 +23,10 @@ const routes = {
     return await ModuleInfo(id);
   },
   "#Dashboard": async () => {
-    if (userData?.EffectiveRole?.toLowerCase() === "administrator" || userData?.EffectiveRole?.toLowerCase() === "teacher") {
+    if (isAdminOrTeacher) {
       return await renderTeacherLearningRoutes();
     }
-    return await RouteOrSelector(setStartYear, getStartYear);
+    return await RouteOrSelector(setStartYear, getStartYear, LearningRoute);
   }
   ,
   "#module-overview": async () => {
@@ -47,16 +48,20 @@ const routes = {
     document.getElementById('app').appendChild(fragment);
   },
   "#beheerder-learning-route": async () => {
-    const params = getHashParams();
-    const { fragment } = await teacherLearningRoute(params);
-    document.getElementById('app').innerHTML = '';
-    document.getElementById('app').appendChild(fragment);
+    if (isAdminOrTeacher) {
+      const params = getHashParams();
+      const { fragment } = await teacherLearningRoute(params);
+      document.getElementById('app').innerHTML = '';
+      document.getElementById('app').appendChild(fragment);
+    } else {
+      return await RouteOrSelector(setStartYear, getStartYear, LearningRoute);
+    }
   },
   "#rapportage": async () => {
-    if (userData?.EffectiveRole?.toLowerCase() === "administrator") {
+    if (isAdmin) {
       return await report();
     }
-    return await RouteOrSelector(setStartYear, getStartYear);
+    return await RouteOrSelector(setStartYear, getStartYear, LearningRoute);
   }
 };
 
@@ -92,6 +97,11 @@ const matchRoute = (path) => {
 // router to match pathname with any existing routes, in case of no results an error is displayed.
 // router uses fragments followed by possible intialization scripts to 'switch' pages.
 const router = async () => {
+  isAdmin = await hasPermission("admin");
+  const isTeacher = await hasPermission("teacher");
+
+  isAdminOrTeacher = isAdmin || isTeacher;
+
   const path = window.location.hash;
   const app = document.getElementById("app");
   app.innerHTML = "";

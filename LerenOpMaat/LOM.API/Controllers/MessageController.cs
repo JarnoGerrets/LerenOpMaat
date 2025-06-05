@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LOM.API.DAL;
 using LOM.API.Models;
@@ -21,7 +16,10 @@ namespace LOM.API.Controllers
 
         public MessageController(LOMContext context) : base(context) {}
 
-        // GET: api/Message
+        /// <summary>
+        /// Alle messages ophalen
+        /// </summary>
+        /// <returns>Lijst met message models</returns>
         [HttpGet]
         [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<IEnumerable<Message>>> GetMessages()
@@ -29,7 +27,12 @@ namespace LOM.API.Controllers
             return await _context.Messages.ToListAsync();
         }
 
-        // GET: api/Message/5
+        /// <summary>
+        /// Specifieke message ophalen
+        /// </summary>
+        /// <param name="id">ID van de message</param>
+        /// <returns>NotFound als er geen message gevonden is</returns>
+        /// <returns>Message model</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<Message>> GetMessage(int id)
         {
@@ -43,8 +46,15 @@ namespace LOM.API.Controllers
             return message;
         }
 
-        // PUT: api/Message/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Message updaten
+        /// </summary>
+        /// <param name="id">ID van de message</param>
+        /// <param name="message">Message model met geupdate properties</param>
+        /// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+        /// <returns>BadRequest als het id niet overeen komt met message model</returns>
+        /// <returns>NotFound als er geen message gevonden is</returns>
+        /// <returns>NoContent als de message successvol opgeslagen is</returns>
         [HttpPut("{id}")]
         [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> PutMessage(int id, Message message)
@@ -53,30 +63,24 @@ namespace LOM.API.Controllers
             {
                 return BadRequest();
             }
+            
+            if (!MessageExists(id))
+            {
+                return NotFound();
+            }
 
             _context.Entry(message).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MessageExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _context.SaveChangesAsync();
+            
             return NoContent();
         }
 
-        // POST: api/Message
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Message opslaan
+        /// </summary>
+        /// <param name="message">Message model met properties fromBody</param>
+        /// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+        /// <returns>Created als de message successvol is opgeslagen</returns>
         [HttpPost]
         [EnableRateLimiting("MessageLimiter")]
         public async Task<ActionResult<Message>> PostMessage(Message message)
@@ -87,7 +91,13 @@ namespace LOM.API.Controllers
             return CreatedAtAction("GetMessage", new { id = message.Id }, message);
         }
 
-        // DELETE: api/Message/5
+        /// <summary>
+        /// Een message verwijderen
+        /// </summary>
+        /// <param name="id">ID van de message om te verwijderen</param>
+        /// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+        /// <returns>NotFound als de message niet gevonden is</returns>
+        /// <returns>NoContent als de message met success is verwijderd</returns>
         [HttpDelete("{id}")]
         [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> DeleteMessage(int id)
@@ -104,17 +114,30 @@ namespace LOM.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Messages ophalen aan de hand van conversatie
+        /// </summary>
+        /// <param name="id">ID van conversatie</param>
+        /// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+        /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+        /// <returns>NotFound als er geen messages gevonden zijn</returns>
+        /// <returns>Lijst met message models</returns>
         [HttpGet("messagesByConversationId/{id}")]
         [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<IEnumerable<Message>>> GetMessagesByConversationId(int id)
         {
             User? user = GetActiveUser();
 
-            var messages = await _context.Messages.Include(u => u.User).Include(u => u.Conversation.Teacher)
-                .Where(s => (
-                    s.ConversationId == id
-                    && (s.User == user || s.Conversation.Teacher == user)
-                )).ToListAsync();
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var messages = await _context.Messages
+                .Include(u => u.User)
+                .Include(u => u.Conversation.Teacher)
+                .Where(s => s.ConversationId == id && (s.User == user || s.Conversation.Teacher == user))
+                .ToListAsync();
 
             if (messages == null)
             {
