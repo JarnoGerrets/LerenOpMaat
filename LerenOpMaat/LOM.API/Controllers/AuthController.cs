@@ -17,12 +17,18 @@ namespace LOM.API.Controllers
         [EnableRateLimiting("LoginLimiter")]
         public IActionResult Authenticate(string? returnUrl = null)
         {
+#if DEBUG
             // 1. Gebruik de opgegeven returnUrl of de Referer-header als fallback
             if (string.IsNullOrEmpty(returnUrl))
             {
                 returnUrl = Request.Headers["Referer"].ToString();
             }
-
+#else
+    if (!string.IsNullOrEmpty(returnUrl) && returnUrl.StartsWith("http://"))
+    {
+        returnUrl = "https://" + returnUrl.Substring("http://".Length);
+    }
+#endif
             // 2. Fallback naar root als er geen geldige returnUrl is
             if (string.IsNullOrEmpty(returnUrl))
             {
