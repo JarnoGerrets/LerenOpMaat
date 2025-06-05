@@ -26,7 +26,7 @@ const routes = {
     if (isAdminOrTeacher) {
       return await renderTeacherLearningRoutes();
     }
-    return await RouteOrSelector(setStartYear, getStartYear);
+    return await RouteOrSelector(setStartYear, getStartYear, LearningRoute);
   }
   ,
   "#module-overview": async () => {
@@ -61,7 +61,7 @@ const routes = {
     if (isAdmin) {
       return await report();
     }
-    return await RouteOrSelector(setStartYear, getStartYear);
+    return await RouteOrSelector(setStartYear, getStartYear, LearningRoute);
   }
 };
 
