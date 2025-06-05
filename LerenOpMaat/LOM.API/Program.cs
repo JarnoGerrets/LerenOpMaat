@@ -28,6 +28,11 @@ builder.WebHost.UseSentry((Action<Sentry.AspNetCore.SentryAspNetCoreOptions>)(op
     options.Debug = builder.Environment.IsDevelopment();
 }));
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+	options.AddServerHeader = false;
+});
+
 IEnumerable<string>? initialScopes = builder.Configuration.GetSection("DownstreamApis:MicrosoftGraph:Scopes").Get<IEnumerable<string>>();
 
 
@@ -43,8 +48,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(allowedOrigins ?? [])
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+			  .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+			  .AllowCredentials();
     });
 });
 // Configure OpenID Connect to handle API requests without redirecting to the login page
@@ -169,7 +174,6 @@ builder.Services.AddRateLimiter(options =>
         }));
 });
 
-
 builder.Services.AddScoped<ISemesterValidationService, SemesterValidationService>();
 builder.Services.AddScoped<IVirusScanner, VirusScanner>();
 builder.Services.AddEndpointsApiExplorer();
@@ -189,6 +193,11 @@ app.MapGet("/debug/student", () => "Student reached");
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRateLimiter();
 app.UseSession();
+app.Use(async (context, next) =>
+{
+	context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+	await next();
+});
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
@@ -206,13 +215,38 @@ app.UseSwagger();
 app.UseSwaggerUI();
 // }
 
+app.UseHsts();
 app.UseHttpsRedirection();
 app.UseCors("AppCorsPolicy");
+var allowedMethods = new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" };
+app.Use(async (context, next) =>
+{
+	var method = context.Request.Method.ToUpperInvariant();
+
+	if (!allowedMethods.Contains(method))
+	{
+		SentrySdk.CaptureMessage($"Blocked HTTP method: {method} on {context.Request.Path}", SentryLevel.Warning);
+
+		context.Response.StatusCode = StatusCodes.Status405MethodNotAllowed;
+		await context.Response.WriteAsync("HTTP-methode niet toegestaan.");
+		return;
+	}
+
+	await next();
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseStaticFiles();
 app.MapFallbackToFile("index.html");
+
+app.Use(async (context, next) =>
+{
+	context.Response.Headers["X-Frame-Options"] = "DENY";
+	context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+	context.Response.Headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'";
+	await next();
+});
 
 app.Run();
 public partial class Program { }
