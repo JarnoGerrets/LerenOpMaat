@@ -1,878 +1,698 @@
 const BASE = "http://localhost:5073";
 const API_BASE = `${BASE}/api`;
 
-export function getLoginUrl() {
-  const returnUrl = encodeURIComponent(window.location.href);
+/**
+ * Default fetch utility function that handles common fetch operations
+ * @param {string} endpoint - The API endpoint to call
+ * @param {Object} options - Fetch options
+ * @param {string} [options.method='GET'] - HTTP method
+ * @param {Object} [options.body] - Request body
+ * @param {Object} [options.headers={}] - Additional headers
+ * @param {boolean} [options.credentials=true] - Whether to include credentials
+ * @returns {Promise<any>} The response data
+ * @throws {Error} If the request fails
+ */
+const lerenOpMaatApiFetch = async (endpoint, options = {}) => {
+    const {
+        method = 'GET',
+        body,
+        headers = {},
+        credentials = true,
+    } = options;
 
-  return `${BASE}/authenticate?returnUrl=${returnUrl}`;
+    // For non-GET requests, fetch CSRF token first
+    if (method !== 'GET') {
+        await getCsrfToken();
+    }
+
+    const defaultHeaders = {
+        'Accept': 'application/json',
+        ...(body && {'Content-Type': 'application/json'}),
+        ...headers
+    };
+
+    const fetchOptions = {
+        method,
+        headers: defaultHeaders,
+        ...(credentials && {credentials: 'include'}),
+        ...(body && {body: JSON.stringify(body)})
+    };
+
+    const response = await fetch(`${API_BASE}${endpoint}`, fetchOptions);
+
+    if (!response.ok) {
+        let errorMessage;
+        try {
+            const errorData = await response.json();
+            errorMessage = errorData.message || JSON.stringify(errorData);
+        } catch {
+            errorMessage = await response.text();
+        }
+        throw new Error(`Request failed: ${response.status} - ${errorMessage}`);
+    }
+
+    // Handle empty responses
+    if (response.status === 204) {
+        return null;
+    }
+
+    return await response.json();
+};
+
+//region Authenticatie
+/**
+ * Haalt de login URL op voor authenticatie
+ * @returns {string} De login URL met gecodeerde return URL
+ */
+export function getLoginUrl() {
+    const returnUrl = encodeURIComponent(window.location.href);
+    return `${BASE}/authenticate?returnUrl=${returnUrl}`;
 }
 
-export async function logout() {
-  try {
-    await fetch(`${BASE}/authenticate/logout`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json"
-      }
+/**
+ * Logt de huidige gebruiker uit en verwijdert sessiegegevens
+ * @returns {Promise<void>}
+ */
+const logout = async () => {
+    await lerenOpMaatApiFetch('/authenticate/logout', {
+        method: 'GET',
     });
 
     document.cookie = "userData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=strict";
     localStorage.removeItem("cohortYear");
     location.reload();
-
-  } catch { }
 }
+//endregion Authenticatie
 
-export async function getUserData() {
-  const loggedIn = await isLoggedIn();
-  if (!loggedIn) {
-    return null;
-  }
-  try {
-    const res = await fetch(`${API_BASE}/account`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json"
-      }
+//region CSRF Token logica
+/**
+ * Haalt het CSRF-token op van de server en slaat het op in cookies
+ * @returns {Promise<string>} De CSRF-token
+ * @throws {Error} Als de CSRF-token niet gegenereerd en/of gevonden kan worden
+ */
+export const getCsrfToken = async () => {
+    await fetch(BASE + '/api/csrf-token', {
+        credentials: 'include'
     });
 
-    const userData = await res.json();
+    const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+    if (!match) {
+        throw new Error('CSRF token not found');
+    }
 
-    return userData;
-  } catch {
-    return null;
-  }
+    return decodeURIComponent(match[1]);
+}
+//endregion CSRF Token logica
+
+//region Api - Account
+/**
+ * Haalt gebruiker account informatie op
+ * @returns {Promise<*>}
+ */
+export const getUserData = async () => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
+    return await lerenOpMaatApiFetch('/account');
 }
 
-export async function isLoggedIn() {
-  const res = await fetch(`${API_BASE}/status`, {
-    credentials: "include",
-    headers: { "Accept": "application/json" }
-  });
-  const json = await res.json();
-  if (json.IsAuthenticated) return true;
-  return false;
+/**
+ * Haalt student informatie op via hun ID
+ * @param {string} id - Het student ID
+ * @returns {Promise<Object>} De student informatie
+ * @throws {Error} Als de student niet kan worden opgehaald
+ */
+export const getStudent = async (id) => {
+    return await lerenOpMaatApiFetch(`/account/getstudent/${id}`);
 }
 
-export async function hasPermission(role) {
-  const loggedIn = await isLoggedIn();
-  if (!loggedIn) {
-    return false;
-  }
-  try {
-    const res = await fetch(`${API_BASE}/roles/${role}`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json"
-      }
+/**
+ * Haalt alle beschikbare rollen in het systeem op
+ * @returns {Promise<Array<string>|null>} Array van rollen of null bij een fout
+ */
+export const getAllRoles = async () => {
+    return await lerenOpMaatApiFetch('/account/roles');
+}
+//endregion Api - Account
+
+//region Api - Roles
+/**
+ * Controleert of de huidige gebruiker een specifieke rol heeft
+ * @param {string} role - De rol om te controleren
+ * @returns {Promise<boolean>} Of de gebruiker de opgegeven rol heeft
+ * @throws {Error} Als de gebruiker niet is ingelogd of als er een 4xx status code is
+ */
+export const hasPermission = async role => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
+    return await lerenOpMaatApiFetch(`/roles/${role}`);
+}
+
+/**
+ * Haalt de effectieve rol van de huidige gebruiker op
+ * @returns {Promise<string>} De effectieve rol
+ * @throws {Error} Als er een fout optreedt bij het ophalen van de rol
+ */
+export const getEffectiveRole = async () => {
+    return await lerenOpMaatApiFetch('/roles/effective-role');
+}
+
+/**
+ * Stelt de effectieve rol in voor de huidige gebruiker
+ * @param {string} role - De rol om in te stellen als effectief
+ * @returns {Promise<boolean>} Of het gelukt is
+ */
+export const setEffectiveRole = async (role) => {
+    return await lerenOpMaatApiFetch('/roles/effective-role', {
+        method: 'POST',
+        body: role
     });
-    const allowed = await res.json();
-    if (res.ok) {
-      return allowed;
-    }
+}
+//endregion Api - Roles
 
-    if (res.status === 403) return false;
-
-    if (res.status === 401) return false;
-
-    throw new Error(`Unexpected response: ${res.status}`);
-  } catch (err) {
-    console.error("Error while checking permission:", err);
-    throw err;
-  }
+//region Api - Modules
+/**
+ * Haalt modules op met een optioneel filter
+ * @param {string} [q] - Optioneel filter
+ * @returns {Promise<Array>} Array van modules
+ * @throws {Error} Als modules niet kunnen worden opgehaald
+ */
+export const getModules = async (q) => {
+    return await lerenOpMaatApiFetch(`/Module?q=${q || ''}`);
 }
 
-export async function getEffectiveRole() {
-  try {
-    const res = await fetch(`${API_BASE}/roles/effective-role`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json"
-      }
+/**
+ * Haalt actieve modules op met een optioneel filter
+ * @param {string} [q] - Optioneel filter
+ * @returns {Promise<Array>} Array van actieve modules
+ * @throws {Error} Als modules niet kunnen worden opgehaald
+ */
+export const getActiveModules = async (q) => {
+    return await lerenOpMaatApiFetch(`/Module/Active?q=${q || ''}`);
+}
+
+/**
+ * Haalt een specifieke module op via ID
+ * @param {string} id - Het module ID
+ * @returns {Promise<Object>} De module informatie
+ * @throws {Error} Als de module niet kan worden opgehaald
+ */
+export const getModule = async (id) => {
+    return await lerenOpMaatApiFetch(`/Module/${id}`);
+}
+
+/**
+ * Werkt een bestaande module bij
+ * @param {Object} module - De modulegegevens om bij te werken
+ * @returns {Promise<void>}
+ * @throws {Error} Als de module niet kan worden bijgewerkt
+ */
+export const updateModule = async (module) => {
+    return await lerenOpMaatApiFetch(`/Module/${module.Id}`, {
+        method: 'PUT',
+        body: module
     });
-
-    const role = await res.json();
-    return role;
-  } catch (err) {
-    throw err;
-  }
 }
 
-export async function setEffectiveRole(role) {
-  try {
-    const res = await fetch(`${API_BASE}/roles/effective-role`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(role)
+/**
+ * Voegt een nieuwe module toe
+ * @param {Object} moduleData - De modulegegevens om toe te voegen
+ * @returns {Promise<Object>} De aangemaakte module
+ * @throws {Error} Als de module niet kan worden toegevoegd
+ */
+export const addModule = async (moduleData) => {
+    return await lerenOpMaatApiFetch('/Module', {
+        method: 'POST',
+        body: moduleData
     });
-    if (res.ok) return true;
-    return false;
-  } catch (err) {
-    return false;
-  }
 }
 
-export async function getStudent(id) {
-  const res = await fetch(`${API_BASE}/account/getstudent/${id}`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept": "application/json"
-    }
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to fetch student: ${res.status}`);
-  }
-  return res.json();
+/**
+ * Controleert of een module bestaat
+ * @param {string} id - Het module ID om te controleren
+ * @returns {Promise<boolean>} Of de module bestaat
+ * @throws {Error} Als de controle mislukt
+ */
+export const existenceModule = async (id) => {
+    return await lerenOpMaatApiFetch(`/Module/existence/${id}`);
 }
 
-export async function getAllRoles() {
-  try {
-    const res = await fetch(`${API_BASE}/account/roles`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json"
-      }
+/**
+ * Activeert een module
+ * @param {string} id - Het module ID om te activeren
+ * @returns {Promise<string>} OK
+ * @throws {Error} Als de module niet kan worden geactiveerd
+ */
+export const activateModule = async (id) => {
+    return await lerenOpMaatApiFetch(`/Module/activate/${id}`, {
+        method: 'PATCH'
     });
-
-    const roles = await res.json();
-    return roles;
-  } catch {
-    return null;
-  }
 }
 
-
-
-export async function getModules(q) {
-  const res = await fetch(`${API_BASE}/Module?q=${q || ''}`, {
-    method: "GET",
-    headers: {
-      "Accept": "text/plain"
-    },
-    credentials: "include"
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch modules: ${res.status}`);
-  }
-
-  return await res.json();
-}
-
-export async function getActiveModules(q) {
-  const res = await fetch(`${API_BASE}/Module/Active?q=${q || ''}`, {
-    method: "GET",
-    headers: {
-      "Accept": "text/plain"
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch modules: ${res.status}`);
-  }
-
-  return await res.json();
-}
-
-
-export async function getModule(id) {
-  const res = await fetch(`${API_BASE}/Module/${id}`, {
-    method: "GET",
-    headers: {
-      "Accept": "text/plain"
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch module: ${res.status}`);
-  }
-
-  return await res.json();
-
-}
-
-export async function updateModule(module) {
-  const res = await fetch(`${API_BASE}/Module/${module.Id}`, {
-    method: "PUT",
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json"
-    },
-    credentials: "include",
-    body: JSON.stringify(module)
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to update module: ${res.status}`);
-  }
-
-  return;
-}
-
-export async function addModule(moduleData) {
-  const res = await fetch(`${API_BASE}/Module`, {
-    method: "POST",
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json"
-    },
-    credentials: "include",
-    body: JSON.stringify(moduleData)
-  });
-
-  if (res.status === 409) {
-    const errorBody = await res.json().catch(() => null);
-    throw new Error(errorBody?.message);
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to save module: ${res.status}`);
-  }
-
-  return res.json();
-}
-
-export async function existenceModule(id) {
-  const res = await fetch(`${API_BASE}/Module/existence/${id}`, {
-    method: "GET",
-    headers: {
-      "Accept": "text/plain"
-    },
-    credentials: "include"
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to check module existence: ${res.status}`);
-  }
-  return await res.json();
-}
-
-export async function activateModule(id) {
-  const res = await fetch(`${API_BASE}/Module/activate/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Accept": "text/plain"
-    },
-    credentials: "include"
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to activate module: ${res.status}`);
-  }
-
-  return res.text();
-
-}
-
-export async function deactivateModule(id) {
-  const res = await fetch(`${API_BASE}/Module/deactivate/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Accept": "text/plain"
-    },
-    credentials: "include"
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to deactivate module: ${res.status}`);
-  }
-
-  return res.text();
-
-}
-
-export async function deleteModule(id) {
-  const res = await fetch(`${API_BASE}/Module/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Accept": "text/plain"
-    },
-    credentials: "include"
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch modules: ${res.status}`);
-  }
-
-  return res.text();
-
-}
-
-
-export async function getModuleProgress(id) {
-  const userData = await window.userData;
-  if (!userData) return null;
-
-  try {
-    const res = await fetch(`${API_BASE}/Module/${id}/progress`, {
-      method: "GET",
-      headers: {
-        "Accept": "application/json"
-      },
-      credentials: "include"
+/**
+ * Deactiveert een module
+ * @param {string} id - Het module ID om te deactiveren
+ * @returns {Promise<string>} OK
+ * @throws {Error} Als de module niet kan worden gedeactiveerd
+ */
+export const deactivateModule = async (id) => {
+    return await lerenOpMaatApiFetch(`/Module/deactivate/${id}`, {
+        method: 'PATCH'
     });
+}
 
-    if (res.status === 401 || res.status === 403 || res.status === 204) {
-      return null;
+/**
+ * Verwijdert een module
+ * @param {string} id - Het module ID om te verwijderen
+ * @returns {Promise<string>} OK
+ * @throws {Error} Als de module niet kan worden verwijderd
+ */
+export const deleteModule = async (id) => {
+    return await lerenOpMaatApiFetch(`/Module/${id}`, {
+        method: 'DELETE'
+    });
+}
+
+/**
+ * Haalt voortgang op voor een specifieke module
+ * @param {string} id - Het module ID
+ * @returns {Promise<Object|null>} De module voortgang of null
+ */
+export const getModuleProgress = async (id) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
     }
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch progress: ${res.status}`);
+    return await lerenOpMaatApiFetch(`/Module/${id}/progress`);
+}
+
+/**
+ * Voegt een voltooide EVL toe aan een module
+ * @param {string} id - Het module ID
+ * @param {string} evlId - Het EVL ID om als voltooid te markeren
+ * @returns {Promise<Object>} Bijgewerkte voortgangs informatie
+ * @throws {Error} Als de update mislukt
+ */
+export const addCompletedEvl = async (id, evlId) => {
+    return await lerenOpMaatApiFetch(`/Module/${id}/addcompletedevl`, {
+        method: 'POST',
+        body: evlId
+    });
+}
+
+/**
+ * Verwijdert een voltooide EVL uit een module
+ * @param {string} id - Het module ID
+ * @param {string} evlId - Het EVL ID om te verwijderen uit voltooide
+ * @returns {Promise<Object>} Bijgewerkte voortgangs informatie
+ * @throws {Error} Als de update mislukt
+ */
+export const removeCompletedEvl = async (id, evlId) => {
+    return await lerenOpMaatApiFetch(`/Module/${id}/removecompletedevl/${evlId}`, {
+        method: 'DELETE'
+    });
+}
+
+/**
+ * Haalt module engagement op
+ * @param {string|null} [year] - Optioneel jaar filter
+ * @param {string|null} [profile] - Optioneel profiel filter
+ * @returns {Promise<Object>} De module engagement informatie
+ * @throws {Error} Als module engagement niet kan worden opgehaald
+ */
+export const getModulesEngagement = async (year = null, profile = null) => {
+    const params = [];
+
+    if (year !== null) {
+        params.push(`year=${encodeURIComponent(year)}`);
+    }
+    if (profile !== null) {
+        params.push(`profileId=${encodeURIComponent(profile)}`);
     }
 
-    return await res.json();
-
-  } catch (error) {
-    console.error("Fetch failed:", error);
-    return null;
-  }
+    return await lerenOpMaatApiFetch(`/Module/reporting/modules-engagement${params.length ? `?${params.join('&')}` : ''}`);
 }
 
-export async function addCompletedEvl(id, evlId) {
-  const res = await fetch(`${API_BASE}/Module/${id}/addcompletedevl`, {
-    method: 'POST',
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(evlId),
-    credentials: "include"
-  });
+/**
+ * Haalt beschikbare jaren op voor modules
+ * @returns {Promise<Array>} Array van beschikbare jaren
+ * @throws {Error} Als beschikbare jaren niet kunnen worden opgehaald
+ */
+export const getAvailableYears = async () => {
+    return await lerenOpMaatApiFetch('/Module/reporting/available-years');
+}
+//endregion Api - Module
 
-  if (!res.ok) {
-    throw new Error(`Failed to update progress: ${res.status}`);
-  }
-
-  return await res.json();
-
+//region Api - Requirements
+/**
+ * Haalt een requirement op via ID
+ * @param {string} id - Het requirement ID
+ * @returns {Promise<Object>} De requirement informatie
+ * @throws {Error} Als de requirement niet kan worden opgehaald
+ */
+export const getRequirement = async (id) => {
+    return await lerenOpMaatApiFetch(`/Requirement/${id}`);
 }
 
-export async function removeCompletedEvl(id, evlId) {
-  const res = await fetch(`${API_BASE}/Module/${id}/removecompletedevl/${evlId}`, {
-    method: 'DELETE',
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json"
-    },
-    credentials: "include"
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to update progress: ${res.status}`);
-  }
-
-  return await res.json();
+/**
+ * Voeg een nieuwe requirement toe
+ * @param {Object} requirement - De requirement gegevens om te plaatsen
+ * @returns {Promise<void>}
+ * @throws {Error} Als de requirement niet kan worden geplaatst
+ */
+export const postRequirement = async (requirement) => {
+    return await lerenOpMaatApiFetch('/Requirement', {
+        method: 'POST',
+        body: requirement
+    });
 }
 
-
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-
-export async function getRequirement(id) {
-  const res = await fetch(`${API_BASE}/Requirement/${id}`, {
-    method: "GET",
-    headers: {
-      "Accept": "text/plain"
-    },
-    credentials: "include"
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch requirement: ${res.status}`);
-  }
-
-  return await res.json();
+/**
+ * Verwijdert een requirement via ID
+ * @param {string} id - Het requirement ID
+ * @returns {Promise<string>} Succesbericht
+ * @throws {Error} Als de requirement niet kan worden verwijderd
+ */
+export const deleteRequirement = async (id) => {
+    return await lerenOpMaatApiFetch(`/Requirement/${id}`, {
+        method: 'DELETE'
+    });
 }
 
-export async function postRequirement(requirement) {
-  const res = await fetch(`${API_BASE}/Requirement`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "text/plain"
-    },
-    credentials: "include",
-    body: JSON.stringify(requirement)
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to post requirement: ${res.status}`);
-  }
-
-  return;
+/**
+ * Werkt een requirement bij
+ * @param {string} id - Het requirement ID
+ * @param {Object} requirement - De bijgewerkte requirement gegevens
+ * @returns {Promise<void>}
+ * @throws {Error} Als de requirement niet kan worden bijgewerkt
+ */
+export const updateRequirement = async (id, requirement) => {
+    return await lerenOpMaatApiFetch(`/Requirement/${id}`, {
+        method: 'PUT',
+        body: requirement
+    });
 }
 
-export async function deleteRequirement(id) {
-  const res = await fetch(`${API_BASE}/Requirement/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Accept": "text/plain"
-    },
-    credentials: "include"
-  });
+/**
+ * Haalt requirement types op
+ * @returns {Promise<Array>} Array van requirement types
+ * @throws {Error} Als requirement types niet kunnen worden opgehaald
+ */
+export const getRequirementTypes = async () => {
+    return await lerenOpMaatApiFetch('/Requirement/types');
+}
+//endregion Api - Requirement
 
-  if (!res.ok) {
-    throw new Error(`Failed to delete requirement: ${res.status}`);
-  }
-
-  return res.text();
+//region Api - GraduateProfile
+/**
+ * Haalt uitstroom profielen op met een optioneel filter
+ * @param {string} [q] - Optioneel filter
+ * @returns {Promise<Array>} Array van uitstroom profielen
+ * @throws {Error} Als uitstroom profielen niet kunnen worden opgehaald
+ */
+export const getProfiles = async (q) => {
+    return await lerenOpMaatApiFetch(`/GraduateProfile?q=${q || ''}`);
 }
 
-export async function updateRequirement(id, requirement) {
-  const res = await fetch(`${API_BASE}/Requirement/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "text/plain"
-    },
-    credentials: "include",
-    body: JSON.stringify(requirement)
-  });
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error("Server error response:", errorText);
-    throw new Error(`Failed to update requirement: ${res.status}`);
-  }
+/**
+ * Haalt een uitstroom profiel op via ID
+ * @param {string} id - Het uitstroom profiel ID
+ * @returns {Promise<Object>} De uitstroom profiel informatie
+ * @throws {Error} Als het uitstroom profiel niet kan worden opgehaald
+ */
+export const getProfile = async (id) => {
+    return await lerenOpMaatApiFetch(`/GraduateProfile/${id}`);
+}
+//endregion Api - GraduateProfile
 
-  return;
+//region Api - LearningRoute
+/**
+ * Valideert een leerroute
+ * @param {Object} learningRoute - De leerroute om te valideren
+ * @returns {Promise<Object>} Het validatie resultaat
+ * @throws {Error} Als de leerroute niet kan worden gevalideerd
+ */
+export const validateRoute = async (learningRoute) => {
+    return await lerenOpMaatApiFetch('/LearningRoute/ValidateRoute', {
+        method: 'POST',
+        body: learningRoute
+    });
 }
 
-export async function getRequirementTypes() {
-  const res = await fetch(`${API_BASE}/Requirement/types`, {
-    method: "GET",
-    headers: {
-      "Accept": "text/plain"
-    },
-    credentials: "include"
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to fetch requirement types: ${res.status}`);
-  }
-
-  return await res.json();
-}
-
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-export async function getProfiles(q) {
-  const res = await fetch(`${API_BASE}/GraduateProfile?q=${q || ''}`, {
-    method: "GET",
-    headers: {
-      "Accept": "text/plain"
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch modules: ${res.status}`);
-  }
-
-  return await res.json();
-}
-
-export async function getProfile(id) {
-  const res = await fetch(`${API_BASE}/GraduateProfile/${id}`, {
-    method: "GET",
-    headers: {
-      "Accept": "text/plain"
-    }
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch profile: ${res.status}`);
-  }
-
-  return await res.json();
-}
-
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-export async function validateRoute(learningRoute) {
-  const res = await fetch(`${API_BASE}/LearningRoute/ValidateRoute`, {
-    method: "Post",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    credentials: "include",
-    body: JSON.stringify(learningRoute)
-  });
-
-
-  if (!res.ok) {
-    let bodyText = await res.text();
-
-    let errorMessage;
-    try {
-      const errorData = JSON.parse(bodyText);
-      errorMessage = errorData.message || JSON.stringify(errorData);
-    } catch {
-      errorMessage = bodyText;
+/**
+ * Haalt leerroutes op via huidige gebruiker ID
+ * @returns {Promise<Array>} Array van leerroutes
+ * @throws {Error} Als leerroutes niet kunnen worden opgehaald
+ */
+export const getLearningRoutesByUserId = async () => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
     }
 
-    throw new Error(`Failed to validate learning route: ${res.status} - ${errorMessage}`);
-  }
-  return await res.json();
+    return await lerenOpMaatApiFetch('/LearningRoute/User');
 }
 
-export async function getLearningRoutesByUserId() {
-  const res = await fetch(`${API_BASE}/LearningRoute/User`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept": "text/plain"
+/**
+ * Voeg een nieuwe leerroute toe
+ * @param {Object} learningRoute - De leerroute gegevens
+ * @returns {Promise<Object>} De aangemaakte leerroute
+ * @throws {Error} Als de leerroute niet kan worden toegevoegd
+ */
+export const postLearningRoute = async (learningRoute) => {
+    return await lerenOpMaatApiFetch('/learningRoute', {
+        method: 'POST',
+        body: learningRoute
+    });
+}
+
+/**
+ * Verwijdert een leerroute via ID
+ * @param {string} learningRouteId - Het leerroute ID om te verwijderen
+ * @returns {Promise<boolean>} Of de leerroute is verwijderd
+ * @throws {Error} Als de leerroute niet kan worden verwijderd
+ */
+export const deleteRoute = async (learningRouteId) => {
+    return await lerenOpMaatApiFetch(`/LearningRoute/${learningRouteId}`, {
+        method: 'DELETE'
+    });
+}
+//endregion Api - LearningRoute
+
+//region Api - Semester
+/**
+ * Werkt een semester bij
+ * @param {string} learningRouteId - Het leerroute ID
+ * @param {Object} semesterData - De semester gegevens om bij te werken
+ * @returns {Promise<Object>} De bijgewerkte semester informatie
+ * @throws {Error} Als het semester niet kan worden bijgewerkt
+ */
+export const updateSemester = async (learningRouteId, semesterData) => {
+    return await lerenOpMaatApiFetch(`/Semester/updateSemesters/${learningRouteId}`, {
+        method: 'PUT',
+        body: semesterData
+    });
+}
+
+/**
+ * Werkt een gesloten semester bij
+ * @param {Object} semesterData - De semester gegevens om bij te werken
+ * @returns {Promise<boolean>} Of het semester is bijgewerkt
+ * @throws {Error} Als het semester niet kan worden bijgewerkt
+ */
+export const updateLockedSemester = async (semesterData) => {
+    return await lerenOpMaatApiFetch('/Semester/updatedlockedsemester', {
+        method: 'PATCH',
+        body: semesterData
+    });
+}
+//endregion Api - LearningRoute
+
+//region Api - Conversation
+/**
+ * Haalt een gesprek op via huidige gebruiker ID
+ * @param {string} [id] - Het gebruiker ID
+ * @returns {Promise<Object|null>} De feedback of null
+ * @throws {Error} Als het gesprek niet kan worden opgehaald
+ */
+export const getConversationByUserId = async (id) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
     }
-  });
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch learning routes: ${res.status}`);
-  }
-
-  return await res.json();
+    return await lerenOpMaatApiFetch(`/Conversation/conversationByStudentId/${id}`);
 }
 
-export async function postLearningRoute(learningRoute) {
-  const res = await fetch(`${API_BASE}/learningRoute`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "text/plain"
-    },
-    credentials: "include",
-    body: JSON.stringify(learningRoute)
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to post learning route: ${res.status}`);
-  }
-
-  return await res.json();
+/**
+ * Werkt een gesprek bij
+ * @param {string} id - Het gesprek-ID
+ * @param {Object} conversationData - De gespreksgegevens om bij te werken
+ * @returns {Promise<Object>} De bijgewerkte gespreksinformatie
+ * @throws {Error} Als het gesprek niet kan worden bijgewerkt
+ */
+export const updateConversation = async (id, conversationData) => {
+    return await lerenOpMaatApiFetch(`/Conversation/${id}`, {
+        method: 'PUT',
+        body: conversationData
+    });
 }
 
-export async function deleteRoute(learningRouteId) {
-
-  const res = await fetch(`${API_BASE}/LearningRoute/${learningRouteId}`, {
-    method: "DELETE",
-    headers: {
-      "Accept": "application/json",
-    },
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to delete learning route: ${res.status}`);
-  }
-
-  return res.ok;
+/**
+ * Plaatst een nieuw gesprek
+ * @param {Object} body - De gespreksgegevens om te plaatsen
+ * @returns {Promise<Object>} De aangemaakte gespreksinformatie
+ * @throws {Error} Als het gesprek niet kan worden geplaatst
+ */
+export const postConversation = async (body) => {
+    return await lerenOpMaatApiFetch('/Conversation', {
+        method: 'POST',
+        body
+    });
 }
 
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-
-export async function updateSemester(learningRouteId, semesterData) {
-  const res = await fetch(`${API_BASE}/Semester/updateSemesters/${learningRouteId}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    credentials: "include",
-    body: JSON.stringify(semesterData)
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    console.error("Server error response:", errorText);
-    throw new Error(`Failed to update semester: ${res.status}`);
-  }
-
-  // Controleer of de response JSON bevat
-  if (res.headers.get("Content-Type")?.includes("application/json")) {
-    return await res.json();
-  } else {
-    return { message: "Semesters updated successfully (geen JSON)" };
-  }
+/**
+ * Haalt een gesprek op via administrator gebruikers ID
+ * @returns {Promise<Object>} De gespreks informatie
+ * @throws {Error} Als het gesprek niet kan worden opgehaald
+ */
+export const getConversationByAdminId = async () => {
+    return await lerenOpMaatApiFetch('/Conversation/conversationByAdministratorId');
 }
 
-
-export async function updateLockedSemester(semesterData) {
-  const res = await fetch(`${API_BASE}/Semester/updatedlockedsemester`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    body: JSON.stringify(semesterData),
-    credentials: "include"
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to change locked status semester: ${res.status}`);
-  }
-
-  return true;
-}
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-
-export async function getConversationByUserId(id) {
-  const userId = id || (await window.userData).InternalId;
-  const res = await fetch(`${API_BASE}/Conversation/conversationByStudentId/${userId}`, {
-    method: "GET",
-    headers: {
-      "Accept": "application/json"
-    },
-    credentials: "include"
-  });
-
-  if (res.status === 404) {
-    return null;
-  }
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch conversation: ${res.status}`);
-  }
-
-  return await res.json();
+/**
+ * Haalt notificaties op voor een actieve gebruiker
+ * @returns {Promise<Array>} Array van meldingen
+ * @throws {Error} Als meldingen niet kunnen worden opgehaald
+ */
+export const getNotificationsForActiveUser = async () => {
+    return await lerenOpMaatApiFetch('/Conversation/notifications');
 }
 
-export async function updateConversation(id, conversationData) {
-  alert("test")
-  const res = await fetch(`${API_BASE}/Conversation/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    credentials: "include",
-    body: JSON.stringify(conversationData)
-  });
+/**
+ * Markeert notificatie als gelezen
+ * @param {Object} body - De notificatie
+ * @returns {Promise<void>}
+ * @throws {Error} Als meldingen niet als gelezen kunnen worden gemarkeerd
+ */
+export const markNotificationsAsRead = async (body) => {
+    return await lerenOpMaatApiFetch('/Conversation/notifications/markasread', {
+        method: 'PATCH',
+        body
+    });
+}
+//endregion Api - Conversation
 
-  if (!res.ok) {
-    throw new Error(`Failed to update conversation: ${res.status}`);
-  }
-
-  const contentType = res.headers.get("Content-Type");
-  if (contentType && contentType.includes("application/json")) {
-    return await res.json();
-  }
-
-  return;
+//region Api - Message
+/**
+ * Haalt berichten op via gesprek ID
+ * @param {string} conversationId - Het gesprek ID
+ * @returns {Promise<Array>} Array van berichten
+ * @throws {Error} Als berichten niet kunnen worden opgehaald
+ */
+export const getMessagesByConversationId = async (conversationId) => {
+    return await lerenOpMaatApiFetch(`/Message/messagesByConversationId/${conversationId}`);
 }
 
-export async function getAllTeachers() {
-  const res = await fetch(`${API_BASE}/User/teachers`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept": "application/json"
+/**
+ * Plaatst een nieuw bericht
+ * @param {Object} messageBody - De bericht gegevens om te plaatsen
+ * @returns {Promise<Object>} De aangemaakte bericht informatie
+ * @throws {Error} Als het bericht niet kan worden geplaatst
+ */
+export const postMessage = async (messageBody) => {
+    return await lerenOpMaatApiFetch('/Message', {
+        method: 'POST',
+        body: messageBody
+    });
+}
+//endregion Api - Message
+
+//region Api - User
+/**
+ * Haalt alle docenten op
+ * @returns {Promise<Array>} Array van docenten
+ * @throws {Error} Als docenten niet kunnen worden opgehaald
+ */
+export const getAllTeachers = async () => {
+    return await lerenOpMaatApiFetch('/User/teachers');
+}
+
+/**
+ * Haalt het startjaar van de huidige gebruiker op
+ * @returns {Promise<number|null>} Het startjaar of null indien niet beschikbaar
+ */
+export const getStartYear = async () => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
     }
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to fetch teachers: ${res.status}`);
-  }
-
-  return await res.json();
+    return await lerenOpMaatApiFetch('/User/startyear');
 }
 
-export async function postConversation(body) {
-  const res = await fetch(`${API_BASE}/Conversation`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    credentials: "include",
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to post conversation: ${res.status}`);
-  }
-  return await res.json();
+/**
+ * Stelt het startjaar in voor de huidige gebruiker
+ * @param {number} startYear - Het startjaar om in te stellen
+ * @returns {Promise<void>}
+ * @throws {Error} Als het startjaar niet kan worden ingesteld
+ */
+export const setStartYear = async (startYear) => {
+    return await lerenOpMaatApiFetch('/User/startyear', {
+        method: 'POST',
+        body: startYear
+    });
 }
+//endregion Api - User
 
-export async function getMessagesByConversationId(conversationId) {
-  const res = await fetch(`${API_BASE}/Message/messagesByConversationId/${conversationId}`, {
-    method: "GET",
-    credentials: "include",
-    headers: {
-      "Accept": "application/json"
-    }
-  });
+//region Api - Oer
+/**
+ * Uploadt een OER PDF
+ * @param {File} file - Het OER bestand om te uploaden
+ * @param {string} userId - Het gebruikers ID geassocieerd met het bestand
+ * @returns {Promise<Object>} De geüploade bestandsinformatie
+ * @throws {Error} Als de upload mislukt
+ */
+export const uploadOerPdf = async (file, userId) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("userId", userId);
 
-  if (!res.ok) {
-    throw new Error(`Failed to fetch messages: ${res.status}`);
-  }
-
-  return await res.json();
-}
-
-export async function postMessage(messageBody) {
-  const res = await fetch(`${API_BASE}/Message`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    credentials: "include",
-    body: JSON.stringify(messageBody)
-  });
-  if (!res.ok) {
-    throw new Error(`Failed to post message: ${res.status}`);
-  }
-  return await res.json();
-}
-
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-
-export async function getStartYear() {
-  try {
-    const response = await fetch(`${API_BASE}/User/startyear`, {
-      method: 'GET',
-      credentials: "include",
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    const response = await fetch(`${API_BASE}/Oer/upload`, {
+        method: "PUT",
+        body: formData
     });
 
     if (!response.ok) {
-      throw new Error('Startjaar niet gevonden.');
+        const errorText = await response.text();
+        throw new Error(`Upload mislukt: ${errorText}`);
     }
 
-    const startYear = await response.json();
-    return startYear;
-  } catch (error) {
-    return null;
-  }
+    return await response.json();
 }
 
-export async function setStartYear(startYear) {
-  try {
-    const response = await fetch(`${API_BASE}/User/startyear`, {
-      method: 'POST',
-      credentials: "include",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(startYear)
+/**
+ * Haalt de huidige OER PDF op
+ * @returns {Promise<Blob>} Het huidige OER PDF
+ * @throws {Error} Als het bestand niet kan worden opgehaald
+ */
+export const getCurrentOerPdf = async () => {
+    return (await fetch(`${API_BASE}/Oer/current`, {
+        method: "GET"
+    })).blob();
+//endregion Api - Oer
+
+async function isLoggedIn() {
+    const response = await fetch(`${API_BASE}/status`, {
+        credentials: "include",
+        headers: {"Accept": "application/json"}
     });
+    const json = await response.json();
 
-    if (!response.ok) {
-      throw new Error('Opslaan mislukt.');
-    }
-  } catch (error) {
-    console.error('Fout bij opslaan startjaar:', error);
-  }
-}
-
-export async function uploadOerPdf(file, userId) {
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("userId", userId);
-
-  const res = await fetch(`${API_BASE}/Oer/upload`, {
-    method: "PUT",
-    credentials: "include",
-    body: formData
-  });
-
-  if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(`Upload mislukt: ${errorText}`);
-  }
-
-  return await res.json();
-}
-
-export async function getCurrentOerPdf() {
-  const res = await fetch(`${API_BASE}/Oer/current`, {
-    method: "GET"
-  });
-
-  if (!res.ok) {
-    throw new Error(`Ophalen OER mislukt: ${res.status}`);
-  }
-
-  return await res.blob();
-}
-
-export async function getConversationByAdminId() {
-  const res = await fetch(`${API_BASE}/Conversation/conversationByAdministratorId`, {
-    method: "GET",
-    headers: {
-      "Accept": "application/json"
-    },
-    credentials: "include"
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch conversation: ${res.status}`);
-  }
-
-  return await res.json();
-}
-
-export async function getNotificationsForActiveUser() {
-  const res = await fetch(`${API_BASE}/Conversation/notifications`, {
-    method: "GET",
-    headers: {
-      "Accept": "application/json"
-    },
-    credentials: "include"
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch notifications: ${res.status}`);
-  }
-
-  return await res.json();
-}
-
-export async function markNotificationsAsRead(body) {
-  const res = await fetch(`${API_BASE}/Conversation/notifications/markasread`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    credentials: "include",
-    body: JSON.stringify(body)
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to mark notifications as read: ${res.status}`);
-  }
-}
-
-export async function getModulesEngagement(year = null, profile = null) {
-  let url = `${API_BASE}/Module/reporting/modules-engagement`;
-  const params = [];
-
-  if (year !== null) {
-    params.push(`year=${encodeURIComponent(year)}`);
-  }
-  if (profile !== null) {
-    params.push(`profileId=${encodeURIComponent(profile)}`);
-  }
-  if (params.length > 0) {
-    url += `?${params.join("&")}`;
-  }
-
-  const response = await fetch(url, {
-    method: "GET",
-    credentials: "include"
-  });
-  if (!response.ok) throw new Error("Failed to fetch modules engagement");
-  return await response.json();
-}
-
-export async function getAvailableYears() {
-  const response = await fetch(`${API_BASE}/Module/reporting/available-years`, {
-    method: "GET",
-    credentials: "include"
-  });
-  if (!response.ok) throw new Error("Failed to fetch available years");
-  return await response.json();
+    return (json.IsAuthenticated);
 }

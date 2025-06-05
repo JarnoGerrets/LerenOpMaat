@@ -1,5 +1,5 @@
 // module-overview.js
-import { getModules, getProfiles, hasPermission, isLoggedIn } from '../client/api-client.js';
+import { getModules, getProfiles } from '../client/api-client.js';
 import addModulePopup from '../views/partials/add-module-popup.js';
 import './module-card.js';
 
