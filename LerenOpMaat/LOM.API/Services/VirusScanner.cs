@@ -1,8 +1,8 @@
 ﻿using VirusTotalNet;
-using VirusTotalNet.ResponseCodes;
 using LOM.API.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
+using VirusTotalNet.ResponseCodes;
 
 namespace LOM.API.Services
 {
@@ -13,36 +13,38 @@ namespace LOM.API.Services
         public VirusScanner(IConfiguration config)
         {
             var apiKey = config["VirusTotal:ApiKey"];
+
+            if (string.IsNullOrWhiteSpace(apiKey) || apiKey.Length < 64)
+            {
+                throw new InvalidOperationException("VirusTotal API key ontbreekt of is ongeldig.");
+            }
+
             _virusTotal = new VirusTotal(apiKey);
         }
 
         public async Task<(bool isSafe, string? virusName)> ScanFileAsync(byte[] fileBytes, string fileName)
         {
-            var sha256 = CalculateSHA256(fileBytes);
-
-            var existingScan = await _virusTotal.GetFileReportAsync(sha256);
-            if (existingScan.ResponseCode == FileReportResponseCode.Present)
+            try
             {
-                return (existingScan.Positives == 0, existingScan.Positives > 0 ? "Known threat detected" : null);
-            }
+                var scanResult = await _virusTotal.ScanFileAsync(new MemoryStream(fileBytes), fileName);
 
-            var scanResult = await _virusTotal.ScanFileAsync(new MemoryStream(fileBytes), fileName);
-            int maxAttempts = 5;
-            int delayMs = 2000;
+                var report = await _virusTotal.GetFileReportAsync(scanResult.SHA256);
 
-            for (int attempt = 0; attempt < maxAttempts; attempt++)
-            {
-                var finalReport = await _virusTotal.GetFileReportAsync(scanResult.SHA256);
-                if (finalReport.ResponseCode == FileReportResponseCode.Present)
+                if (report.ResponseCode == FileReportResponseCode.Present)
                 {
-                    return (finalReport.Positives == 0, finalReport.Positives > 0 ? "Threat found after scan" : null);
+                    bool isSafe = report.Positives == 0;
+                    return (isSafe, isSafe ? null : "Threat found in single report check");
                 }
-                await Task.Delay(delayMs);
-            }
 
-            // Als geen resultaat beschikbaar is na retries, ga uit van onveilig
-            return (false, "Scan timeout or failed");
+                return (true, "No verdict yet (not present in VT database)");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Virus scan error: {ex.Message}");
+                return (false, $"Virus scan error: {ex.Message}");
+            }
         }
+
 
         private string CalculateSHA256(byte[] file)
         {
