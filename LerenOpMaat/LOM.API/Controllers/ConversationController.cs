@@ -56,6 +56,7 @@ namespace LOM.API.Controllers
         /// <returns>NotFound als de conversatie niet gevonden is a.d.h id parameter</returns>
         /// <returns>NoContent als de conversatie met success is opgeslagen</returns>
         [HttpPut("{id}")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> PutConversation(int id, Conversation conversation)
         {
@@ -112,6 +113,7 @@ namespace LOM.API.Controllers
         /// <returns>Unautorized als de gebruiker niet gevonden is</returns>
         /// <returns>Conversatie model als de conversatie met success is opgeslagen in de database</returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("PostLimiter")]
         public async Task<ActionResult<Conversation>> PostConversation(Conversation conversation)
         {
@@ -138,6 +140,7 @@ namespace LOM.API.Controllers
         /// <returns>NotFound als de conversatie niet gevonden is</returns>
         /// <returns>NotContent als de conversatie met success is verwijderd</returns>
         [HttpDelete("{id}")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("DeleteLimiter")]
         public async Task<IActionResult> DeleteConversation(int id)
         {
@@ -254,6 +257,7 @@ namespace LOM.API.Controllers
         /// <returns>Unauthorized als er geen gebruiker ingelogd is.</returns>
         /// <returns>NoContext als de notificatie successvol is opgeslagen</returns>
         [HttpPatch("notifications/markasread")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> MarkMessagesAsRead([FromBody] MarkAsReadRequestDto request)
         {

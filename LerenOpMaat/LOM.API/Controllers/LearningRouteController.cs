@@ -64,6 +64,7 @@ namespace LOM.API.Controllers
         /// <returns>NotFound als de leerroute niet gevonden is</returns>
         /// <returns>NoContent als de leerroute successvol opgeslagen is</returns>
         [HttpPut("{id}")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("PostLimiter")]
         public async Task<IActionResult> PutLearningRoute(int id, LearningRoute learningRoute)
         {
@@ -93,6 +94,7 @@ namespace LOM.API.Controllers
         /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
         /// <returns>Ok als de leerroute successvol is opgeslagen</returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("PostLimiter")]
         public async Task<ActionResult<LearningRoute>> PostLearningRoute([FromBody] LearningRoute? learningRoute)
         {
@@ -133,6 +135,7 @@ namespace LOM.API.Controllers
         /// <returns>NotFound als de leerroute niet gevonden is</returns>
         /// <returns>Ok als de leerroute met success is verwijderd</returns>
         [HttpDelete("{id}")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteLearningRoute(int id)
         {
             User? user = GetActiveUser();
@@ -229,6 +232,7 @@ namespace LOM.API.Controllers
         /// <returns>Ok als de leerroute gevalideerd is</returns>
         [AllowAnonymous]
         [HttpPost("ValidateRoute")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("ValidateLimiter")]
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {

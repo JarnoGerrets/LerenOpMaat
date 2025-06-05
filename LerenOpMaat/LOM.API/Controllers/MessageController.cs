@@ -56,6 +56,7 @@ namespace LOM.API.Controllers
         /// <returns>NotFound als er geen message gevonden is</returns>
         /// <returns>NoContent als de message successvol opgeslagen is</returns>
         [HttpPut("{id}")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> PutMessage(int id, Message message)
         {
@@ -82,6 +83,7 @@ namespace LOM.API.Controllers
         /// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
         /// <returns>Created als de message successvol is opgeslagen</returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("MessageLimiter")]
         public async Task<ActionResult<Message>> PostMessage(Message message)
         {
@@ -99,6 +101,7 @@ namespace LOM.API.Controllers
         /// <returns>NotFound als de message niet gevonden is</returns>
         /// <returns>NoContent als de message met success is verwijderd</returns>
         [HttpDelete("{id}")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> DeleteMessage(int id)
         {

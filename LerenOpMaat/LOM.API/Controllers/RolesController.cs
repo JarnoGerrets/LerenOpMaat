@@ -45,6 +45,7 @@ namespace LOM.API.Controllers
         /// <returns>Ok als de rol is toegevoegd.</returns>
         [Authorize(Roles = "Administrator")]
         [HttpPost("effective-role")]
+        [ValidateAntiForgeryToken]
         public IActionResult SetEffectiveRole([FromBody] string role)
         {
             var allowedRoles = new[] { "Administrator", "Lecturer", "Student" };

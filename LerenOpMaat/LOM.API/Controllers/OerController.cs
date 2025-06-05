@@ -22,6 +22,7 @@ namespace LOM.API.Controllers
 
         [Authorize(Roles = "Administrator, Lecturer")]
         [HttpPut("upload")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("PostLimiter")]
         public async Task<IActionResult> UploadOer(IFormFile? file)
         {
