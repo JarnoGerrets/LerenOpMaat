@@ -25,7 +25,7 @@ namespace LOM.API.Validator.Spec.BusinessSpecifications
                 .Take(CurrentSemesterIndex)
                 .Any(s => s.Module != null && s.Module.Id == RequiredModuleId);
 
-
+            //checking if the required module appears before current in route
             if (!exists && ValidationContext.Modules.TryGetValue(RequiredModuleId, out var requiredModule))
             {
                 return new ValidationResult(false,

@@ -10,6 +10,7 @@ using LOM.API.Middleware;
 using LOM.API.Validator;
 using LOM.API.Validator.ValidationService;
 using System.Threading.RateLimiting;
+using LOM.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -175,7 +176,7 @@ builder.Services.AddRateLimiter(options =>
 
 
 builder.Services.AddScoped<ISemesterValidationService, SemesterValidationService>();
-
+builder.Services.AddScoped<IVirusScanner, VirusScanner>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSession(options =>

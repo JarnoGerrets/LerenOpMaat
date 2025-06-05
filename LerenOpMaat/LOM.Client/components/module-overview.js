@@ -1,21 +1,26 @@
 // module-overview.js
-import { getModules, getProfiles } from '../client/api-client.js';
+
+// Import required APIs and components
+import { getModules, getProfiles, hasPermission, isLoggedIn } from '../client/api-client.js';
 import addModulePopup from '../views/partials/add-module-popup.js';
 import './module-card.js';
 
+// Define a custom element for the module overview
 class ModuleOverview extends HTMLElement {
     constructor() {
         super();
     }
 
+    // Lifecycle hook when element is added to the DOM
     async connectedCallback() {
-        this.renderLayout();
-        this.addHandlers();
+        this.renderLayout();      // Render static layout
+        this.addHandlers();       // Attach event handlers
 
-        const modules = await getModules();
-        this.renderModules(modules);
+        const modules = await getModules();  // Fetch initial module list
+        this.renderModules(modules);         // Render module cards
     }
 
+    // Renders the HTML layout for the module overview page
     renderLayout() {
         this.innerHTML = `
             <div class="container my-5">
@@ -34,14 +39,17 @@ class ModuleOverview extends HTMLElement {
         `;
     }
 
+    // Adds interactivity and handlers for search, adding modules, and legend
     async addHandlers() {
-        //search handler
+        // Search functionality
         const input = this.querySelector('#searchInput');
         input.addEventListener('input', async (e) => {
             const query = e.target.value;
             const filteredModules = await getModules(query);
             this.renderModules(filteredModules);
         });
+
+        // Check if user has permissions to add modules
         const userData = await window.userData;
         let role;
         if (userData) {
@@ -49,6 +57,7 @@ class ModuleOverview extends HTMLElement {
         }
 
         if (!(role == "Student") && userData) {
+            // Show and handle "Add Module" button
             const addModuleInput = this.querySelector('#add-module-button');
             addModuleInput.style.display = 'flex';
             addModuleInput.addEventListener('click', async () => {
@@ -60,16 +69,18 @@ class ModuleOverview extends HTMLElement {
             });
         }
 
+        // Create and display legend tooltip from profile data
         const profiles = await getProfiles();
         const profileString = profiles.map(i =>
             `<p style="display: flex; align-items: center; margin: 4px 0;">
-      <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background: ${i.ColorCode}; margin-right: 8px; border: 1px solid #ccc;"></span>
-      ${i.Name}
-   </p>`
+                <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background: ${i.ColorCode}; margin-right: 8px; border: 1px solid #ccc;"></span>
+                ${i.Name}
+            </p>`
         ).join("");
 
         const button = this.querySelector("#legendButton");
 
+        // Tooltip setup
         const tooltip = document.createElement("div");
         tooltip.classList.add("legend-tooltip");
         tooltip.style.position = "absolute";
@@ -84,6 +95,7 @@ class ModuleOverview extends HTMLElement {
 
         let isOpen = false;
 
+        // Toggle tooltip on legend button click
         button.addEventListener("click", (e) => {
             e.stopPropagation();
             isOpen = !isOpen;
@@ -97,15 +109,16 @@ class ModuleOverview extends HTMLElement {
             }
         });
 
+        // Close tooltip when clicking outside
         document.addEventListener("click", (e) => {
             if (!button.contains(e.target) && !tooltip.contains(e.target)) {
                 tooltip.style.display = "none";
                 isOpen = false;
             }
         });
-
     }
 
+    // Renders module cards inside the wrapper
     renderModules(modules) {
         const wrapper = this.querySelector('#module-wrapper');
         wrapper.innerHTML = '';
@@ -119,4 +132,5 @@ class ModuleOverview extends HTMLElement {
     }
 }
 
+// Register the custom element
 customElements.define('module-overview', ModuleOverview);

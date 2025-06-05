@@ -19,7 +19,7 @@ namespace LOM.API.Validator.Spec.BusinessSpecifications
 			var previousModules = semesters
 				.Select(s => s.Module)
 				.ToList();
-
+			//counting the amount of level 2 modules before current
 			int level2Count = previousModules.Count(m => m.Level == 2);
 
 			bool ismet = level2Count >= 2;
