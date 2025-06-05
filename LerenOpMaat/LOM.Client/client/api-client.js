@@ -25,6 +25,10 @@ export async function logout() {
 }
 
 export async function getUserData() {
+  const loggedIn = await isLoggedIn();
+  if (!loggedIn) {
+    return null;
+  }
   try {
     const res = await fetch(`${API_BASE}/account`, {
       method: "GET",
@@ -500,12 +504,14 @@ export async function validateRoute(learningRoute) {
 
 
   if (!res.ok) {
+    let bodyText = await res.text();
+
     let errorMessage;
     try {
-      const errorData = await res.json();
+      const errorData = JSON.parse(bodyText);
       errorMessage = errorData.message || JSON.stringify(errorData);
     } catch {
-      errorMessage = await res.text();
+      errorMessage = bodyText;
     }
 
     throw new Error(`Failed to validate learning route: ${res.status} - ${errorMessage}`);

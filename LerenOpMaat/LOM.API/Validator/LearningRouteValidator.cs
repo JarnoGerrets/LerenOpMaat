@@ -45,7 +45,7 @@ namespace LOM.API.Validator
 
 			return resultCollection;
 		}
-
+		//index is the place in the array of the current to be validated module
 		private void ValidateModuleBusinessRequirements(Module currentModule, List<Semester> semesters, int index, ICollection<IValidationResult> resultCollection)
 		{
 			foreach (var requirement in currentModule.Requirements)

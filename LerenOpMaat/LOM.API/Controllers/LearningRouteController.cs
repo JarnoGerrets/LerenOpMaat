@@ -39,7 +39,7 @@ namespace LOM.API.Controllers
             {
                 return Unauthorized();
             }
-            
+
             var learningRoute = await _context.LearningRoutes
                 .Where(l => l.UserId == user.Id)
                 .Include(s => s.Semesters)
@@ -71,7 +71,7 @@ namespace LOM.API.Controllers
             {
                 return BadRequest();
             }
-            
+
             if (!LearningRouteExists(id))
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace LOM.API.Controllers
 
             return Ok();
         }
-        
+
         /// <summary>
         /// Een leerroute verwijderen
         /// </summary>
@@ -219,7 +219,7 @@ namespace LOM.API.Controllers
 
             return learningRoute;
         }
-        
+
         /// <summary>
         /// Valideer een leerroute aan de hand van semesters
         /// </summary>
@@ -227,21 +227,23 @@ namespace LOM.API.Controllers
         /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
         /// <returns>BadRequest als de leerroute fouten heeft tijdens valideren</returns>
         /// <returns>Ok als de leerroute gevalideerd is</returns>
+        [AllowAnonymous]
         [HttpPost("ValidateRoute")]
         [EnableRateLimiting("ValidateLimiter")]
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {
             User? user = GetActiveUser();
-
-            if (user == null)
+            var userId = 0;
+            
+            if (user != null)
             {
-                return Unauthorized();
+                userId = user.Id;
             }
 
             ICollection<IValidationResult> results;
             try
             {
-                results = await _validationService.ValidateSemestersAsync(semesters, user.Id);
+                results = await _validationService.ValidateSemestersAsync(semesters, userId);
             }
             catch (InvalidDataException)
             {
