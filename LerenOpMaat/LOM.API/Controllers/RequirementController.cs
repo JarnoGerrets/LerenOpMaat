@@ -63,6 +63,7 @@ namespace LOM.API.Controllers
 		/// <returns>Ok met ModuleRequirementTypeDto model</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[EnableRateLimiting("PostLimiter")]
 		public async Task<ActionResult> PostRequirement(Requirement? requirement)
 		{
@@ -87,6 +88,7 @@ namespace LOM.API.Controllers
 		/// <returns>NoContent als de requirment successvol is opgeslagen</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPut("{id}")]
+		[ValidateAntiForgeryToken]
 		[EnableRateLimiting("PostLimiter")]
 		public async Task<IActionResult> PutRequirement(int id, Requirement requirement)
 		{
@@ -111,6 +113,7 @@ namespace LOM.API.Controllers
 		/// <returns>NoContent als de requirment successvol is verwijderd</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpDelete("{id}")]
+		[ValidateAntiForgeryToken]
 		[EnableRateLimiting("DeleteLimiter")]
 		public async Task<IActionResult> DeleteRequirement(int id)
 		{

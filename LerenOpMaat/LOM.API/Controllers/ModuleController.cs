@@ -140,6 +140,7 @@ namespace LOM.API.Controllers
 		/// <returns>NoContent als de module successvol opgeslagen is</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPut("{id}")]
+		[ValidateAntiForgeryToken]
 		[EnableRateLimiting("PostLimiter")]
 		public async Task<IActionResult> PutModule(ModuleDto moduleDto)
 		{
@@ -216,6 +217,7 @@ namespace LOM.API.Controllers
 		/// <returns>Created als de module successvol opgeslagen is</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[EnableRateLimiting("PostLimiter")]
 		public async Task<ActionResult<Module>> PostModule(ModuleCreateDto? dto)
 		{
@@ -265,6 +267,7 @@ namespace LOM.API.Controllers
 		/// <returns>NoContent als de module successvol op inactief is gezet</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPatch("deactivate/{id}")]
+		[ValidateAntiForgeryToken]
 		[EnableRateLimiting("PostLimiter")]
 		public async Task<IActionResult> DeactivateModule(int id)
 		{
@@ -291,6 +294,7 @@ namespace LOM.API.Controllers
 		/// <returns>NoContent als de module successvol op actief is gezet</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpPatch("activate/{id}")]
+		[ValidateAntiForgeryToken]
 		[EnableRateLimiting("PostLimiter")]
 		public async Task<IActionResult> ActivateModule(int id)
 		{
@@ -318,6 +322,7 @@ namespace LOM.API.Controllers
 		/// <returns>NoContent als de module successvol verwijderd is</returns>
 		[Authorize(Roles = "Lecturer, Administrator")]
 		[HttpDelete("{id}")]
+		[ValidateAntiForgeryToken]
 		[EnableRateLimiting("DeleteLimiter")]
 		public async Task<IActionResult> DeleteModule(int id)
 		{
@@ -381,6 +386,7 @@ namespace LOM.API.Controllers
 		/// <returns>NoContent als er niks geupdated is</returns>
 		/// <returns>Ok met ModuleProgressDto model</returns>
 		[HttpPost("{id}/addcompletedevl")]
+		[ValidateAntiForgeryToken]
 		public async Task<ActionResult<ModuleProgressDto>> AddCompletedEvl(int id, [FromBody] int evlId)
 		{
 			User? user = GetActiveUser();
@@ -445,6 +451,7 @@ namespace LOM.API.Controllers
 		/// <returns>NoContent als er niks geupdated is</returns>
 		/// <returns>Ok met ModuleProgressDto model</returns>
 		[HttpDelete("{moduleId}/removecompletedevl/{evlId}")]
+		[ValidateAntiForgeryToken]
 		[EnableRateLimiting("DeleteLimiter")]
 		public async Task<ActionResult<ModuleProgressDto>> RemoveCompletedEvl(int moduleId, int evlId)
 		{

@@ -31,6 +31,7 @@ namespace LOM.API.Controllers
         /// <returns>BadRequest als het aantal semesters meer dan de max van 30 is</returns>
         /// <returns>Ok</returns>
         [HttpPut("/api/[controller]/updateSemesters/{learningRouteId}")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("ValidateLimiter")]
         public async Task<IActionResult> UpdateSemesters(int learningRouteId, [FromBody] UpdateSemestersDto dto)
         {
@@ -99,6 +100,7 @@ namespace LOM.API.Controllers
         /// <returns>Ok</returns>
         [Authorize(Roles = "Lecturer, Administrator")]
         [HttpPatch("updatedlockedsemester")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("GetLimiter")]
         public async Task<IActionResult> UpdateLockSemester([FromBody] SemesterUpdateLockDto request)
         {

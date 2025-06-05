@@ -44,6 +44,7 @@ namespace LOM.API.Controllers
         /// <returns>BadRequest als het startjaar niet voldoet aan de eis</returns>
         /// <returns>Ok als het opslaan van de gebruiker successvol is gelukt</returns>
         [HttpPost("startyear")]
+        [ValidateAntiForgeryToken]
         [EnableRateLimiting("PostLimiter")]
         public async Task<IActionResult> SetStartYear([FromBody] int startYear)
         {
