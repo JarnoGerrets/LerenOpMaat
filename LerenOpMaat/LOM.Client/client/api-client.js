@@ -9,8 +9,8 @@ const API_BASE = `${BASE}/api`;
  * @param {Object} [options.body] - Request body
  * @param {Object} [options.headers={}] - Additional headers
  * @param {boolean} [options.credentials=true] - Whether to include credentials
- * @returns {Promise<any>} The response data
- * @throws {Error} If the request fails
+ * @returns {Promise<any>} De response data
+ * @throws {Error} Als de request mislukt
  */
 const lerenOpMaatApiFetch = async (endpoint, options = {}) => {
     const {
@@ -107,7 +107,8 @@ export const getCsrfToken = async () => {
 //region Api - Account
 /**
  * Haalt gebruiker account informatie op
- * @returns {Promise<*>}
+ * @returns {Promise<*>} De account informatie
+ * @throws {Error} Als de gebruiker niet is ingelogd
  */
 export const getUserData = async () => {
     const loggedIn = await isLoggedIn();
@@ -168,6 +169,11 @@ export const getEffectiveRole = async () => {
  * @returns {Promise<boolean>} Of het gelukt is
  */
 export const setEffectiveRole = async (role) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/roles/effective-role', {
         method: 'POST',
         body: role
@@ -213,6 +219,11 @@ export const getModule = async (id) => {
  * @throws {Error} Als de module niet kan worden bijgewerkt
  */
 export const updateModule = async (module) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Module/${module.Id}`, {
         method: 'PUT',
         body: module
@@ -226,6 +237,11 @@ export const updateModule = async (module) => {
  * @throws {Error} Als de module niet kan worden toegevoegd
  */
 export const addModule = async (moduleData) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/Module', {
         method: 'POST',
         body: moduleData
@@ -249,6 +265,11 @@ export const existenceModule = async (id) => {
  * @throws {Error} Als de module niet kan worden geactiveerd
  */
 export const activateModule = async (id) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Module/activate/${id}`, {
         method: 'PATCH'
     });
@@ -261,6 +282,11 @@ export const activateModule = async (id) => {
  * @throws {Error} Als de module niet kan worden gedeactiveerd
  */
 export const deactivateModule = async (id) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Module/deactivate/${id}`, {
         method: 'PATCH'
     });
@@ -273,6 +299,11 @@ export const deactivateModule = async (id) => {
  * @throws {Error} Als de module niet kan worden verwijderd
  */
 export const deleteModule = async (id) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Module/${id}`, {
         method: 'DELETE'
     });
@@ -300,6 +331,11 @@ export const getModuleProgress = async (id) => {
  * @throws {Error} Als de update mislukt
  */
 export const addCompletedEvl = async (id, evlId) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Module/${id}/addcompletedevl`, {
         method: 'POST',
         body: evlId
@@ -314,6 +350,11 @@ export const addCompletedEvl = async (id, evlId) => {
  * @throws {Error} Als de update mislukt
  */
 export const removeCompletedEvl = async (id, evlId) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Module/${id}/removecompletedevl/${evlId}`, {
         method: 'DELETE'
     });
@@ -367,6 +408,11 @@ export const getRequirement = async (id) => {
  * @throws {Error} Als de requirement niet kan worden geplaatst
  */
 export const postRequirement = async (requirement) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/Requirement', {
         method: 'POST',
         body: requirement
@@ -380,6 +426,11 @@ export const postRequirement = async (requirement) => {
  * @throws {Error} Als de requirement niet kan worden verwijderd
  */
 export const deleteRequirement = async (id) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Requirement/${id}`, {
         method: 'DELETE'
     });
@@ -393,6 +444,11 @@ export const deleteRequirement = async (id) => {
  * @throws {Error} Als de requirement niet kan worden bijgewerkt
  */
 export const updateRequirement = async (id, requirement) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Requirement/${id}`, {
         method: 'PUT',
         body: requirement
@@ -439,6 +495,11 @@ export const getProfile = async (id) => {
  * @throws {Error} Als de leerroute niet kan worden gevalideerd
  */
 export const validateRoute = async (learningRoute) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/LearningRoute/ValidateRoute', {
         method: 'POST',
         body: learningRoute
@@ -479,6 +540,11 @@ export const postLearningRoute = async (learningRoute) => {
  * @throws {Error} Als de leerroute niet kan worden verwijderd
  */
 export const deleteRoute = async (learningRouteId) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/LearningRoute/${learningRouteId}`, {
         method: 'DELETE'
     });
@@ -494,6 +560,11 @@ export const deleteRoute = async (learningRouteId) => {
  * @throws {Error} Als het semester niet kan worden bijgewerkt
  */
 export const updateSemester = async (learningRouteId, semesterData) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Semester/updateSemesters/${learningRouteId}`, {
         method: 'PUT',
         body: semesterData
@@ -507,6 +578,11 @@ export const updateSemester = async (learningRouteId, semesterData) => {
  * @throws {Error} Als het semester niet kan worden bijgewerkt
  */
 export const updateLockedSemester = async (semesterData) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/Semester/updatedlockedsemester', {
         method: 'PATCH',
         body: semesterData
@@ -538,6 +614,11 @@ export const getConversationByUserId = async (id) => {
  * @throws {Error} Als het gesprek niet kan worden bijgewerkt
  */
 export const updateConversation = async (id, conversationData) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Conversation/${id}`, {
         method: 'PUT',
         body: conversationData
@@ -551,6 +632,11 @@ export const updateConversation = async (id, conversationData) => {
  * @throws {Error} Als het gesprek niet kan worden geplaatst
  */
 export const postConversation = async (body) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/Conversation', {
         method: 'POST',
         body
@@ -563,6 +649,11 @@ export const postConversation = async (body) => {
  * @throws {Error} Als het gesprek niet kan worden opgehaald
  */
 export const getConversationByAdminId = async () => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/Conversation/conversationByAdministratorId');
 }
 
@@ -572,6 +663,11 @@ export const getConversationByAdminId = async () => {
  * @throws {Error} Als meldingen niet kunnen worden opgehaald
  */
 export const getNotificationsForActiveUser = async () => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/Conversation/notifications');
 }
 
@@ -582,6 +678,11 @@ export const getNotificationsForActiveUser = async () => {
  * @throws {Error} Als meldingen niet als gelezen kunnen worden gemarkeerd
  */
 export const markNotificationsAsRead = async (body) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/Conversation/notifications/markasread', {
         method: 'PATCH',
         body
@@ -597,6 +698,11 @@ export const markNotificationsAsRead = async (body) => {
  * @throws {Error} Als berichten niet kunnen worden opgehaald
  */
 export const getMessagesByConversationId = async (conversationId) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch(`/Message/messagesByConversationId/${conversationId}`);
 }
 
@@ -607,6 +713,11 @@ export const getMessagesByConversationId = async (conversationId) => {
  * @throws {Error} Als het bericht niet kan worden geplaatst
  */
 export const postMessage = async (messageBody) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/Message', {
         method: 'POST',
         body: messageBody
@@ -627,12 +738,14 @@ export const getAllTeachers = async () => {
 /**
  * Haalt het startjaar van de huidige gebruiker op
  * @returns {Promise<number|null>} Het startjaar of null indien niet beschikbaar
+ * @throws {Error} Als het startjaar niet kan worden opgehaald
  */
 export const getStartYear = async () => {
     const loggedIn = await isLoggedIn();
     if (!loggedIn) {
         throw new Error('Gebruiker is niet ingelogt');
     }
+
     return await lerenOpMaatApiFetch('/User/startyear');
 }
 
@@ -643,6 +756,11 @@ export const getStartYear = async () => {
  * @throws {Error} Als het startjaar niet kan worden ingesteld
  */
 export const setStartYear = async (startYear) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     return await lerenOpMaatApiFetch('/User/startyear', {
         method: 'POST',
         body: startYear
@@ -659,6 +777,11 @@ export const setStartYear = async (startYear) => {
  * @throws {Error} Als de upload mislukt
  */
 export const uploadOerPdf = async (file, userId) => {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+        throw new Error('Gebruiker is niet ingelogt');
+    }
+
     const formData = new FormData();
     formData.append("file", file);
     formData.append("userId", userId);
@@ -685,6 +808,7 @@ export const getCurrentOerPdf = async () => {
     return (await fetch(`${API_BASE}/Oer/current`, {
         method: "GET"
     })).blob();
+}
 //endregion Api - Oer
 
 async function isLoggedIn() {
