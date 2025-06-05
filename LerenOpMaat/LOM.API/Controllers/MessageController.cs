@@ -5,6 +5,7 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using LOM.API.Controllers.Base;
+using System.Text.RegularExpressions;
 
 namespace LOM.API.Controllers
 {
@@ -14,7 +15,7 @@ namespace LOM.API.Controllers
     public class MessageController : LOMBaseController
     {
 
-        public MessageController(LOMContext context) : base(context) {}
+        public MessageController(LOMContext context) : base(context) { }
 
         /// <summary>
         /// Alle messages ophalen
@@ -63,7 +64,7 @@ namespace LOM.API.Controllers
             {
                 return BadRequest();
             }
-            
+
             if (!MessageExists(id))
             {
                 return NotFound();
@@ -71,7 +72,7 @@ namespace LOM.API.Controllers
 
             _context.Entry(message).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            
+
             return NoContent();
         }
 
@@ -85,6 +86,27 @@ namespace LOM.API.Controllers
         [EnableRateLimiting("MessageLimiter")]
         public async Task<ActionResult<Message>> PostMessage(Message message)
         {
+            // Alleen standaard tekens toestaan (geen emoji's)
+            if (!string.IsNullOrWhiteSpace(message.Commentary))
+            {
+                // Alleen ASCII-tekens toestaan (verwijdert emoji's en andere niet-standaard tekens)
+                message.Commentary = Regex.Replace(
+                    message.Commentary,
+                    @"[^\u0000-\u007F]+",
+                    string.Empty
+                ).Trim();
+            }
+
+            if (string.IsNullOrWhiteSpace(message.Commentary))
+            {
+                return BadRequest("Commentaar mag niet leeg zijn of alleen uit emoji's bestaan.");
+            }
+
+            if (message.Commentary.Length > 250)
+            {
+                return BadRequest("Commentaar mag maximaal 250 tekens bevatten.");
+            }
+
             _context.Messages.Add(message);
             await _context.SaveChangesAsync();
 

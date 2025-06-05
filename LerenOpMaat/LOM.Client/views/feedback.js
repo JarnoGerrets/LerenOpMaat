@@ -10,6 +10,7 @@ export default async function Feedback() {
     const response = await fetch("/templates/feedback.html");
     const html = await response.text();
     const userData = await window.userData;
+    const currentUserId = userData.InternalId;
 
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
@@ -141,8 +142,7 @@ export default async function Feedback() {
                     conversation = await getConversationByUserId();
                     await renderMessages();
                 } catch (err) {
-                    errorMsg.textContent = "Kon begeleider niet aanpassen.";
-                    errorMsg.style.display = "block";
+                    showToast("Kon begeleider niet aanpassen.", "error");
                     console.error("Backend error bij updateConversation:", err);
                 }
             } else {
@@ -169,8 +169,7 @@ export default async function Feedback() {
 
             let valid = true;
             if (!conversationId) {
-                errorMsg.textContent = "Er bestaat nog geen conversatie. Vraag eerst een begeleider aan.";
-                errorMsg.style.display = "block";
+                showToast("Er bestaat nog geen conversatie. Vraag eerst een begeleider aan.", "error");
                 valid = false;
             }
             if (!feedback) {
@@ -181,7 +180,25 @@ export default async function Feedback() {
             } else {
                 textarea.classList.remove("lom-feedback-placeholder-error");
             }
+
+            // --- VALIDATIE EN FILTERING HIER TOEVOEGEN ---
+            // Emoji regex
+            const emojiRegex = /([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD83C-\uDBFF][\uDC00-\uDFFF]|\u24C2|\uD83D[\uDC00-\uDE4F])/g;
+            // Toegestane tekens
+            const allowed = /[a-zA-Z0-9\s.,;:!?@#\$%\^&\*\(\)\[\]\{\}\-_+=\/\\'"\|<>~`€£§]/g;
+
+            if (emojiRegex.test(feedback)) {
+                showToast("Emoji's zijn niet toegestaan.", "error");
+                textarea.style.borderColor = "red";
+                valid = false;
+            }
+
+            // Filter feedback op alleen toegestane tekens
+            let filtered = feedback.replace(emojiRegex, '').match(allowed);
+            feedback = filtered ? filtered.join('') : '';
+
             if (!valid) return;
+            // --- EINDE VALIDATIE ---
 
             try {
                 // Alleen updateConversation aanroepen als TeacherId gewijzigd is
@@ -199,12 +216,11 @@ export default async function Feedback() {
                 updateTextareaPlaceholder();
                 textarea.style.borderColor = "";
                 textarea.classList.remove("lom-feedback-placeholder-error");
-                errorMsg.style.display = "none";
                 dropdown.style.borderColor = "";
+                showToast("Feedback succesvol verzonden!", "success");
                 await renderMessages();
             } catch (err) {
-                errorMsg.textContent = "Kon bericht niet plaatsen.";
-                errorMsg.style.display = "block";
+                showToast("Kon bericht niet plaatsen.", "error");
             }
         });
     }

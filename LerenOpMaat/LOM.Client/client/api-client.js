@@ -639,7 +639,7 @@ export async function getConversationByUserId(id) {
 }
 
 export async function updateConversation(id, conversationData) {
-  alert("test")
+
   const res = await fetch(`${API_BASE}/Conversation/${id}`, {
     method: "PUT",
     headers: {
