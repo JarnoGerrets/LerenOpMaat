@@ -4,6 +4,7 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using LOM.API.Controllers.Base;
+using LOM.API.Services.Interfaces;
 
 namespace LOM.API.Controllers
 {
@@ -12,25 +13,19 @@ namespace LOM.API.Controllers
     [ApiController]
     public class OerController : LOMBaseController
     {
+        private readonly IVirusScanner _virusScanner;
 
-        public OerController(LOMContext context) : base(context) { }
+        public OerController(LOMContext context, IVirusScanner virusScanner) : base(context)
+        {
+            _virusScanner = virusScanner;
+        }
 
-        /// <summary>
-        /// Upload een nieuw oer pdf bestand
-        /// Vereiste rol: Administrator of Lecturer 
-        /// </summary>
-        /// <param name="file">PDF Bestand om te uploaden, maximaal 10MB</param>
-        /// <returns>BadRequest Als er geen bestand geupload is</returns>
-        /// <returns>BadRequest Als bestand groter is dan 10MB</returns>
-        /// <returns>BadRequest Als het bestand geen PDF bestand is</returns>
-        /// <returns>Ok als het bestand successvol is geupload</returns>
         [Authorize(Roles = "Administrator, Lecturer")]
         [HttpPut("upload")]
         [EnableRateLimiting("PostLimiter")]
         public async Task<IActionResult> UploadOer(IFormFile? file)
         {
-            const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
-
+            const long MaxFileSizeBytes = 10 * 1024 * 1024;
             if (file == null || file.Length == 0)
             {
                 return BadRequest("Geen bestand geüpload.");
@@ -53,8 +48,14 @@ namespace LOM.API.Controllers
                 fileBytes = ms.ToArray();
             }
 
-            var oer = await _context.Oers.FindAsync(1);
+            // Virus scan via interface
+            var (isSafe, virusName) = await _virusScanner.ScanFileAsync(fileBytes, file.FileName);
+            if (!isSafe)
+            {
+                return BadRequest($"Virus gevonden: {virusName ?? "onbekend"}");
+            }
 
+            var oer = await _context.Oers.FindAsync(1);
             if (oer == null)
             {
                 oer = new Oer { Id = 1 };
@@ -69,27 +70,19 @@ namespace LOM.API.Controllers
             return Ok(new { id = oer.Id });
         }
 
-        /// <summary>
-        /// Oer van het huidige jaar ophalen
-        /// </summary>
-        /// <returns>NotFound als er nog geen oer bestand geupload is voor het huidige jaar</returns>
-        /// <returns>Het oer bestand van het huidige jaar</returns>
         [AllowAnonymous]
         [HttpGet("current")]
         [EnableRateLimiting("GetLimiter")]
         public async Task<IActionResult> GetCurrentOer()
         {
             var oer = await _context.Oers.FindAsync(1);
-
             if (oer == null)
             {
                 return NotFound("Geen OER gevonden.");
             }
 
             var fileBytes = Convert.FromBase64String(oer.Base64PDF);
-            var stream = new MemoryStream(fileBytes);
-
-            return File(stream, "application/pdf", enableRangeProcessing: true);
+            return File(new MemoryStream(fileBytes), "application/pdf", enableRangeProcessing: true);
         }
     }
 }

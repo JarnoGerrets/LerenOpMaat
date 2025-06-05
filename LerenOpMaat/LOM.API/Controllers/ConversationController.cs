@@ -2,15 +2,9 @@
 using LOM.API.DAL;
 using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace LOM.API.Controllers
 {
@@ -22,17 +16,23 @@ namespace LOM.API.Controllers
 
         public ConversationController(LOMContext context) : base(context) { }
 
-        // GET: api/Conversation
+        /// <summary>
+        /// Haal alle conversatie tussen docent en student op
+        /// </summary>
+        /// <returns>Lijst met conversatie models</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Conversation>>> GetConversations()
         {
             return await _context.Conversations.ToListAsync();
         }
 
-        // GET: api/Conversation/5
+        /// <summary>
+        /// Haal alle conversatie tussen docent en student op
+        /// </summary>
+        /// <param name="id">ID van conversatie</param>
+        /// <returns>Notfound of Conversatie model</returns>
         [HttpGet("{id}")]
         [EnableRateLimiting("GetLimiter")]
-
         public async Task<ActionResult<Conversation>> GetConversation(int id)
         {
             var conversation = await _context.Conversations.FindAsync(id);
@@ -45,11 +45,18 @@ namespace LOM.API.Controllers
             return conversation;
         }
 
-        // PUT: api/Conversation/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Een conversatie updaten
+        /// </summary>
+        /// <param name="id">ID Van de conversatie</param>
+        /// <param name="conversation">Geupdate velden</param>
+        /// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+        /// <returns>BadRequest als geupdate veld id niet overeenkomt</returns>
+        /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+        /// <returns>NotFound als de conversatie niet gevonden is a.d.h id parameter</returns>
+        /// <returns>NoContent als de conversatie met success is opgeslagen</returns>
         [HttpPut("{id}")]
         [EnableRateLimiting("MessageLimiter")]
-
         public async Task<IActionResult> PutConversation(int id, Conversation conversation)
         {
             if (id != conversation.Id)
@@ -60,7 +67,7 @@ namespace LOM.API.Controllers
             User? user = GetActiveUser();
 
             // Get the current user from the session
-            if (user.Id == null)
+            if (user == null)
             {
                 return Unauthorized(new { message = "User not found in the database." });
             }
@@ -97,8 +104,13 @@ namespace LOM.API.Controllers
             return NoContent();
         }
 
-        // POST: api/Conversation
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Een nieuwe conversatie aanmaken
+        /// </summary>
+        /// <param name="conversation">Conversatie model wat aangemaakt moet worden</param>
+        /// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+        /// <returns>Unautorized als de gebruiker niet gevonden is</returns>
+        /// <returns>Conversatie model als de conversatie met success is opgeslagen in de database</returns>
         [HttpPost]
         [EnableRateLimiting("PostLimiter")]
         public async Task<ActionResult<Conversation>> PostConversation(Conversation conversation)
@@ -119,7 +131,12 @@ namespace LOM.API.Controllers
             return CreatedAtAction("GetConversation", new { id = conversation.Id }, conversation);
         }
 
-        // DELETE: api/Conversation/5
+        /// <summary>
+        /// Een conversatie verwijderen
+        /// </summary>
+        /// <param name="id">ID van de conversatie om te verwijderen</param>
+        /// <returns>NotFound als de conversatie niet gevonden is</returns>
+        /// <returns>NotContent als de conversatie met success is verwijderd</returns>
         [HttpDelete("{id}")]
         [EnableRateLimiting("DeleteLimiter")]
         public async Task<IActionResult> DeleteConversation(int id)
@@ -136,11 +153,22 @@ namespace LOM.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Krijg alle conversaties + leraar + leerroute + student
+        /// </summary>
+        /// <returns>Unauthorized als er geen gebruiker ingelogd is.</returns>
+        /// <returns>NotFound als er geen conversatie</returns>
+        /// <returns>Conversatie model</returns>
         [HttpGet("conversationByStudentId/{userId}")]
         [EnableRateLimiting("GetLimiter")]
-        public async Task<ActionResult<Conversation>> getConversationByStudentId()
+        public async Task<ActionResult<Conversation>> GetConversationByStudentId()
         {
             User? user = GetActiveUser();
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
 
             var conversation = await _context.Conversations
                 .Include(t => t.Teacher)
@@ -155,11 +183,22 @@ namespace LOM.API.Controllers
             return conversation;
         }
 
+        /// <summary>
+        /// Krijg alle conversaties + leraar + leerroute + student + semester + module
+        /// </summary>
+        /// <returns>Unauthorized als er geen gebruiker ingelogd is.</returns>
+        /// <returns>NotFound als er geen conversatie</returns>
+        /// <returns>Conversatie model</returns>
         [HttpGet("conversationByAdministratorId")]
         [EnableRateLimiting("GetLimiter")]
-        public async Task<ActionResult<IEnumerable<Conversation>>> getConversationsByAdministratorId()
+        public async Task<ActionResult<IEnumerable<Conversation>>> GetConversationsByAdministratorId()
         {
             User? user = GetActiveUser();
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
 
             // Haal alle conversations op waar de admin als Teacher gekoppeld is
             var conversations = await _context.Conversations
@@ -173,16 +212,22 @@ namespace LOM.API.Controllers
 
             return conversations;
         }
-        private bool ConversationExists(int id)
-        {
-            return _context.Conversations.Any(e => e.Id == id);
-        }
 
+        /// <summary>
+        /// Haal alle ongelezen notificaties op van een gebruiker
+        /// </summary>
+        /// <returns>Unauthorized als er geen gebruiker ingelogd is.</returns>
+        /// <returns>OK Met alle ongelezen notificaties</returns>
         [HttpGet("notifications")]
         [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult> GetNotificationsByUserId()
         {
             User? user = GetActiveUser();
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
 
             var unreadMessages = await _context.Messages
                 .Include(m => m.Conversation)
@@ -202,11 +247,22 @@ namespace LOM.API.Controllers
             return Ok(unreadMessages);
         }
 
+        /// <summary>
+        /// Markeer een notificatie als gelezen
+        /// </summary>
+        /// <param name="request">MarkAsReadRequest from body</param>
+        /// <returns>Unauthorized als er geen gebruiker ingelogd is.</returns>
+        /// <returns>NoContext als de notificatie successvol is opgeslagen</returns>
         [HttpPatch("notifications/markasread")]
         [EnableRateLimiting("MessageLimiter")]
         public async Task<IActionResult> MarkMessagesAsRead([FromBody] MarkAsReadRequestDto request)
         {
             User? user = GetActiveUser();
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
 
             var messages = await _context.Messages
                 .Where(m => m.ConversationId == request.ConversationId
@@ -224,5 +280,14 @@ namespace LOM.API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Helper method om te checken of een conversatie met id bestaat.
+        /// </summary>
+        /// <param name="id">ID van conversatie</param>
+        /// <returns>True / False</returns>
+        private bool ConversationExists(int id)
+        {
+            return _context.Conversations.Any(e => e.Id == id);
+        }
     }
 }

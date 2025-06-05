@@ -5,7 +5,6 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using LOM.API.Controllers.Base;
-using System.Security.Claims;
 
 namespace LOM.API.Controllers
 {
@@ -17,9 +16,13 @@ namespace LOM.API.Controllers
 
         public UserController(LOMContext context) : base(context) {}
 
+        /// <summary>
+        /// Haal het start jaar van de huidige gebruiker op
+        /// </summary>
+        /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+        /// <returns>Ok met het start jaar</returns>
         [HttpGet("startyear")]
         [EnableRateLimiting("GetLimiter")]
-
         public async Task<ActionResult<int?>> GetStartYear()
         {
             User? user = GetActiveUser();
@@ -32,19 +35,30 @@ namespace LOM.API.Controllers
             return Ok(user.StartYear);
         }
 
-
+        /// <summary>
+        /// Update het start jaar van de huidige gebruiker
+        /// </summary>
+        /// <param name="startYear"></param>
+        /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+        /// <returns>Forbid als het user.Id niet overeen komt met id</returns>
+        /// <returns>BadRequest als het startjaar niet voldoet aan de eis</returns>
+        /// <returns>Ok als het opslaan van de gebruiker successvol is gelukt</returns>
         [HttpPost("startyear")]
         [EnableRateLimiting("PostLimiter")]
-
-        public async Task<IActionResult> SetStartYear(int id, [FromBody] int startYear)
+        public async Task<IActionResult> SetStartYear([FromBody] int startYear)
         {
-            var currentYear = DateTime.Now.Year + 1;
-            var validYears = Enumerable.Range(currentYear - 3, 4);
             User? user = GetActiveUser();
 
             if (user == null)
             {
                 return Unauthorized();
+            }
+
+            var currentYear = DateTime.Now.Year + 1;
+            var validYears = Enumerable.Range(currentYear - 3, 4);
+            if (validYears.Contains(startYear) == false)
+            {
+                return BadRequest();
             }
 
             user.StartYear = startYear;
@@ -53,6 +67,10 @@ namespace LOM.API.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Haal alle leraren op
+        /// </summary>
+        /// <returns>Lijst met leraar models</returns>
         [HttpGet("teachers")]
         [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsersWithIdOne()
@@ -61,7 +79,5 @@ namespace LOM.API.Controllers
 
             return Ok(teachers);
         }
-
     }
-
 }

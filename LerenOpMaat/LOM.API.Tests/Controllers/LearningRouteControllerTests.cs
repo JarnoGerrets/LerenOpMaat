@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using Xunit;
 using LOM.API.Controllers;
 using LOM.API.DAL;
 using LOM.API.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace LOM.API.Tests.Controllers
 {
@@ -31,8 +33,19 @@ namespace LOM.API.Tests.Controllers
 
             var controller = new LearningRouteController(context, null);
 
+            // Mock Claims
+            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.ExternalID) };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(identity)
+                }
+            };
+
             // Act
-            var result = await controller.GetLearningRouteByUserId(1);
+            var result = await controller.GetLearningRouteByUserId();
 
             // Assert
             var okResult = Assert.IsType<ActionResult<LearningRoute>>(result);
@@ -41,7 +54,6 @@ namespace LOM.API.Tests.Controllers
             Assert.NotNull(learningRoute.User);
             Assert.Equal("Jan", learningRoute.User.FirstName);
         }
-
         [Fact]
         public async Task GetLearningRouteByUserId_ReturnsNewLearningRoute_WhenNotExists()
         {
@@ -53,8 +65,19 @@ namespace LOM.API.Tests.Controllers
 
             var controller = new LearningRouteController(context, null);
 
+            // Mock Claims
+            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.ExternalID) };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(identity)
+                }
+            };
+
             // Act
-            var result = await controller.GetLearningRouteByUserId(2);
+            var result = await controller.GetLearningRouteByUserId();
 
             // Assert
             var okResult = Assert.IsType<ActionResult<LearningRoute>>(result);

@@ -22,14 +22,29 @@ namespace LOM.API.Controllers
             _validationService = validationService;
         }
 
-        // GET: api/learningRoutes/5
+        /// <summary>
+        /// Specifieke leerroute ophalen + user + semesters + module
+        /// </summary>
+        /// <param name="id">ID van de leerroute om op te halen</param>
+        /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+        /// <returns>NotFound als de leerroute niet gevonden is</returns>
+        /// <returns>Leerroute model</returns>
         [HttpGet("{id}")]
         [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<LearningRoute>> GetlearningRoute(int id)
         {
             User? user = GetActiveUser();
-            var learningRoute = await _context.LearningRoutes.Where(l => l.UserId == user.Id)
-            .Include(s => s.Semesters).ThenInclude(m => m.Module).FirstOrDefaultAsync(lr => lr.Id == id);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var learningRoute = await _context.LearningRoutes
+                .Where(l => l.UserId == user.Id)
+                .Include(s => s.Semesters)
+                .ThenInclude(m => m.Module)
+                .FirstOrDefaultAsync(lr => lr.Id == id);
 
             if (learningRoute == null)
             {
@@ -39,56 +54,66 @@ namespace LOM.API.Controllers
             return learningRoute;
         }
 
-        // PUT: api/learningRoutes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Leerroute opdaten
+        /// </summary>
+        /// <param name="id">ID van de leerroute</param>
+        /// <param name="learningRoute">Leerroute model met geupdate properties</param>
+        /// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+        /// <returns>BadRequest als het id niet overeen komt met leerroute model</returns>
+        /// <returns>NotFound als de leerroute niet gevonden is</returns>
+        /// <returns>NoContent als de leerroute successvol opgeslagen is</returns>
         [HttpPut("{id}")]
         [EnableRateLimiting("PostLimiter")]
-        public async Task<IActionResult> PutlearningRoute(int id, LearningRoute learningRoute)
+        public async Task<IActionResult> PutLearningRoute(int id, LearningRoute learningRoute)
         {
             if (id != learningRoute.Id)
             {
                 return BadRequest();
             }
 
+            if (!LearningRouteExists(id))
+            {
+                return NotFound();
+            }
+
             _context.Entry(learningRoute).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!learningRouteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/learningRoutes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Leerroute opslaan
+        /// </summary>
+        /// <param name="learningRoute">Leerroute model met properties fromBody</param>
+        /// <see cref="go.microsoft.com/fwlink/?linkid=2123754"/>
+        /// <returns>BadRequest als er geen leerroute aanwezig is in de body</returns>
+        /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+        /// <returns>Ok als de leerroute successvol is opgeslagen</returns>
         [HttpPost]
         [EnableRateLimiting("PostLimiter")]
-        public async Task<ActionResult<LearningRoute>> PostlearningRoute([FromBody] LearningRoute learningRoute)
+        public async Task<ActionResult<LearningRoute>> PostLearningRoute([FromBody] LearningRoute? learningRoute)
         {
             if (learningRoute == null)
+            {
                 return BadRequest("Learning route cannot be null.");
+            }
 
             User? user = GetActiveUser();
 
             if (user == null)
-                return BadRequest("User does not exist.");
+            {
+                return Unauthorized();
+            }
 
             var validationResults = await _validationService.ValidateSemestersAsync(learningRoute.Semesters.ToList(), user.Id);
 
             if (validationResults.Any(r => !r.IsValid))
+            {
                 return Ok(validationResults);
+            }
 
             learningRoute.User = user;
             _context.LearningRoutes.Add(learningRoute);
@@ -100,12 +125,22 @@ namespace LOM.API.Controllers
             return Ok();
         }
 
-
-        // DELETE: api/learningRoutes/5
+        /// <summary>
+        /// Een leerroute verwijderen
+        /// </summary>
+        /// <param name="id">ID van de leerroute om te verwijderen</param>
+        /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+        /// <returns>NotFound als de leerroute niet gevonden is</returns>
+        /// <returns>Ok als de leerroute met success is verwijderd</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLearningRoute(int id)
         {
             User? user = GetActiveUser();
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
 
             var learningRoute = await _context.LearningRoutes
                 .Include(lr => lr.Semesters)
@@ -135,12 +170,23 @@ namespace LOM.API.Controllers
             return Ok();
         }
 
-        //Speciaal get leerroute call
+        /// <summary>
+        /// Alle leerroutes ophalen van een user
+        /// </summary>
+        /// <param name="id">ID van de user</param>
+        /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+        /// <returns>NotFound als er geen gebruiker niet gevonden is</returns>
+        /// <returns>Leerroute model als deze gevonden is</returns>
         [HttpGet("/api/LearningRoute/User")]
         [EnableRateLimiting("GetLimiter")]
         public async Task<ActionResult<LearningRoute>> GetLearningRouteByUserId()
         {
             User? user = GetActiveUser();
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
 
             var learningRoute = await _context.LearningRoutes
                 .Include(u => u.User)
@@ -173,7 +219,15 @@ namespace LOM.API.Controllers
 
             return learningRoute;
         }
-        //LearningRoute/ValidateRoute
+
+        /// <summary>
+        /// Valideer een leerroute aan de hand van semesters
+        /// </summary>
+        /// <param name="semesters">Lijst met semesters</param>
+        /// <returns>Unauthorized als de gebruiker niet gevonden is</returns>
+        /// <returns>BadRequest als de leerroute fouten heeft tijdens valideren</returns>
+        /// <returns>Ok als de leerroute gevalideerd is</returns>
+        [AllowAnonymous]
         [HttpPost("ValidateRoute")]
         [EnableRateLimiting("ValidateLimiter")]
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
@@ -182,7 +236,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return BadRequest("Teveel semesters voor validatie");
+                return Unauthorized();
             }
 
             ICollection<IValidationResult> results;
@@ -197,7 +251,7 @@ namespace LOM.API.Controllers
             return Ok(results);
         }
 
-        private bool learningRouteExists(int id)
+        private bool LearningRouteExists(int id)
         {
             return _context.LearningRoutes.Any(e => e.Id == id);
         }

@@ -1,9 +1,7 @@
-using System.Security.Claims;
 using LOM.API.Controllers.Base;
 using LOM.API.DAL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 
 namespace LOM.API.Controllers
 {
@@ -14,10 +12,14 @@ namespace LOM.API.Controllers
     {
         public StatusController(LOMContext context) : base(context) { }
 
+        /// <summary>
+        /// Haal de login status op van de huidige gebruiker
+        /// </summary>
+        /// <returns>Ok met True of False</returns>
         [HttpGet]
         public IActionResult GetLoginStatus()
         {
-            return Ok(new { IsAuthenticated = User?.Identity?.IsAuthenticated == true });
+            return Ok(new { IsAuthenticated = User.Identity?.IsAuthenticated == true });
         }
 
     }
