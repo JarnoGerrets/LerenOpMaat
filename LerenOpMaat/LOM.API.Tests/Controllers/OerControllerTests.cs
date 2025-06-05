@@ -1,7 +1,7 @@
 ﻿using LOM.API.Controllers;
 using LOM.API.DAL;
 using LOM.API.Models;
-using LOM.API.Services.Interfaces;
+using LOM.API.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
