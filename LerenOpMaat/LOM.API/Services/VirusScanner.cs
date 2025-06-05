@@ -40,7 +40,6 @@ namespace LOM.API.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"❌ Virus scan error: {ex.Message}");
                 return (false, $"Virus scan error: {ex.Message}");
             }
         }
