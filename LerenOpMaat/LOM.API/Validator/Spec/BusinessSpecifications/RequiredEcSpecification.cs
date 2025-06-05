@@ -33,7 +33,7 @@ namespace LOM.API.Validator.Spec.BusinessSpecifications
 					.ElementAtOrDefault(CurrentSemesterIndex)?
 					.Module?.Id;
 				int totalAchievedEcs = 0;
-
+                //counting the ec's from previous modules
 				foreach (Module module in previousModules)
 				{
 					var progress = ValidationContext.ModuleProgresses
