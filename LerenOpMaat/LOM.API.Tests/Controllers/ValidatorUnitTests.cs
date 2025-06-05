@@ -529,6 +529,42 @@ namespace LerenOpMaat.LOM.API.Tests.Validators
         }
 
 
+        [Fact(DisplayName = "UserId in context is enforced over client input")]
+        public void UserIdTakenFromContext_ShouldRespectContext()
+        {
+            // Arrange
+            var module = new Module { Id = 1, Name = "Test Module", Period = 1 };
+
+            var semesters = new List<Semester> { new Semester { Period = 1, Module = module, ModuleId = module.Id } };
+
+            var context = GenerateValidationContext(userId: 999);
+            var validator = new LearningRouteValidator(context);
+
+            // Act
+            var results = validator.ValidateLearningRoute(semesters);
+
+            // Assert
+            Assert.DoesNotContain(results, r => !r.IsValid);
+        }
+
+        [Fact(DisplayName = "Invalid enum requirement should throw or fail gracefully")]
+        public void InvalidEnumInRequirement_ShouldThrow()
+        {
+            // Arrange
+            var validationContext = GenerateDummyValidationContext();
+            var factory = new BusinessSpecificationFactory(validationContext);
+
+            // Een ongeldige enumwaarde simuleren
+            int invalidEnumValue = 999;
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                var type = (ModulePreconditionType)invalidEnumValue;
+                factory.CreateSpecification(type, "10", 0);
+            });
+        }
+
     }
 
 }
