@@ -2,13 +2,13 @@ const BASE = "http://localhost:5073";
 const API_BASE = `${BASE}/api`;
 
 /**
- * Default fetch utility function that handles common fetch operations
- * @param {string} endpoint - The API endpoint to call
- * @param {Object} options - Fetch options
- * @param {string} [options.method='GET'] - HTTP method
+ * LerenOpMaat fetch methode met alle standaard opties ingesteld.
+ * @param {string} endpoint - API endpoint
+ * @param {Object} options - Extra opties (Zie fetch(); )
+ * @param {string} [options.method='GET'] - HTTP methode
  * @param {Object} [options.body] - Request body
- * @param {Object} [options.headers={}] - Additional headers
- * @param {boolean} [options.credentials=true] - Whether to include credentials
+ * @param {Object} [options.headers={}] - Optionele extra headers
+ * @param {boolean} [options.credentials=true] - Wel of geen credentials meesturen, standaard aan
  * @returns {Promise<any>} De response data
  * @throws {Error} Als de request mislukt
  */
