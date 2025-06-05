@@ -109,8 +109,8 @@ export default class Header extends HTMLElement {
     const itemsContainer = this.querySelector(".notification-items");
 
     const _userData = await userData;
-    const currentUserId = _userData.InteralId;
     if (!_userData) return;
+    const currentUserId = _userData.InternalId;
 
     const notifications = await getNotificationsForActiveUser();
 

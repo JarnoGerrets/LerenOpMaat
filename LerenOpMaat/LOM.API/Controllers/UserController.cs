@@ -45,18 +45,13 @@ namespace LOM.API.Controllers
         /// <returns>Ok als het opslaan van de gebruiker successvol is gelukt</returns>
         [HttpPost("startyear")]
         [EnableRateLimiting("PostLimiter")]
-        public async Task<IActionResult> SetStartYear(int id, [FromBody] int startYear)
+        public async Task<IActionResult> SetStartYear([FromBody] int startYear)
         {
             User? user = GetActiveUser();
 
             if (user == null)
             {
                 return Unauthorized();
-            }
-
-            if (user.Id != id)
-            {
-                return Forbid();
             }
 
             var currentYear = DateTime.Now.Year + 1;
