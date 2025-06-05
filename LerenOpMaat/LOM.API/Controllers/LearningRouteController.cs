@@ -234,6 +234,7 @@ namespace LOM.API.Controllers
         {
             User? user = GetActiveUser();
             var userId = 0;
+            
             if (user != null)
             {
                 userId = user.Id;
