@@ -69,11 +69,15 @@ namespace LOM.API.Controllers
                     semesterToUpdate.ModuleId = semester.ModuleId;
                 }
             }
-
+            User? user = GetActiveUser();
+            if (user == null)
+            {
+                return Unauthorized();
+            }
             ICollection<IValidationResult> results;
             try
             {
-                results = await _validationService.ValidateSemestersAsync(dto.Semesters, dto.UserId);
+                results = await _validationService.ValidateSemestersAsync(dto.Semesters, user.Id);
             }
             catch (InvalidDataException)
             {
@@ -85,7 +89,7 @@ namespace LOM.API.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
-        
+
         /// <summary>
         /// Sluit een semester
         /// Vereiste rol: Lecturer of Administrator
