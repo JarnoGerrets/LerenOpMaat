@@ -233,16 +233,17 @@ namespace LOM.API.Controllers
         public async Task<ActionResult<ICollection<IValidationResult>>> ValidateRoute(List<Semester> semesters)
         {
             User? user = GetActiveUser();
-
-            if (user == null)
+            var userId = 0;
+            
+            if (user != null)
             {
-                return Unauthorized();
+                userId = user.Id;
             }
 
             ICollection<IValidationResult> results;
             try
             {
-                results = await _validationService.ValidateSemestersAsync(semesters, user.Id);
+                results = await _validationService.ValidateSemestersAsync(semesters, userId);
             }
             catch (InvalidDataException)
             {
