@@ -1,4 +1,4 @@
-﻿namespace LOM.API.Services.Interfaces
+﻿namespace LOM.API.Services
 {
     public interface IVirusScanner
     {
