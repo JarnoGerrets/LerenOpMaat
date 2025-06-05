@@ -78,7 +78,7 @@ namespace LOM.API.Tests.Controllers
             TestUserHelper.SetUser(controller, user.ExternalID);
 
             // Act
-            var result = await controller.SetStartYear(user.Id, validYear);
+            var result = await controller.SetStartYear(validYear);
 
             // Assert
             Assert.IsType<OkResult>(result);
@@ -105,7 +105,7 @@ namespace LOM.API.Tests.Controllers
             TestUserHelper.SetUser(controller, user.ExternalID);
 
             // Act
-            var result = await controller.SetStartYear(user.Id, 2020);
+            var result = await controller.SetStartYear(2020);
 
             // Assert
             Assert.IsType<BadRequestResult>(result);
@@ -130,43 +130,10 @@ namespace LOM.API.Tests.Controllers
 
 
             // Act
-            var result = await controller.SetStartYear(user.Id, _currentYear - 1);
+            var result = await controller.SetStartYear(_currentYear - 1);
 
             // Assert
             Assert.IsType<UnauthorizedResult>(result);
-        }
-
-        [Fact]
-        public async Task SetStartYear_ReturnsForbid_When_SessionUserDoesNotMatch()
-        {
-            // Arrange
-            var user = new User
-            {
-                ExternalID = "ext1",
-                FirstName = "Test",
-                LastName = "User",
-                RoleId = 2
-            };
-
-            var otherUser = new User
-            {
-                ExternalID = "ext2",
-                FirstName = "Other",
-                LastName = "User",
-                RoleId = 2
-            };
-            _context.User.Add(user);
-            _context.User.Add(otherUser);
-            await _context.SaveChangesAsync();
-
-            var controller = new UserController(_context);
-            TestUserHelper.SetUser(controller, otherUser.ExternalID);
-
-            // Act
-            var result = await controller.SetStartYear(user.Id, _currentYear - 1);
-
-            // Assert
-            Assert.IsType<ForbidResult>(result);
         }
     }
 }
