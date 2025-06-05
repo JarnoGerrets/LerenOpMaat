@@ -24,7 +24,7 @@ namespace LOM.API.Controllers
             }
 
             // 2. Fallback naar root als er geen geldige returnUrl is
-            if (string.IsNullOrEmpty(returnUrl))
+            if (string.IsNullOrEmpty(returnUrl) || !returnUrl.StartsWith("/"))
             {
                 returnUrl = "/";
             }
