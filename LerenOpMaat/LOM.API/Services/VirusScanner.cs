@@ -1,6 +1,4 @@
 ﻿using VirusTotalNet;
-using LOM.API.Services.Interfaces;
-using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using VirusTotalNet.ResponseCodes;
 

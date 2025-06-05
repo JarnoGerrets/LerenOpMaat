@@ -4,7 +4,7 @@ using LOM.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using LOM.API.Controllers.Base;
-using LOM.API.Services.Interfaces;
+using LOM.API.Services;
 
 namespace LOM.API.Controllers
 {
