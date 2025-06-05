@@ -122,7 +122,7 @@ namespace LOM.API.Controllers
 
 			if (module == null)
 			{
-				return NotFound();
+				return NotFound("Geen module gevonden.");
 			}
 
 			var result = await ModuleDto.FromModelAsync(module, _context);
@@ -150,12 +150,12 @@ namespace LOM.API.Controllers
 
 			if (existingModule == null)
 			{
-				return NotFound();
+				return NotFound("Geen module gevonden.");
 			}
 
 			if (ModuleCodeExists(moduleDto.Id, moduleDto.Code))
 			{
-				return Conflict(new { message = "Module code bestaat al." });
+				return Conflict(new { message = "Module met deze code bestaat al." });
 			}
 
 			existingModule.Name = moduleDto.Name;
@@ -223,12 +223,12 @@ namespace LOM.API.Controllers
 		{
 			if (dto == null)
 			{
-				return BadRequest("Module data is required.");
+				return BadRequest("Dto mag niet leeg zijn");
 			}
 
 			if (ModuleCodeExists(dto.Id, dto.Code))
 			{
-				return Conflict(new { message = "Module code bestaat al." });
+				return Conflict(new { message = "Module met deze code bestaat al." });
 			}
 
 			try
@@ -274,7 +274,7 @@ namespace LOM.API.Controllers
 			var module = await _context.Modules.FindAsync(id);
 			if (module == null)
 			{
-				return NotFound();
+				return NotFound("Geen module gevonden.");
 			}
 
 			module.IsActive = false;
@@ -301,7 +301,7 @@ namespace LOM.API.Controllers
 			var module = await _context.Modules.FindAsync(id);
 			if (module == null)
 			{
-				return NotFound();
+				return NotFound("Geen module gevonden.");
 			}
 
 			module.IsActive = true;
@@ -329,13 +329,13 @@ namespace LOM.API.Controllers
 			var module = await _context.Modules.FindAsync(id);
 			if (module == null)
 			{
-				return NotFound();
+				return NotFound("Geen module gevonden.");
 			}
 
 			var isInUse = await _context.Semesters.AnyAsync(s => s.ModuleId == id);
 			if (isInUse)
 			{
-				return BadRequest("Module is in use and cannot be deleted.");
+				return BadRequest("Module wordt gebruikt en kan dus niet worden verwijderd.");
 			}
 
 			_context.Modules.Remove(module);
@@ -359,7 +359,7 @@ namespace LOM.API.Controllers
 
 			if (user == null)
 			{
-				return Unauthorized();
+				return Unauthorized("Gebruiker niet ingelogd.");
 			}
 
 			var progress = await _context.ModuleProgresses
@@ -393,7 +393,7 @@ namespace LOM.API.Controllers
 
 			if (user == null)
 			{
-				return Unauthorized();
+				return Unauthorized("Gebruiker niet ingelogd.");
 			}
 
 			var progress = await _context.ModuleProgresses
@@ -459,7 +459,7 @@ namespace LOM.API.Controllers
 
 			if (user == null)
 			{
-				return Unauthorized();
+				return Unauthorized("Gebruiker niet ingelogd.");
 			}
 
 			var progress = await _context.ModuleProgresses

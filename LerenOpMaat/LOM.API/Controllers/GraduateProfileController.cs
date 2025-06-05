@@ -42,7 +42,7 @@ namespace LOM.API.Controllers
 
             if (profile == null)
             {
-                return NotFound();
+                return NotFound("Geen uitstroom profiel gevonden.");
             }
 
             return profile;

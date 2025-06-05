@@ -40,7 +40,7 @@ namespace LOM.API.Controllers
 
             if (message == null)
             {
-                return NotFound();
+                return NotFound("Geen bericht niet gevonden.");
             }
 
             return message;
@@ -62,12 +62,12 @@ namespace LOM.API.Controllers
         {
             if (id != message.Id)
             {
-                return BadRequest();
+                return BadRequest("Id en message.Id komen niet overeen.");
             }
             
             if (!MessageExists(id))
             {
-                return NotFound();
+                return NotFound("Geen bericht niet gevonden.");
             }
 
             _context.Entry(message).State = EntityState.Modified;
@@ -108,7 +108,7 @@ namespace LOM.API.Controllers
             var message = await _context.Messages.FindAsync(id);
             if (message == null)
             {
-                return NotFound();
+                return NotFound("Geen bericht niet gevonden.");
             }
 
             _context.Messages.Remove(message);
@@ -133,7 +133,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             var messages = await _context.Messages
@@ -144,7 +144,7 @@ namespace LOM.API.Controllers
 
             if (messages == null)
             {
-                return NotFound();
+                return NotFound("Geen bericht niet gevonden.");
             }
 
             return messages;

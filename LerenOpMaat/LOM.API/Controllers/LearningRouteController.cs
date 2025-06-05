@@ -37,7 +37,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             var learningRoute = await _context.LearningRoutes
@@ -48,7 +48,7 @@ namespace LOM.API.Controllers
 
             if (learningRoute == null)
             {
-                return NotFound();
+                return NotFound("Geen leerroute gevonden.");
             }
 
             return learningRoute;
@@ -70,12 +70,12 @@ namespace LOM.API.Controllers
         {
             if (id != learningRoute.Id)
             {
-                return BadRequest();
+                return BadRequest("Id en learningRoute.Id komen niet overeen.");
             }
 
             if (!LearningRouteExists(id))
             {
-                return NotFound();
+                return NotFound("Geen leerroute gevonden.");
             }
 
             _context.Entry(learningRoute).State = EntityState.Modified;
@@ -100,14 +100,14 @@ namespace LOM.API.Controllers
         {
             if (learningRoute == null)
             {
-                return BadRequest("Learning route cannot be null.");
+                return BadRequest("Leerroute mag niet leeg zijn.");
             }
 
             User? user = GetActiveUser();
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             var validationResults = await _validationService.ValidateSemestersAsync(learningRoute.Semesters.ToList(), user.Id);
@@ -142,7 +142,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             var learningRoute = await _context.LearningRoutes
@@ -152,7 +152,7 @@ namespace LOM.API.Controllers
 
             if (learningRoute == null)
             {
-                return NotFound();
+                return NotFound("Geen leerroute gevonden.");
             }
 
             // Remove related Semesters
@@ -188,7 +188,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             var learningRoute = await _context.LearningRoutes

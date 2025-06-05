@@ -52,7 +52,7 @@ namespace LOM.API.Controllers
 
             if (!allowedRoles.Contains(role))
             {
-                return BadRequest("Invalid role");
+                return BadRequest("Opgegeven rol is niet valide.");
             }
 
             HttpContext.Session.SetString("EffectiveRole", role);

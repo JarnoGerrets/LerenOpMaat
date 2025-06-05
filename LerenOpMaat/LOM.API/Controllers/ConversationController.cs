@@ -39,7 +39,7 @@ namespace LOM.API.Controllers
 
             if (conversation == null)
             {
-                return NotFound();
+                return NotFound("Conversatie niet gevonden");
             }
 
             return conversation;
@@ -62,7 +62,7 @@ namespace LOM.API.Controllers
         {
             if (id != conversation.Id)
             {
-                return BadRequest();
+                return BadRequest("ID en conversation.Id komen niet overeen.");
             }
 
             User? user = GetActiveUser();
@@ -70,14 +70,14 @@ namespace LOM.API.Controllers
             // Get the current user from the session
             if (user == null)
             {
-                return Unauthorized(new { message = "User not found in the database." });
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             // Fetch the existing conversation from the database
             var existingConversation = await _context.Conversations.FindAsync(id);
             if (existingConversation == null)
             {
-                return NotFound();
+                return NotFound("Geen conversatie gevonden om te updaten.");
             }
 
             // Update only TeacherId
@@ -94,11 +94,7 @@ namespace LOM.API.Controllers
             {
                 if (!ConversationExists(id))
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
+                    return NotFound("Geen conversatie gevonden om te updaten.");
                 }
             }
 
@@ -121,7 +117,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             conversation.StudentId = user.Id;
@@ -170,7 +166,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             var conversation = await _context.Conversations
@@ -180,7 +176,7 @@ namespace LOM.API.Controllers
                 .FirstOrDefaultAsync(s => s.StudentId == user.Id);
             if (conversation == null)
             {
-                return NotFound();
+                return NotFound("Geen conversatie gevonden.");
             }
 
             return conversation;
@@ -200,7 +196,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             // Haal alle conversations op waar de admin als Teacher gekoppeld is
@@ -229,7 +225,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             var unreadMessages = await _context.Messages
@@ -265,7 +261,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             var messages = await _context.Messages

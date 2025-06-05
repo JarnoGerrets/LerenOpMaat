@@ -73,7 +73,7 @@ namespace LOM.API.Controllers
             User? user = GetActiveUser();
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
             ICollection<IValidationResult> results;
             try

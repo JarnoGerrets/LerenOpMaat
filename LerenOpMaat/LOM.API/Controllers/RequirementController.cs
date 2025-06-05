@@ -69,7 +69,7 @@ namespace LOM.API.Controllers
 		{
 			if (requirement == null)
 			{
-				return BadRequest();
+				return BadRequest("Requirement mag niet leeg zijn");
 			}
 
 			_context.Requirements.Add(requirement);

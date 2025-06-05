@@ -29,7 +29,7 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             return Ok(user.StartYear);
@@ -52,14 +52,15 @@ namespace LOM.API.Controllers
 
             if (user == null)
             {
-                return Unauthorized();
+                return Unauthorized("Gebruiker niet ingelogd.");
             }
 
             var currentYear = DateTime.Now.Year + 1;
             var validYears = Enumerable.Range(currentYear - 3, 4);
             if (validYears.Contains(startYear) == false)
             {
-                return BadRequest();
+                return BadRequest(
+                    $"Startjaar is te laat of vroeg, moet binnen: {currentYear - 3} en {currentYear + 1} zijn.");
             }
 
             user.StartYear = startYear;
