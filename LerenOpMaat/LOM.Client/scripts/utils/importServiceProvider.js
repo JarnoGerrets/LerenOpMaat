@@ -90,3 +90,7 @@ export const reportServices = Object.freeze({
     Chart: window.Chart
 });
 
+export const moduleServices = Object.freeze({
+    getModules: baseServices.getModules,
+    getProfiles: baseServices.getProfiles,
+});
