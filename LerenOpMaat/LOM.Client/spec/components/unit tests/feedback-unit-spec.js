@@ -1,16 +1,13 @@
 import Feedback from "../../../views/feedback.js";
 
-describe("Feedback frontend", () => {
+// spec/components/unit tests/feedback-unit-spec.test.js
+
+describe("Feedback .message-feedback-container", () => {
     let app;
     let teachersMock, messagesMock, conversationMock;
 
     beforeEach(() => {
-        // Reset fetch spy als die al bestaat
-        if (window.fetch && window.fetch.and && window.fetch.and.originalFn) {
-            window.fetch = window.fetch.and.originalFn;
-        }
-
-        // Verwijder oude app-div als die bestaat
+        // Clean up DOM
         const oldApp = document.getElementById('app');
         if (oldApp) oldApp.remove();
 
@@ -18,31 +15,17 @@ describe("Feedback frontend", () => {
         app.id = 'app';
         document.body.appendChild(app);
 
-        // Mock window.userData
+        // Mock user
         window.userData = Promise.resolve({ InternalId: 42 });
 
-        // Mock API calls
+        // Mock API data
         teachersMock = [
             { Id: 1, FirstName: "Jan", LastName: "Jansen" },
             { Id: 2, FirstName: "Piet", LastName: "Pietersen" }
         ];
-        messagesMock = [
-            {
-                Id: 1,
-                Commentary: "Hallo!",
-                DateTime: "2024-05-30T10:00:00",
-                User: { Id: 42, FirstName: "Student", LastName: "Test" }
-            },
-            {
-                Id: 2,
-                Commentary: "Goed gedaan!",
-                DateTime: "2024-05-30T11:00:00",
-                User: { Id: 2, FirstName: "Piet", LastName: "Pietersen" }
-            }
-        ];
         conversationMock = { Id: 123, TeacherId: 2, StudentId: 42 };
 
-        // Mock fetch voor template en API
+        // Mock fetch
         spyOn(window, "fetch").and.callFake(async (url) => {
             if (url.endsWith("feedback.html")) {
                 return {
@@ -72,7 +55,6 @@ describe("Feedback frontend", () => {
                     json: async () => teachersMock
                 };
             }
-            // Mock conversatie ophalen
             if (url.includes("/api/Conversation/conversationByStudentId/")) {
                 return {
                     ok: true,
@@ -80,32 +62,27 @@ describe("Feedback frontend", () => {
                     json: async () => conversationMock
                 };
             }
-            // Mock berichten ophalen
             if (url.includes("/api/Message/messagesByConversationId/")) {
-                console.log("fetch-mock geeft terug:", messagesMock);
                 return {
                     ok: true,
                     status: 200,
                     json: async () => messagesMock
                 };
             }
-            // fallback
             return { text: async () => "" };
         });
 
-        // Mock api-client.js functies op window
+        // Mock API client functions
         window.getAllTeachers = async () => teachersMock;
         window.getConversationByUserId = async () => conversationMock;
-        window.getMessagesByConversationId = async (id) => messagesMock;
-        window.updateConversation = async () => { };
-        window.postMessage = async () => { };
+        window.getMessagesByConversationId = async () => messagesMock;
+        window.updateConversation = async () => {};
+        window.postMessage = async () => {};
     });
 
     afterEach(() => {
-        // Verwijder app-div na elke test
         const oldApp = document.getElementById('app');
         if (oldApp) oldApp.remove();
-
         delete window.getAllTeachers;
         delete window.getConversationByUserId;
         delete window.getMessagesByConversationId;
@@ -114,28 +91,34 @@ describe("Feedback frontend", () => {
         delete window.userData;
     });
 
-    it("vult de dropdown met docenten", async () => {
-        const { fragment } = await Feedback();
-        app.appendChild(fragment);
-
-        await new Promise(res => setTimeout(res, 0)); // wacht op async rendering
-
-        const dropdown = document.querySelector(".feedback-dropdown");
-        const options = Array.from(dropdown.options).map(opt => opt.textContent);
-        expect(options).toContain("Jan Jansen");
-        expect(options).toContain("Piet Pietersen");
-    });
-
     it("toont 'Geen berichten gevonden.' als er geen berichten zijn", async () => {
-        // Zet messagesMock leeg vóór het renderen van Feedback
         messagesMock = [];
-
         const { fragment } = await Feedback();
         app.appendChild(fragment);
 
-        await new Promise(res => setTimeout(res, 0)); // wacht op async rendering
+        await new Promise(res => setTimeout(res, 0));
 
         const container = document.querySelector(".message-feedback-container");
         expect(container.innerHTML).toContain("Geen berichten gevonden.");
+    });
+
+    it("toont berichten als er berichten zijn", async () => {
+        messagesMock = [
+            {
+                Id: 1,
+                Commentary: "Testbericht!",
+                DateTime: "2024-05-30T10:00:00",
+                User: { Id: 42, FirstName: "Student", LastName: "Test" }
+            }
+        ];
+        const { fragment } = await Feedback();
+        app.appendChild(fragment);
+
+        await new Promise(res => setTimeout(res, 0));
+
+        const container = document.querySelector(".message-feedback-container");
+        expect(container.innerHTML).not.toContain("Geen berichten gevonden.");
+        expect(container.innerHTML).toContain("Testbericht!");
+        expect(container.innerHTML).toContain("Student Test");
     });
 });

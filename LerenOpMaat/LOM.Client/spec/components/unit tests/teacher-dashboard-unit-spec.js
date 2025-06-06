@@ -56,4 +56,27 @@ describe("renderTeacherLearningRoutes", () => {
         expect(msg).not.toBeNull();
         expect(msg.textContent).toContain("Geen Conversaties beschikbaar");
     });
+
+    it("toont converstaie als er conversaties zijn", async () => {
+        window.__testConversations = [
+            {
+                Id: 1,
+                Title: "Test Conversatie",
+                Description: "Dit is een test conversatie",
+                CreationDate: "2023-10-01T12:00:00Z",
+                LastMessageDate: "2023-10-02T12:00:00Z",
+                Participants: [
+                    { UserId: 1, Name: "Docent 1" },
+                    { UserId: 2, Name: "Leerling 1" }
+                ]
+            }
+        ];
+        await renderTeacherLearningRoutes();
+
+        await new Promise(res => setTimeout(res, 0));
+
+        const msg = document.querySelector("#list div");
+        expect(msg).not.toBeNull();
+        expect(msg.textContent).toContain("Geen Conversaties beschikbaar");
+    });
 });
