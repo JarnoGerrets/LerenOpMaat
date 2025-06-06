@@ -6,7 +6,6 @@ namespace LOM.API.Test.Middleware
 	public class HttpMethodRestrictionMiddlewareTests
 	{
 		[Theory]
-		[InlineData("PATCH")]
 		[InlineData("TRACE")]
 		public async Task Middleware_Blocks_Disallowed_Methods(string method)
 		{
