@@ -48,7 +48,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(allowedOrigins ?? [])
               .AllowAnyHeader()
-			  .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+			  .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
 			  .AllowCredentials();
     });
 });
@@ -218,35 +218,12 @@ app.UseSwaggerUI();
 app.UseHsts();
 app.UseHttpsRedirection();
 app.UseCors("AppCorsPolicy");
-var allowedMethods = new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" };
-app.Use(async (context, next) =>
-{
-	var method = context.Request.Method.ToUpperInvariant();
-
-	if (!allowedMethods.Contains(method))
-	{
-		SentrySdk.CaptureMessage($"Blocked HTTP method: {method} on {context.Request.Path}", SentryLevel.Warning);
-
-		context.Response.StatusCode = StatusCodes.Status405MethodNotAllowed;
-		await context.Response.WriteAsync("HTTP-methode niet toegestaan.");
-		return;
-	}
-
-	await next();
-});
+app.UseMiddleware<HttpMethodRestrictionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseStaticFiles();
 app.MapFallbackToFile("index.html");
-
-app.Use(async (context, next) =>
-{
-	context.Response.Headers["X-Frame-Options"] = "DENY";
-	context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
-	context.Response.Headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'";
-	await next();
-});
-
+app.UseMiddleware<SecurityHeadersMiddleware>();
 app.Run();
 public partial class Program { }
