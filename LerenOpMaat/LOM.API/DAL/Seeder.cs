@@ -15,16 +15,6 @@ public class Seeder
 
     public void Seed()
     {
-        // _modelBuilder.Entity<Cohort>().HasData(
-        //     new Cohort { Id = 1, StartDate = DateTime.Now, IsActive = true },
-        //     new Cohort { Id = 2, StartDate = DateTime.Now.AddYears(1), IsActive = true },
-        //     new Cohort { Id = 3, StartDate = DateTime.Now.AddYears(2), IsActive = false },
-        //     new Cohort { Id = 4, StartDate = DateTime.Now.AddYears(-1), IsActive = true },
-        //     new Cohort { Id = 5, StartDate = DateTime.Now.AddYears(-2), IsActive = true },
-        //     new Cohort { Id = 6, StartDate = DateTime.Now.AddYears(-3), IsActive = true },
-        //     new Cohort { Id = 7, StartDate = DateTime.Now.AddYears(-4), IsActive = true }
-        // );
-
         _modelBuilder.Entity<Module>().HasData(
             new Module { Id = 1, Name = "Introduction to Programming", Code = "IP.01", Description = "Introduction to Programming", Ec = 30, Level = 1, Period = 1, IsActive = true, GraduateProfileId = 3 },
             new Module { Id = 2, Name = "Web Development Basics", Code = "WDB.02", Description = "Web Development Basics", Ec = 30, Level = 2, Period = 2, IsActive = true, GraduateProfileId = 1 },

@@ -12,7 +12,6 @@ public class LOMContext : DbContext
 	public virtual DbSet<ModuleEVL> ModuleEVLs { get; set; }
 	public virtual DbSet<ModuleProgress> ModuleProgresses { get; set; }
 	public virtual DbSet<CompletedEvl> CompletedEvls { get; set; }
-	// public virtual DbSet<Cohort> Cohorts { get; set; }
 	public virtual DbSet<User> User { get; set; }
 	public virtual DbSet<Semester> Semesters { get; set; }
 	public virtual DbSet<Requirement> Requirements { get; set; }
