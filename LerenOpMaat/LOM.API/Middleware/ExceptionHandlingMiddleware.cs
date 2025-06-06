@@ -2,6 +2,7 @@
 
 namespace LOM.API.Middleware;
 
+// This middleware handles exceptions globally so that we can log them and return a consistent error response.
 public class ExceptionHandlingMiddleware
 {
 	private readonly RequestDelegate _next;
