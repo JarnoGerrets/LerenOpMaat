@@ -1,4 +1,4 @@
-import Popup from "../../components/Popup.js";
+import Popup from "../../components/popup.js";
 
 
 let popup;
