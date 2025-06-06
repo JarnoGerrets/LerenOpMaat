@@ -39,7 +39,7 @@ namespace LOM.API.Controllers
 				query = _context.Modules.Where(m => m.IsActive);
 			}
 
-			if (!string.IsNullOrWhiteSpace(q))
+            if (!string.IsNullOrWhiteSpace(q))
 			{
 				string lowerQ = q.ToLower();
 				query = query.Where(m =>

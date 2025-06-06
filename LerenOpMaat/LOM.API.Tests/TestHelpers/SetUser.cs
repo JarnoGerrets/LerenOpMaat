@@ -7,7 +7,7 @@ namespace LOM.API.TestHelpers
 {
     public static class TestUserHelper
     {
-        public static void SetUser(UserController controller, string? externalId)
+        public static void SetUser(ControllerBase controller, string? externalId)
         {
             var httpContext = new DefaultHttpContext();
 
@@ -23,5 +23,6 @@ namespace LOM.API.TestHelpers
                 HttpContext = httpContext
             };
         }
+
     }
 }
