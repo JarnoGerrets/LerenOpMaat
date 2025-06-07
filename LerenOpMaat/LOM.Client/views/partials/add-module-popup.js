@@ -138,7 +138,7 @@ export default async function addModulePopup() {
 
             const form = e.target;
             if (!form.checkValidity()) {
-                form.reportValidity(); // This shows built-in browser messages
+                form.reportValidity();
                 return;
             }
 

@@ -1,5 +1,4 @@
 import { calculateAchievedECs } from "../../../scripts/utils/semester-card-utils/utils.js";
-import * as uiUpdates from "../../../scripts/utils/semester-card-utils/ui-updates.js";
 import { handleValidationResult } from "../../../scripts/utils/semester-card-utils/validations.js";
 
 

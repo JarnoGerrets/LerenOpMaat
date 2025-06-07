@@ -15,7 +15,7 @@ export default async function confirmationPopup(name, id, header, content, confi
     });
 
     popup.open();
-
+    // slight delay to make sure all elements are part of the DOM before quering for them
     setTimeout(() => {
         document.getElementById("confirm-confirmation-popup")?.addEventListener("click", async () => {
             await confirmationAction(id);

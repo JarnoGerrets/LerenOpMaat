@@ -12,7 +12,7 @@ import confirmationPopup from "../../views/partials/confirmation-popup.js"
 import editRequirementPopup from "../../views/partials/edit-requirement-popup.js"
 
 
-
+//module to centralize all imports. create a const "servicename" to bundle necessary imports for specific module.
 const baseServices = {
     SemesterChoice,
     ...apiClient,
@@ -87,6 +87,7 @@ export const reportServices = Object.freeze({
     getProfiles: baseServices.getProfiles,
     getModulesEngagement: baseServices.getModulesEngagement,
     getAvailableYears:  baseServices.getAvailableYears,
+    loadTemplate: baseServices.loadTemplate,
     Chart: window.Chart
 });
 
