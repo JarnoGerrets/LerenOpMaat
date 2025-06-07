@@ -1,5 +1,6 @@
 ﻿namespace LOM.API.Middleware;
 
+// This middleware restricts HTTP methods to prevent unwanted calls.
 public class HttpMethodRestrictionMiddleware
 {
 	private readonly RequestDelegate _next;
