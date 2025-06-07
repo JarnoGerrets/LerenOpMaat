@@ -10,7 +10,7 @@ describe("moduleOverview integration", () => {
         document.getElementById("test-root").innerHTML = "";
     });
 
-    it("rendert layout correct", async () => {
+    it("renders layout correctly", async () => {
         const { default: ModuleOverview } = await import("../../../components/module-overview.js");
 
         const mockedModule = getMockModules();
@@ -25,7 +25,7 @@ describe("moduleOverview integration", () => {
         expect(el.querySelector('#module-wrapper')).not.toBeNull();
     });
 
-    it("toont module cards als data geladen wordt", async () => {
+    it("displays module cards when data is loaded", async () => {
         const { default: ModuleOverview } = await import("../../../components/module-overview.js");
 
         const mockedModule = getMockModules();
@@ -39,7 +39,7 @@ describe("moduleOverview integration", () => {
         expect(cards.length).toBe(2);
     });
 
-    it("laat add-module knop zien voor docent", async () => {
+    it("shows add-module button for teacher", async () => {
         const { default: ModuleOverview } = await import("../../../components/module-overview.js");
 
         mockUserRole();
