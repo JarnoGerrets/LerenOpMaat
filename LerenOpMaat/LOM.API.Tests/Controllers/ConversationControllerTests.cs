@@ -98,7 +98,6 @@ namespace LOM.API.Tests.Controllers
             Assert.IsType<NotFoundResult>(result.Result);
         }
 
-
         [Fact]
         public async Task GetConversationsByAdministratorId_ReturnsConversations_WhenExists()
         {
@@ -145,7 +144,6 @@ namespace LOM.API.Tests.Controllers
             Assert.Equal(2, ((Conversation)System.Linq.Enumerable.First(conversations)).TeacherId);
         }
 
-
         [Fact]
         public async Task GetConversationsByAdministratorId_ReturnsEmpty_WhenNoneExist()
         {
@@ -178,6 +176,47 @@ namespace LOM.API.Tests.Controllers
             Assert.Empty(conversations);
         }
 
+        [Fact]
+        public async Task PostConversation_CreatesConversation_ReturnsCreated()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var student = new User { Id = 1, FirstName = "Student", LastName = "Test", ExternalID = "S1", RoleId = 2, LearningRouteId = 1 };
+            var route = new LearningRoute { Id = 1, UserId = 1, User = student };
+            context.User.Add(student);
+            context.LearningRoutes.Add(route);
+            await context.SaveChangesAsync();
+
+            var controller = new ConversationController(context);
+
+            // Mock Claims
+            var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, student.ExternalID) };
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(identity)
+                }
+            };
+
+            var conversation = new Conversation
+            {
+                TeacherId = null // Teacher is not required at creation
+                                 // StudentId and LearningRouteId will be set by the controller
+            };
+
+            // Act
+            var result = await controller.PostConversation(conversation);
+
+            // Assert
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+            var createdConversation = Assert.IsType<Conversation>(createdResult.Value);
+            Assert.Equal(student.Id, createdConversation.StudentId);
+            Assert.Equal(student.LearningRouteId, createdConversation.LearningRouteId);
+            Assert.Null(createdConversation.TeacherId);
+            Assert.True(createdConversation.Id > 0);
+        }
 
     }
 }
