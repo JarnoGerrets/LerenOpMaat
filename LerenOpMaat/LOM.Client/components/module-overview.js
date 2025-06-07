@@ -1,7 +1,7 @@
 // module-overview.js
 
 // Import required APIs and components
-import { getModules, getProfiles, hasPermission, isLoggedIn } from '../client/api-client.js';
+import { moduleServices } from "../scripts/utils/importServiceProvider.js";
 import addModulePopup from '../views/partials/add-module-popup.js';
 import './module-card.js';
 
@@ -12,11 +12,15 @@ class ModuleOverview extends HTMLElement {
     }
 
     // Lifecycle hook when element is added to the DOM
-    async connectedCallback() {
+    async connectedCallback(services = moduleServices) {
+        const { getModules, getProfiles } = services;
+        this.getModules = getModules;
+        this.getProfiles = getProfiles;
+
         this.renderLayout();      // Render static layout
         this.addHandlers();       // Attach event handlers
 
-        const modules = await getModules();  // Fetch initial module list
+        const modules = await this.getModules();  // Fetch initial module list
         this.renderModules(modules);         // Render module cards
     }
 
@@ -45,7 +49,7 @@ class ModuleOverview extends HTMLElement {
         const input = this.querySelector('#searchInput');
         input.addEventListener('input', async (e) => {
             const query = e.target.value;
-            const filteredModules = await getModules(query);
+            const filteredModules = await this.getModules(query);
             this.renderModules(filteredModules);
         });
 
@@ -63,14 +67,14 @@ class ModuleOverview extends HTMLElement {
             addModuleInput.addEventListener('click', async () => {
                 const success = await addModulePopup();
                 if (success) {
-                    const modules = await getModules();
+                    const modules = await this.getModules();
                     this.renderModules(modules);
                 }
             });
         }
 
         // Create and display legend tooltip from profile data
-        const profiles = await getProfiles();
+        const profiles = await this.getProfiles();
         const profileString = profiles.map(i =>
             `<p style="display: flex; align-items: center; margin: 4px 0;">
                 <span style="display: inline-block; width: 16px; height: 16px; border-radius: 4px; background: ${i.ColorCode}; margin-right: 8px; border: 1px solid #ccc;"></span>
