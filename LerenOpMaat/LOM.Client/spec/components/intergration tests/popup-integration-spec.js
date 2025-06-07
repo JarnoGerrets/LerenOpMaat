@@ -1,4 +1,4 @@
-import Popup from "../../../components/Popup.js";
+import Popup from "../../../components/popup.js";
 import { wait } from "../../helpers/test-utils.js";
 
 describe("Popup integration", () => {

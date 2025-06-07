@@ -4,8 +4,7 @@ import { reportServices } from "../scripts/utils/importServiceProvider.js";
 export default async function report(services = reportServices) {
     const { getProfiles, getModulesEngagement, getAvailableYears, Chart } = services;
     let showingChart = false;
-    const response = await fetch('./templates/report.html');
-    const html = await response.text();
+    const html = await loadTemplate('./templates/report.html');
 
     const tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
@@ -123,7 +122,7 @@ export default async function report(services = reportServices) {
         }
     }
 
-
+    // create chart using external library chart.js
     function showChart(data) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -1,4 +1,4 @@
-import Popup from "../../components/Popup.js";
+import Popup from "../../components/popup.js";
 import { getProfiles, addModule } from "../../client/api-client.js";
 import {getSelectedEVLs, setupListeners} from "../../scripts/utils/evl-dropdown/evl-dropdown-utils.js"
 import { mapPeriodToPresentableString } from "../../scripts/utils/universal-utils.js";
@@ -138,7 +138,7 @@ export default async function addModulePopup() {
 
             const form = e.target;
             if (!form.checkValidity()) {
-                form.reportValidity(); // This shows built-in browser messages
+                form.reportValidity();
                 return;
             }
 

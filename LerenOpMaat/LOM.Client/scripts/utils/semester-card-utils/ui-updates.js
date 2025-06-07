@@ -6,15 +6,12 @@ export function updateExclamationIcon(cardElement, validationMsg, isValid) {
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  icon.replaceWith(icon.cloneNode(true));
-  const updatedIcon = cardElement.querySelector('.exclamation-icon');
-
   if (!isValid) {
-    updatedIcon.classList.add('show');
-    updatedIcon.setAttribute('title', validationMsg);
+    icon.classList.add('show');
+    icon.setAttribute('title', validationMsg);
 
-    if (isMobile) {
-      updatedIcon.addEventListener('click', () => {
+    if (isMobile && !icon.dataset.listenerAdded) {
+      icon.addEventListener('click', () => {
         const lines = validationMsg.split('\n').map(line => line.trim()).filter(Boolean);
         lines.forEach(line => {
           if (line.startsWith("-")) {
@@ -24,12 +21,14 @@ export function updateExclamationIcon(cardElement, validationMsg, isValid) {
           }
         });
       });
+      icon.dataset.listenerAdded = "true";
     }
   } else {
-    updatedIcon.classList.remove('show');
-    updatedIcon.removeAttribute('title');
+    icon.classList.remove('show');
+    icon.removeAttribute('title');
   }
 }
+
 
 export function updateAllCardsStyling(validationResults = {}, scope = document) {
   const allCards = scope.querySelectorAll(".semester-card");

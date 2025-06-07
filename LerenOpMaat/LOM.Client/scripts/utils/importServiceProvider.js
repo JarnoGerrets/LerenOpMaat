@@ -5,14 +5,14 @@ import * as cardUtils from "./semester-card-utils/utils.js";
 import * as moduleActions from "./module-info-utils/module-actions.js";
 import * as evlDropdownUtils from "../utils/evl-dropdown/evl-dropdown-utils.js"
 import * as utils from "../utils/universal-utils.js";
-import Popup from "../../components/Popup.js";
-import SemesterModule from "../../components/SemesterModule.js";
+import Popup from "../../components/popup.js";
+import SemesterModule from "../../components/semester-module.js";
 import SemesterChoice from "../../views/partials/semester-choice.js";
 import confirmationPopup from "../../views/partials/confirmation-popup.js"
 import editRequirementPopup from "../../views/partials/edit-requirement-popup.js"
 
 
-
+//module to centralize all imports. create a const "servicename" to bundle necessary imports for specific module.
 const baseServices = {
     SemesterChoice,
     ...apiClient,
@@ -87,6 +87,7 @@ export const reportServices = Object.freeze({
     getProfiles: baseServices.getProfiles,
     getModulesEngagement: baseServices.getModulesEngagement,
     getAvailableYears:  baseServices.getAvailableYears,
+    loadTemplate: baseServices.loadTemplate,
     Chart: window.Chart
 });
 
