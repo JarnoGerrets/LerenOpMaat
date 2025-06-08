@@ -20,16 +20,23 @@ const lerenOpMaatApiFetch = async (endpoint, options = {}) => {
         credentials = true,
     } = options;
 
-    // For non-GET requests, fetch CSRF token first
-    if (method !== 'GET') {
-        await getCsrfToken();
-    }
-
     const defaultHeaders = {
         'Accept': 'application/json',
         ...(body && {'Content-Type': 'application/json'}),
         ...headers
-    };
+    }
+
+    // For non-GET requests, fetch CSRF token first and attach to headers
+    if (method !== 'GET') {
+        const token = await getCsrfToken();
+        
+        if(token !== '') {
+            defaultHeaders = {
+                ...defaultHeaders,
+                'X-XSRF-TOKEN': token,
+            }
+        }
+    }
 
     const fetchOptions = {
         method,
