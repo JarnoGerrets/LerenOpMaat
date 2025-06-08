@@ -37,6 +37,7 @@ class ModuleOverview extends HTMLElement {
                         <i class="bi bi-list legend" id="legendButton"></i>
                     </div>
                 </div>
+                <label for="searchInput">Zoeken</label>
                 <input class="form-control" id="searchInput" type="text" placeholder="Type om te zoeken">
                 <div class="row" id="module-wrapper"></div>
             </div>

@@ -1,4 +1,5 @@
 import { reportServices } from "../scripts/utils/importServiceProvider.js";
+import { loadTemplate } from "../scripts/utils/universal-utils.js";
 
 
 export default async function report(services = reportServices) {
