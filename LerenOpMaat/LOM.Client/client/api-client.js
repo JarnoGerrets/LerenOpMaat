@@ -1,4 +1,4 @@
-const BASE = "http://localhost:5073";
+const BASE = "https://lerenopmaat.info";
 const API_BASE = `${BASE}/api`;
 
 /**
@@ -73,7 +73,7 @@ export function getLoginUrl() {
  * Logt de huidige gebruiker uit en verwijdert sessiegegevens
  * @returns {Promise<void>}
  */
-const logout = async () => {
+export const logout = async () => {
     await lerenOpMaatApiFetch('/authenticate/logout', {
         method: 'GET',
     });
