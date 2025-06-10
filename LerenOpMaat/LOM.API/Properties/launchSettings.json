@@ -24,7 +24,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7024;http://localhost:5073",
+      "applicationUrl": "https://lerenopmaat.info/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
