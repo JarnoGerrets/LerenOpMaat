@@ -13,7 +13,7 @@
 
 .module-tile {
     width: clamp(300px, 20vw, 440px);
-    height: 220px;
+    min-height: 220px;
     border-radius: 15px;
     padding: 20px;
     text-align: left;
@@ -49,4 +49,16 @@
     font-weight: bold;
     color: black;
     font-family: 'Courier', sans-serif;
+}
+
+.requirement-section {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.requirement-row {
+    padding-left: 12px;       /* Create space for the dash */
+    text-indent: -12px;       /* Pull the first line back so dash appears in left margin */        /* Optional: improve readability */
+    white-space: normal;      /* Ensure wrapping works */
+    word-wrap: break-word;    /* Just in case */
 }

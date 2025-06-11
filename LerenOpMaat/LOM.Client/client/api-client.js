@@ -1,4 +1,4 @@
-const BASE = "https://lerenopmaat.info";
+const BASE = "http://localhost:5073";
 const API_BASE = `${BASE}/api`;
 
 export function getLoginUrl() {
