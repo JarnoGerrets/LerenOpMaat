@@ -44,15 +44,17 @@ export default class SemesterModule {
                                 </div>
                             </div>
                         </div>
-                        <div class="requirement-section mt-2">
-                        Toegangseisen:
-                            ${module.Requirements.map(printRequirement).join('')}
-                        </div>
+                        ${module.Requirements && module.Requirements.length > 0
+                        ? `<div class="requirement-section mt-2">
+                            Toegangseisen:
+                                ${module.Requirements.map(printRequirement).join('')}
+                            </div>`
+                        : '<div class="requirement-section mt-2">Geen toegangseisen voor deze module. </div>'}
                     </div>`;
             }
             const populatedTemplate = template
                 .replace('{{card_text}}', cardText)
-                .replace('{{title}}', `${module.Name} (${module.Code})`)
+                .replace('{{title}}', `${module.Name} ${module.Code ? `(${module.Code})` : ``}`)
                 .replace('{{link}}', link);
 
             const tile = document.createElement('div');

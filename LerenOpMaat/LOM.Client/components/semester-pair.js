@@ -50,6 +50,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         moduleId,
                         moduleName,
                     });
+                    window.learningRouteArray = learningRouteArray;
                 }
             },
 
@@ -100,6 +101,7 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         moduleId,
                         moduleName,
                     });
+                    window.learningRouteArray = learningRouteArray;
                 }
             },
 
@@ -150,6 +152,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         placeholder.style.width = "150px";
         wrapper.appendChild(placeholder);
     }
-
+    window.learningRouteArray = learningRouteArray;
     return wrapper;
 }

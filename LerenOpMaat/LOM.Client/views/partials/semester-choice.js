@@ -9,7 +9,7 @@ let selectedCategories = [];
 let selectedCategory;
 let cachedPopupWidth;
 
-export default async function SemesterChoice(selectedModuleName = "Selecteer je module", services = semesterChoiceServices) {
+export default async function SemesterChoice(selectedModuleName = "Selecteer je module", services = semesterChoiceServices, learningRouteArray = []) {
     const {
         Popup,
         SemesterModule,
@@ -33,7 +33,12 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
         renderedSemesterModules.innerHTML = "<span class='error-label-popup'>Er zijn geen modules gevonden, neem contact op met de beheerder</span>";
 
     } else {
-        modules = apiResponse;
+        console.log(window.learningRouteArray);
+        const selectedModuleIds = window.learningRouteArray.map(item => item.moduleId);
+
+        modules = apiResponse.filter(module =>
+            !selectedModuleIds.includes(module.Id)
+        );
         //Deze is omdat alles hardcoded is, maar later als wij een DB hebben
         //dan wordt alles uit de koppel tabel opgehaald
         if (selectedModuleName !== "Selecteer je module") {
