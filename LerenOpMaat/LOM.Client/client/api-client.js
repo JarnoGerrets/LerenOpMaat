@@ -1,4 +1,4 @@
-const BASE = "https://lerenopmaat.info";
+const BASE = "http://localhost:5073";
 const API_BASE = `${BASE}/api`;
 
 export function getLoginUrl() {
@@ -7,11 +7,23 @@ export function getLoginUrl() {
   return `${BASE}/authenticate?returnUrl=${returnUrl}`;
 }
 
-export function logout() {
+export async function logout() {
   document.cookie = "userData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=strict";
   localStorage.removeItem("cohortYear");
+  try {
+    const res = await fetch(`${BASE}/authenticate/logout`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Accept": "application/json"
+      }
+    });
 
-  window.location.href = `${BASE}/authenticate/logout`;
+    window.location.href = "/";
+  } catch {
+    return null;
+  }
+
 }
 
 export async function getUserData() {

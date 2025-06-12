@@ -194,7 +194,10 @@ builder.Services.AddSession(options =>
     }
 );
 builder.Services.AddDistributedMemoryCache();
-
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LogoutPath = "/api/account/logout";
+});
 var app = builder.Build();
 app.MapGet("/debug/student", () => "Student reached");
 // Middleware
