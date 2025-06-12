@@ -9,7 +9,6 @@ import {
     hasPermission
 } from "../client/api-client.js"
 
-import { learningRouteArray } from "../components/semester-pair.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
 import { showLoading, hideLoading } from "../scripts/utils/loading-screen.js";
 import { debounce } from "../scripts/utils/universal-utils.js";
@@ -158,16 +157,16 @@ export default async function LearningRoute() {
         const saveButton = fragment.getElementById("saveLearningRoute");
         if (saveButton) {
             const debouncedSave = debounce(async () => {
-                JSON.stringify(learningRouteArray, null, 2);
+                JSON.stringify(window.learningRouteArray, null, 2);
                 if (routeId !== null) {
                     try {
-                        await updateLearningRoute(routeId, learningRouteArray);
+                        await updateLearningRoute(routeId, window.learningRouteArray);
                     } catch (error) {
                         showToast("Fout bij het opslaan van de leerroute", "error");
                     }
                 } else {
                     try {
-                        await saveLearningRoute(learningRouteArray);
+                        await saveLearningRoute(window.learningRouteArray);
                     } catch (error) {
                         showToast("Fout bij het opslaan van de leerroute", "error");
                     }
@@ -182,7 +181,7 @@ export default async function LearningRoute() {
             exportButton.addEventListener("click", async () => {
                 let user, semesters, isFallback = false;
                 if (!apiResponse || !apiResponse.User || !apiResponse.Semesters) {
-                    semesters = learningRouteArray;
+                    semesters = window.learningRouteArray;
                     user = {
                         FirstName: "Gast",
                         LastName: "",
@@ -327,7 +326,7 @@ export default async function LearningRoute() {
         });
     }
     if (userData && userData.InternalId) {
-        const validation = await validateRoute(learningRouteArray);
+        const validation = await validateRoute(window.learningRouteArray);
         handleValidationResult(validation, undefined, fragment);
     }
 

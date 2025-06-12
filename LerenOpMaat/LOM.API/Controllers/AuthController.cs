@@ -46,12 +46,18 @@ namespace LOM.API.Controllers
         /// Logout endpoint, destroy sessie
         /// </summary>
         [HttpGet("logout")]
-        public async Task Logout()
+        public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            await HttpContext.SignOutAsync("Cookies");
 
-            //Important, this method should never return anything.
+            return SignOut(new AuthenticationProperties
+            {
+                RedirectUri = "/"
+            },
+            OpenIdConnectDefaults.AuthenticationScheme,
+            "Cookies");
         }
+
+
     }
 }

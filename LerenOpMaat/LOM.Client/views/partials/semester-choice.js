@@ -33,7 +33,6 @@ export default async function SemesterChoice(selectedModuleName = "Selecteer je 
         renderedSemesterModules.innerHTML = "<span class='error-label-popup'>Er zijn geen modules gevonden, neem contact op met de beheerder</span>";
 
     } else {
-        console.log(window.learningRouteArray);
         const selectedModuleIds = window.learningRouteArray.map(item => item.moduleId);
 
         modules = apiResponse.filter(module =>

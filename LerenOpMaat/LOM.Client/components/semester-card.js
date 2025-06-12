@@ -1,4 +1,3 @@
-import { learningRouteArray } from "./semester-pair.js";
 import { semesterCardServices } from "../scripts/utils/importServiceProvider.js";
 
 let validationState = {};
@@ -74,7 +73,7 @@ export default async function SemesterCard({isAdmin = false, isTeacher = false, 
     const selectedModule = await getModule(moduleId);
     try {
       const progress = await getModuleProgress(moduleId);
-      await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
+      await updateModuleUI(button, coursePoints, locked, selectedModule, progress, window.learningRouteArray);
       addExpandClickListener(cardElement);
       updateInactiveLabel(cardElement.closest(".semester-card-container"), selectedModule?.IsActive ?? true);
     } catch (error) {
@@ -108,7 +107,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
   onModuleChange({ semester, moduleId: selectedModule.Id, moduleName: selectedModule.Name });
 
-  const result = await validateRoute(learningRouteArray);
+  const result = await validateRoute(window.learningRouteArray);
   const hasDuplicate = result.some(v => v.Message.toLowerCase().includes("komt al voor in de leerroute") && !v.IsValid);
   if (hasDuplicate) {
     showToast("Module kan niet toegevoegd worden omdat het al bestaat in de leerroute.", "error");
@@ -123,7 +122,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
     console.error("Failed to load progress for selected module:", error);
   }
 
-  await updateModuleUI(button, coursePoints, locked, selectedModule, progress, learningRouteArray);
+  await updateModuleUI(button, coursePoints, locked, selectedModule, progress, window.learningRouteArray);
 
   // re-select coursePoints after DOM update
   coursePoints = cardElement.querySelector(`#coursePoints-${selectedModule.Id || ''}`);
@@ -131,7 +130,7 @@ async function handleModuleSelection({ button, coursePoints, semester, locked, o
 
   cardElement.setAttribute("data-module-id", selectedModule.Id);
 
-  const finalValidation = await validateRoute(learningRouteArray);
+  const finalValidation = await validateRoute(window.learningRouteArray);
   handleValidationResult(finalValidation);
 }
 
@@ -143,7 +142,7 @@ async function clearSelection(cardElement, coursePoints, locked, semester, onMod
   } = services;
 
   const moduleId = parseInt(cardElement.getAttribute("data-module-id"));
-  await updateModuleUI(cardElement.querySelector("#select-module"), coursePoints, locked, null, learningRouteArray);
+  await updateModuleUI(cardElement.querySelector("#select-module"), coursePoints, locked, null, window.learningRouteArray);
 
   coursePoints = cardElement.querySelector(`#coursePoints-`);
   addExpandClickListener(cardElement);

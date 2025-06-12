@@ -65,6 +65,14 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
 
         return Task.CompletedTask;
     };
+
+    options.SignedOutCallbackPath = "/signout-callback-oidc";
+    options.Events.OnSignedOutCallbackRedirect = context =>
+    {
+        context.Response.Redirect("/");
+        context.HandleResponse();
+        return Task.CompletedTask;
+    };
 });
 
 
