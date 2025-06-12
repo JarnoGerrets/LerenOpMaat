@@ -7,21 +7,11 @@ export function getLoginUrl() {
   return `${BASE}/authenticate?returnUrl=${returnUrl}`;
 }
 
-export async function logout() {
-  try {
-    await fetch(`${BASE}/authenticate/logout`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Accept": "application/json"
-      }
-    });
+export function logout() {
+  document.cookie = "userData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=strict";
+  localStorage.removeItem("cohortYear");
 
-    document.cookie = "userData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=strict";
-    localStorage.removeItem("cohortYear");
-    location.reload();
-
-  } catch { }
+  window.location.href = `${BASE}/authenticate/logout`;
 }
 
 export async function getUserData() {

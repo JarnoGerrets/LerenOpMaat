@@ -6,7 +6,6 @@ export default class SemesterModule {
         this.modules = modules;
         this.onModuleSelect = onModuleSelect;
     }
-
     async render() {
         const container = document.createElement('div');
         container.classList.add('module-container');
@@ -25,31 +24,37 @@ export default class SemesterModule {
 
             if (module.Name != "Geen Keuze") {
                 cardText = `<div class="d-flex flex-column justify-content-between">
-                <div class="d-flex">
-                    <div class="w-50">
-                        <div class="module-info-row">
-                        Code: <span id="code-text">${module.Code}</span>
+                        <div style="font-style: bold;">
+                            <div class="d-flex">
+                                <div class="w-50">
+                                    <div class="module-info-row">
+                                        Profiel: <span id="period-text">${module.GraduateProfile.Name}</span>
+                                    </div>
+                                    <div class="module-info-row">
+                                        Periode: <span id="period-text">${mapPeriodToPresentableString(module.Period)}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="module-info-row">
+                                        EC: <span id="ec-text">${module.Ec}</span>
+                                    </div>
+                                    <div class="module-info-row">
+                                        Niveau: <span id="level-text">${module.Level}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="module-info-row">
-                        Periode: <span id="period-text">${mapPeriodToPresentableString(module.Period)}</span>
-                        </div>
-                        <div class="module-info-row">
-                        Profiel: <span id="period-text">${module.GraduateProfile.Name}</span>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="module-info-row">
-                        EC: <span id="ec-text">${module.Ec}</span>
-                        </div>
-                        <div class="module-info-row">
-                        Niveau: <span id="level-text">${module.Level}</span>
-                        </div>
-                    </div>
-                </div>`;
+                        ${module.Requirements && module.Requirements.length > 0
+                        ? `<div class="requirement-section mt-2">
+                            Toegangseisen:
+                                ${module.Requirements.map(printRequirement).join('')}
+                            </div>`
+                        : '<div class="requirement-section mt-2">Geen toegangseisen voor deze module. </div>'}
+                    </div>`;
             }
             const populatedTemplate = template
                 .replace('{{card_text}}', cardText)
-                .replace('{{title}}', module.Name)
+                .replace('{{title}}', `${module.Name} ${module.Code ? `(${module.Code})` : ``}`)
                 .replace('{{link}}', link);
 
             const tile = document.createElement('div');
@@ -86,4 +91,9 @@ export default class SemesterModule {
         });
         return container;
     }
+}
+
+
+function printRequirement(item) {
+    return `<div class="requirement-row">- ${item.Description}</div>`;
 }

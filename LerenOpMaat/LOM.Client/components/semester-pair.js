@@ -1,6 +1,6 @@
 import SemesterCard from "../components/semester-card.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
-export let learningRouteArray = [];
+let learningRouteArray = window.learningRouteArray ?? [];
 
 export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
@@ -15,7 +15,15 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
     }
 
     // Fallback for semester1
-    if (!semester1 || !semester1.Module || !semester1.Module.Name) {
+    const routeItem1 = learningRouteArray.find(item => item.Year === index + 1 && item.Period === 1);
+    if (routeItem1) {
+        semester1.Module = {
+            ...semester1.Module,
+            Id: routeItem1.moduleId,
+            Name: routeItem1.moduleName,
+            IsActive: routeItem1.isActive,
+        };
+    } else if (!semester1 || !semester1.Module || !semester1.Module.Name) {
         semester1 = dummySemester1;
     }
 
@@ -49,7 +57,9 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         Period: semester.Period,
                         moduleId,
                         moduleName,
+                        isActive,
                     });
+                    window.learningRouteArray = learningRouteArray;
                 }
             },
 
@@ -67,9 +77,18 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
     }
 
     // Fallback for semester2
-    if (!semester2 || !semester2.Module || !semester2.Module.Name) {
+    const routeItem2 = learningRouteArray.find(item => item.Year === index + 1 && item.Period === 2);
+    if (routeItem2) {
+        semester2.Module = {
+            ...semester2.Module,
+            Id: routeItem2.moduleId,
+            Name: routeItem2.moduleName,
+            IsActive: routeItem2.isActive,
+        };
+    } else if (!semester2 || !semester2.Module || !semester2.Module.Name) {
         semester2 = dummySemester2;
     }
+
 
     if (semester2) {
         const connector = document.createElement("div");
@@ -99,7 +118,9 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
                         Period: semester.Period,
                         moduleId,
                         moduleName,
+                        isActive,
                     });
+                    window.learningRouteArray = learningRouteArray;
                 }
             },
 
@@ -150,6 +171,6 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         placeholder.style.width = "150px";
         wrapper.appendChild(placeholder);
     }
-
+    window.learningRouteArray = learningRouteArray;
     return wrapper;
 }

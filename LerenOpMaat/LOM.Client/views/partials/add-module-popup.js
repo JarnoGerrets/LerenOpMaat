@@ -143,13 +143,18 @@ export default async function addModulePopup() {
             }
 
             const { totalEC, evls } = getSelectedEVLs();
-
+            let periodValue;
+            if (form.querySelector("#period").value == "Beide"){
+                periodValue = 3;
+            }else{
+                periodValue = parseInt(form.querySelector("#period").value);
+            }
             const moduleToSend = {
                 Name: form.querySelector("#name").value,
                 Code: form.querySelector("#code").value,
                 EC: totalEC,
                 Level: parseInt(form.querySelector("#level").value),
-                Period: parseInt(form.querySelector("#period").value),
+                Period: periodValue,
                 IsActive: true,
                 GraduateProfileId: parseInt(form.querySelector("#graduateProfile").value),
                 Requirements: [],

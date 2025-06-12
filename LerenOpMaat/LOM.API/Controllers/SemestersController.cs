@@ -30,7 +30,7 @@ namespace LOM.API.Controllers
         /// <returns>NotFound als er geen leerroute gevonden is</returns>
         /// <returns>BadRequest als het aantal semesters meer dan de max van 30 is</returns>
         /// <returns>Ok</returns>
-        [HttpPut("/api/[controller]/updateSemesters/{learningRouteId}")]
+        [HttpPut("updateSemesters/{learningRouteId}")]
         [EnableRateLimiting("ValidateLimiter")]
         public async Task<IActionResult> UpdateSemesters(int learningRouteId, [FromBody] UpdateSemestersDto dto)
         {

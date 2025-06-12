@@ -29,7 +29,7 @@ namespace LOM.API.DTO
 				ModuleId = r.ModuleId,
 				Type = r.Type,
 				RequiredModule = RequiredModuleDto.FromModel(module),
-				Description = $"{module?.Name ?? "Onbekende module"} moet afgerond zijn."
+				Description = $"{module?.Name ?? "Onbekende module"} ({module.Code ?? ""}) moet afgerond zijn."
 			};
 		}
 	}

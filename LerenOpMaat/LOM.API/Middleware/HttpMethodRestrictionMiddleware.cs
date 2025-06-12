@@ -4,7 +4,7 @@
 public class HttpMethodRestrictionMiddleware
 {
 	private readonly RequestDelegate _next;
-	private static readonly HashSet<string> AllowedMethods = new() { "GET", "POST", "PUT", "DELETE", "OPTIONS" };
+	private static readonly HashSet<string> AllowedMethods = new() { "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH" };
 
 	public HttpMethodRestrictionMiddleware(RequestDelegate next)
 	{

@@ -84,7 +84,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
   const achievedECs = calculateAchievedECs(progress, selectedModule);
   const loggedIn = window.userData;
   // only loggedin users should be able to update evl's as the feature represents progress of education.
-  if (selectedModule?.Evls && loggedIn) {
+  if (selectedModule?.Evls && loggedIn && selectedModule?.Ec > 0) {
     evlList.innerHTML = selectedModule.Evls.map(ev => {
       const isChecked = progress?.CompletedEvls?.some(completed => completed.ModuleEvl.Id === ev.Id);
       return `
@@ -141,7 +141,7 @@ export async function updateModuleUI(button, coursePoints, locked, selectedModul
     evlList.innerHTML = "";
   }
   // updating the text in the card to show current progression of education.
-  if (selectedModule && loggedIn) {
+  if (selectedModule && loggedIn && selectedModule?.Ec > 0) {
     coursePoints.innerHTML = `Behaalde ec's (${achievedECs}/${selectedModule.Ec}) ↓`;
     coursePoints.style.cursor = "pointer";
 
