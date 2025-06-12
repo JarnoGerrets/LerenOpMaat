@@ -52,7 +52,7 @@ namespace LOM.API.Controllers
 
             return SignOut(new AuthenticationProperties
             {
-                RedirectUri = "/"
+                RedirectUri = "/signout-callback-oidc"
             },
             OpenIdConnectDefaults.AuthenticationScheme,
             "Cookies");
