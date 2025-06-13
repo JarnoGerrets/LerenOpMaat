@@ -161,7 +161,7 @@ namespace LOM.API.Controllers
         /// <returns>Conversatie model</returns>
         [HttpGet("conversationByStudentId/{userId}")]
         [EnableRateLimiting("GetLimiter")]
-        public async Task<ActionResult<Conversation>> GetConversationByStudentId()
+        public async Task<ActionResult<Conversation>> GetConversationByStudentId(int userId)
         {
             User? user = GetActiveUser();
 
@@ -174,7 +174,7 @@ namespace LOM.API.Controllers
                 .Include(t => t.Teacher)
                 .Include(lr => lr.LearningRoute)
                 .Include(s => s.Student)
-                .FirstOrDefaultAsync(s => s.StudentId == user.Id);
+                .FirstOrDefaultAsync(s => s.StudentId == userId);
             if (conversation == null)
             {
                 return NotFound();
