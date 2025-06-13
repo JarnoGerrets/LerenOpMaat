@@ -73,9 +73,9 @@ namespace LOM.API.Controllers
         /// <returns>Lijst met leraar models</returns>
         [HttpGet("teachers")]
         [EnableRateLimiting("GetLimiter")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsersWithIdOne()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsersWithIdOneOrThree()
         {
-            var teachers = await _context.User.Where(u => u.RoleId == 1).ToListAsync();
+            var teachers = await _context.User.Where(u => u.RoleId == 1 || u.RoleId == 3).ToListAsync();
 
             return Ok(teachers);
         }
