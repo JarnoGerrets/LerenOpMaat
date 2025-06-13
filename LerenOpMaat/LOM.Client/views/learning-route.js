@@ -279,7 +279,9 @@ export default async function LearningRoute() {
             deleteButton.addEventListener("click", async () => {
                 if (routeId !== null) {
                     await confirmationPopup("Leerroute", routeId, header, content, deleteRoute, "/");
-                    showToast("Leerroute verwijderd", "success");
+                    setTimeout(() => {
+                        showToast("Leerroute verwijderd", "success");
+                    }, 1500);
                 } else {
                     showToast("Fout bij het verwijderen van leerroute", "error");
                 }

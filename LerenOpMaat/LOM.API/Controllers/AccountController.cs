@@ -32,7 +32,6 @@ namespace LOM.API.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // sub
             var email = User.FindFirstValue("preferred_username");       // meestal email
             var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
-
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("No user ID found in claims.");
 

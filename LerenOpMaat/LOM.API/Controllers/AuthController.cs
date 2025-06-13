@@ -48,10 +48,12 @@ namespace LOM.API.Controllers
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync("Cookies");
-            await HttpContext.SignOutAsync("oidc");
 
-            return NoContent(); // 204 No Content — semantically correct
+            await HttpContext.SignOutAsync("Cookies");
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+
+            return NoContent();
+
         }
 
 

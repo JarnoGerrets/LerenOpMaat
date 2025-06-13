@@ -179,22 +179,24 @@ namespace LOM.API.Controllers
         /// <returns>Leerroute model als deze gevonden is</returns>
         [HttpGet("/api/LearningRoute/User")]
         [EnableRateLimiting("GetLimiter")]
-        public async Task<ActionResult<LearningRoute>> GetLearningRouteByUserId()
+        public async Task<ActionResult<LearningRoute>> GetLearningRouteByUserId([FromQuery] int? userId = null)
         {
-            User? user = GetActiveUser();
-
-            if (user == null)
+            if (userId == null)
             {
-                return Unauthorized();
+                User? user = GetActiveUser();
+                userId = user.Id;
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
             }
-
             var learningRoute = await _context.LearningRoutes
                 .Include(u => u.User)
                 .Include(s => s.Semesters)
                 .ThenInclude(m => m.Module)
-                .FirstOrDefaultAsync(lr => lr.UserId == user.Id);
+                .FirstOrDefaultAsync(lr => lr.UserId == userId);
 
-            var getUser = await _context.User.FirstOrDefaultAsync(ui => ui.Id == user.Id);
+            var getUser = await _context.User.FirstOrDefaultAsync(ui => ui.Id == userId);
 
             if (learningRoute == null)
             {
