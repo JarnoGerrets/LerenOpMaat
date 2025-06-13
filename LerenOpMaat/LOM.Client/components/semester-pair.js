@@ -1,8 +1,11 @@
 import SemesterCard from "../components/semester-card.js";
 import { dummySemester1, dummySemester2 } from "../components/dummyData2.js";
+import { hasPermission } from "../client/api-client.js";
 let learningRouteArray = window.learningRouteArray ?? [];
 
 export default async function SemesterPair(semester1, semester2, index, totalAmountOfYears) {
+    const isAdmin = await hasPermission("admin");
+    const isTeacher = await hasPermission("teacher");
     const cohortYear = parseInt(localStorage.getItem("cohortYear"));
     const wrapper = document.createElement("div");
     wrapper.classList.add("semester-pair");
@@ -38,6 +41,8 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         wrapper.appendChild(connector);
 
         const card1 = await SemesterCard({
+            isAdmin: isAdmin,
+            isTeacher: isTeacher,
             id: semester1.id,
             semester: semester1,
             module: semester1.Module.Name,
@@ -99,6 +104,8 @@ export default async function SemesterPair(semester1, semester2, index, totalAmo
         wrapper.appendChild(connector);
 
         const card2 = await SemesterCard({
+            isAdmin: isAdmin,
+            isTeacher: isTeacher,
             id: semester2.id,
             semester: semester2,
             module: semester2.Module.Name,

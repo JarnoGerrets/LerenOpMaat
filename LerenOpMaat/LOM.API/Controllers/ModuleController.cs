@@ -239,7 +239,7 @@ namespace LOM.API.Controllers
 					Ec = dto.Ec,
 					Level = dto.Level,
 					Period = dto.Period,
-					IsActive = dto.IsActive,
+					IsActive = false,
 					GraduateProfileId = dto.GraduateProfileId,
 					Evls = dto.Evls?.Select(evl => evl.ToModel()).ToList() ?? new List<ModuleEVL>(),
 				};
